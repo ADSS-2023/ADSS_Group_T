@@ -2,7 +2,7 @@ package BusinessLayer.Stock;
 
 import java.util.List;
 
-public class Item {
+public class Item implements ProductCategoryManagement {
     protected int item_id;
     protected String name;
     protected List<ItemPerOrder> items;
@@ -76,5 +76,18 @@ public class Item {
 
     public void setDiscount_list(List<Discount> discount_list) {
         this.discount_list = discount_list;
+    }
+
+    @Override
+    public String produceInventoryReport() {
+        return null;
+    }
+
+    @Override
+    public void setDiscount(Discount discount) {
+
+    }
+    private void alert(){
+
     }
 }
