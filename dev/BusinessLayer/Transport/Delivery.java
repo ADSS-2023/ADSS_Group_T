@@ -12,7 +12,7 @@ public class Delivery {
     private Site source;
     private String driverName;
     private int truckNumber;
-
+       
     public Delivery(int id, LocalDate date, LocalTime departureTime, int truckWeight, HashMap<Site, File> destinations,
             Site source, String driverName, int truckNumber) {
         this.id = id;
