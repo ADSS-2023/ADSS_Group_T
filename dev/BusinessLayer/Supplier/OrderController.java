@@ -1,6 +1,9 @@
 package BusinessLayer.Supplier;
 
+import ServiceLayer.Supplier.ItemToOrder;
+
 import java.util.HashMap;
+import java.util.List;
 
 public class OrderController {
     private HashMap<int,OrderBusiness> orders;
@@ -10,11 +13,11 @@ public class OrderController {
         this.orders = orders;
         this.sc = sc;
     }
-    public void createOrder(List<ItemToSend>){
+    public void createOrder(List<ItemToOrder> itemsList){
 
     }
     public List<OrderBusiness> getOrders(){
-
+        return null;
     }
     private void sendDelivery(){
 

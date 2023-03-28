@@ -1,5 +1,8 @@
 package ServiceLayer.Supplier;
 
+import BusinessLayer.Supplier.OrderController;
+import BusinessLayer.Supplier.SupplierController;
+
 public class ServiceFactory {
     private SupplierController sc;
     private OrderController oc;
@@ -7,7 +10,7 @@ public class ServiceFactory {
     private OrderService orderService;
     private ProductService productService;
 
-    public ServiceFactory(SupplierController sc,OrderController oc, SupplierService supplierService, OrderService orderService, ProductService productService){
+    public ServiceFactory(SupplierController sc, OrderController oc, SupplierService supplierService, OrderService orderService, ProductService productService){
         this.sc = sc;
         this.oc = oc;
         this.supplierService = supplierService;
