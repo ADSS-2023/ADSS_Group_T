@@ -25,6 +25,9 @@ public class SupplierBusiness {
         this.products = products;
     }
 
+    private void addProduct(String productName, String manufacturer, int price, int maxAmount){
+
+    }
     private void editDiscount(int productNum, int productAmount, int discount){
         getSupplierProduct(productNum).editDiscount(productAmount, discount);
     }
