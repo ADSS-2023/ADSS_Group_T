@@ -13,6 +13,18 @@ public class SupplierService {
     public SupplierService(SupplierController sc){
         this.sc = sc;
     }
+
+    public void addSupplier(String name, String address, int supplierNum,int bankAccountNum, Map<String, Integer> contacts, List<String> constDeliveryDays, boolean selfDelivery, Map<Integer, SupplierProductBusiness> products){
+        sc.addSupplier(name,address,supplierNum,bankAccountNum,contacts,constDeliveryDays, selfDelivery,products);
+    }
+
+    public void deleteSupplier(int supplierNum){
+        sc.deleteSupplier(supplierNum);
+    }
+
+    public void editSupplier(addSupplier(String name, String address, int supplierNum,int bankAccountNum, Map<String, Integer> contacts, List<String> constDeliveryDays, boolean selfDelivery, Map<Integer, SupplierProductBusiness> products){
+        sc.editSupplier(name,address,supplierNum,bankAccountNum,contacts,constDeliveryDays, selfDelivery,products);
+    }
     public List<String> getProducts(int vendorNum){
         HashMap<Integer, SupplierProductBusiness> productMap =  sc.getProducts(vendorNum);
         List<String> products = new ArrayList<String>();
