@@ -22,15 +22,15 @@ public class SupplierService {
         return products;
     }
 
-    public void addProduct(int supplierNum, int productNum, String productName, String manufacturer, int price, int maxAmount){
-        sc.addProduct(supplierNum, productNum, productName, manufacturer, price, maxAmount);
+    public void addProduct(int supplierNum, String productName, String manufacturer, int price, int maxAmount){
+        sc.addProduct(supplierNum, productName, manufacturer, price, maxAmount);
     }
 
-    public void editProduct(int supplierNum, int productNum, String productName, String manufacturer, int price, int maxAmount){
-        sc.editProduct(supplierNum, productNum, productName, manufacturer, price, maxAmount);
+    public void editProduct(int supplierNum, String ProductName, String manufacturer, int price, int maxAmount){
+        sc.editProduct(supplierNum, productName, manufacturer, price, maxAmount);
     }
 
-    public void deleteProduct(int supplierNum, int productNum, String productName, String manufacturer, int price, int maxAmount){
-        sc.deleteProduct(supplierNum, productNum, productName, manufacturer, price, maxAmount);
+    public void deleteProduct(int supplierNum, String ProductName, String manufacturer, int price, int maxAmount){
+        sc.deleteProduct(supplierNum, productName, manufacturer, price, maxAmount);
     }
 }
