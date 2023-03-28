@@ -45,4 +45,15 @@ public class SupplierBusiness {
     public Map<Integer, SupplierProductBusiness> getProducts(){
 
     }
+
+    public void editSupplier(String name, String address, int supplierNum,int bankAccountNum, Map<String, Integer> contacts, List<String> constDeliveryDays, boolean selfDelivery, Map<Integer, SupplierProductBusiness> products){
+        this.name = name;
+        this.address = address;
+        this.supplierNum = supplierNum;
+        this.bankAccountNum = bankAccountNum;
+        this.contacts = contacts;
+        this.constDeliveryDays = constDeliveryDays;
+        this.selfDelivery = selfDelivery;
+        this.products = products;
+    }
 }
