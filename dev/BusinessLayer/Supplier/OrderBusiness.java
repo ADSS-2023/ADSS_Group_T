@@ -14,12 +14,12 @@ public class OrderBusiness {
     private int supplierNum;
     private int contactName;
     private int contactNumber;
-    private HashMap<Integer,Integer> products ;
+    private HashMap<Integer,OrderProduct> products ;
 
     public OrderBusiness(int orderNum, String supplierName, Date orderDate,
                          String supplierAddress, String destinationAddress
             ,int supplierNum, int contactName, int contactNumber,
-                         HashMap<Integer, Integer> products) {
+                         HashMap<Integer, OrderProduct> products) {
         this.orderNum = orderNum;
         this.supplierName = supplierName;
         this.orderDate = orderDate;
