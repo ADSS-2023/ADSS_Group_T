@@ -1,6 +1,8 @@
 package BusinessLayer.Transport;
 import java.time.LocalDate;
 import java.util.*;
+import BusinessLayer.Transport.Driver.LicenseType;
+import BusinessLayer.Transport.Driver.CoolingLevel;
 
 public class LogisticsCenter {
 
@@ -35,7 +37,10 @@ public LogisticsCenter( HashMap<Integer,Truck> trucks,HashMap<Integer,Delivery> 
 
     }
 
-    public void addTruck(int licenseNumber, String model, int weight, int maxWeight , Driver.LicenseType licenseType,)
+    public void addTruck(int licenseNumber, String model, int weight, int maxWeight ,
+                         LicenseType licenseType, CoolingLevel coolingLevel){
+        trucks.put(licenseNumber,new Truck(licenseNumber,model,weight,maxWeight,licenseType,coolingLevel));
+    }
     
 
 
