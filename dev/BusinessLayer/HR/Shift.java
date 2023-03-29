@@ -1,5 +1,4 @@
 package BusinessLayer.HR;
-
 import java.util.*;
 
 public class Shift {
