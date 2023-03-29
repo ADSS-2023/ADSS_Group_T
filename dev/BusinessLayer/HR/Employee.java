@@ -76,14 +76,16 @@ public class Employee {
 
     public void addRestriction(String date, boolean isMorning) {
         if (shiftsRestriction.containsKey(date)) {
-            if (! (shiftsRestriction.get(date).contains(isMorning)))
+            if (!shiftsRestriction.get(date).contains(isMorning)) {
                 shiftsRestriction.get(date).add(isMorning);
+            }
         } else {
-            Vector<boolean> shiftTypes = new Vector<Integer>();
+            Vector<Boolean> shiftTypes = new Vector<>();
             shiftTypes.add(isMorning);
             shiftsRestriction.put(date, shiftTypes);
         }
     }
+
 
 
 
