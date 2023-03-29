@@ -7,9 +7,11 @@ public class Driver {
     private CoolingLevel coolingLevel;
     
 
-    public Driver(String name, LicenseType licenseType) {
+    public Driver(int id, String name, LicenseType licenseType, CoolingLevel coolingLevel) {
+        this.id = id;
         this.name = name;
         this.licenseType = licenseType;
+        this.coolingLevel = coolingLevel;
     }
 
     public String getName() {
