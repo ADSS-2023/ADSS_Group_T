@@ -67,7 +67,7 @@ public LogisticsCenter( HashMap<Integer,Truck> trucks,HashMap<Integer,Delivery> 
     }
     
     public boolean truckOverWeight(int licenseNumber){
-        return trucks.get(licenseNumber)
+        return trucks.get(licenseNumber).getWeight() > trucks.get(licenseNumber).getMaxWeight();
     }
 
 
