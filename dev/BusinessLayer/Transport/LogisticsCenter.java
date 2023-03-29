@@ -79,6 +79,18 @@ public LogisticsCenter( HashMap<Integer,Truck> trucks,HashMap<Integer,Delivery> 
         });
     }
 
+    public HashMap<Product,Integer> loadProducts(HashMap<Product,Integer> requestedSupply){
+        Set<Product> keys = requestedSupply.keySet();
+        for(Product p : keys){
+            if(products.containsKey(p) && products.get(p) >= requestedSupply.get(p))    //product exist in stock in the requested amount
+                products.replace(p, products.get(p) - requestedSupply.get(p));
+            else if(products.containsKey(p)) {  //product exist in stock but not in the requested amount
+                requestedSupply.replace(p,requestedSupply.get(p) - products.get(p));
+                products.replace(p, 0);
+            }
+        }
+        return requestedSupply;
+    }
 
 
     
