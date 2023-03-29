@@ -28,7 +28,6 @@ public class Delivery {
     public HashMap<Product,Integer> getProductsOfSupplier(Site supplier){
         return destinations.get(supplier).getProducts();
     }
-
     public int getId() {
         return this.id;
     }
