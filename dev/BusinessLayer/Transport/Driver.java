@@ -27,10 +27,10 @@ public class Driver {
     public void setLicenseLevel(LicenseType licenseType) {
         this.licenseType = licenseType;
     }
-    enum LicenseType {
+    public enum LicenseType {
         C, C1, E
     }
-    enum CoolingLevel {
+    public enum CoolingLevel {
        non ,fridge , freezer
     }
 }

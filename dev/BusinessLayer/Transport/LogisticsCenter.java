@@ -35,6 +35,7 @@ public LogisticsCenter( HashMap<Integer,Truck> trucks,HashMap<Integer,Delivery> 
 
     }
 
+    public void addTruck(int licenseNumber, String model, int weight, int maxWeight , Driver.LicenseType licenseType,)
     
 
 
