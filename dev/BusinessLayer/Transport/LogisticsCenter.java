@@ -37,13 +37,33 @@ public LogisticsCenter( HashMap<Integer,Truck> trucks,HashMap<Integer,Delivery> 
 
     }
 
-    public void addTruck(int licenseNumber, String model, int weight, int maxWeight ,
+    public boolean addTruck(int licenseNumber, String model, int weight, int maxWeight ,
                          LicenseType licenseType, CoolingLevel coolingLevel){
+        if(trucks.containsKey(licenseNumber))
+            return false;
         trucks.put(licenseNumber,new Truck(licenseNumber,model,weight,maxWeight,licenseType,coolingLevel));
+        return true;
     }
 
-    public void removeTruck(int licenseNumber){
+    public boolean removeTruck(int licenseNumber){
+        if(!trucks.containsKey(licenseNumber))
+            return false;
         trucks.remove(licenseNumber);
+        return true;
+    }
+
+    public boolean addDriver(int id, String name, LicenseType licenseType, CoolingLevel coolingLevel){
+        if(drivers.containsKey(id))
+            return false;
+        drivers.put(id, new Driver(id, name, licenseType, coolingLevel));
+        return true;
+    }
+
+    public boolean removeDriver(int id){
+        if(!drivers.containsKey(id))
+            return false;
+        drivers.remove(id);
+        return true;
     }
     
 
