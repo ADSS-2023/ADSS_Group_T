@@ -41,6 +41,10 @@ public LogisticsCenter( HashMap<Integer,Truck> trucks,HashMap<Integer,Delivery> 
                          LicenseType licenseType, CoolingLevel coolingLevel){
         trucks.put(licenseNumber,new Truck(licenseNumber,model,weight,maxWeight,licenseType,coolingLevel));
     }
+
+    public void removeTruck(int licenseNumber){
+        trucks.remove(licenseNumber);
+    }
     
 
 
