@@ -2,6 +2,10 @@ package BusinessLayer.HR;
 
 public class Constraint {
     private String date;
+
+    private String shiftType;
+    private boolean isTemp ;
+
     private boolean morningOrEveningl; //true-morning, false- evening
     private boolean isTemp ;
 
@@ -22,6 +26,4 @@ public class Constraint {
     public boolean isTemp(){
         return  isTemp;
     }
-
-
 }
