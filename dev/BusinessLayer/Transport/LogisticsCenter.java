@@ -70,6 +70,16 @@ public LogisticsCenter( HashMap<Integer,Truck> trucks,HashMap<Integer,Delivery> 
         return trucks.get(licenseNumber).getWeight() > trucks.get(licenseNumber).getMaxWeight();
     }
 
+    public void storeProducts(HashMap<Product,Integer> newSupply){
+        newSupply.forEach((key,value) -> {
+            if(products.containsKey(key))                           //product exist in stock - update amount
+                products.replace(key, products.get(key) + value);
+            else
+                products.put(key,value);
+        });
+    }
+
+
 
     
 }
