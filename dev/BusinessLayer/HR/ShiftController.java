@@ -1,25 +1,30 @@
 package BusinessLayer.HR;
 
-import java.awt.*;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Vector;
 
 public class ShiftController {
     private HashMap<Integer,Shift> shifts;
-    private int shiftsCounter;
+    private int shiftId;
 
     public ShiftController(){
         shifts = new HashMap<Integer,Shift>();
-        shiftsCounter = 0;
+        shiftId = 0;
+    }
+
+    public void addSubmittedPosition(Employee emp){
+        if (emp.isManager())
 
 
     }
 
-    public void CreateShift(String date, String shiftType, Vector<Employee> employeesList ,Vector<Position> positionlist,int managerId){
-        Shift newShift = new Shift(shiftsCounter,date,managerId,shiftType,employeesList,positionlist);
-        shifts.put(shiftsCounter,newShift);
-        shiftsCounter++;
+    public void assignShiftnyManager{
+
+    }
+    public void CreateShift(int shiftId, int managerID, String date,  String shiftType){
+        Shift newShift = new Shift(shiftId, managerID, date, shiftType);
+        shifts.put(shiftId,newShift);
+        shiftId++;
     }
     public void DeleteShift(int shiftId){
         if(shifts.containsKey(shiftId)){
