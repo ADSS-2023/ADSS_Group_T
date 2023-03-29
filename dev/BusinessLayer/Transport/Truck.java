@@ -19,4 +19,28 @@ public class Truck {
         this.licenseNumber = licenseNumber;
         this.coolingLevel = coolingLevel;
     }
+
+    public int getLicenseNumber() {
+        return licenseNumber;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public int getWeight() {
+        return weight;
+    }
+
+    public int getMaxWeight() {
+        return maxWeight;
+    }
+
+    public CoolingLevel getCoolingLevel() {
+        return coolingLevel;
+    }
+
+    public LicenseType getLicenseType() {
+        return licenseType;
+    }
 }
