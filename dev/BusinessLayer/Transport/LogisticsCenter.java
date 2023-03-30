@@ -17,6 +17,7 @@ public class LogisticsCenter {
 
     private LocalDate currDate;
 
+
     public LogisticsCenter( HashMap<Integer,Truck> trucks,HashMap<Integer,Delivery> deliveries,
                         HashMap<Product,Integer> products,HashMap<Integer,Driver> drivers){
         this.trucks = trucks;
@@ -60,6 +61,7 @@ public class LogisticsCenter {
         if(trucks.containsKey(licenseNumber))
             return false;
         trucks.put(licenseNumber,new Truck(licenseNumber,model,weight,maxWeight,licenseType,coolingLevel));
+
         return true;
     }
 

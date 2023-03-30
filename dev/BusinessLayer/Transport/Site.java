@@ -13,4 +13,8 @@ public class Site {
         this.shippingArea = shippingArea;
     }
 
+    public String getName() {
+        return this.address;
+    }
+
 }
