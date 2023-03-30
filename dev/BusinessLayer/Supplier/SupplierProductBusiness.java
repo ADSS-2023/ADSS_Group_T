@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SupplierProductBusiness {
+    int supplierNum;
     private String name;
     private int productNum;
     private String manufacturer;
@@ -12,7 +13,8 @@ public class SupplierProductBusiness {
     private HashMap<Integer, Integer> quantitiesAgreement;
     private LocalTime expiredDate;
 
-    public SupplierProductBusiness(String name, int productNum, String manufacturer, int price, int maxAmount, HashMap<Integer, Integer> quantitiesAgreement, LocalTime expiredDate){
+    public SupplierProductBusiness(int supplierNum, String name, int productNum, String manufacturer, int price, int maxAmount, HashMap<Integer, Integer> quantitiesAgreement, LocalTime expiredDate){
+        this.supplierNum = supplierNum;
         this.name = name;
         this.productNum = productNum;
         this.manufacturer = manufacturer;
@@ -83,5 +85,14 @@ public class SupplierProductBusiness {
 
     public HashMap<Integer, Integer> getQuantitiesAgreement(){
         return quantitiesAgreement;
+    }
+
+    public int getDiscount(int quantity){
+        int discount = 0;
+        for (Map.Entry<Integer, Integer> entry : quantitiesAgreement.entrySet()) {
+            if (entry.getKey() <= quantity && entry.getValue() < discount)
+                discount = entry.getValue();
+        }
+        return discount;
     }
 }
