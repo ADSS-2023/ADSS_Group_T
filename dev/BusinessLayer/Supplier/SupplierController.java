@@ -56,7 +56,7 @@ public class SupplierController {
                 sb = null;
                 int minPrice = Integer.MAX_VALUE;
                 for (Map.Entry<Integer, SupplierBusiness> entry : suppliers.entrySet()) {
-                    int currentPrice = entry.getValue().getPriceLimitedQuantity(productName, manufacturer)
+                    int currentPrice = entry.getValue().getProduct.getPriceLimitedQuantity(quantity);
                     if (currentPrice < minPrice && !suppliersIncluded.contains(entry.getKey())) {
                         if(sb.equals(entry.getValue()))
                             over = true;
