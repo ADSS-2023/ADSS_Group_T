@@ -1,5 +1,6 @@
 package BusinessLayer.Supplier;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,5 +34,44 @@ public class SupplierController {
 
     public void editSupplier(addSupplier(String name, String address, int supplierNum,int bankAccountNum, Map<String, Integer> contacts, List<String> constDeliveryDays, boolean selfDelivery, Map<Integer, SupplierProductBusiness> products){
         suppliers.get(supplierNum).editSupplier(name,address, bankAccountNum, contacts, constDeliveryDays, selfDelivery, products);
+    }
+
+    public HashMap<SupplierProductBusiness, Integer> findSuppliersProduct(String productName, String manufacturer, int quantity){
+        int minPrice = Integer.MAX_VALUE;
+        SupplierBusiness sb = null;
+        HashMap<SupplierProductBusiness, Integer> suppliersPerProduct = new HashMap<>();
+        for (Map.Entry<Integer, SupplierBusiness> entry : suppliers.entrySet()) {
+            SupplierProductBusiness sp = entry.getValue().getProduct(productName,manufacturer);
+            if(sp != null && sp.isEnough(quantity)) && sp.getPriceByQuantity(quantity)< minPrice){
+                minPrice = sp.getPriceByQuantity(quantity);
+                sb = entry.getValue();
+            }
+        }
+        if(sb != null)
+            suppliersPerProduct.add(sb.getProduct(productName,manufacturer), quantity);
+        else {
+            List<Integer> suppliersIncluded = new ArrayList<>();
+            boolean over = false;
+            while (quantity > 0 && !over) {
+                sb = null;
+                int minPrice = Integer.MAX_VALUE;
+                for (Map.Entry<Integer, SupplierBusiness> entry : suppliers.entrySet()) {
+                    int currentPrice = entry.getValue().getPriceLimitedQuantity(productName, manufacturer)
+                    if (currentPrice < minPrice && !suppliersIncluded.contains(entry.getKey())) {
+                        if(sb.equals(entry.getValue()))
+                            over = true;
+                        minPrice = currentPrice;
+                        sb = entry.getValue();
+                    }
+                }
+                if(sb != null) {
+                    suppliersIncluded.add(sb.getSupplierNum());
+                    SupplierProductBusiness sp = sb.getProduct(productName,manufacturer);
+                    quantity = quantity - Math.min(quantity,sp.getMaxAmount());
+                    suppliersPerProduct.put(sp,Math.min(quantity,sp.getMaxAmount()));
+                }
+            }
+        }
+        return suppliersPerProduct;
     }
 }
