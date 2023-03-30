@@ -32,7 +32,7 @@ public class DeliveryManagerService {
         sites = new ArrayList<>();
         products = new ArrayList<>();
 
-        curDay = LocalDate.of(2023, 1, 1);
+        curDay = LocalDate.now();
         //---------- create Drivers ----------//
         Driver driver1 = new Driver(1001, "Driver1",LicenseType.C1);
         Driver driver2 = new Driver(1002,"Driver2", LicenseType.C);
@@ -42,6 +42,7 @@ public class DeliveryManagerService {
         hashMapDrivers.put(1001, driver1);
         hashMapDrivers.put(1002, driver2);
         hashMapDrivers.put(1003, driver3);
+        hashMapDrivers.put(1004, driver4);
 
          //---------- create Trucks ----------//
         Truck truck1 = new Truck(2001, "Truck1", 2000, 4000, LicenseType.C1);
@@ -60,7 +61,6 @@ public class DeliveryManagerService {
         Product product5 = new Product("Product 5");
         Product product6 = new Product("Product 6");
 
-        HashMap<Product,Integer> hashMapProducts = new HashMap<Product,Integer>();
         products.add(product1);
         products.add(product2);
         products.add(product3);
@@ -68,9 +68,11 @@ public class DeliveryManagerService {
         products.add(product5);
         products.add(product6);
 
+        HashMap<Product,Integer> hashMapProducts = new HashMap<Product,Integer>();
+        
         //---------- create Sites ----------//
         Site site1 = new Site("Address 1", "123456789", "Contact 1", "Area 1");
-        Site site2 = new Site("Address 2", "987654321", "Contact 2", "Area 2");
+        Site site2 = new Site("Address 2", "987654321", "Contact 2", "Area 1");
         Site site3 = new Site("Address 3", "555555555", "Contact 3", "Area 3");
         sites.add(site1);
         sites.add(site2);
@@ -137,7 +139,9 @@ public class DeliveryManagerService {
     
     void skipDay() {
         // Do something
-        this.curDay = this.curDay.plusDays(1);
+
+        D lcControler.skipDay();
+        //this.curDay = this.curDay.plusDays(1);
         start(); // Return to main menu
     }
     
@@ -334,7 +338,7 @@ public class DeliveryManagerService {
 
 
 
-    
+
 public String addNewTruck(int licenseNumber, String model, int weight,int maxWeight, int licenseIndex  ){
     return "not implemented yet";
 }
