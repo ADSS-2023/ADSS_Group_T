@@ -1,6 +1,7 @@
 package BusinessLayer.Supplier;
 import java.time.LocalTime;
 import java.util.HashMap;
+import java.util.Map;
 
 public class SupplierProductBusiness {
     private String name;
@@ -33,6 +34,29 @@ public class SupplierProductBusiness {
         quantitiesAgreement.remove(productAmount,discount);
     }
 
+    public boolean isEnough(int quantity){
+        return quantity >= quantity;
+    }
+
+    public int getPriceByQuantity(int quantity){
+        int maxDiscount = 0;
+        for (Map.Entry<Integer, Integer> entry : quantitiesAgreement.entrySet()) {
+            if(entry.getKey() <= quantity && maxDiscount <= entry.getValue())
+                maxDiscount = entry.getValue();
+        }
+        return (1-(maxDiscount/100))*(quantity*price);
+    }
+
+    public int getPriceLimitedQuantity(int quantity){
+        int quantityProvided = Math.min(maxAmount, quantity);
+        int discount = 0;
+        for (Map.Entry<Integer, Integer> entry : quantitiesAgreement.entrySet()) {
+            if(entry.getKey() <= quantityProvided && discount <= entry.getValue())
+                discount = entry.getValue();
+        }
+        int totalPrice = (1-(discount/100))*(quantity*price);
+        return totalPrice/quantityProvided;
+    }
     public String getName() {
         return name;
     }
