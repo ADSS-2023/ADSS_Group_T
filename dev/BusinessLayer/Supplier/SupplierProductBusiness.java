@@ -32,4 +32,32 @@ public class SupplierProductBusiness {
     private void deleteDiscount(int productAmount, int discount){
         quantitiesAgreement.remove(productAmount,discount);
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public HashMap<Integer, Integer> getQuantitiesAgreement() {
+        return quantitiesAgreement;
+    }
+
+    public int getMaxAmount() {
+        return maxAmount;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public int getProductNum() {
+        return productNum;
+    }
+
+    public LocalTime getExpiredDate() {
+        return expiredDate;
+    }
+
+    public String getManufacturer() {
+        return manufacturer;
+    }
 }
