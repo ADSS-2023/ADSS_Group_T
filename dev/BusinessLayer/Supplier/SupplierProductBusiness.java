@@ -1,5 +1,5 @@
 package BusinessLayer.Supplier;
-
+import java.time.LocalTime;
 import java.util.HashMap;
 
 public class SupplierProductBusiness {
@@ -9,13 +9,16 @@ public class SupplierProductBusiness {
     private int price;
     private int maxAmount;
     HashMap<Integer, Integer> quantitiesAgreement;
+    private LocalTime expiredDate;
 
-    public SupplierProductBusiness(String name, int productNum, String manufacturer, int price, int maxAmount){
+    public SupplierProductBusiness(String name, int productNum, String manufacturer, int price, int maxAmount, HashMap<Integer, Integer> quantitiesAgreement, LocalTime expiredDate){
         this.name = name;
         this.productNum = productNum;
         this.manufacturer = manufacturer;
         this.price = price;
         this.maxAmount = maxAmount;
+        this.quantitiesAgreement = quantitiesAgreement;
+        this.expiredDate = expiredDate;
     }
 
     private void editDiscount(int productAmount, int discount){
