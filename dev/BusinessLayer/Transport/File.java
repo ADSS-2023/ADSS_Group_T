@@ -10,6 +10,9 @@ public class File {
         this.products = new HashMap<Product, Integer>();
     }
 
+    public HashMap<Product, Integer> getProducts() {
+        return products;
+    }
     public int getId() {
         return this.id;
     }

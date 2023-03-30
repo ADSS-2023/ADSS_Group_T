@@ -8,23 +8,27 @@ public class Delivery {
     private LocalDate date;
     private LocalTime departureTime;
     private int truckWeight;
-    private HashMap<Site, File> destinations;
+    private HashMap<Site, File> suppliers;
+    private HashMap<Site, File> branches;
     private Site source;
     private String driverName;
     private int truckNumber;
        
-    public Delivery(int id, LocalDate date, LocalTime departureTime, int truckWeight, HashMap<Site, File> destinations,
+    public Delivery(int id, LocalDate date, LocalTime departureTime, int truckWeight, HashMap<Site, File> suppliers,
             Site source, String driverName, int truckNumber) {
         this.id = id;
         this.date = date;
         this.departureTime = departureTime;
         this.truckWeight = truckWeight;
-        this.destinations = destinations;
+        this.suppliers = suppliers;
         this.source = source;
         this.driverName = driverName;
         this.truckNumber = truckNumber;
     }
 
+    public HashMap<Product,Integer> getProductsOfSupplier(Site supplier){
+        return suppliers.get(supplier).getProducts();
+    }
     public int getId() {
         return this.id;
     }
@@ -58,11 +62,11 @@ public class Delivery {
     }
 
     public Map<Site, File> getDestinations() {
-        return this.destinations;
+        return this.suppliers;
     }
 
     public void setDestinations(HashMap<Site, File> destinations) {
-        this.destinations = destinations;
+        this.suppliers = destinations;
     }
 
     public Site getSource() {

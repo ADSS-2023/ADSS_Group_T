@@ -24,7 +24,29 @@ public class Truck {
             BusinessLayer.Transport.Driver.CoolingLevel coolingLevel2) {
     }
 
-    enum CoolingLevel {
-        non ,fridge , freezer
-     }
+
+    public int getLicenseNumber() {
+        return licenseNumber;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public int getWeight() {
+        return weight;
+    }
+
+    public int getMaxWeight() {
+        return maxWeight;
+    }
+
+    public CoolingLevel getCoolingLevel() {
+        return coolingLevel;
+    }
+
+    public LicenseType getLicenseType() {
+        return licenseType;
+    }
+
 }
