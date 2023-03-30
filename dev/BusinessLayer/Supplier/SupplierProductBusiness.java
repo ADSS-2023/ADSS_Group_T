@@ -1,19 +1,20 @@
 package BusinessLayer.Supplier;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
 
 public class SupplierProductBusiness {
-    int supplierNum;
+    private int supplierNum;
     private String name;
     private int productNum;
     private String manufacturer;
     private int price;
     private int maxAmount;
     private HashMap<Integer, Integer> quantitiesAgreement;
-    private LocalTime expiredDate;
+    private LocalDateTime expiredDate;
 
-    public SupplierProductBusiness(int supplierNum, String name, int productNum, String manufacturer, int price, int maxAmount, HashMap<Integer, Integer> quantitiesAgreement, LocalTime expiredDate){
+    public SupplierProductBusiness(int supplierNum, String name, int productNum, String manufacturer, int price, int maxAmount, HashMap<Integer, Integer> quantitiesAgreement, LocalDateTime expiredDate){
         this.supplierNum = supplierNum;
         this.name = name;
         this.productNum = productNum;
@@ -24,15 +25,15 @@ public class SupplierProductBusiness {
         this.expiredDate = expiredDate;
     }
 
-    private void editDiscount(int productAmount, int discount){
+    public void editDiscount(int productAmount, int discount){
         quantitiesAgreement.put(productAmount, discount);
     }
 
-    private void addDiscount(int productAmount, int discount){
+    public void addDiscount(int productAmount, int discount){
         quantitiesAgreement.put(productAmount,discount);
     }
 
-    private void deleteDiscount(int productAmount, int discount){
+    public void deleteDiscount(int productAmount, int discount){
         quantitiesAgreement.remove(productAmount,discount);
     }
 
@@ -75,7 +76,7 @@ public class SupplierProductBusiness {
         return productNum;
     }
 
-    public LocalTime getExpiredDate() {
+    public LocalDateTime getExpiredDate() {
         return expiredDate;
     }
 
@@ -85,6 +86,10 @@ public class SupplierProductBusiness {
 
     public HashMap<Integer, Integer> getQuantitiesAgreement(){
         return quantitiesAgreement;
+    }
+
+    public int getSupplierNum() {
+        return supplierNum;
     }
 
     public int getDiscount(int quantity){

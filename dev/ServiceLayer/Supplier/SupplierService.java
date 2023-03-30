@@ -1,7 +1,9 @@
 package ServiceLayer.Supplier;
 
+import BusinessLayer.Supplier.SupplierController;
 import BusinessLayer.Supplier.SupplierProductBusiness;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +16,7 @@ public class SupplierService {
         this.sc = sc;
     }
 
-    public void addSupplier(String name, String address, int supplierNum,int bankAccountNum, Map<String, Integer> contacts, List<String> constDeliveryDays, boolean selfDelivery, Map<Integer, SupplierProductBusiness> products){
+    public void addSupplier(String name, String address, int supplierNum,int bankAccountNum, HashMap<String, Integer> contacts, List<String> constDeliveryDays, boolean selfDelivery, HashMap<Integer, SupplierProductBusiness> products){
         sc.addSupplier(name,address,supplierNum,bankAccountNum,contacts,constDeliveryDays, selfDelivery,products);
     }
 
@@ -22,7 +24,7 @@ public class SupplierService {
         sc.deleteSupplier(supplierNum);
     }
 
-    public void editSupplier(addSupplier(String name, String address, int supplierNum,int bankAccountNum, Map<String, Integer> contacts, List<String> constDeliveryDays, boolean selfDelivery, Map<Integer, SupplierProductBusiness> products){
+    public void editSupplier(String name, String address, int supplierNum,int bankAccountNum, HashMap<String, Integer> contacts, List<String> constDeliveryDays, boolean selfDelivery, HashMap<Integer, SupplierProductBusiness> products){
         sc.editSupplier(name,address,supplierNum,bankAccountNum,contacts,constDeliveryDays, selfDelivery,products);
     }
     public List<String> getProducts(int vendorNum){
@@ -34,15 +36,15 @@ public class SupplierService {
         return products;
     }
 
-    public void addProduct(int supplierNum, String productName, String manufacturer, int price, int maxAmount){
-        sc.addProduct(supplierNum, productName, manufacturer, price, maxAmount);
+    public void addProduct(int supplierNum, int productNum, String productName, String manufacturer, int price, int maxAmount, HashMap<Integer, Integer> quantitiesAgreement, LocalDateTime expiredDate){
+        sc.addProduct(supplierNum, productNum, productName, manufacturer, price, maxAmount, quantitiesAgreement, expiredDate);
     }
 
-    public void editProduct(int supplierNum, String ProductName, String manufacturer, int price, int maxAmount){
-        sc.editProduct(supplierNum, productName, manufacturer, price, maxAmount);
+    public void editProduct(int supplierNum, int productNum, String productName, String manufacturer, int price, int maxAmount, HashMap<Integer, Integer> quantitiesAgreement, LocalDateTime expiredDate){
+        sc.editProduct(supplierNum, productNum, productName, manufacturer, price, maxAmount, quantitiesAgreement, expiredDate);
     }
 
-    public void deleteProduct(int supplierNum, String ProductName, String manufacturer, int price, int maxAmount){
-        sc.deleteProduct(supplierNum, productName, manufacturer, price, maxAmount);
+    public void deleteProduct(int supplierNum, int productNum){
+        sc.deleteProduct(supplierNum, productNum);
     }
 }
