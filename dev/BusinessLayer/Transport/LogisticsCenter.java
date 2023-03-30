@@ -101,6 +101,22 @@ public class LogisticsCenter {
         return requestedSupply;
     }
 
+    public boolean replaceTruck(int deliveryID, Truck t,int weight,LocalDate date){
+        for(int licenseNumber : this.trucks.keySet()){
+            Truck optionalTruck = trucks.get(licenseNumber);
+            if((optionalTruck.getMaxWeight() >= weight) &&
+            !date2trucks.get(date).contains(optionalTruck) &&
+            optionalTruck.getCoolingLevel() == t.getCoolingLevel() &&
+            optionalTruck.getLicenseType().ordinal() >= t.getLicenseType().ordinal()){
+                deliveries.get(deliveryID).setTruckNumber(optionalTruck.getLicenseNumber());
+                date2trucks.get(date).remove(t);
+                date2trucks.get(date).add(trucks.get(licenseNumber));
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     
 }
