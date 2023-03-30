@@ -15,6 +15,8 @@ public class LogisticsCenter {
     private  HashMap<LocalDate,ArrayList<Delivery>> date2deliveries;
     private int deliveryCounter = 0;
 
+    private LocalDate currDate;
+
     public LogisticsCenter( HashMap<Integer,Truck> trucks,HashMap<Integer,Delivery> deliveries,
                         HashMap<Product,Integer> products,HashMap<Integer,Driver> drivers){
         this.trucks = trucks;
@@ -24,6 +26,7 @@ public class LogisticsCenter {
         this.date2trucks = new HashMap<>();
         this.date2drivers = new HashMap<>();
         this.date2deliveries = new HashMap<>();
+        this.currDate = LocalDate.now();
     }
 
     public LogisticsCenter(){
@@ -40,14 +43,20 @@ public class LogisticsCenter {
     //s1,<>,1.1
     //s2,<>,1.1
     //s3,<>,1.2
-    public boolean orderDelivery(Site site,ArrayList<Product> products, LocalDate date){
+    public boolean orderDelivery(Site branch, HashMap<Site,HashMap<Product,Integer>> suppliers, LocalDate date, String coolingLevel){
         //if(date2deliveries.containsKey(date))
         return true;
+    }
 
+    public int skipDay(){
+        this.currDate = this.currDate.plusDays(1);
+        //TODO: check if there is delivery today
+        Delivery d = null;
+        return d.getId();
     }
 
     public boolean addTruck(int licenseNumber, String model, int weight, int maxWeight ,
-                         LicenseType licenseType, CoolingLevel coolingLevel){
+                         LicenseType licenseType, String coolingLevel){
         if(trucks.containsKey(licenseNumber))
             return false;
         trucks.put(licenseNumber,new Truck(licenseNumber,model,weight,maxWeight,licenseType,coolingLevel));
@@ -61,7 +70,7 @@ public class LogisticsCenter {
         return true;
     }
 
-    public boolean addDriver(int id, String name, LicenseType licenseType, CoolingLevel coolingLevel){
+    public boolean addDriver(int id, String name, LicenseType licenseType, String coolingLevel){
         if(drivers.containsKey(id))
             return false;
         drivers.put(id, new Driver(id, name, licenseType, coolingLevel));
@@ -102,8 +111,8 @@ public class LogisticsCenter {
     }
 
     public boolean replaceTruck(int deliveryID, int weight,LocalDate date){
-        //is the weight already updated in the delivery form? if so remove weight param
-        Truck t = trucks.get(get(deliveryID).getTruckNumber());
+        //TODO: is the weight already updated in the delivery form? if so remove weight param
+        Truck t = trucks.get(deliveries.get(deliveryID).getTruckNumber());
         for(int licenseNumber : this.trucks.keySet()){
             Truck optionalTruck = trucks.get(licenseNumber);
             if((optionalTruck.getMaxWeight() >= weight) &&
