@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class DeliveryManager {
+public class DeliveryManagerService {
     private LocalDate curDay;
     private LogisticsCenter lc;
 
@@ -28,7 +28,7 @@ public class DeliveryManager {
     
     
 
-    public DeliveryManager() {
+    public DeliveryManagerService() {
         sites = new ArrayList<>();
         products = new ArrayList<>();
 
@@ -36,7 +36,8 @@ public class DeliveryManager {
         //---------- create Drivers ----------//
         Driver driver1 = new Driver(1001, "Driver1",LicenseType.C1);
         Driver driver2 = new Driver(1002,"Driver2", LicenseType.C);
-        Driver driver3 = new Driver(1003,"Driver3", LicenseType.E);
+        Driver driver3 = new Driver(1003,"Driver3", LicenseType.C);
+        Driver driver4 = new Driver(1004,"Driver4", LicenseType.E);
         HashMap<Integer,Driver> hashMapDrivers = new HashMap<Integer,Driver>();
         hashMapDrivers.put(1001, driver1);
         hashMapDrivers.put(1002, driver2);
@@ -116,13 +117,13 @@ public class DeliveryManager {
                     skipDay();
                     break;
                 case 2:
-                    enterNewDelivery();
+                    addNewDelivery();
                     break;
                 case 3:
-                    enterNewDriver();
+                    addNewDriver();
                     break;
                 case 4:
-                    enterNewTruck();
+                    addNewTruck();
                     break;
                 case 5:
                     running = false;
@@ -134,14 +135,14 @@ public class DeliveryManager {
         }
     }
     
-    private void skipDay() {
+    void skipDay() {
         // Do something
         this.curDay = this.curDay.plusDays(1);
         start(); // Return to main menu
     }
     
    
-    private void enterNewDelivery() {
+    private void addNewDelivery() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter the delivery details:");
         // Get the destination site
@@ -230,9 +231,11 @@ public class DeliveryManager {
         start(); // Return to main menu
     }
     
+    public void addNewDriver(String id,String name, String license ){
+
+    }
     
-    
-    private void enterNewDriver() {
+    public void addNewDriver() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter the driver details:");
     
@@ -266,7 +269,7 @@ public class DeliveryManager {
         start(); // Return to main menu
     }
     
-    private void enterNewTruck() {
+    void addNewTruck() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter the truck details:");
     
@@ -317,6 +320,33 @@ public class DeliveryManager {
         System.out.println("New truck added successfully.");
         start(); // Return to main menu
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+public String addNewTruck(int licenseNumber, String model, int weight,int maxWeight, int licenseIndex  ){
+    return "not implemented yet";
+}
+public String addNewDriver(int id, String name, int licenseIndex){
+    return "not implemented yet";
+} 
+public String addNewOrder(int id, String name, int licenseIndex){
+    return "not implemented yet";
+} 
+
+
+
     
     
 }
