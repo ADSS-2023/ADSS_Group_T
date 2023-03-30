@@ -1,7 +1,10 @@
 package BusinessLayer.Stock;
 
 import java.time.LocalDate;
-
+/*
+    This class represents a discount. Each discount has a start and an end dates,
+    and the discount in percentage
+ */
 public class Discount {
     private LocalDate start_date;
     private LocalDate end_date;
