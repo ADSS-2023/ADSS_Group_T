@@ -1,8 +1,10 @@
 package BusinessLayer.Supplier;
 import java.time.LocalTime;
 import java.util.HashMap;
+import java.util.Map;
 
 public class SupplierProductBusiness {
+    int supplierNum;
     private String name;
     private int productNum;
     private String manufacturer;
@@ -11,7 +13,8 @@ public class SupplierProductBusiness {
     private HashMap<Integer, Integer> quantitiesAgreement;
     private LocalTime expiredDate;
 
-    public SupplierProductBusiness(String name, int productNum, String manufacturer, int price, int maxAmount, HashMap<Integer, Integer> quantitiesAgreement, LocalTime expiredDate){
+    public SupplierProductBusiness(int supplierNum, String name, int productNum, String manufacturer, int price, int maxAmount, HashMap<Integer, Integer> quantitiesAgreement, LocalTime expiredDate){
+        this.supplierNum = supplierNum;
         this.name = name;
         this.productNum = productNum;
         this.manufacturer = manufacturer;
@@ -33,6 +36,29 @@ public class SupplierProductBusiness {
         quantitiesAgreement.remove(productAmount,discount);
     }
 
+    public boolean isEnough(int quantity){
+        return quantity >= quantity;
+    }
+
+    public int getPriceByQuantity(int quantity){
+        int maxDiscount = 0;
+        for (Map.Entry<Integer, Integer> entry : quantitiesAgreement.entrySet()) {
+            if(entry.getKey() <= quantity && maxDiscount <= entry.getValue())
+                maxDiscount = entry.getValue();
+        }
+        return (1-(maxDiscount/100))*(quantity*price);
+    }
+
+    public int getPriceLimitedQuantity(int quantity){
+        int quantityProvided = Math.min(maxAmount, quantity);
+        int discount = 0;
+        for (Map.Entry<Integer, Integer> entry : quantitiesAgreement.entrySet()) {
+            if(entry.getKey() <= quantityProvided && discount <= entry.getValue())
+                discount = entry.getValue();
+        }
+        int totalPrice = (1-(discount/100))*(quantity*price);
+        return totalPrice/quantityProvided;
+    }
     public String getName() {
         return name;
     }
@@ -59,5 +85,14 @@ public class SupplierProductBusiness {
 
     public HashMap<Integer, Integer> getQuantitiesAgreement(){
         return quantitiesAgreement;
+    }
+
+    public int getDiscount(int quantity){
+        int discount = 0;
+        for (Map.Entry<Integer, Integer> entry : quantitiesAgreement.entrySet()) {
+            if (entry.getKey() <= quantity && entry.getValue() < discount)
+                discount = entry.getValue();
+        }
+        return discount;
     }
 }
