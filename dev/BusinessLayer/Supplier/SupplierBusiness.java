@@ -4,7 +4,7 @@ import java.util.Dictionary;
 import java.util.List;
 import java.util.Map;
 
-public class SupplierBusiness {
+public class    SupplierBusiness {
     private String name;
     private String address;
     private int supplierNum;

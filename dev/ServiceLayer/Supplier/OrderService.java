@@ -11,6 +11,9 @@ public class OrderService {
         this.oc = oc;
     }
     public void createOrder(List<ItemToOrder> itemsList){
-        oc.createOrder(itemsList);
+        for (ItemToOrder item  : itemsList) {
+            oc.addToShoppingLists(item.productName,item.manufacturer,item.quantity);
+        }
+        oc.createOrders();
     }
 }
