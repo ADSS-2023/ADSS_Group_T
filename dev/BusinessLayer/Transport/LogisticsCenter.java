@@ -101,7 +101,9 @@ public class LogisticsCenter {
         return requestedSupply;
     }
 
-    public boolean replaceTruck(int deliveryID, Truck t,int weight,LocalDate date){
+    public boolean replaceTruck(int deliveryID, int weight,LocalDate date){
+        //is the weight already updated in the delivery form? if so remove weight param
+        Truck t = trucks.get(get(deliveryID).getTruckNumber());
         for(int licenseNumber : this.trucks.keySet()){
             Truck optionalTruck = trucks.get(licenseNumber);
             if((optionalTruck.getMaxWeight() >= weight) &&
@@ -115,6 +117,17 @@ public class LogisticsCenter {
             }
         }
         return false;
+    }
+
+    public void unloadProducts(int deliveryID, Site site){
+        double currWeight = deliveries.get(deliveryID).getTruckWeight();
+        int maxWeight = trucks.get(deliveries.get(deliveryID).getTruckNumber()).getMaxWeight();
+        double unloadFactor = (currWeight - maxWeight) / currWeight;
+        for(Product p: deliveries.get(deliveryID).getDestinations().get(site).getProducts().keySet()){
+            int amount = deliveries.get(deliveryID).getDestinations().get(site).getProducts().get(p);
+            int unloadAmount = (int)Math.ceil(amount * unloadFactor);
+            deliveries.get(deliveryID).getDestinations().get(site).getProducts().replace(p,amount - unloadAmount);
+        }
     }
 
 
