@@ -16,23 +16,31 @@ private int deliveryCounter = 0;
 
 
 
-public LogisticsCenter( HashMap<Integer,Truck> trucks,HashMap<Integer,Delivery> deliveries,
-                        HashMap<Product,Integer> products,HashMap<Integer,Driver> drivers){
+public LogisticsCenter( HashMap<Integer,Truck> trucks,
+        HashMap<Product,Integer> products,HashMap<Integer,Driver> drivers){
         
                 this.trucks = trucks;
-                this.deliveries = deliveries;
                 this.products = products;
-                this.drivers = drivers;            
+                this.drivers = drivers;    
+                this.deliveries = new HashMap<>();        
     }
  
 
-    //s1,<>,1.1
-    //s2,<>,1.1
-    //s3,<>,1.2
-    public boolean orderDelivery(Site site,ArrayList<Product> products, LocalDate date){
-        //if(date2deliveries.containsKey(date))
+   
+    public boolean addNewOrder(Site site,Map<Product, Integer> productQuantities, LocalDate date){
         return true;
+    }
 
+    public boolean addNewTruck(Truck newTruck) {
+        return true;
+    }
+
+    public boolean addNewDriver(Driver newDriver) {
+        return true;
+    }
+
+    public boolean addNewProduct(Product newProduct, int amount) {
+        return true;
     }
 
     

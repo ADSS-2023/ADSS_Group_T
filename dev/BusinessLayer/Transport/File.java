@@ -13,5 +13,8 @@ public class File {
     public int getId() {
         return this.id;
     }
+
+    public void addProduct(Product product1, int i) {
+    }
     
 }
