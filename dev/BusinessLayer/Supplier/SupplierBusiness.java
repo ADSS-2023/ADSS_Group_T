@@ -36,8 +36,8 @@ public class SupplierBusiness {
         return false;
     }
 
-    private void addProduct(String productName, String manufacturer, int price, int maxAmount, HashMap<Integer, Integer> quantitiesAgreement, LocalDateTime expiredDate){
-
+    private void addProduct(int productNum, String productName, String manufacturer, int price, int maxAmount, HashMap<Integer, Integer> quantitiesAgreement, LocalDateTime expiredDate){
+        products.put(productNum, new SupplierProductBusiness(productName,productNum, manufacturer, price, maxAmount, quantitiesAgreement, expiredDate));
     }
 
     private void deleteProduct(int productNum){
