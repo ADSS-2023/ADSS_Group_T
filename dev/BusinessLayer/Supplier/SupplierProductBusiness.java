@@ -8,7 +8,7 @@ public class SupplierProductBusiness {
     private String manufacturer;
     private int price;
     private int maxAmount;
-    HashMap<Integer, Integer> quantitiesAgreement;
+    private HashMap<Integer, Integer> quantitiesAgreement;
     private LocalTime expiredDate;
 
     public SupplierProductBusiness(String name, int productNum, String manufacturer, int price, int maxAmount, HashMap<Integer, Integer> quantitiesAgreement, LocalTime expiredDate){
@@ -37,10 +37,6 @@ public class SupplierProductBusiness {
         return name;
     }
 
-    public HashMap<Integer, Integer> getQuantitiesAgreement() {
-        return quantitiesAgreement;
-    }
-
     public int getMaxAmount() {
         return maxAmount;
     }
@@ -59,5 +55,9 @@ public class SupplierProductBusiness {
 
     public String getManufacturer() {
         return manufacturer;
+    }
+
+    public HashMap<Integer, Integer> getQuantitiesAgreement(){
+        return quantitiesAgreement;
     }
 }
