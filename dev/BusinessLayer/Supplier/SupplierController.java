@@ -3,6 +3,7 @@ package BusinessLayer.Supplier;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.time.LocalDateTime;
 
 public class SupplierController {
     HashMap<Integer, SupplierBusiness> suppliers;
@@ -10,17 +11,16 @@ public class SupplierController {
     public SupplierController(){
         suppliers = new HashMap<>();
     }
-
-    public void addProduct(int supplierNum, String productName, String manufacturer, int price, int maxAmount){
-        suppliers.get(supplierNum).addProduct(productName, manufacturer, price, maxAmount);
+    public void addProduct(int supplierNum, String productName, String manufacturer, int price, int maxAmount, HashMap<Integer, Integer> quantitiesAgreement, LocalDateTime expiredDate){
+        suppliers.get(supplierNum).addProduct(productName, manufacturer, price, maxAmount, quantitiesAgreement, expiredDate);
     }
 
     public void editProduct(int supplierNum, String productName, String manufacturer, int price, int maxAmount){
-        suppliers.get(supplierNum).editProduct(productName, manufacturer, price, maxAmount);
+        suppliers.get(supplierNum).editProduct(productName, manufacturer, price, maxAmount, quantitiesAgreement, expiredDate);
     }
 
     public void deleteProduct(int supplierNum, String productName, String manufacturer, int price, int maxAmount){
-        suppliers.get(supplierNum).deleteProduct(productName, manufacturer, price, maxAmount);
+        suppliers.get(supplierNum).deleteProduct(productName, manufacturer, price, maxAmount, quantitiesAgreement, expiredDate);
     }
 
     public void addSupplier(String name, String address, int supplierNum, int bankAccountNum, Map<String, Integer> contacts, List<String> constDeliveryDays, boolean selfDelivery, Map<Integer, SupplierProductBusiness> products){
