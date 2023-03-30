@@ -30,7 +30,7 @@ public class SupplierBusiness {
     public boolean isProductExists(String productName, String manufacturer) {
         for (Map.Entry<Integer, SupplierProductBusiness> entry : products.entrySet()) {
             SupplierProductBusiness sp = entry.getValue();
-            if (sp.getManufacturer() == manufacturer && sp.getProductName() == productName)
+            if (sp.getManufacturer() == manufacturer && sp.getName() == productName)
                 return true;
         }
         return false;
@@ -68,6 +68,17 @@ public class SupplierBusiness {
         this.selfDelivery = selfDelivery;
         this.products = products;
     }
+
+    public SupplierProductBusiness getProduct(String productName, String manufacturer) {
+        for (Map.Entry<Integer, SupplierProductBusiness> entry : products.entrySet()) {
+            SupplierProductBusiness sp = entry.getValue();
+            if (sp.getManufacturer() == manufacturer && sp.getName() == productName)
+                return sp;
+        }
+        return null;
+    }
+
+
 
     public int getBankAccountNum() {
         return bankAccountNum;
