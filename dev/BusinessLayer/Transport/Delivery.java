@@ -33,6 +33,10 @@ public class Delivery {
         return this.id;
     }
 
+    public HashMap<Site, File> getBranches() {
+        return branches;
+    }
+
     public void setId(int id) {
         this.id = id;
     }
