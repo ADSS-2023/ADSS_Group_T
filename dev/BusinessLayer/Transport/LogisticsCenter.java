@@ -70,8 +70,8 @@ public class LogisticsCenter {
             Set<CoolingLevel> newDeliveriesCoolingLevels = countCoolingOptions(suppliers);
             for(CoolingLevel coolingLevel: newDeliveriesCoolingLevels){
                 date2deliveries.put(requiredDate,new ArrayList<>());
-                Truck t = scheduleTruck(requiredDate,coolingLevel);       //TODO: implement scheduleTruck
-                Driver driver = scheduleDriver(requiredDate,coolingLevel);    //TODO: implement scheduleDriver
+                Truck t = scheduleTruck(requiredDate,coolingLevel);
+                Driver driver = scheduleDriver(requiredDate,coolingLevel);
                 //TODO: check case when there is no truck or driver free for the delivery
                 Delivery d = new Delivery(deliveryCounter,requiredDate, LocalTime.NOON,t.getWeight(),new HashMap<>(),
                         null,driver.getName(),t.getLicenseNumber());    //TODO:change source param value
@@ -90,9 +90,33 @@ public class LogisticsCenter {
     }
 
     private Truck scheduleTruck(LocalDate date, CoolingLevel coolingLevel){
-        for(Truck t : trucks.values()){
-            if(!date2trucks.get(date).contains(t) && t.getCoolingLevel().ordinal() >= coolingLevel.ordinal())
-                return t;
+        for(Truck truck : trucks.values()){
+            if(date2trucks.containsKey(date) &&
+                    !date2trucks.get(date).contains(truck) && truck.getCoolingLevel() == coolingLevel) {
+                date2trucks.get(date).add(truck);
+                return truck;
+            }
+            else if(!date2trucks.containsKey(date) && truck.getCoolingLevel() == coolingLevel){
+                date2trucks.put(date,new ArrayList<>());
+                date2trucks.get(date).add(truck);
+                return truck;
+            }
+        }
+        return null;
+    }
+
+    private Driver scheduleDriver(LocalDate date, CoolingLevel coolingLevel){
+        for(Driver driver : drivers.values()){
+            if(date2drivers.containsKey(date) &&
+            !date2drivers.get(date).contains(driver) && driver.getCoolingLevel().ordinal() >= coolingLevel.ordinal()){
+                date2drivers.get(date).add(driver);
+                return driver;
+            }
+            else if(!date2drivers.containsKey(date) && driver.getCoolingLevel().ordinal() >= coolingLevel.ordinal()){
+                date2drivers.put(date,new ArrayList<>());
+                date2drivers.get(date).add(driver);
+                return driver;
+            }
         }
         return null;
     }
