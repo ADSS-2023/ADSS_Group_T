@@ -13,6 +13,7 @@ public class Delivery {
     private Site source;
     private String driverName;
     private int truckNumber;
+    private String shippingArea;
        
     public Delivery(int id, LocalDate date, LocalTime departureTime, int truckWeight, HashMap<Site, File> suppliers,
             Site source, String driverName, int truckNumber) {
@@ -24,6 +25,10 @@ public class Delivery {
         this.source = source;
         this.driverName = driverName;
         this.truckNumber = truckNumber;
+    }
+
+    public String getShippingArea() {
+        return shippingArea;
     }
 
     public HashMap<Product,Integer> getProductsOfSupplier(Site supplier){
