@@ -18,6 +18,7 @@ public class LogisticsCenter {
     private int filesCounter = 0;
     private LocalDate currDate;
 
+
     public LogisticsCenter( HashMap<Integer,Truck> trucks,HashMap<Integer,Delivery> deliveries,
                         HashMap<Product,Integer> products,HashMap<Integer,Driver> drivers){
         this.trucks = trucks;
