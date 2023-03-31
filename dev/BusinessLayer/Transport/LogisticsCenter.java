@@ -50,13 +50,13 @@ public class LogisticsCenter {
             for(Delivery d: date2deliveries.get(requiredDate)){     //the delivery is to the required date
                 if(branch.getShippingArea().equals(d.getShippingArea())){        //the delivery is to the required branch
                     if(!d.getBranches().containsKey(branch)) {
-                        d.addBranch(branch, filesCounter);    //TODO: add function to delivery Class
+                        d.addBranch(branch, filesCounter);
                         filesCounter ++;
                     }
                     for(Site supplier: suppliers.keySet()){
                         for(Product p: suppliers.get(supplier).keySet()){
                             if(p.getCoolingLevel() == trucks.get(d.getTruckNumber()).getCoolingLevel()){
-                                d.addProductsToSupplier(supplier, p, suppliers.get(supplier).get(p)); //TODO: add function to delivery Class
+                                d.addProductsToSupplier(supplier, p, suppliers.get(supplier).get(p));
                                 suppliers.get(supplier).remove(p);
                             }
                         }
@@ -87,6 +87,14 @@ public class LogisticsCenter {
             }
         }
         return true;
+    }
+
+    private Truck scheduleTruck(LocalDate date, CoolingLevel coolingLevel){
+        for(Truck t : trucks.values()){
+            if(!date2trucks.get(date).contains(t) && t.getCoolingLevel().ordinal() >= coolingLevel.ordinal())
+                return t;
+        }
+        return null;
     }
 
     private Set<CoolingLevel> countCoolingOptions(HashMap<Site,HashMap<Product,Integer>> suppliers){
