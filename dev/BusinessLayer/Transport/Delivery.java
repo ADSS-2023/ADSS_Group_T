@@ -25,8 +25,13 @@ public class Delivery {
         this.source = source;
         this.driverName = driverName;
         this.truckNumber = truckNumber;
+        this.branches = new HashMap<>();
     }
 
+    public void addBranch(Site branch, int fileID){
+        File f = new File(fileID);
+        branches.put(branch,f);
+    }
     public String getShippingArea() {
         return shippingArea;
     }
