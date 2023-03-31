@@ -32,6 +32,10 @@ public class Delivery {
         File f = new File(fileID);
         branches.put(branch,f);
     }
+
+    public void addProductsToSupplier(Site supplier, Product p, int amount){
+        suppliers.get(supplier).addProduct(p,amount);
+    }
     public String getShippingArea() {
         return shippingArea;
     }
