@@ -43,8 +43,16 @@ public class LogisticsCenter {
     //s1,<>,1.1
     //s2,<>,1.1
     //s3,<>,1.2
-    public boolean orderDelivery(Site branch, HashMap<Site,HashMap<Product,Integer>> suppliers, LocalDate date, String coolingLevel){
-        //if(date2deliveries.containsKey(date))
+    public boolean orderDelivery(Site branch, HashMap<Site,HashMap<Product,Integer>> suppliers, LocalDate requiredDate, String coolingLevel){
+        if(date2deliveries.containsKey(requiredDate)){
+            for(Delivery d: date2deliveries.get(requiredDate)){
+                if(d.get)
+            }
+
+        }
+        else{   //open new delivery
+
+        }
         return true;
     }
 
@@ -59,7 +67,7 @@ public class LogisticsCenter {
                          LicenseType licenseType, String coolingLevel){
         if(trucks.containsKey(licenseNumber))
             return false;
-        trucks.put(licenseNumber,new Truck(licenseNumber,model,weight,maxWeight,licenseType,coolingLevel));
+        trucks.put(licenseNumber,new Truck(licenseNumber,model,weight,maxWeight,licenseType,CoolingLevel.valueOf(coolingLevel)));
         return true;
     }
 
@@ -73,7 +81,7 @@ public class LogisticsCenter {
     public boolean addDriver(int id, String name, LicenseType licenseType, String coolingLevel){
         if(drivers.containsKey(id))
             return false;
-        drivers.put(id, new Driver(id, name, licenseType, coolingLevel));
+        drivers.put(id, new Driver(id, name, licenseType, CoolingLevel.valueOf(coolingLevel)));
         return true;
     }
 
