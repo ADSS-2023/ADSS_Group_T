@@ -1,5 +1,6 @@
 package BusinessLayer.Transport;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.*;
 import BusinessLayer.Transport.Driver.LicenseType;
 import BusinessLayer.Transport.Driver.CoolingLevel;
@@ -14,7 +15,7 @@ public class LogisticsCenter {
     private  HashMap<LocalDate,ArrayList<Driver>> date2drivers;
     private  HashMap<LocalDate,ArrayList<Delivery>> date2deliveries;
     private int deliveryCounter = 0;
-
+    private int filesCounter = 0;
     private LocalDate currDate;
 
     public LogisticsCenter( HashMap<Integer,Truck> trucks,HashMap<Integer,Delivery> deliveries,
@@ -43,18 +44,58 @@ public class LogisticsCenter {
     //s1,<>,1.1
     //s2,<>,1.1
     //s3,<>,1.2
-    public boolean orderDelivery(Site branch, HashMap<Site,HashMap<Product,Integer>> suppliers, LocalDate requiredDate, String coolingLevel){
+    public boolean orderDelivery(Site branch, HashMap<Site,HashMap<Product,Integer>> suppliers, LocalDate requiredDate){
         if(date2deliveries.containsKey(requiredDate)){          //there is delivery in this date
             for(Delivery d: date2deliveries.get(requiredDate)){     //the delivery is to the required date
-                if(d.getBranches().containsKey(branch)){        //the delivery is to the required branch
-                    if(d.getDestinations()
+                if(branch.getShippingArea().equals(d.getShippingArea())){        //the delivery is to the required branch
+                    if(!d.getBranches().containsKey(branch)) {
+                        d.addBranch(branch, filesCounter);    //TODO: add function to delivery Class
+                        filesCounter ++;
+                    }
+                    for(Site supplier: suppliers.keySet()){
+                        for(Product p: suppliers.get(supplier).keySet()){
+                            if(p.getCoolingLevel() == trucks.get(d.getTruckNumber()).getCoolingLevel()){
+                                d.addProductsToSupplier(supplier, p, suppliers.get(supplier).get(p)); //TODO: add function to delivery Class
+                                suppliers.get(supplier).remove(p);
+                            }
+                        }
+                        if(suppliers.get(supplier).isEmpty())   //all the suppliers products scheduled
+                            suppliers.remove(supplier);
+                    }
                 }
             }
         }
-        else{   //open new delivery
-
+        if(!suppliers.isEmpty()){   //open new delivery
+            Set<CoolingLevel> newDeliveriesCoolingLevels = countCoolingOptions(suppliers);
+            for(CoolingLevel coolingLevel: newDeliveriesCoolingLevels){
+                date2deliveries.put(requiredDate,new ArrayList<>());
+                Truck t = scheduleTruck(requiredDate,coolingLevel);       //TODO: implement scheduleTruck
+                Driver driver = scheduleDriver(requiredDate,coolingLevel);    //TODO: implement scheduleDriver
+                //TODO: check case when there is no truck or driver free for the delivery
+                Delivery d = new Delivery(deliveryCounter,requiredDate, LocalTime.NOON,t.getWeight(),new HashMap<>(),
+                        null,driver.getName(),t.getLicenseNumber());    //TODO:change source param value
+                deliveryCounter++;
+                //add supply to the new delivery
+                for(Site supplier: suppliers.keySet()){
+                    for(Product p: suppliers.get(supplier).keySet()){
+                        if(p.getCoolingLevel() == coolingLevel){
+                            d.addProductsToSupplier(supplier, p, suppliers.get(supplier).get(p));
+                        }
+                    }
+                }
+            }
         }
         return true;
+    }
+
+    private Set<CoolingLevel> countCoolingOptions(HashMap<Site,HashMap<Product,Integer>> suppliers){
+        Set<CoolingLevel> s = new HashSet<>();
+        for(Site supplier: suppliers.keySet()){
+            for(Product product: suppliers.get(supplier).keySet()){
+                s.add(product.getCoolingLevel());
+            }
+        }
+        return s;
     }
 
     public int skipDay(){
