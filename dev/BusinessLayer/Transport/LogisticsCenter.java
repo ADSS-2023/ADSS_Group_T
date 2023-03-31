@@ -98,6 +98,10 @@ public class LogisticsCenter {
         return s;
     }
 
+    public LocalDate getCurrDate() {
+        return currDate;
+    }
+
     public int skipDay(){
         this.currDate = this.currDate.plusDays(1);
         //TODO: check if there is delivery today
