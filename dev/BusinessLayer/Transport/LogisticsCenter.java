@@ -44,9 +44,11 @@ public class LogisticsCenter {
     //s2,<>,1.1
     //s3,<>,1.2
     public boolean orderDelivery(Site branch, HashMap<Site,HashMap<Product,Integer>> suppliers, LocalDate requiredDate, String coolingLevel){
-        if(date2deliveries.containsKey(requiredDate)){
-            for(Delivery d: date2deliveries.get(requiredDate)){
-                if(d.get)
+        if(date2deliveries.containsKey(requiredDate)){          //there is delivery in this date
+            for(Delivery d: date2deliveries.get(requiredDate)){     //the delivery is to the required date
+                if(d.getBranches().containsKey(branch)){        //the delivery is to the required branch
+                    for()
+                }
             }
 
         }
