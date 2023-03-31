@@ -25,6 +25,10 @@ public class Driver {
         this.name = name;
     }
 
+    public CoolingLevel getCoolingLevel() {
+        return coolingLevel;
+    }
+
     public LicenseType getLicenseLevel() {
         return this.licenseType;
     }
