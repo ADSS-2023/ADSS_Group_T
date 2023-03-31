@@ -47,10 +47,9 @@ public class LogisticsCenter {
         if(date2deliveries.containsKey(requiredDate)){          //there is delivery in this date
             for(Delivery d: date2deliveries.get(requiredDate)){     //the delivery is to the required date
                 if(d.getBranches().containsKey(branch)){        //the delivery is to the required branch
-                    for()
+                    if(d.getDestinations()
                 }
             }
-
         }
         else{   //open new delivery
 
