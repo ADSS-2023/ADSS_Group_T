@@ -248,13 +248,13 @@ public class LogisticsCenter {
         }
     }
 
-    public void replaceOrDropSite(){
-
+    public void replaceOrDropSite(int deliveryID){
+        deliveries.get(deliveryID).removeSupplier();
     }
 
     public void overWeightAction(int deliveryID, int action){
         if(action == 1)
-            replaceOrDropSite();
+            replaceOrDropSite(deliveryID);
         else if(action == 2)
             replaceTruck(deliveryID);
         else if(action == 3)
