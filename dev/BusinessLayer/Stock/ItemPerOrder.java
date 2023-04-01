@@ -60,4 +60,10 @@ public class ItemPerOrder {
     public void setValidity(LocalDate validity) {
         this.validity = validity;
     }
+
+    /**
+     * This function returns the total amount of this item from this order
+     * @ int
+     */
+    public int amount() {return amount_store+amount_warehouse;}
 }
