@@ -1,9 +1,9 @@
 package BusinessLayer.Transport;
 
 public class Site {
-    private String address;
-    private String telNumber;
-    private String contactName;
+    protected String address;
+    protected String telNumber;
+    protected String contactName;
     private String shippingArea;
 
     public Site(String address,String telNumber,String contactName,String shippingArea){
