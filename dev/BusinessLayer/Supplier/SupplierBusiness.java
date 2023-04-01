@@ -1,20 +1,22 @@
 package BusinessLayer.Supplier;
 
 import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.time.LocalDateTime;
 
 public class    SupplierBusiness {
     private String name;
     private String address;
     private int supplierNum;
     private int bankAccountNum;
-    private Map<String, Integer> contacts;
+    private HashMap<String, Integer> contacts;
     private List<String> constDeliveryDays;
     private boolean selfDelivery;
-    private Map<Integer, SupplierProductBusiness> products;
+    private HashMap<Integer, SupplierProductBusiness> products;
 
-    public SupplierBusiness(String name, String address, int supplierNum,int bankAccountNum, Map<String, Integer> contacts, List<String> constDeliveryDays, boolean selfDelivery, Map<Integer, SupplierProductBusiness> products){
+    public SupplierBusiness(String name, String address, int supplierNum,int bankAccountNum, HashMap<String, Integer> contacts, List<String> constDeliveryDays, boolean selfDelivery, HashMap<Integer, SupplierProductBusiness> products){
         this.name = name;
         this.address = address;
         this.supplierNum = supplierNum;
@@ -25,24 +27,90 @@ public class    SupplierBusiness {
         this.products = products;
     }
 
-    private void addProduct(String productName, String manufacturer, int price, int maxAmount){
-
+    public boolean isProductExists(String productName, String manufacturer) {
+        for (Map.Entry<Integer, SupplierProductBusiness> entry : products.entrySet()) {
+            SupplierProductBusiness sp = entry.getValue();
+            if (sp.getManufacturer() == manufacturer && sp.getName() == productName)
+                return true;
+        }
+        return false;
     }
-    private void editDiscount(int productNum, int productAmount, int discount){
+
+    public void addProduct(int productNum, String productName, String manufacturer, int price, int maxAmount, HashMap<Integer, Integer> quantitiesAgreement, LocalDateTime expiredDate){
+        products.put(productNum, new SupplierProductBusiness( supplierNum,productName,productNum, manufacturer, price, maxAmount, quantitiesAgreement, expiredDate));
+    }
+    public void editProduct(int productNum, String productName, String manufacturer, int price, int maxAmount, HashMap<Integer, Integer> quantitiesAgreement, LocalDateTime expiredDate){
+        products.put(productNum, new SupplierProductBusiness(supplierNum, productName,productNum, manufacturer, price, maxAmount, quantitiesAgreement, expiredDate));
+    }
+
+    public void deleteProduct(int productNum){
+        products.remove(productNum);
+    }
+    public void editDiscount(int productNum, int productAmount, int discount){
         getSupplierProduct(productNum).editDiscount(productAmount, discount);
     }
 
-    private void addDiscount(int productNum, int productAmount, int discount){
+    public void addDiscount(int productNum, int productAmount, int discount){
         getSupplierProduct(productNum).addDiscount(productAmount, discount);
     }
-    private void deleteDiscount(int productNum, int productAmount, int discount){
+    public void deleteDiscount(int productNum, int productAmount, int discount){
         getSupplierProduct(productNum).deleteDiscount(productAmount, discount);
     }
 
-    private SupplierProductBusiness getSupplierProduct(int productNumber){
+    public SupplierProductBusiness getSupplierProduct(int productNumber){
         return products.get(productNumber);
     }
-    public Map<Integer, SupplierProductBusiness> getProducts(){
 
+    public void editSupplier(String name, String address, int supplierNum,int bankAccountNum, HashMap<String, Integer> contacts, List<String> constDeliveryDays, boolean selfDelivery, HashMap<Integer, SupplierProductBusiness> products){
+        this.name = name;
+        this.address = address;
+        this.supplierNum = supplierNum;
+        this.bankAccountNum = bankAccountNum;
+        this.contacts = contacts;
+        this.constDeliveryDays = constDeliveryDays;
+        this.selfDelivery = selfDelivery;
+        this.products = products;
+    }
+
+    public SupplierProductBusiness getProduct(String productName, String manufacturer) {
+        for (Map.Entry<Integer, SupplierProductBusiness> entry : products.entrySet()) {
+            SupplierProductBusiness sp = entry.getValue();
+            if (sp.getManufacturer() == manufacturer && sp.getName() == productName)
+                return sp;
+        }
+        return null;
+    }
+
+
+
+    public int getBankAccountNum() {
+        return bankAccountNum;
+    }
+
+    public int getSupplierNum() {
+        return supplierNum;
+    }
+
+    public List<String> getConstDeliveryDays() {
+        return constDeliveryDays;
+    }
+
+    public Map<String, Integer> getContacts() {
+        return contacts;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public String getName() {
+        return name;
+    }
+    public boolean getSelfDelivery(){
+        return selfDelivery;
+    }
+
+    public HashMap<Integer, SupplierProductBusiness> getProducts() {
+        return products;
     }
 }
