@@ -14,7 +14,7 @@ public class LogisticsCenter {
     private  HashMap<LocalDate,ArrayList<Truck>> date2trucks;
     private  HashMap<LocalDate,ArrayList<Driver>> date2drivers;
     private  HashMap<LocalDate,ArrayList<Delivery>> date2deliveries;
-    private ArrayList<Site> sites;
+    private HashMap<String,Site> sites;
     private int deliveryCounter = 0;
     private int filesCounter = 0;
     private LocalDate currDate;
@@ -29,7 +29,7 @@ public class LogisticsCenter {
         this.date2trucks = new HashMap<>();
         this.date2drivers = new HashMap<>();
         this.date2deliveries = new HashMap<>();
-        this.sites = new ArrayList<>();
+        this.sites = new HashMap<>();
         this.currDate = LocalDate.now();
     }
 
@@ -41,7 +41,7 @@ public class LogisticsCenter {
         this.date2trucks = new HashMap<>();
         this.date2drivers = new HashMap<>();
         this.date2deliveries = new HashMap<>();
-        this.sites = new ArrayList<>();
+        this.sites = new HashMap<>();
         this.currDate = LocalDate.now();
     }
  
@@ -245,11 +245,11 @@ public class LogisticsCenter {
     }
 
     public Site getSite(String address){
-        for(Site s : sites){
-            if(s.getAddress().equals(address))
-                return s;
-        }
-        return null;
+        return sites.get(address);
+    }
+
+    public Delivery getDelivery(int id){
+        return deliveries.get(id);
     }
 
 
