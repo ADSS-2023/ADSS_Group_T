@@ -112,7 +112,7 @@ public class LogisticsCenter {
 //        return null;
 //    }
 
-    public HashMap<Supplier,HashMap<Product,Integer>> orderDelivery(Branch branch, HashMap<Supplier,HashMap<Product,Integer>> suppliers, LocalDate requiredDate){
+    public HashMap<Supplier,HashMap<Product,Integer>> orderDelivery(Branch branch, HashMap<Supplier,HashMap<Product,Integer>> suppliers, LocalDate requiredDate, HashMap<Supplier,Integer> supplierWeight){
         if(date2deliveries.containsKey(requiredDate)){          //there is delivery in this date
             for(Delivery d: date2deliveries.get(requiredDate)){     //the delivery is to the required date
                 if(branch.getShippingArea().equals(d.getShippingArea())){        //the delivery is to the required branch
@@ -121,12 +121,13 @@ public class LogisticsCenter {
                         filesCounter ++;
                     }
                     for(Supplier supplier: suppliers.keySet()){
-                            if(supplier.getCoolingLevel() == trucks.get(d.getTruckNumber()).getCoolingLevel()){
-                                for(Product p: suppliers.get(supplier).keySet()) {
-                                    d.addProductsToSupplier(supplier, p, suppliers.get(supplier).get(p));
-                                    suppliers.get(supplier).remove(p);
-                                }
+                        if(supplier.getCoolingLevel() == trucks.get(d.getTruckNumber()).getCoolingLevel()){
+                            for(Product p: suppliers.get(supplier).keySet()) {
+                                d.addProductsToSupplier(supplier, p, suppliers.get(supplier).get(p));
+                                suppliers.get(supplier).remove(p);
                             }
+                        }
+                        d.setTruckWeight(d.getTruckWeight() + supplierWeight.get(supplier));
                         if(suppliers.get(supplier).isEmpty())   //all the suppliers products scheduled
                             suppliers.remove(supplier);
                     }
@@ -158,6 +159,7 @@ public class LogisticsCenter {
                             suppliers.get(supplier).remove(p);
                         }
                     }
+                    d.setTruckWeight(d.getTruckWeight() + supplierWeight.get(supplier));
                     if(suppliers.get(supplier).isEmpty())   //all the suppliers products scheduled
                         suppliers.remove(supplier);
                 }
@@ -316,11 +318,11 @@ public class LogisticsCenter {
         double currWeight = deliveries.get(deliveryID).getTruckWeight();
         int maxWeight = trucks.get(deliveries.get(deliveryID).getTruckNumber()).getMaxWeight();
         double unloadFactor = (currWeight - maxWeight) / currWeight;
-        for(Supplier supplier : deliveries.get(deliveryID).getDestinations().keySet()) {
-            for (Product p : deliveries.get(deliveryID).getDestinations().get(supplier).getProducts().keySet()) {
-                int amount = deliveries.get(deliveryID).getDestinations().get(supplier).getProducts().get(p);
+        for(Supplier supplier : deliveries.get(deliveryID).getSuppliers().keySet()) {
+            for (Product p : deliveries.get(deliveryID).getSuppliers().get(supplier).getProducts().keySet()) {
+                int amount = deliveries.get(deliveryID).getSuppliers().get(supplier).getProducts().get(p);
                 int unloadAmount = (int) Math.ceil(amount * unloadFactor);
-                deliveries.get(deliveryID).getDestinations().get(supplier).getProducts().replace(p, amount - unloadAmount);
+                deliveries.get(deliveryID).getSuppliers().get(supplier).getProducts().replace(p, amount - unloadAmount);
             }
         }
     }
