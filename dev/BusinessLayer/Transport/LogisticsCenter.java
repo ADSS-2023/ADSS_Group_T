@@ -55,6 +55,60 @@ public class LogisticsCenter {
     //s1,<>,1.1
     //s2,<>,1.1
     //s3,<>,1.2
+//    public HashMap<Site,HashMap<Product,Integer>> orderDelivery(Site branch, HashMap<Site,HashMap<Product,Integer>> suppliers, LocalDate requiredDate){
+//        if(date2deliveries.containsKey(requiredDate)){          //there is delivery in this date
+//            for(Delivery d: date2deliveries.get(requiredDate)){     //the delivery is to the required date
+//                if(branch.getShippingArea().equals(d.getShippingArea())){        //the delivery is to the required branch
+//                    if(!d.getBranches().containsKey(branch)) {
+//                        d.addBranch(branch, filesCounter);
+//                        filesCounter ++;
+//                    }
+//                    for(Site supplier: suppliers.keySet()){
+//                        for(Product p: suppliers.get(supplier).keySet()){
+//                            if(p.getCoolingLevel() == trucks.get(d.getTruckNumber()).getCoolingLevel()){
+//                                d.addProductsToSupplier(supplier, p, suppliers.get(supplier).get(p));
+//                                suppliers.get(supplier).remove(p);
+//                            }
+//                        }
+//                        if(suppliers.get(supplier).isEmpty())   //all the suppliers products scheduled
+//                            suppliers.remove(supplier);
+//                    }
+//                }
+//            }
+//        }
+//        if(!suppliers.isEmpty()){   //open new delivery
+//            Set<CoolingLevel> newDeliveriesCoolingLevels = countCoolingOptions(suppliers);
+//            for(CoolingLevel coolingLevel: newDeliveriesCoolingLevels){
+//                date2deliveries.put(requiredDate,new ArrayList<>());
+//                Truck t = scheduleTruck(requiredDate,coolingLevel);
+//                if(t == null)       //in case there is no truck available for this delivery
+//                   return suppliers;
+//                Driver driver = scheduleDriver(requiredDate,coolingLevel);
+//                if(driver == null){     //in case there is no driver available for this delivery
+//                    date2trucks.get(requiredDate).remove(t); //remove truck from this day deliveries list
+//                    return suppliers;
+//                }
+//                Delivery d = new Delivery(deliveryCounter,requiredDate, LocalTime.NOON,t.getWeight(),new HashMap<>(),
+//                        null,driver.getName(),t.getLicenseNumber(),branch.getShippingArea());
+//                deliveryCounter++;
+//                //add supply to the new delivery
+//                for(Site supplier: suppliers.keySet()){
+//                    for(Product p: suppliers.get(supplier).keySet()){
+//                        if(p.getCoolingLevel() == coolingLevel){
+//                            if(d.getSource() == null)
+//                                d.setSource(supplier);
+//                            d.addProductsToSupplier(supplier, p, suppliers.get(supplier).get(p));
+//                            suppliers.get(supplier).remove(p);
+//                        }
+//                    }
+//                    if(suppliers.get(supplier).isEmpty())   //all the suppliers products scheduled
+//                        suppliers.remove(supplier);
+//                }
+//            }
+//        }
+//        return null;
+//    }
+
     public HashMap<Site,HashMap<Product,Integer>> orderDelivery(Site branch, HashMap<Site,HashMap<Product,Integer>> suppliers, LocalDate requiredDate){
         if(date2deliveries.containsKey(requiredDate)){          //there is delivery in this date
             for(Delivery d: date2deliveries.get(requiredDate)){     //the delivery is to the required date
@@ -64,6 +118,7 @@ public class LogisticsCenter {
                         filesCounter ++;
                     }
                     for(Site supplier: suppliers.keySet()){
+
                         for(Product p: suppliers.get(supplier).keySet()){
                             if(p.getCoolingLevel() == trucks.get(d.getTruckNumber()).getCoolingLevel()){
                                 d.addProductsToSupplier(supplier, p, suppliers.get(supplier).get(p));
@@ -82,7 +137,7 @@ public class LogisticsCenter {
                 date2deliveries.put(requiredDate,new ArrayList<>());
                 Truck t = scheduleTruck(requiredDate,coolingLevel);
                 if(t == null)       //in case there is no truck available for this delivery
-                   return suppliers;
+                    return suppliers;
                 Driver driver = scheduleDriver(requiredDate,coolingLevel);
                 if(driver == null){     //in case there is no driver available for this delivery
                     date2trucks.get(requiredDate).remove(t); //remove truck from this day deliveries list
@@ -141,15 +196,15 @@ public class LogisticsCenter {
         return null;
     }
 
-    private Set<CoolingLevel> countCoolingOptions(HashMap<Site,HashMap<Product,Integer>> suppliers){
-        Set<CoolingLevel> s = new HashSet<>();
-        for(Site supplier: suppliers.keySet()){
-            for(Product product: suppliers.get(supplier).keySet()){
-                s.add(product.getCoolingLevel());
-            }
-        }
-        return s;
-    }
+//    private Set<CoolingLevel> countCoolingOptions(HashMap<Site,HashMap<Product,Integer>> suppliers){
+//        Set<CoolingLevel> s = new HashSet<>();
+//        for(Site supplier: suppliers.keySet()){
+//            for(Product product: suppliers.get(supplier).keySet()){
+//                s.add(product.getCoolingLevel());
+//            }
+//        }
+//        return s;
+//    }
 
     public LocalDate getCurrDate() {
         return currDate;
