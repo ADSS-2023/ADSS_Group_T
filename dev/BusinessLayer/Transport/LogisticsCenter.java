@@ -14,8 +14,9 @@ public class LogisticsCenter {
     private  HashMap<LocalDate,ArrayList<Truck>> date2trucks;
     private  HashMap<LocalDate,ArrayList<Driver>> date2drivers;
     private  HashMap<LocalDate,ArrayList<Delivery>> date2deliveries;
-    private HashMap<String,Site> sites;
-    private HashMap<Site,ArrayList<Product>> suppliers;
+    private HashMap<String,Branch> branches;
+    private HashMap<String,Supplier> suppliers;
+    private HashMap<Site,ArrayList<Product>> suppliersProducts;
     private HashMap<String,Product> products;
     private int deliveryCounter = 0;
     private int filesCounter = 0;
@@ -31,7 +32,8 @@ public class LogisticsCenter {
         this.date2trucks = new HashMap<>();
         this.date2drivers = new HashMap<>();
         this.date2deliveries = new HashMap<>();
-        this.sites = new HashMap<>();
+        this.branches = new HashMap<>();
+        this.suppliersProducts = new HashMap<>();
         this.suppliers = new HashMap<>();
         this.products = new HashMap<>();
         this.currDate = LocalDate.now();
@@ -45,7 +47,8 @@ public class LogisticsCenter {
         this.date2trucks = new HashMap<>();
         this.date2drivers = new HashMap<>();
         this.date2deliveries = new HashMap<>();
-        this.sites = new HashMap<>();
+        this.branches = new HashMap<>();
+        this.suppliersProducts = new HashMap<>();
         this.suppliers = new HashMap<>();
         this.products = new HashMap<>();
         this.currDate = LocalDate.now();
@@ -109,7 +112,7 @@ public class LogisticsCenter {
 //        return null;
 //    }
 
-    public HashMap<Site,HashMap<Product,Integer>> orderDelivery(Site branch, HashMap<Site,HashMap<Product,Integer>> suppliers, LocalDate requiredDate){
+    public HashMap<Supplier,HashMap<Product,Integer>> orderDelivery(Branch branch, HashMap<Supplier,HashMap<Product,Integer>> suppliers, LocalDate requiredDate){
         if(date2deliveries.containsKey(requiredDate)){          //there is delivery in this date
             for(Delivery d: date2deliveries.get(requiredDate)){     //the delivery is to the required date
                 if(branch.getShippingArea().equals(d.getShippingArea())){        //the delivery is to the required branch
@@ -117,14 +120,13 @@ public class LogisticsCenter {
                         d.addBranch(branch, filesCounter);
                         filesCounter ++;
                     }
-                    for(Site supplier: suppliers.keySet()){
-
-                        for(Product p: suppliers.get(supplier).keySet()){
-                            if(p.getCoolingLevel() == trucks.get(d.getTruckNumber()).getCoolingLevel()){
-                                d.addProductsToSupplier(supplier, p, suppliers.get(supplier).get(p));
-                                suppliers.get(supplier).remove(p);
+                    for(Supplier supplier: suppliers.keySet()){
+                            if(supplier.getCoolingLevel() == trucks.get(d.getTruckNumber()).getCoolingLevel()){
+                                for(Product p: suppliers.get(supplier).keySet()) {
+                                    d.addProductsToSupplier(supplier, p, suppliers.get(supplier).get(p));
+                                    suppliers.get(supplier).remove(p);
+                                }
                             }
-                        }
                         if(suppliers.get(supplier).isEmpty())   //all the suppliers products scheduled
                             suppliers.remove(supplier);
                     }
@@ -147,9 +149,9 @@ public class LogisticsCenter {
                         null,driver.getName(),t.getLicenseNumber(),branch.getShippingArea());
                 deliveryCounter++;
                 //add supply to the new delivery
-                for(Site supplier: suppliers.keySet()){
-                    for(Product p: suppliers.get(supplier).keySet()){
-                        if(p.getCoolingLevel() == coolingLevel){
+                for(Supplier supplier: suppliers.keySet()){
+                    if(supplier.getCoolingLevel() == coolingLevel){
+                        for(Product p: suppliers.get(supplier).keySet()){
                             if(d.getSource() == null)
                                 d.setSource(supplier);
                             d.addProductsToSupplier(supplier, p, suppliers.get(supplier).get(p));
@@ -194,6 +196,13 @@ public class LogisticsCenter {
             }
         }
         return null;
+    }
+
+    private Set<CoolingLevel> countCoolingOptions(HashMap<Supplier,HashMap<Product,Integer>> suppliers){
+        Set<CoolingLevel> s = new HashSet<>();
+        for(Supplier supplier: suppliers.keySet())
+            s.add(supplier.getCoolingLevel());
+        return s;
     }
 
 //    private Set<CoolingLevel> countCoolingOptions(HashMap<Site,HashMap<Product,Integer>> suppliers){
@@ -307,11 +316,11 @@ public class LogisticsCenter {
         double currWeight = deliveries.get(deliveryID).getTruckWeight();
         int maxWeight = trucks.get(deliveries.get(deliveryID).getTruckNumber()).getMaxWeight();
         double unloadFactor = (currWeight - maxWeight) / currWeight;
-        for(Site site : deliveries.get(deliveryID).getDestinations().keySet()) {
-            for (Product p : deliveries.get(deliveryID).getDestinations().get(site).getProducts().keySet()) {
-                int amount = deliveries.get(deliveryID).getDestinations().get(site).getProducts().get(p);
+        for(Supplier supplier : deliveries.get(deliveryID).getDestinations().keySet()) {
+            for (Product p : deliveries.get(deliveryID).getDestinations().get(supplier).getProducts().keySet()) {
+                int amount = deliveries.get(deliveryID).getDestinations().get(supplier).getProducts().get(p);
                 int unloadAmount = (int) Math.ceil(amount * unloadFactor);
-                deliveries.get(deliveryID).getDestinations().get(site).getProducts().replace(p, amount - unloadAmount);
+                deliveries.get(deliveryID).getDestinations().get(supplier).getProducts().replace(p, amount - unloadAmount);
             }
         }
     }
@@ -329,8 +338,12 @@ public class LogisticsCenter {
             unloadProducts(deliveryID);
     }
 
-    public Site getSite(String address){
-        return sites.get(address);
+    public Branch getBranch(String address){
+        return branches.get(address);
+    }
+
+    public Supplier getSupplier(String address){
+        return suppliers.get(address);
     }
 
     public Delivery getDelivery(int id){
