@@ -16,7 +16,7 @@ public class LogisticsCenter {
     private  HashMap<LocalDate,ArrayList<Delivery>> date2deliveries;
     private HashMap<String,Branch> branches;
     private HashMap<String,Supplier> suppliers;
-    private HashMap<Site,ArrayList<Product>> suppliersProducts;
+    private HashMap<Supplier,ArrayList<Product>> suppliersProducts;
     private HashMap<String,Product> products;
     private int deliveryCounter = 0;
     private int filesCounter = 0;
@@ -267,6 +267,15 @@ public class LogisticsCenter {
             return false;
         products.put(name,new Product(name));
         return true;
+    }
+
+    public void addBranch(Branch branch){
+        branches.put(branch.getAddress(),branch);
+    }
+
+    public void addSupplier(Supplier supplier, ArrayList<Product> supplierProducts){
+        suppliers.put(supplier.getAddress(),supplier);
+        suppliersProducts.put(supplier,supplierProducts);
     }
 
     //condition is wrong
