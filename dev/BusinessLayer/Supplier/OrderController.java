@@ -22,9 +22,13 @@ public class OrderController {
            List<OrderProduct> products = shoppingList.getValue();
            SupplierBusiness supplier = sc.getSupplier(shoppingList.getKey());
            OrderBusiness order = new OrderBusiness(orderCounter++,supplier.getSupplierName, Date.Now,supplier.getAddress(),
-                   "SuperLi",supplier.getSupplierNum(),supplier.getContactName(),supplier.getgContactNum(),
+                   "SuperLi",supplier.getSupplierNum(),supplier.getContactName(),supplier.getContactNum(),
                    products);
            orders.add(order);
+           if(!supplier.isDelivering()){
+               sendDelivery(order);
+           }
+
        }
     }
     public List<OrderBusiness> getOrders(){
