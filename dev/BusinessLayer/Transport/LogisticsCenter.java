@@ -234,10 +234,10 @@ public class LogisticsCenter {
     }
 
     public boolean addTruck(int licenseNumber, String model, int weight, int maxWeight ,
-                         LicenseType licenseType, String coolingLevel){
+                         LicenseType licenseType, CoolingLevel coolingLevel){
         if(trucks.containsKey(licenseNumber))
             return false;
-        trucks.put(licenseNumber,new Truck(licenseNumber,model,weight,maxWeight,licenseType,CoolingLevel.valueOf(coolingLevel)));
+        trucks.put(licenseNumber,new Truck(licenseNumber,model,weight,maxWeight,licenseType,coolingLevel));
         return true;
     }
 
@@ -248,10 +248,10 @@ public class LogisticsCenter {
         return true;
     }
 
-    public boolean addDriver(int id, String name, LicenseType licenseType, String coolingLevel){
+    public boolean addDriver(int id, String name, LicenseType licenseType, CoolingLevel coolingLevel){
         if(drivers.containsKey(id))
             return false;
-        drivers.put(id, new Driver(id, name, licenseType, CoolingLevel.valueOf(coolingLevel)));
+        drivers.put(id, new Driver(id, name, licenseType, coolingLevel));
         return true;
     }
 
