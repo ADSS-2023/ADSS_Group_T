@@ -1,25 +1,27 @@
 package BusinessLayer.Supplier;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 
 public class OrderBusiness {
 
     private int orderNum;
     private String supplierName;
-    private Date orderDate;
+    private LocalDateTime orderDate;
     private String supplierAddress;
     private String destinationAddress;
     private int supplierNum;
-    private int contactName;
+    private String contactName;
     private int contactNumber;
-    private HashMap<Integer,OrderProduct> products ;
+    private List<OrderProduct> products ;
 
-    public OrderBusiness(int orderNum, String supplierName, Date orderDate,
+    public OrderBusiness(int orderNum, String supplierName, LocalDateTime  orderDate,
                          String supplierAddress, String destinationAddress
-            ,int supplierNum, int contactName, int contactNumber,
-                         HashMap<Integer, OrderProduct> products) {
+            ,int supplierNum, String contactName, int contactNumber,
+                       List<OrderProduct> products) {
         this.orderNum = orderNum;
         this.supplierName = supplierName;
         this.orderDate = orderDate;

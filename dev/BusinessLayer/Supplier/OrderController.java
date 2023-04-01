@@ -2,6 +2,7 @@ package BusinessLayer.Supplier;
 
 import ServiceLayer.Supplier.ItemToOrder;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class OrderController {
@@ -21,11 +22,13 @@ public class OrderController {
        for( Map.Entry<Integer, List<OrderProduct>> shoppingList : shoppingLists.entrySet()){
            List<OrderProduct> products = shoppingList.getValue();
            SupplierBusiness supplier = sc.getSupplier(shoppingList.getKey());
-           OrderBusiness order = new OrderBusiness(orderCounter++,supplier.getSupplierName, Date.Now,supplier.getAddress(),
-                   "SuperLi",supplier.getSupplierNum(),supplier.getContactName(),supplier.getContactNum(),
-                   products);
+           Map.Entry<String,Integer> entry = supplier.getContacts().entrySet().iterator().next();
+           String contactName = entry.getKey();
+           int contactNum = entry.getValue();
+           OrderBusiness order = new OrderBusiness(orderCounter++,supplier.getName(),LocalDateTime.now(),supplier.getAddress(),
+                   "SuperLi",supplier.getSupplierNum(),contactName,contactNum,products);
            orders.add(order);
-           if(!supplier.isDelivering()){
+           if(!supplier.getSelfDelivery()){
                sendDelivery(order);
            }
 
@@ -34,14 +37,14 @@ public class OrderController {
     public List<OrderBusiness> getOrders(){
         return orders;
     }
-    private void sendDelivery(){
+    private void sendDelivery(OrderBusiness order){
         //activate module DELIVERY
     }
 
     public void addToShoppingLists(String productName, String manufacturer, int quantity) {
         HashMap<SupplierProductBusiness,Integer> productsToOrder  =  sc.findSuppliersProduct(productName,manufacturer,quantity);
         for(Map.Entry<SupplierProductBusiness, Integer> product : productsToOrder.entrySet()) {
-            int productNumber = product.getKey().getProductNumber();
+            int productNumber = product.getKey().getProductNum();
             int initialPrice = product.getKey().getPrice();
             int discount = product.getKey().getDiscount(quantity);
             int finalPrice = initialPrice*quantity*(1-(discount/100));

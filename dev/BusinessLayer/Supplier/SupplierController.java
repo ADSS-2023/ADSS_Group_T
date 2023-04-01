@@ -88,4 +88,13 @@ public class SupplierController {
         }
         return suppliersPerProduct;
     }
+
+    public boolean isSupplierExists(int supplierNum){
+        return suppliers.containsKey(supplierNum);
+    }
+    public SupplierBusiness getSupplier(int supplierNum){
+        if(isSupplierExists(supplierNum))
+             return  suppliers.get(supplierNum);
+        else return null;
+    }
 }
