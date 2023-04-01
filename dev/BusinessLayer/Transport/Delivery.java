@@ -16,7 +16,7 @@ public class Delivery {
     private String shippingArea;
        
     public Delivery(int id, LocalDate date, LocalTime departureTime, int truckWeight, HashMap<Site, File> suppliers,
-            Site source, String driverName, int truckNumber) {
+            Site source, String driverName, int truckNumber, String shippingArea) {
         this.id = id;
         this.date = date;
         this.departureTime = departureTime;
@@ -26,6 +26,11 @@ public class Delivery {
         this.driverName = driverName;
         this.truckNumber = truckNumber;
         this.branches = new HashMap<>();
+        this.shippingArea = shippingArea;
+    }
+
+    public void removeSupplier(){
+        suppliers.remove(suppliers.entrySet().iterator().next().getKey());
     }
 
     public void addBranch(Site branch, int fileID){
