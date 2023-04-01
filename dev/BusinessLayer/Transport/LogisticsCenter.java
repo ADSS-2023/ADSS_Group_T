@@ -189,10 +189,11 @@ public class LogisticsCenter {
         drivers.remove(id);
         return true;
     }
-    
-    public boolean truckOverWeight(int licenseNumber){
-        return trucks.get(licenseNumber).getWeight() > trucks.get(licenseNumber).getMaxWeight();
-    }
+
+    //condition is wrong
+//    public boolean truckOverWeight(int licenseNumber){
+//        return trucks.get(licenseNumber).getWeight() > trucks.get(licenseNumber).getMaxWeight();
+//    }
 
     public void storeProducts(HashMap<Product,Integer> newSupply){
         newSupply.forEach((key,value) -> {
@@ -216,12 +217,12 @@ public class LogisticsCenter {
         return requestedSupply;
     }
 
-    public boolean replaceTruck(int deliveryID, int weight,LocalDate date){
-        //TODO: is the weight already updated in the delivery form? if so remove weight param
+    public boolean replaceTruck(int deliveryID){
         Truck t = trucks.get(deliveries.get(deliveryID).getTruckNumber());
+        LocalDate date = deliveries.get(deliveryID).getDate();
         for(int licenseNumber : this.trucks.keySet()){
             Truck optionalTruck = trucks.get(licenseNumber);
-            if((optionalTruck.getMaxWeight() >= weight) &&
+            if((optionalTruck.getMaxWeight() >= deliveries.get(deliveryID).getTruckWeight()) &&
             !date2trucks.get(date).contains(optionalTruck) &&
             optionalTruck.getCoolingLevel() == t.getCoolingLevel() &&
             optionalTruck.getLicenseType().ordinal() >= t.getLicenseType().ordinal()){
@@ -234,19 +235,30 @@ public class LogisticsCenter {
         return false;
     }
 
-    public void unloadProducts(int deliveryID, Site site){
+    public void unloadProducts(int deliveryID){
         double currWeight = deliveries.get(deliveryID).getTruckWeight();
         int maxWeight = trucks.get(deliveries.get(deliveryID).getTruckNumber()).getMaxWeight();
         double unloadFactor = (currWeight - maxWeight) / currWeight;
-        for(Product p: deliveries.get(deliveryID).getDestinations().get(site).getProducts().keySet()){
-            int amount = deliveries.get(deliveryID).getDestinations().get(site).getProducts().get(p);
-            int unloadAmount = (int)Math.ceil(amount * unloadFactor);
-            deliveries.get(deliveryID).getDestinations().get(site).getProducts().replace(p,amount - unloadAmount);
+        for(Site site : deliveries.get(deliveryID).getDestinations().keySet()) {
+            for (Product p : deliveries.get(deliveryID).getDestinations().get(site).getProducts().keySet()) {
+                int amount = deliveries.get(deliveryID).getDestinations().get(site).getProducts().get(p);
+                int unloadAmount = (int) Math.ceil(amount * unloadFactor);
+                deliveries.get(deliveryID).getDestinations().get(site).getProducts().replace(p, amount - unloadAmount);
+            }
         }
     }
 
     public void replaceOrDropSite(){
 
+    }
+
+    public void overWeightAction(int deliveryID, int action){
+        if(action == 1)
+            replaceOrDropSite();
+        else if(action == 2)
+            replaceTruck(deliveryID);
+        else if(action == 3)
+            unloadProducts(deliveryID);
     }
 
     public Site getSite(String address){
