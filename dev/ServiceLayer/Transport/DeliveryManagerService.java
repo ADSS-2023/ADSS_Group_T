@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Scanner;
 import java.util.Set;
-import java.util.function.Supplier;
+
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,19 +15,20 @@ import BusinessLayer.Transport.*;
 import BusinessLayer.Transport.Driver.CoolingLevel;
 import BusinessLayer.Transport.Driver.LicenseType;
 
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class DeliveryManagerService {
     private DeliveryController dc;
-    private ArrayList<Site> sites;
+    private List<Site> sites;
     private HashMap<Site,List<Product>> suppliers;
     
     public DeliveryManagerService() {
         dc = new DeliveryController();
-        sites = new ArrayList<>();
-        suppliers = new HashMap<>();
+        //sites = new ArrayList<>();
+       // suppliers = new HashMap<>();
         
        
 
@@ -39,6 +40,9 @@ public class DeliveryManagerService {
         dc.addDriver(1003, "Driver3",LicenseType.C,CoolingLevel.fridge);
         dc.addDriver(1004, "Driver4",LicenseType.E,CoolingLevel.non);
 
+        
+
+
         //---------- init trucks ----------//
         dc.addTruck(2001, "Truck1", 4000 , 8000, LicenseType.C1,CoolingLevel.freezer);
         dc.addTruck(2002, "Truck2", 8000, 13000, LicenseType.C1,CoolingLevel.fridge);
@@ -46,45 +50,43 @@ public class DeliveryManagerService {
         dc.addTruck(2004, "Truck4", 15000, 22000, LicenseType.C,CoolingLevel.freezer);
         dc.addTruck(2005, "Truck5", 20000, 30000, LicenseType.E,CoolingLevel.non);
 
-        //---------- init suppliers ----------//
-        Site site_branch1 = new Site("branch1", "000000001", "Contact B1", "Area 1");
-        Site site_branch2 = new Site("branch2", "000000002", "Contact B2", "Area 1");
-        Site site_branch3 = new Site("branch3", "000000003", "Contact B3", "Area 2");
-        Site site_branch4 = new Site("branch4", "000000004", "Contact B4", "Area 3");
-        sites.add(site_branch1);
-        sites.add(site_branch2);
-        sites.add(site_branch3);
-        sites.add(site_branch4);
+       //---------- init branches ----------//
+        dc.addBranch( new Branch("branch1", "000000001", "Contact B1", "Area 1"));
+        dc.addBranch( new Branch("branch2", "000000002", "Contact B2", "Area 1"));
+        dc.addBranch( new Branch("branch3", "000000003", "Contact B3", "Area 2"));
+        dc.addBranch( new Branch("branch4", "000000004", "Contact B4", "Area 3"));
+        
 
-
-        //---------- init branches ----------//
-        Site site_tnuva = new Site("Tnuva", "111111111", "Contact 1", "Area 1");
-        Site site_bakery = new Site("Bakery", "222222222", "Contact 2", "Area 2");
-        Site site_snacks = new Site("Snacks", "333333333", "Contact 3", "Area 3");
-        Site site_beverages = new Site("Beverages", "444444444", "Contact 4", "Area 3");
-        sites.add(site_tnuva);
-        sites.add(site_bakery);
-        sites.add(site_snacks);
-        sites.add(site_beverages);
-
-
-        //---------- init suppliers ----------//
-         
+        
+         //---------- init suppliers ----------//
+        Site site_tnuva = new Supplier("Tnuva", "111111111", "Contact 1", CoolingLevel.fridge);
+        Site site_bakery = new Supplier("Beverages", "22222222", "Contact 2", CoolingLevel.non);
+        Site site_snacks = new Supplier("Snacks", "333333333", "Contact 3",CoolingLevel.non);
+        Site site_beverages = new Supplier("Beverages", "444444444", "Contact 4", CoolingLevel.non);
+        Site site_golda = new Supplier("Golda", "555555555", "Contact 5", CoolingLevel.freezer);
     
+       
+        
+        
+
         // Create products
         Product product_milk = new Product("milk");
         Product product_cheese = new Product("cheese");
         Product product_eggs = new Product("eggs");
-        Product product_bread = new Product("bread");
-        Product product_pita = new Product("pita");
-        Product product_cake = new Product("cake");
-        Product product_chocolate = new Product("chocolate");
-        Product product_chips = new Product("chips");
-        Product product_doritos = new Product("doritos");
         Product product_coke = new Product("coke");
         Product product_sprite = new Product("sprite");
         Product product_fanta = new Product("fanta");
         Product product_fuzeTea = new Product("fuzeTea");
+        Product product_chocolate = new Product("chocolate");
+        Product product_chips = new Product("chips");
+        Product product_doritos = new Product("doritos");
+        Product product_bread = new Product("bread");
+        Product product_pita = new Product("pita");
+        Product product_cake = new Product("cake");
+        Product product_mintChocolateChip = new Product("mint chocolate chip ice cream");
+        Product product_cookiesAndCream = new Product("cookies and cream ice cream");
+        Product product_strawberryCheesecake = new Product("strawberry cheesecake ice cream");
+     
 
         // Create product lists for each supplier
         List<Product> tnuvaProducts = new ArrayList<>();
@@ -104,18 +106,26 @@ public class DeliveryManagerService {
         beveragesProducts.add(product_sprite);
         beveragesProducts.add(product_fanta);
         beveragesProducts.add(product_fuzeTea);
+        List<Product> goldaProducts = new ArrayList<>();
+        goldaProducts.add(product_mintChocolateChip);
+        goldaProducts.add(product_cookiesAndCream);
+        goldaProducts.add(product_strawberryCheesecake);
+       
 
         // Add product lists to suppliers map
-        suppliers.put(site_tnuva, tnuvaProducts);
-        suppliers.put(site_bakery, bakeryProducts);
-        suppliers.put(site_snacks, snacksProducts);
-        suppliers.put(site_beverages, beveragesProducts);
 
-        // when merge:
-        // dc.addSupplier(site_tnuva, tnuvaProducts);
-        // dc.addSupplier(site_bakery, bakeryProducts);
-        // dc.addSupplier(site_snacks, snacksProducts);
-        // dc.addSupplier(site_beverages, beveragesProducts);
+        dc.addSupplier(site_tnuva, tnuvaProducts);
+        dc.addSupplier(site_bakery, bakeryProducts);
+        dc.addSupplier(site_snacks, snacksProducts);
+        dc.addSupplier(site_beverages, beveragesProducts);
+        dc.addSupplier(site_golda, goldaProducts);
+
+
+        //if we add more its not update!!!!!!!!!!1!!!!!!
+        this.sites = dc.getSites();
+        this.suppliers = dc.getSuppliers();
+
+
 
     }
     
@@ -160,6 +170,9 @@ public class DeliveryManagerService {
     
     // option 1
     void skipDay() {
+        sites = dc.getSites();
+
+
         ArrayList<Delivery> deliveriesWithProblems = dc.skipDay();
         Scanner scanner = new Scanner(System.in);
         for (Delivery delivery : deliveriesWithProblems) {
@@ -202,7 +215,7 @@ public class DeliveryManagerService {
     private Site chooseDestinationSite(Scanner scanner) {
         System.out.println("\nPlease choose a destination site:");
         for (int i = 0; i < sites.size(); i++) {
-            System.out.println((i + 1) + ". " + sites.get(i).getName());
+            System.out.println((i + 1) + ". " + sites.get(i).getAddress());
         }
         int siteIndex = scanner.nextInt() - 1;
         if (siteIndex < 0 || siteIndex >= sites.size()) {
@@ -238,7 +251,7 @@ public class DeliveryManagerService {
     
             selectedProducts.put(selectedSupplier, supplierProducts);
     
-            System.out.println("Enter weight of products from " + selectedSupplier.getName() + ":");
+            System.out.println("Enter weight of products from " + selectedSupplier.getAddress() + ":");
             int weight = scanner.nextInt();
             if (weight <= 0) {
                 System.out.println("Invalid quantity.");
@@ -253,10 +266,10 @@ public class DeliveryManagerService {
     
 
     private HashMap<Product, Integer> selectSupplierProducts(Scanner scanner, Site selectedSupplier) {
-        System.out.println("\nPlease choose products from " + selectedSupplier.getName() + ":");
+        System.out.println("\nPlease choose products from " + selectedSupplier.getAddress() + ":");
         List<Product> products = suppliers.get(selectedSupplier);
         if (products == null || products.isEmpty()) {
-            System.out.println("No products available from " + selectedSupplier.getName() + ".");
+            System.out.println("No products available from " + selectedSupplier.getAddress() + ".");
             return new HashMap<>();
         }
         HashMap<Product, Integer> selectedProducts = new HashMap<>();
@@ -288,7 +301,7 @@ public class DeliveryManagerService {
             if (products.isEmpty()) {
                 break;
             }
-            System.out.println("Do you want to add more products from " + selectedSupplier.getName() + "? (Y/N)");
+            System.out.println("Do you want to add more products from " + selectedSupplier.getAddress() + "? (Y/N)");
             String choice = scanner.next();
             if (choice.equalsIgnoreCase("N")) {
                 break;
@@ -305,7 +318,7 @@ public class DeliveryManagerService {
             if (selectedSuppliers.contains(supplier) || supplier.equals(destinationSite)) {
                 continue; // Skip already selected and destination site
             }
-            System.out.println((supplierIndex + 1) + ". " + supplier.getName());
+            System.out.println((supplierIndex + 1) + ". " + supplier.getAddress());
             supplierIndex++;
         }
         if (supplierIndex == 0) {

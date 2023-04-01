@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.function.Supplier;
+
 
 import BusinessLayer.Transport.Driver.CoolingLevel;
 import BusinessLayer.Transport.Driver.LicenseType;
@@ -16,8 +16,9 @@ public class DeliveryController {
         lc = new LogisticsCenter();
     }
     
-    public boolean orderDelivery(Site branch, HashMap<Site,HashMap<Product,Integer>> suppliers, LocalDate date, String coolingLevel){
-        return lc.orderDelivery(branch,suppliers,date,coolingLevel);
+    public HashMap<Supplier,HashMap<Product,Integer>> orderDelivery(Branch branch, HashMap<Supplier,HashMap<Product,Integer>> suppliers, LocalDate requiredDate, HashMap<Supplier,Integer> supplierWeight){
+        lc.orderDelivery(branch, suppliers , requiredDate, supplierWeight);
+        return null;
     }
     public ArrayList<Delivery> skipDay(){
         //return lc.skipDay();
@@ -43,16 +44,16 @@ public class DeliveryController {
        return lc.loadProducts(requestedSupply);
     }
 
-    public boolean replaceTruck(int deliveryID, int weight,LocalDate date){
-        return lc.replaceTruck(deliveryID, weight, date);
+    public boolean replaceTruck(int deliveryID){
+        return lc.replaceTruck(deliveryID);
     }
 
-    public void unloadProducts(int deliveryID, Site site){
-        lc.unloadProducts(deliveryID, site);
+    public void unloadProducts(int deliveryID){
+        lc.unloadProducts(deliveryID);
     }
 
-    public void replaceOrDropSite(){
-        lc.replaceOrDropSite();
+    public void replaceOrDropSite(int deliveryID){
+        lc.replaceOrDropSite(deliveryID);
     }
 
     public LocalDate getCurrDate()
@@ -63,26 +64,29 @@ public class DeliveryController {
     public boolean checkDate(LocalDate deliveryDate){
         return true;
     }
-    // public List<Site> getSites(){
-    //     lc.getSites();
-    // }
-    // public List<Site> getSuppliers(){
-    //     lc.getSuppliers();
-    // }
+    public List<Site> getSites(){
+        return lc.getSites();
+    }
+    public HashMap<Site, List<Product>> getSuppliers(){
+        return lc.getSuppliers();
+    }
 
     public void handleProblem(int id, String string) {
     }
 
-    // public HashMap<Site,list<product>> getBranches(){
-    //     lc.getBranches();
-    // }
+    public HashMap<Site,List<Product>> getBranches(){
+        return lc.getBranches();
+    }
 
-    // public void addSite(Site newSite){
-    //     lc.addSite(newSite);
-    // }
-    // public void addSupplier(Site supplier,List <Product> listOfProducts ){
-    //     lc.addSupplier(supplier,listOfProducts);
-    // }
+    public void addBranch(Branch newBranch){
+        lc.addBranch(newBranch);
+    }
+    public void addSupplier(Site supplier,List <Product> listOfProducts ){
+        lc.addSupplier(supplier,listOfProducts);
+    }
+    public void addSupplier(Supplier newSupplier){
+        lc.addSupplier(newSupplier);
+    }
 
 
 

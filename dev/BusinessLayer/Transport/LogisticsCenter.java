@@ -237,7 +237,7 @@ public class LogisticsCenter {
                          LicenseType licenseType, CoolingLevel coolingLevel){
         if(trucks.containsKey(licenseNumber))
             return false;
-        trucks.put(licenseNumber,new Truck(licenseNumber,model,weight,maxWeight,licenseType,CoolingLevel.valueOf(coolingLevel)));
+        trucks.put(licenseNumber,new Truck(licenseNumber,model,weight,maxWeight,licenseType,coolingLevel));
         return true;
     }
 
@@ -251,7 +251,7 @@ public class LogisticsCenter {
     public boolean addDriver(int id, String name, LicenseType licenseType, CoolingLevel coolingLevel){
         if(drivers.containsKey(id))
             return false;
-        drivers.put(id, new Driver(id, name, licenseType, CoolingLevel.valueOf(coolingLevel)));
+        drivers.put(id, new Driver(id, name, licenseType, coolingLevel));
         return true;
     }
 
@@ -352,10 +352,34 @@ public class LogisticsCenter {
         return deliveries.get(id);
     }
 
-    public LocalDate getCurrDate() {
-        return this.currDate;
+
+
+    //noam gilad function for check:
+
+    public List<Site> getSites(){
+        //return list of site with all the branches and suppliers
+        return null;
+    }
+    public HashMap<Site, List<Product>> getSuppliers(){
+        // //return list of supplier with all the suppliers
+        return null;
     }
 
+
+    public HashMap<Site,List<Product>> getBranches(){
+         // //return list of brancges with all the branches
+         return null;
+    }
+
+    public void addBranch(Site newSite){
+        //add new branch with the addres as the key
+    }
+    public void addSupplier(Site supplier,List <Product> listOfProducts ){
+        //add new supplier with the addres as the key
+    }
+    public void addSupplier(Supplier newSupplier){
+        //add new supplier with the addres as the key
+    }
 
 
 
