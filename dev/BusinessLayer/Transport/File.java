@@ -17,7 +17,11 @@ public class File {
         return this.id;
     }
 
-    public void addProduct(Product product1, int i) {
+    public void addProduct(Product product, int amount) {
+        if(products.containsKey(product))
+            products.replace(product,products.get(product) + amount);
+        else
+            products.put(product,amount);
     }
     
 }

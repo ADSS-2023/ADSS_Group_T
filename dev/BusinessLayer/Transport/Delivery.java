@@ -8,14 +8,15 @@ public class Delivery {
     private LocalDate date;
     private LocalTime departureTime;
     private int truckWeight;
-    private HashMap<Site, File> suppliers;
-    private HashMap<Site, File> branches;
+    private HashMap<Supplier, File> suppliers;
+    private HashMap<Branch, File> branches;
     private Site source;
     private String driverName;
     private int truckNumber;
+    private String shippingArea;
        
-    public Delivery(int id, LocalDate date, LocalTime departureTime, int truckWeight, HashMap<Site, File> suppliers,
-            Site source, String driverName, int truckNumber) {
+    public Delivery(int id, LocalDate date, LocalTime departureTime, int truckWeight, HashMap<Supplier, File> suppliers,
+            Site source, String driverName, int truckNumber, String shippingArea) {
         this.id = id;
         this.date = date;
         this.departureTime = departureTime;
@@ -24,13 +25,35 @@ public class Delivery {
         this.source = source;
         this.driverName = driverName;
         this.truckNumber = truckNumber;
+        this.branches = new HashMap<>();
+        this.shippingArea = shippingArea;
     }
 
-    public HashMap<Product,Integer> getProductsOfSupplier(Site supplier){
+    public void removeSupplier(){
+        suppliers.remove(suppliers.entrySet().iterator().next().getKey());
+    }
+
+    public void addBranch(Branch branch, int fileID){
+        File f = new File(fileID);
+        branches.put(branch,f);
+    }
+
+    public void addProductsToSupplier(Supplier supplier, Product p, int amount){
+        suppliers.get(supplier).addProduct(p,amount);
+    }
+    public String getShippingArea() {
+        return shippingArea;
+    }
+
+    public HashMap<Product,Integer> getProductsOfSupplier(Supplier supplier){
         return suppliers.get(supplier).getProducts();
     }
     public int getId() {
         return this.id;
+    }
+
+    public HashMap<Branch, File> getBranches() {
+        return branches;
     }
 
     public void setId(int id) {
@@ -61,14 +84,9 @@ public class Delivery {
         this.truckWeight = truckWeight;
     }
 
-    public Map<Site, File> getDestinations() {
-        return this.suppliers;
+    public HashMap<Supplier, File> getSuppliers() {
+        return suppliers;
     }
-
-    public void setDestinations(HashMap<Site, File> destinations) {
-        this.suppliers = destinations;
-    }
-
     public Site getSource() {
         return this.source;
     }
@@ -91,9 +109,5 @@ public class Delivery {
 
     public void setTruckNumber(int truckNumber) {
         this.truckNumber = truckNumber;
-    }
-
-    public static void main(String[] args) {
-        
     }
 }
