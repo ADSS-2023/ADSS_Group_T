@@ -9,39 +9,45 @@ public class LogisticsCenter {
 
     private  HashMap<Integer,Truck> trucks;
     private  HashMap<Integer,Delivery> deliveries;
-    private  HashMap<Product,Integer> products;
+    private  HashMap<Product,Integer> productsInStock;
     private  HashMap<Integer,Driver> drivers;
     private  HashMap<LocalDate,ArrayList<Truck>> date2trucks;
     private  HashMap<LocalDate,ArrayList<Driver>> date2drivers;
     private  HashMap<LocalDate,ArrayList<Delivery>> date2deliveries;
     private HashMap<String,Site> sites;
+    private HashMap<Site,ArrayList<Product>> suppliers;
+    private HashMap<String,Product> products;
     private int deliveryCounter = 0;
     private int filesCounter = 0;
     private LocalDate currDate;
 
 
     public LogisticsCenter( HashMap<Integer,Truck> trucks,HashMap<Integer,Delivery> deliveries,
-                        HashMap<Product,Integer> products,HashMap<Integer,Driver> drivers){
+                        HashMap<Product,Integer> productsInStock,HashMap<Integer,Driver> drivers){
         this.trucks = trucks;
         this.deliveries = deliveries;
-        this.products = products;
+        this.productsInStock = productsInStock;
         this.drivers = drivers;
         this.date2trucks = new HashMap<>();
         this.date2drivers = new HashMap<>();
         this.date2deliveries = new HashMap<>();
         this.sites = new HashMap<>();
+        this.suppliers = new HashMap<>();
+        this.products = new HashMap<>();
         this.currDate = LocalDate.now();
     }
 
     public LogisticsCenter(){
         this.trucks = new HashMap<>();
         this.deliveries = new HashMap<>();
-        this.products = new HashMap<>();
+        this.productsInStock = new HashMap<>();
         this.drivers = new HashMap<>();
         this.date2trucks = new HashMap<>();
         this.date2drivers = new HashMap<>();
         this.date2deliveries = new HashMap<>();
         this.sites = new HashMap<>();
+        this.suppliers = new HashMap<>();
+        this.products = new HashMap<>();
         this.currDate = LocalDate.now();
     }
  
@@ -190,6 +196,13 @@ public class LogisticsCenter {
         return true;
     }
 
+    public boolean addProduct(String name){
+        if(products.containsKey(name))
+            return false;
+        products.put(name,new Product(name));
+        return true;
+    }
+
     //condition is wrong
 //    public boolean truckOverWeight(int licenseNumber){
 //        return trucks.get(licenseNumber).getWeight() > trucks.get(licenseNumber).getMaxWeight();
@@ -197,21 +210,21 @@ public class LogisticsCenter {
 
     public void storeProducts(HashMap<Product,Integer> newSupply){
         newSupply.forEach((key,value) -> {
-            if(products.containsKey(key))                           //product exist in stock - update amount
-                products.replace(key, products.get(key) + value);
+            if(productsInStock.containsKey(key))                           //product exist in stock - update amount
+                productsInStock.replace(key, productsInStock.get(key) + value);
             else
-                products.put(key,value);
+                productsInStock.put(key,value);
         });
     }
 
     public HashMap<Product,Integer> loadProducts(HashMap<Product,Integer> requestedSupply){
         Set<Product> keys = requestedSupply.keySet();
         for(Product p : keys){
-            if(products.containsKey(p) && products.get(p) >= requestedSupply.get(p))    //product exist in stock in the requested amount
-                products.replace(p, products.get(p) - requestedSupply.get(p));
-            else if(products.containsKey(p)) {  //product exist in stock but not in the requested amount
-                requestedSupply.replace(p,requestedSupply.get(p) - products.get(p));
-                products.replace(p, 0);
+            if(productsInStock.containsKey(p) && productsInStock.get(p) >= requestedSupply.get(p))    //product exist in stock in the requested amount
+                productsInStock.replace(p, productsInStock.get(p) - requestedSupply.get(p));
+            else if(productsInStock.containsKey(p)) {  //product exist in stock but not in the requested amount
+                requestedSupply.replace(p,requestedSupply.get(p) - productsInStock.get(p));
+                productsInStock.replace(p, 0);
             }
         }
         return requestedSupply;
