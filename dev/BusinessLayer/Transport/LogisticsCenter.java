@@ -83,7 +83,7 @@ public class LogisticsCenter {
                     return suppliers;
                 }
                 Delivery d = new Delivery(deliveryCounter,requiredDate, LocalTime.NOON,t.getWeight(),new HashMap<>(),
-                        null,driver.getName(),t.getLicenseNumber());
+                        null,driver.getName(),t.getLicenseNumber(),branch.getShippingArea());
                 deliveryCounter++;
                 //add supply to the new delivery
                 for(Site supplier: suppliers.keySet()){
