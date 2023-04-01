@@ -1,16 +1,18 @@
 package BusinessLayer.Transport;
-
+import BusinessLayer.Transport.Driver.CoolingLevel;
 public class Product {
     private String name;
+    //private CoolingLevel coolingLevel;
 
-    public Product(String name){
+    public Product(String name) {
         this.name = name;
+        //this.coolingLevel = coolingLevel;
     }
     public String getName() {
         return this.name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+//    public CoolingLevel getCoolingLevel() {
+//        return coolingLevel;
+//    }
 }

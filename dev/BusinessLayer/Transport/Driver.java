@@ -10,8 +10,6 @@ public class Driver {
 
     public Driver(int id, String name, LicenseType licenseType, CoolingLevel coolingLevel) {
         this.id = id;
-
-   
         this.name = name;
         this.licenseType = licenseType;
         this.coolingLevel = coolingLevel;
@@ -23,6 +21,10 @@ public class Driver {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public CoolingLevel getCoolingLevel() {
+        return coolingLevel;
     }
 
     public LicenseType getLicenseLevel() {
