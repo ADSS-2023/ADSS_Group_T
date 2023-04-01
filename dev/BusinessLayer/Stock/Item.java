@@ -1,5 +1,6 @@
 package BusinessLayer.Stock;
 
+import java.time.LocalDate;
 import java.util.List;
 /*
     This class represents a specific item, each item holds a list of its kind
@@ -26,29 +27,6 @@ public class Item implements ProductCategoryManagement {
         this.discount_list = discount_list;
     }
 
-    public int getItem_id() {
-        return item_id;
-    }
-
-    public void setItem_id(int item_id) {
-        this.item_id = item_id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public List<ItemPerOrder> getItems() {
-        return items;
-    }
-
-    public void setItems(List<ItemPerOrder> items) {
-        this.items = items;
-    }
 
     public int getMin_amount() {
         return min_amount;
@@ -57,30 +35,6 @@ public class Item implements ProductCategoryManagement {
     public void setMin_amount(int min_amount) {
         this.min_amount = min_amount;
     }
-
-    public String getManufacturer_name() {
-        return manufacturer_name;
-    }
-
-    public void setManufacturer_name(String manufacturer_name) {
-        this.manufacturer_name = manufacturer_name;
-    }
-
-    public double getOriginal_price() {
-        return original_price;
-    }
-
-    public void setOriginal_price(double original_price) {
-        this.original_price = original_price;
-    }
-
-//    public List<Discount> getDiscount_list() {
-//        return discount_list;
-//    }
-//
-//    public void setDiscount_list(List<Discount> discount_list) {
-//        this.discount_list = discount_list;
-//    }
 
     @Override
     public String produceInventoryReport() {
@@ -121,5 +75,17 @@ public class Item implements ProductCategoryManagement {
     }
     public void set_on_alert_callback(OnAlertCallBack c) {
         onAlertCallBack = c;
+    }
+
+    /**
+     * This function receives new order
+     * @param amount_warehouse
+     * @param amount_store
+     * @param cost_price
+     * @param location
+     * @param validity
+     */
+    public void recive_order(int amount_warehouse,int amount_store,double cost_price,String location, LocalDate validity){
+        items.add(new ItemPerOrder(amount_warehouse,amount_store,cost_price,location, validity));
     }
 }

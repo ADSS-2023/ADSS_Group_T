@@ -13,6 +13,15 @@ public class ItemPerOrder {
     private String location;
     private LocalDate validity;
 
+    /**
+     * This class represnts an item by order (validity)
+     * the constructor args are:
+     * @param amount_warehouse
+     * @param amount_store
+     * @param cost_price
+     * @param location
+     * @param validity
+     */
     public ItemPerOrder(int amount_warehouse, int amount_store, double cost_price, String location, LocalDate validity) {
         this.amount_warehouse = amount_warehouse;
         this.amount_store = amount_store;
