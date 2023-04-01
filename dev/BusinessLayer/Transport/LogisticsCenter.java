@@ -149,11 +149,16 @@ public class LogisticsCenter {
         return currDate;
     }
 
-    public int skipDay(){
+    public ArrayList<Integer> skipDay(){
         this.currDate = this.currDate.plusDays(1);
-        //TODO: check if there is delivery today
-        Delivery d = null;
-        return d.getId();
+        if(date2deliveries.get(currDate) == null || date2deliveries.get(currDate).isEmpty())
+            return null;
+        ArrayList<Integer> overWeightDeliveries = new ArrayList<>();
+        for(Delivery d : date2deliveries.get(currDate)){
+            if(d.getTruckWeight() > trucks.get(d.getTruckNumber()).getMaxWeight())
+                overWeightDeliveries.add(d.getId());
+        }
+        return overWeightDeliveries;
     }
 
     public boolean addTruck(int licenseNumber, String model, int weight, int maxWeight ,
