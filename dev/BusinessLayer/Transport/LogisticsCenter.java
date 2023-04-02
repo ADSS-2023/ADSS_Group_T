@@ -176,39 +176,43 @@ public class LogisticsCenter {
         return null;
     }
 
-    private Truck scheduleTruck(LocalDate date, CoolingLevel coolingLevel){
-        for(Truck truck : trucks.values()){
-            if(date2trucks.containsKey(date) &&
-                    !date2trucks.get(date).contains(truck) && truck.getCoolingLevel() == coolingLevel) {
-                date2trucks.get(date).add(truck);
-                return truck;
-            }
-            else if(!date2trucks.containsKey(date) && truck.getCoolingLevel() == coolingLevel){
-                date2trucks.put(date,new ArrayList<>());
-                date2trucks.get(date).add(truck);
-                return truck;
-            }
-        }
-        return null;
-    }
-
-    private Driver scheduleDriver(LocalDate date, CoolingLevel coolingLevel){
-        for(Driver driver : drivers.values()){
-            if(date2drivers.containsKey(date) &&
-            !date2drivers.get(date).contains(driver) && driver.getCoolingLevel().ordinal() >= coolingLevel.ordinal()){
-                date2drivers.get(date).add(driver);
-                return driver;
-            }
-            else if(!date2drivers.containsKey(date) && driver.getCoolingLevel().ordinal() >= coolingLevel.ordinal()){
-                date2drivers.put(date,new ArrayList<>());
-                date2drivers.get(date).add(driver);
-                return driver;
+    public Truck scheduleTruck(LocalDate date, CoolingLevel coolingLevel){
+        if(trucks != null){
+            for(Truck truck : trucks.values()){
+                if(date2trucks.containsKey(date) &&
+                        !date2trucks.get(date).contains(truck) && truck.getCoolingLevel() == coolingLevel) {
+                    date2trucks.get(date).add(truck);
+                    return truck;
+                }
+                else if(!date2trucks.containsKey(date) && truck.getCoolingLevel() == coolingLevel){
+                    date2trucks.put(date,new ArrayList<>());
+                    date2trucks.get(date).add(truck);
+                    return truck;
+                }
             }
         }
         return null;
     }
 
-    private Set<CoolingLevel> countCoolingOptions(LinkedHashMap<Supplier,LinkedHashMap<Product,Integer>> suppliers){
+    public Driver scheduleDriver(LocalDate date, CoolingLevel coolingLevel){
+        if(drivers != null){
+            for(Driver driver : drivers.values()){
+                if(date2drivers.containsKey(date) &&
+                !date2drivers.get(date).contains(driver) && driver.getCoolingLevel().ordinal() >= coolingLevel.ordinal()){
+                    date2drivers.get(date).add(driver);
+                    return driver;
+                }
+                else if(!date2drivers.containsKey(date) && driver.getCoolingLevel().ordinal() >= coolingLevel.ordinal()){
+                    date2drivers.put(date,new ArrayList<>());
+                    date2drivers.get(date).add(driver);
+                    return driver;
+                }
+            }
+        }
+        return null;
+    }
+
+    public Set<CoolingLevel> countCoolingOptions(LinkedHashMap<Supplier,LinkedHashMap<Product,Integer>> suppliers){
         Set<CoolingLevel> s = new HashSet<>();
         for(Supplier supplier: suppliers.keySet())
             s.add(supplier.getCoolingLevel());
