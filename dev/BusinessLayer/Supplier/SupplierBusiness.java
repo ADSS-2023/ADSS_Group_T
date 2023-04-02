@@ -81,15 +81,15 @@ public class    SupplierBusiness {
         switch(discountEnum){
             case DISCOUNT_BY_TOTAL_PRICE :
                 if(isPercentage)
-                     discountPerTotalPrice.add(new PrecentDiscount(amount,discount));
+                     discountPerTotalPrice.add(new PrecentDiscount(amount,discount,true));
                 else
-                    discountPerTotalPrice.add(new QuantityDiscount(amount,discount));
+                    discountPerTotalPrice.add(new QuantityDiscount(amount,discount,false));
 
             case DISCOUNT_BY_TOTAL_QUANTITY:
                 if(isPercentage)
-                    discountPerTotalQuantity.add(new PrecentDiscount(amount,discount));
+                    discountPerTotalQuantity.add(new PrecentDiscount(amount,discount,true));
                 else
-                    discountPerTotalQuantity.add(new QuantityDiscount(amount,discount));
+                    discountPerTotalQuantity.add(new QuantityDiscount(amount,discount, false));
                 break;
         }
     }
