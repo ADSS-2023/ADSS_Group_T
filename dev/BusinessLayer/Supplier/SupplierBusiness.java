@@ -57,8 +57,8 @@ public class    SupplierBusiness {
         products.remove(productNum);
     }
 
-    public void editProductDiscount(int productNum, int productAmount, int discount, boolean isPercentage){
-        getSupplierProduct(productNum).editProductDiscount(productAmount, discount);
+    public void editProductDiscount(int productNum, int productAmount, int discount, boolean isPercentage) throws Exception {
+        getSupplierProduct(productNum).editProductDiscount(productAmount, discount, isPercentage);
     }
 
     public void addProductDiscount(int productNum, int productAmount, int discount, boolean isPercentage){
@@ -168,8 +168,6 @@ public class    SupplierBusiness {
         }
         return null;
     }
-
-
 
     public int getBankAccountNum() {
         return bankAccountNum;

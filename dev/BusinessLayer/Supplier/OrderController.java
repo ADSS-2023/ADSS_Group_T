@@ -63,14 +63,14 @@ public class OrderController {
 
     //this function gets an item, calculates which suppliers will supply the specific quantities
     // and adds an orderProduct to a specific shopping list of a certain supplier
-    public void addToShoppingLists(String productName, String manufacturer, int quantity) {
-        HashMap<SupplierProductBusiness,Integer> productsToOrder  =  sc.findSuppliersProduct(productName,manufacturer,quantity);
+    public void addToShoppingLists(ItemToOrder item) {
+        HashMap<SupplierProductBusiness,Integer> productsToOrder  =  sc.findSuppliersProduct(item);
         for(Map.Entry<SupplierProductBusiness, Integer> product : productsToOrder.entrySet()) {
             int productNumber = product.getKey().getProductNum();
             int initialPrice = product.getKey().getPrice();
-            int discount = product.getKey().getDiscount(quantity);
-            int finalPrice = initialPrice*quantity*(1-(discount/100));
-            OrderProduct orderProduct = new OrderProduct(productName,productNumber,quantity,initialPrice,discount,finalPrice);
+            int discount = product.getKey().getDiscount(item.getQuantity());
+            int finalPrice = initialPrice*item.getQuantity()*(1-(discount/100));
+            OrderProduct orderProduct = new OrderProduct(item.getProductName(),productNumber,item.getQuantity(),initialPrice,discount,finalPrice);
             int supplierNum = product.getKey().getSupplierNum();
             if(!shoppingLists.containsKey(supplierNum))
                 shoppingLists.put(supplierNum,new LinkedList());

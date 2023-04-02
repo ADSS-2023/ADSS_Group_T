@@ -1,6 +1,7 @@
 package BusinessLayer.Supplier;
 
 import BusinessLayer.Supplier.Discounts.Discount;
+import ServiceLayer.Supplier.ItemToOrder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,19 +28,40 @@ public class SupplierController {
         return suppliers.get(supplierNum).getProducts();
     }
 
-    public HashMap<SupplierProductBusiness, Integer> findSuppliersProduct(String productName, String manufacturer, int quantity){
+    public SupplierBusiness findSingleSupplier(List<ItemToOrder> items){
+        SupplierBusiness sp = null;
+        int minPrice = Integer.MAX_VALUE;
+        for (Map.Entry<Integer, SupplierBusiness> entry : suppliers.entrySet()) {
+            int currentPrice = 0;
+            boolean flag = true;
+            for (ItemToOrder item : items) {
+                if ((entry.getValue().isProductExists(item.getProductName(), item.getManufacturer()) && entry.getValue().getProduct(item.getProductName(), item.getManufacturer()).hasEnoughQuantity(item.getQuantity())))
+                    currentPrice = currentPrice + entry.getValue().getProduct(item.getProductName(), item.getManufacturer()).getPriceByQuantity(item.getQuantity());
+                else
+                    flag = false;
+            }
+            if (flag && minPrice > currentPrice) {
+                minPrice = currentPrice;
+                sp = entry.getValue();
+            }
+        }
+        return sp;
+    }
+
+    public HashMap<SupplierProductBusiness, Integer> findSuppliersProduct(ItemToOrder item){
+        int quantity = item.getQuantity();
         int minPrice = Integer.MAX_VALUE;
         SupplierBusiness sb = null;
         HashMap<SupplierProductBusiness, Integer> suppliersPerProduct = new HashMap<>();
         for (Map.Entry<Integer, SupplierBusiness> entry : suppliers.entrySet()) {
-            SupplierProductBusiness sp = entry.getValue().getProduct(productName,manufacturer);
+            SupplierProductBusiness sp = entry.getValue().getProduct(item.getProductName(), item.getManufacturer());
             if(sp != null && sp.hasEnoughQuantity(quantity) && (sp.getPriceByQuantity(quantity)) < minPrice){
                 minPrice = sp.getPriceByQuantity(quantity);
                 sb = entry.getValue();
             }
         }
         if(sb != null)
-            suppliersPerProduct.put(sb.getProduct(productName,manufacturer), quantity);
+            suppliersPerProduct.put(sb.getProduct(item.getProductName(),item.getManufacturer()), quantity);
         else {
             List<Integer> suppliersIncluded = new ArrayList<>();
             boolean over = false;
@@ -47,7 +69,7 @@ public class SupplierController {
                 sb = null;
                 int MinPrice = Integer.MAX_VALUE;
                 for (Map.Entry<Integer, SupplierBusiness> entry : suppliers.entrySet()) {
-                    int currentPrice = entry.getValue().getProduct(productName,manufacturer).getPriceLimitedQuantity(quantity);
+                    int currentPrice = (entry.getValue().getProduct(item.getProductName(),item.getManufacturer()).getPriceByQuantity(quantity))/Math.min(entry.getValue().getProduct(item.getProductName(), item.getManufacturer()).getMaxAmount(), quantity);
                     if (currentPrice < MinPrice && !suppliersIncluded.contains(entry.getKey())) {
                         if(sb.equals(entry.getValue()))
                             over = true;
@@ -57,8 +79,8 @@ public class SupplierController {
                 }
                 if(sb != null) {
                     suppliersIncluded.add(sb.getSupplierNum());
-                    SupplierProductBusiness sp = sb.getProduct(productName,manufacturer);
-                    quantity = quantity - Math.min(quantity,sp.getMaxAmount());
+                    SupplierProductBusiness sp = sb.getProduct(item.getProductName(),item.getManufacturer());
+                    quantity = (quantity - Math.min(quantity,sp.getMaxAmount()));
                     suppliersPerProduct.put(sp,Math.min(quantity,sp.getMaxAmount()));
                 }
             }

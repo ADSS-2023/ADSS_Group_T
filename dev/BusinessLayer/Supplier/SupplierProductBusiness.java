@@ -28,12 +28,27 @@ public class SupplierProductBusiness {
         this.expiredDate = expiredDate;
     }
 
-    public void editProductDiscount(int productAmount, int discount){
-        quantitiesAgreement.put(productAmount, discount);
+    private boolean isDiscountExists(int productAmount, int discount, boolean isPercentage){
+        for(Discount dis:quantitiesAgreement) {
+            if (dis.isPercentage() == isPercentage && dis.getAmount() == productAmount)
+                return true;
+        }
+        return false;
+    }
+
+    public void editProductDiscount(int productAmount, int discount, boolean isPercentage) throws Exception {
+        if(!isDiscountExists(productAmount, discount, isPercentage))
+            throw new Exception("Discount not found");
+        for(Discount dis:quantitiesAgreement){
+            if(dis.isPercentage() == isPercentage && dis.getAmount() == productAmount)
+                dis.editDiscount(productAmount, discount);
+        }
     }
 
     public void addProductDiscount(int productAmount, int discount){
-        quantitiesAgreement.put(productAmount,discount);
+        if(isDiscountExists(productAmount, discount, isPercentage))
+            throw new Exception("Discount not found");
+
     }
 
     public void deleteProductDiscount(int productAmount, int discount){
@@ -45,24 +60,15 @@ public class SupplierProductBusiness {
     }
 
     public int getPriceByQuantity(int quantity){
-        int maxDiscount = 0;
-        for (Map.Entry<Integer, Integer> entry : quantitiesAgreement.entrySet()) {
-            if(entry.getKey() <= quantity && maxDiscount <= entry.getValue())
-                maxDiscount = entry.getValue();
+        quantity= Math.min(maxAmount, quantity);
+        Discount dis = null;
+        for (Discount currentDiscount : quantitiesAgreement) {
+            if(currentDiscount.getAmount()<quantity)
+                dis = currentDiscount;
         }
-        return (1-(maxDiscount/100))*(quantity*price);
-    }
+        return dis.getPriceAfterDiscount(quantity*price);
+        }
 
-    public int getPriceLimitedQuantity(int quantity){
-        int quantityProvided = Math.min(maxAmount, quantity);
-        int discount = 0;
-        for (Map.Entry<Integer, Integer> entry : quantitiesAgreement.entrySet()) {
-            if(entry.getKey() <= quantityProvided && discount <= entry.getValue())
-                discount = entry.getValue();
-        }
-        int totalPrice = (1-(discount/100))*(quantity*price);
-        return totalPrice/quantityProvided;
-    }
     public String getName() {
         return name;
     }

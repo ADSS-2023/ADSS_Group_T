@@ -8,14 +8,12 @@ public class ServiceFactory {
     private OrderController oc;
     private SupplierService supplierService;
     private OrderService orderService;
-    private SupplierProductService supplierProductService;
 
-    public ServiceFactory(SupplierController sc, OrderController oc, SupplierService supplierService, OrderService orderService, SupplierProductService supplierProductService){
+    public ServiceFactory(SupplierController sc, OrderController oc, SupplierService supplierService, OrderService orderService){
         this.sc = sc;
         this.oc = oc;
         this.supplierService = supplierService;
         this.orderService = orderService;
-        this.supplierProductService = supplierProductService;
     }
 
     public void setUpData(){

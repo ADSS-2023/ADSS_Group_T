@@ -12,7 +12,7 @@ public class OrderService {
     }
     public void createOrder(List<ItemToOrder> itemsList) throws Exception {
         for (ItemToOrder item  : itemsList) {
-            oc.addToShoppingLists(item.productName,item.manufacturer,item.quantity);
+            oc.addToShoppingLists(item);
         }
         oc.createOrders();
     }
