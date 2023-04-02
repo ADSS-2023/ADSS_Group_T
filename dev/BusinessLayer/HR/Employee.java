@@ -100,6 +100,7 @@ public class Employee {
             if (!shiftsRestriction.get(date).contains(isMorning)) {
                 shiftsRestriction.get(date).add(isMorning);
             }
+
         } else {
             List<Boolean> shiftTypes = new ArrayList<>();
             shiftTypes.add(isMorning);
