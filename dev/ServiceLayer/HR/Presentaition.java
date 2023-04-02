@@ -11,7 +11,6 @@ public class Presentaition {
 
     public Presentaition (EmployeeService employeeService , MangerService mangerService) {}
     public void begin(){
-
         Scanner input = new Scanner(System.in);
         System.out.println("Welcome to Shefa-yissaschar : please enter your ID number");
         int ans_id = input.nextInt();
