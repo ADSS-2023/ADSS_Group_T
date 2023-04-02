@@ -16,7 +16,7 @@ public class LogisticsCenter {
     private  HashMap<LocalDate,ArrayList<Delivery>> date2deliveries;
     private HashMap<String,Branch> branches;
     private HashMap<String,Supplier> suppliers;
-    private HashMap<Supplier,ArrayList<Product>> suppliersProducts;//gilad change to Supp
+    private HashMap<Supplier,ArrayList<Product>> suppliersProducts;
     private HashMap<String,Product> products;
     private int deliveryCounter = 0;
     private int filesCounter = 0;
@@ -274,6 +274,15 @@ public class LogisticsCenter {
         return true;
     }
 
+    public void addBranch(Branch branch){
+        branches.put(branch.getAddress(),branch);
+    }
+
+    public void addSupplier(Supplier supplier, ArrayList<Product> supplierProducts){
+        suppliers.put(supplier.getAddress(),supplier);
+        suppliersProducts.put(supplier,supplierProducts);
+    }
+
     //condition is wrong
 //    public boolean truckOverWeight(int licenseNumber){
 //        return trucks.get(licenseNumber).getWeight() > trucks.get(licenseNumber).getMaxWeight();
@@ -358,39 +367,18 @@ public class LogisticsCenter {
         return deliveries.get(id);
     }
 
-
-
-    //noam gilad function for check:
-
     public ArrayList<Site> getSites() {
         ArrayList<Site> sites = new ArrayList<>();
         sites.addAll(suppliers.values());
         sites.addAll(branches.values());
         return sites;
     }
-    
+
     public HashMap<Supplier, ArrayList<Product>> getSuppliers() {
-        
         return suppliersProducts;
     }
-    
+
     public ArrayList<Branch> getBranches() {
-       return new ArrayList<>(branches.values());
+        return new ArrayList<>(branches.values());
     }
-    
-    public void addBranch(Branch newSite) {
-        branches.put(newSite.getAddress(), newSite);
-    }
-    
-    public void addSupplier(Supplier supplier, ArrayList<Product> listOfProducts) {
-        suppliers.put(supplier.getAddress(),supplier);
-        suppliersProducts.put(supplier,listOfProducts );
-      
-    }
-    
- 
-
-
-
-    
 }
