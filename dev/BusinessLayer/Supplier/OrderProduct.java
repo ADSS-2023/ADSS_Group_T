@@ -16,4 +16,24 @@ public class OrderProduct {
         this.discount = discount;
         this.finalPrice = finalPrice;
     }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public int getFinalPrice() {
+        return finalPrice;
+    }
+
+    public void setDiscount(int discount) {
+        this.discount = discount;
+    }
+
+    public void setFinalPrice(int finalPrice) {
+        this.finalPrice = finalPrice;
+    }
+
+    public int getDiscount() {
+        return discount;
+    }
 }

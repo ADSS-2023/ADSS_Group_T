@@ -1,5 +1,8 @@
 package BusinessLayer.Supplier;
 
+import BusinessLayer.Supplier.Discounts.Discount;
+import BusinessLayer.Supplier.Discounts.PrecentDiscount;
+import BusinessLayer.Supplier.Discounts.QuantityDiscount;
 import Util.Discounts;
 
 import java.util.HashMap;
@@ -17,11 +20,11 @@ public class    SupplierBusiness {
     private boolean selfDelivery;
     private HashMap<Integer, SupplierProductBusiness> products;
 
-    private HashMap<Integer, Integer> discountPerTotalQuantity;
+    private List<Discount> discountPerTotalQuantity;
 
-    private HashMap<Integer, Integer> discountPerTotalPrice;
+    private List<Discount> discountPerTotalPrice;
 
-    public SupplierBusiness(String name, String address, int supplierNum,int bankAccountNum, HashMap<String, Integer> contacts, List<String> constDeliveryDays, boolean selfDelivery, HashMap<Integer, SupplierProductBusiness> products, HashMap<Integer, Integer> discountPerTotalQuantity, HashMap<Integer, Integer> discountPerTotalPrice){
+    public SupplierBusiness(String name, String address, int supplierNum,int bankAccountNum, HashMap<String, Integer> contacts, List<String> constDeliveryDays, boolean selfDelivery, HashMap<Integer, SupplierProductBusiness> products, List<Discount> discountPerTotalQuantity, List<Discount> discountPerTotalPrice){
         this.name = name;
         this.address = address;
         this.supplierNum = supplierNum;
@@ -43,60 +46,100 @@ public class    SupplierBusiness {
         return false;
     }
 
-    public void addProduct(int productNum, String productName, String manufacturer, int price, int maxAmount, HashMap<Integer, Integer> quantitiesAgreement, LocalDateTime expiredDate){
+    public void addProduct(int productNum, String productName, String manufacturer, int price, int maxAmount, List<Discount> quantitiesAgreement, LocalDateTime expiredDate){
         products.put(productNum, new SupplierProductBusiness( supplierNum,productName,productNum, manufacturer, price, maxAmount, quantitiesAgreement, expiredDate));
     }
-    public void editProduct(int productNum, String productName, String manufacturer, int price, int maxAmount, HashMap<Integer, Integer> quantitiesAgreement, LocalDateTime expiredDate){
+    public void editProduct(int productNum, String productName, String manufacturer, int price, int maxAmount, List<Discount> quantitiesAgreement, LocalDateTime expiredDate){
         products.put(productNum, new SupplierProductBusiness(supplierNum, productName,productNum, manufacturer, price, maxAmount, quantitiesAgreement, expiredDate));
     }
 
     public void deleteProduct(int productNum){
         products.remove(productNum);
     }
-    public void editProductDiscount(int productNum, int productAmount, int discount){
+
+    public void editProductDiscount(int productNum, int productAmount, int discount, boolean isPercentage){
         getSupplierProduct(productNum).editProductDiscount(productAmount, discount);
     }
 
-    public void addProductDiscount(int productNum, int productAmount, int discount){
+    public void addProductDiscount(int productNum, int productAmount, int discount, boolean isPercentage){
         getSupplierProduct(productNum).addProductDiscount(productAmount, discount);
     }
 
-    public void deleteProductDiscount(int productNum, int productAmount, int discount){
+    public void deleteProductDiscount(int productNum, int productAmount, int discount, boolean isPercentage){
         getSupplierProduct(productNum).deleteProductDiscount(productAmount, discount);
     }
 
-    public void editSupplierDiscount(Discounts discountEnum, int amount, int discount) {
+    public void editSupplierDiscount(Discounts discountEnum, int amount, int discountToChange,boolean isPercentage) throws Exception {
+        if(!isDiscountExist(discountEnum,amount,isPercentage))
+            throw new Exception("No such Discount");
+        getDiscount(discountEnum,amount,isPercentage).editDiscount(amount,discountToChange);
+    }
+
+    public void addSupplierDiscount(Discounts discountEnum, int amount, int discount,boolean isPercentage) throws Exception {
+        if(isDiscountExist(discountEnum,amount,isPercentage))
+            throw new Exception("Discount is already exists");
         switch(discountEnum){
             case DISCOUNT_BY_TOTAL_PRICE :
-                if (discountPerTotalPrice.containsKey(amount))
-                    discountPerTotalPrice.put(amount, discount);
-                break;
+                if(isPercentage)
+                     discountPerTotalPrice.add(new PrecentDiscount(amount,discount));
+                else
+                    discountPerTotalPrice.add(new QuantityDiscount(amount,discount));
+
             case DISCOUNT_BY_TOTAL_QUANTITY:
-                if (discountPerTotalQuantity.containsKey(amount))
-                    discountPerTotalQuantity.put(amount, discount);
+                if(isPercentage)
+                    discountPerTotalQuantity.add(new PrecentDiscount(amount,discount));
+                else
+                    discountPerTotalQuantity.add(new QuantityDiscount(amount,discount));
                 break;
         }
     }
 
-    public void addSupplierDiscount(Discounts discountEnum, int amount, int discount) {
+    public boolean isDiscountExist(Discounts discountEnum,int amount, boolean isPercentage) {
         switch(discountEnum){
             case DISCOUNT_BY_TOTAL_PRICE :
-                discountPerTotalPrice.put(amount, discount);
-                break;
+                for (Discount dis : discountPerTotalPrice) {
+                    if (dis.getAmount() == amount && dis.isPercentage() == isPercentage)
+                        return true;
+                }
             case DISCOUNT_BY_TOTAL_QUANTITY:
-                discountPerTotalQuantity.put(amount, discount);
-                break;
+                for (Discount dis : discountPerTotalQuantity) {
+                    if (dis.getAmount() == amount && dis.isPercentage() == isPercentage)
+                        return true;
+                }
         }
+        return false;
     }
 
-    public void deleteSupplierDiscount(Discounts discountEnum, int amount, int discount) {
+    public Discount getDiscount(Discounts discountEnum,int amount, boolean isPercentage) {
         switch(discountEnum){
             case DISCOUNT_BY_TOTAL_PRICE :
-                discountPerTotalPrice.remove(amount, discount);
+                for (Discount dis : discountPerTotalPrice) {
+                    if (dis.getAmount() == amount && dis.isPercentage() == isPercentage)
+                       return dis;
+                }
+            case DISCOUNT_BY_TOTAL_QUANTITY:
+                for (Discount dis : discountPerTotalQuantity) {
+                    if (dis.getAmount() == amount && dis.isPercentage() == isPercentage)
+                        return dis;
+                }
+        }
+        return null;
+    }
+
+    public void deleteSupplierDiscount(Discounts discountEnum, int amount, boolean isPercentage) {
+        switch (discountEnum) {
+            case DISCOUNT_BY_TOTAL_PRICE:
+                for (Discount dis : discountPerTotalPrice) {
+                    if (dis.getAmount() == amount && dis.isPercentage() == isPercentage)
+                        discountPerTotalPrice.remove(dis);
+                }
                 break;
             case DISCOUNT_BY_TOTAL_QUANTITY:
-                discountPerTotalQuantity.remove(amount, discount);
-                break;
+                for (Discount dis : discountPerTotalQuantity) {
+                    if (dis.getAmount() == amount&& dis.isPercentage() == isPercentage)
+                        discountPerTotalQuantity.remove(dis);
+                    break;
+                }
         }
     }
 
@@ -104,7 +147,7 @@ public class    SupplierBusiness {
         return products.get(productNumber);
     }
 
-    public void editSupplier(String name, String address, int supplierNum,int bankAccountNum, HashMap<String, Integer> contacts, List<String> constDeliveryDays, boolean selfDelivery, HashMap<Integer, SupplierProductBusiness> products, HashMap<Integer, Integer> discountPerTotalQuantity, HashMap<Integer, Integer> discountPerTotalPrice){
+    public void editSupplier(String name, String address, int supplierNum,int bankAccountNum, HashMap<String, Integer> contacts, List<String> constDeliveryDays, boolean selfDelivery, HashMap<Integer, SupplierProductBusiness> products, List<Discount> discountPerTotalQuantity, List<Discount> discountPerTotalPrice){
         this.name = name;
         this.address = address;
         this.supplierNum = supplierNum;
@@ -151,11 +194,47 @@ public class    SupplierBusiness {
     public String getName() {
         return name;
     }
-    public boolean getSelfDelivery(){
+
+    public List<Discount> getDiscountPerTotalQuantity() {
+        return discountPerTotalQuantity;
+    }
+
+    public List<Discount> getDiscountPerTotalPrice() {
+        return discountPerTotalPrice;
+    }
+
+    public boolean isDelivering(){
         return selfDelivery;
     }
 
     public HashMap<Integer, SupplierProductBusiness> getProducts() {
         return products;
+    }
+
+    //this function gets products number in the order, and old total price and returns new price
+    public int getPriceAfterTotalDiscount(int totalProductsNum, int totalOrderPrice) {
+        Discount dis1 =null;
+        int discount1=0;
+        Discount dis2 =null;
+        int discount2=0;
+        //loop for number of products discounts
+        for (Discount currentDiscount : discountPerTotalPrice) {
+            if(currentDiscount.getAmount()<totalOrderPrice)
+                dis1 = currentDiscount;
+        }
+        if(dis1!=null)
+            discount1=totalOrderPrice-dis1.getPriceAfterDiscount(totalOrderPrice);
+
+
+        for (Discount currentDiscount : discountPerTotalQuantity) {
+            if(currentDiscount.getAmount()<totalProductsNum)
+                dis2 = currentDiscount;
+        }
+        if(dis2!=null)
+            discount2=totalOrderPrice-dis2.getPriceAfterDiscount(totalOrderPrice);
+
+        return totalOrderPrice-discount1-discount2;
+
+
     }
 }

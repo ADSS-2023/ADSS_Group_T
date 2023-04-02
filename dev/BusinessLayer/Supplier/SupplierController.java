@@ -1,5 +1,7 @@
 package BusinessLayer.Supplier;
 
+import BusinessLayer.Supplier.Discounts.Discount;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,7 +15,7 @@ public class SupplierController {
         suppliers = new HashMap<>();
     }
 
-    public void addSupplier(String name, String address, int supplierNum,int bankAccountNum, HashMap<String, Integer> contacts, List<String> constDeliveryDays, boolean selfDelivery, HashMap<Integer, SupplierProductBusiness> products, HashMap<Integer, Integer> discountPerTotalQuantity, HashMap<Integer, Integer> discountPerTotalPrice){
+    public void addSupplier(String name, String address, int supplierNum, int bankAccountNum, HashMap<String, Integer> contacts, List<String> constDeliveryDays, boolean selfDelivery, HashMap<Integer, SupplierProductBusiness> products, List<Discount> discountPerTotalQuantity, List<Discount> discountPerTotalPrice){
         suppliers.put(supplierNum, new SupplierBusiness(name, address, supplierNum, bankAccountNum, contacts, constDeliveryDays, selfDelivery, products, discountPerTotalQuantity, discountPerTotalPrice));
     }
 
@@ -67,9 +69,10 @@ public class SupplierController {
     public boolean isSupplierExists(int supplierNum){
         return suppliers.containsKey(supplierNum);
     }
-    public SupplierBusiness getSupplier(int supplierNum){
-        if(isSupplierExists(supplierNum))
-             return  suppliers.get(supplierNum);
-        else return null;
+    public SupplierBusiness getSupplier(int supplierNum) throws Exception {
+        if(!isSupplierExists(supplierNum))
+            throw new Exception("Supplier Does Not Exists");
+        return suppliers.get(supplierNum);
+
     }
 }

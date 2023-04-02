@@ -1,5 +1,6 @@
 package ServiceLayer.Supplier;
 
+import BusinessLayer.Supplier.Discounts.Discount;
 import BusinessLayer.Supplier.SupplierController;
 import BusinessLayer.Supplier.SupplierProductBusiness;
 import Util.Discounts;
@@ -17,7 +18,7 @@ public class SupplierService {
         this.sc = sc;
     }
 
-    public void addSupplier(String name, String address, int supplierNum,int bankAccountNum, HashMap<String, Integer> contacts, List<String> constDeliveryDays, boolean selfDelivery, HashMap<Integer, SupplierProductBusiness> products, HashMap<Integer, Integer> discountPerTotalQuantity, HashMap<Integer, Integer> discountPerTotalPrice){
+    public void addSupplier(String name, String address, int supplierNum,int bankAccountNum, HashMap<String, Integer> contacts, List<String> constDeliveryDays, boolean selfDelivery, HashMap<Integer, SupplierProductBusiness> products, List<Discount> discountPerTotalQuantity, List<Discount> discountPerTotalPrice){
         sc.addSupplier(name,address,supplierNum,bankAccountNum,contacts,constDeliveryDays, selfDelivery,products, discountPerTotalQuantity, discountPerTotalPrice);
     }
 
@@ -25,7 +26,7 @@ public class SupplierService {
         sc.deleteSupplier(supplierNum);
     }
 
-    public void editSupplier(String name, String address, int supplierNum,int bankAccountNum, HashMap<String, Integer> contacts, List<String> constDeliveryDays, boolean selfDelivery, HashMap<Integer, SupplierProductBusiness> products, HashMap<Integer, Integer> discountPerTotalQuantity, HashMap<Integer, Integer> discountPerTotalPrice){
+    public void editSupplier(String name, String address, int supplierNum,int bankAccountNum, HashMap<String, Integer> contacts, List<String> constDeliveryDays, boolean selfDelivery, HashMap<Integer, SupplierProductBusiness> products, List<Discount> discountPerTotalQuantity, List<Discount> discountPerTotalPrice) throws Exception {
         sc.getSupplier(supplierNum).editSupplier(name,address,supplierNum,bankAccountNum,contacts,constDeliveryDays, selfDelivery,products, discountPerTotalQuantity, discountPerTotalPrice);
     }
     public List<String> getProducts(int supplierNum){
@@ -37,39 +38,39 @@ public class SupplierService {
         return products;
     }
 
-    public void addProduct(int supplierNum, int productNum, String productName, String manufacturer, int price, int maxAmount, HashMap<Integer, Integer> quantitiesAgreement, LocalDateTime expiredDate){
+    public void addProduct(int supplierNum, int productNum, String productName, String manufacturer, int price, int maxAmount, List<Discount> quantitiesAgreement, LocalDateTime expiredDate) throws Exception {
         sc.getSupplier(supplierNum).addProduct(productNum, productName, manufacturer, price, maxAmount, quantitiesAgreement, expiredDate);
     }
 
-    public void editProduct(int supplierNum, int productNum, String productName, String manufacturer, int price, int maxAmount, HashMap<Integer, Integer> quantitiesAgreement, LocalDateTime expiredDate){
+    public void editProduct(int supplierNum, int productNum, String productName, String manufacturer, int price, int maxAmount, List<Discount> quantitiesAgreement, LocalDateTime expiredDate) throws Exception {
         sc.getSupplier(supplierNum).editProduct(productNum, productName, manufacturer, price, maxAmount, quantitiesAgreement, expiredDate);
     }
 
-    public void deleteProduct(int supplierNum, int productNum){
+    public void deleteProduct(int supplierNum, int productNum) throws Exception {
         sc.getSupplier(supplierNum).deleteProduct(productNum);
     }
 
-    public void editSupplierDiscount(int supplierNum, Discounts discountEnum, int amount, int discount) {
-        sc.getSupplier(supplierNum).editSupplierDiscount(discountEnum, amount, discount);
+    public void editSupplierDiscount(int supplierNum, Discounts discountEnum, int amount, int discountToChange,boolean isPercentage) throws Exception {
+        sc.getSupplier(supplierNum).editSupplierDiscount(discountEnum, amount, discountToChange,isPercentage);
     }
 
-    public void addSupplierDiscount(int supplierNum, Discounts discountEnum, int amount, int discount) {
-        sc.getSupplier(supplierNum).addSupplierDiscount(discountEnum, amount, discount);
+    public void addSupplierDiscount(int supplierNum, Discounts discountEnum, int amount, int discount,boolean isPercentage) throws Exception {
+        sc.getSupplier(supplierNum).addSupplierDiscount(discountEnum, amount, discount,isPercentage);
     }
 
-    public void deleteSupplierDiscount(int supplierNum, Discounts discountEnum, int amount, int discount) {
-        sc.getSupplier(supplierNum).deleteSupplierDiscount(discountEnum, amount, discount);
+    public void deleteSupplierDiscount(int supplierNum, Discounts discountEnum, int amount, int discount,boolean isPercentage) throws Exception {
+        sc.getSupplier(supplierNum).deleteSupplierDiscount(discountEnum, amount,isPercentage);
     }
 
-    public void editProductDiscount(int supplierNum, int productNum, int productAmount, int discount) {
-        sc.getSupplier(supplierNum).editProductDiscount(productNum, productAmount, discount);
+    public void editProductDiscount(int supplierNum, int productNum, int productAmount, int discount,boolean isPercentage) throws Exception {
+        sc.getSupplier(supplierNum).editProductDiscount(productNum, productAmount, discount,isPercentage);
     }
 
-    public void addProductDiscount(int supplierNum, int productNum, int productAmount, int discount) {
-        sc.getSupplier(supplierNum).addProductDiscount(productNum, productAmount, discount);
+    public void addProductDiscount(int supplierNum, int productNum, int productAmount, int discount,boolean isPercentage) throws Exception {
+        sc.getSupplier(supplierNum).addProductDiscount(productNum, productAmount, discount,isPercentage);
     }
 
-    public void deleteProductDiscount(int supplierNum, int productNum, int productAmount, int discount) {
-        sc.getSupplier(supplierNum).deleteProductDiscount(productNum, productAmount, discount);
+    public void deleteProductDiscount(int supplierNum, int productNum, int productAmount, int discount,boolean isPercentage) throws Exception {
+        sc.getSupplier(supplierNum).deleteProductDiscount(productNum, productAmount, discount,isPercentage);
     }
 }

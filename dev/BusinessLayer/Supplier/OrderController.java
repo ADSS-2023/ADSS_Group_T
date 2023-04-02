@@ -18,22 +18,42 @@ public class OrderController {
         shoppingLists = new HashMap<>();
         orderCounter=0;
     }
-    public void createOrders(){
-       for( Map.Entry<Integer, List<OrderProduct>> shoppingList : shoppingLists.entrySet()){
+
+    //createOrders goes over every shopping list per supplier consisted of OrderProducts and performs each order
+    public void createOrders() throws Exception {
+       for(Map.Entry<Integer, List<OrderProduct>> shoppingList : shoppingLists.entrySet()){
            List<OrderProduct> products = shoppingList.getValue();
            SupplierBusiness supplier = sc.getSupplier(shoppingList.getKey());
            Map.Entry<String,Integer> entry = supplier.getContacts().entrySet().iterator().next();
            String contactName = entry.getKey();
            int contactNum = entry.getValue();
+
+           //calculate order quantities&prices
+           int totalProductsNum = 0;
+           int totalorderPrice = 0;
+           for (OrderProduct product : products){
+                totalorderPrice+=product.getFinalPrice();
+                totalProductsNum+=product.getQuantity();
+           }
+           //calculate supplier general discounts and final prices
+           int finalPrice = supplier.getPriceAfterTotalDiscount(totalProductsNum,totalorderPrice);
+           int discountPerProduct = (totalorderPrice-finalPrice)/products.size();
+           for (OrderProduct product : products){
+               product.setDiscount(discountPerProduct+product.getDiscount());
+               product.setFinalPrice(product.getFinalPrice()-discountPerProduct);
+           }
+           //create order from products in the send and send to delivery if needed
            OrderBusiness order = new OrderBusiness(orderCounter++,supplier.getName(),LocalDateTime.now(),supplier.getAddress(),
                    "SuperLi",supplier.getSupplierNum(),contactName,contactNum,products);
-           orders.add(order);
-           if(!supplier.getSelfDelivery()){
-               sendDelivery(order);
-           }
+                   orders.add(order);
+//              in case of delivery needed - connect with Delivery module
+//           if(!supplier.isDelivering()){
+//               sendDelivery(order);
+//           }
 
        }
     }
+    //support functionality of displaying all orders from different suppliers.
     public List<OrderBusiness> getOrders(){
         return orders;
     }
@@ -41,6 +61,8 @@ public class OrderController {
         //activate module DELIVERY
     }
 
+    //this function gets an item, calculates which suppliers will supply the specific quantities
+    // and adds an orderProduct to a specific shopping list of a certain supplier
     public void addToShoppingLists(String productName, String manufacturer, int quantity) {
         HashMap<SupplierProductBusiness,Integer> productsToOrder  =  sc.findSuppliersProduct(productName,manufacturer,quantity);
         for(Map.Entry<SupplierProductBusiness, Integer> product : productsToOrder.entrySet()) {

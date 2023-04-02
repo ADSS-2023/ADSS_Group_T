@@ -1,7 +1,10 @@
 package BusinessLayer.Supplier;
+import BusinessLayer.Supplier.Discounts.Discount;
+
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class SupplierProductBusiness {
@@ -11,10 +14,10 @@ public class SupplierProductBusiness {
     private String manufacturer;
     private int price;
     private int maxAmount;
-    private HashMap<Integer, Integer> quantitiesAgreement;
+    private List<Discount> quantitiesAgreement;
     private LocalDateTime expiredDate;
 
-    public SupplierProductBusiness(int supplierNum, String name, int productNum, String manufacturer, int price, int maxAmount, HashMap<Integer, Integer> quantitiesAgreement, LocalDateTime expiredDate){
+    public SupplierProductBusiness(int supplierNum, String name, int productNum, String manufacturer, int price, int maxAmount, List<Discount> quantitiesAgreement, LocalDateTime expiredDate){
         this.supplierNum = supplierNum;
         this.name = name;
         this.productNum = productNum;
@@ -38,7 +41,7 @@ public class SupplierProductBusiness {
     }
 
     public boolean hasEnoughQuantity(int quantity){
-        return quantity >= quantity;
+        return maxAmount >= quantity;
     }
 
     public int getPriceByQuantity(int quantity){
@@ -84,7 +87,7 @@ public class SupplierProductBusiness {
         return manufacturer;
     }
 
-    public HashMap<Integer, Integer> getQuantitiesAgreement(){
+    public List<Discount> getQuantitiesAgreement(){
         return quantitiesAgreement;
     }
 
@@ -94,7 +97,7 @@ public class SupplierProductBusiness {
 
     public int getDiscount(int quantity){
         int discount = 0;
-        for (Map.Entry<Integer, Integer> entry : quantitiesAgreement.entrySet()) {
+        for () {
             if (entry.getKey() <= quantity && entry.getValue() < discount)
                 discount = entry.getValue();
         }

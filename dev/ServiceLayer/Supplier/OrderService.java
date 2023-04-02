@@ -10,7 +10,7 @@ public class OrderService {
     public OrderService(OrderController oc) {
         this.oc = oc;
     }
-    public void createOrder(List<ItemToOrder> itemsList){
+    public void createOrder(List<ItemToOrder> itemsList) throws Exception {
         for (ItemToOrder item  : itemsList) {
             oc.addToShoppingLists(item.productName,item.manufacturer,item.quantity);
         }
