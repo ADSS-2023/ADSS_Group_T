@@ -9,7 +9,7 @@ public class Employee {
     private List<Position> qualifiedPositions;
     private Map<String, List<Constraint>> submittedShifts;
     private Map<String, List<Constraint>> assignedShifts;
-    private Map<String, List<boolean>> shiftsRestriction;
+    private Map<String, Vector<Boolean>> shiftsRestriction;
     private String description;
     private int salary;
     private String joiningDay;
@@ -25,7 +25,7 @@ public class Employee {
         this.password = password;
         this.submittedShifts = new HashMap<>();
         this.assignedShifts = new HashMap<>();
-        this.shiftsRestriction = new HashMap<>();
+        this.shiftsRestriction = new HashMap<String, Vector<Boolean>>();
     }
 
     public void addSubmittedShift(String date, boolean shiftType, boolean isTemp) {
@@ -61,7 +61,25 @@ public class Employee {
     }
 
 
+    public Map<String, List<Constraint>> getSubmittedShifts() {
+        return submittedShifts;
+    }
 
+    public Map<String, List<Constraint>> getAssignedShifts() {
+        return assignedShifts;
+    }
+
+    public Map<String, Vector<Boolean>> getShiftsRestriction() {
+        return shiftsRestriction;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getPassword() {
+        return password;
+    }
 
     public void  setDescription(String description){
         this.description = description;
@@ -76,14 +94,16 @@ public class Employee {
 
     public void addRestriction(String date, boolean isMorning) {
         if (shiftsRestriction.containsKey(date)) {
-            if (! (shiftsRestriction.get(date).contains(isMorning)))
+            if (!shiftsRestriction.get(date).contains(isMorning)) {
                 shiftsRestriction.get(date).add(isMorning);
+            }
         } else {
-            Vector<boolean> shiftTypes = new Vector<Integer>();
+            Vector<Boolean> shiftTypes = new Vector<>();
             shiftTypes.add(isMorning);
             shiftsRestriction.put(date, shiftTypes);
         }
     }
+
 
 
 

@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PersonnelManager extends  Employee {
+public class PersonnelManager {
     private List<Employee> employees;
     private HashMap<String, List<String>> shiftsDemand;
 
@@ -38,7 +38,7 @@ public class PersonnelManager extends  Employee {
         return employees.size() >= numOfShiftWorkers;
     }
 
-    public List<Employee> getQualifiedEmployees(String date, String shiftType){
+/*    public List<Employee> getQualifiedEmployees(String date, String shiftType){
         List<Employee> qualifiedEmployees = new ArrayList<Employee>();
         for (Employee employee : employees) {
             if (employee.getQualifiedPositions().contains(shiftType)) {
@@ -48,28 +48,41 @@ public class PersonnelManager extends  Employee {
             }
         }
         return qualifiedEmployees;
-    }
+    }*/
 
-    public boolean isEmployeeInShift(String date, String shiftType, Employee employee){
-        List<Shift> shifts = employee.getShifts();
+ /*   public boolean isEmployeeInShift(String date, String shiftType, Employee employee){
+        List<Shift> shifts = employee.getAssignedShifts();
         for (Shift shift : shifts) {
             if (shift.getDate().equals(date) && shift.getShiftType().equals(shiftType)) {
                 return true;
             }
         }
         return false;
-    }
+    }*/
 
-    public boolean isEmployeeAssigned(Employee employee, String date, String shiftType){
+  /*  public boolean isEmployeeAssigned(Employee employee, String date, String shiftType){
         List<Shift> shifts = getShiftsByDateAndShiftType(date, shiftType);
         for (Shift shift : shifts) {
-            for (Employee assignedEmployee : shift.getEmployees()) {
+            for (Employee assignedEmployee : shift.getFulfillPositionByEmployees()) {
                 if (assignedEmployee == employee) {
                     return true;
                 }
             }
         }
         return false;
-    }
+    }*/
 
-    public List<Shift> getShiftsByDateAndShiftType
+/*    public List<Shift> getShiftsByDateAndShiftType(String date, String shiftType) {
+        List<Shift> shifts = new ArrayList<Shift>();
+        for (Employee employee : employees) {
+            List<Shift> employeeShifts = employee.getAssignedShifts();
+            for (Shift shift : employeeShifts) {
+                if (shift.getDate().equals(date) && shift.getShiftType().equals(shiftType)) {
+                    shifts.add(shift);
+                }
+            }
+        }
+        return shifts;
+    }*/
+
+}

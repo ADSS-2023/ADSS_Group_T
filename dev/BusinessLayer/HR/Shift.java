@@ -66,6 +66,7 @@ public class Shift {
         }
     }
 
+
     public void assignEmployee(Position pos, Employee emp) {
         if (!fulfillPositionByEmployees.containsKey(pos)) {
             throw  new IllegalArgumentException("there is no position exist");

@@ -11,12 +11,12 @@ public class ShiftController {
         shifts = new HashMap<Integer,Shift>();
         shiftId = 0;
     }
+/*
 
     public void addSubmittedPosition(Employee emp){
         if (emp.isManager())
-
-
     }
+*/
 
     public void assignShiftnyManager{
 
