@@ -1,4 +1,6 @@
 package BusinessLayer.HR;
+import UtilSuper.PositionType;
+
 import java.util.*;
 
 public class Shift {
@@ -24,8 +26,7 @@ public class Shift {
 
     public HashMap<String, Integer> createNewEmployeesRequirement() {
         HashMap<String, Integer> employeeRequirements = new HashMap<>();
-        for (Position.PositionType positionType : Position.PositionType.values()) {
-            Position position = new Position(positionType);
+        for (PositionType positionType : PositionType.values()) {
             employeeRequirements.put(positionType.name(), 0); // set initial requirement to 0
         }
         return employeeRequirements;
@@ -33,17 +34,16 @@ public class Shift {
 
     public HashMap<String, List<Employee>> createNewFulfillPositionByEmployees() {
         HashMap<String, List<Employee>> fulfillPositionByEmployees = new HashMap<>();
-        for (Position.PositionType positionType : Position.PositionType.values()) {
-            fulfillPositionByEmployees.put(positionType.name(), new Vector<>()); // create an empty list for each position
+        for (PositionType positionType : PositionType.values()) {
+            fulfillPositionByEmployees.put(positionType.name(), new ArrayList<>()); // create an empty list for each position
         }
         return fulfillPositionByEmployees;
     }
 
     public HashMap<String, List<Employee>> createNewSubmittedPositionByEmployees() {
         HashMap<String, List<Employee>> submittedPositionByEmployees = new HashMap<>();
-        for (Position.PositionType positionType : Position.PositionType.values()) {
-            Position position = new Position(positionType);
-            submittedPositionByEmployees.put(positionType.name(), new Vector<>()); // create an empty list for each position
+        for (PositionType positionType : PositionType.values()) {
+            submittedPositionByEmployees.put(positionType.name(), new ArrayList<>()); // create an empty list for each position
         }
         return submittedPositionByEmployees;
     }
@@ -67,7 +67,7 @@ public class Shift {
     }
 
 
-    public void assignEmployee(Position pos, Employee emp) {
+    public void assignEmployee(PositionType pos, Employee emp) {
         if (!fulfillPositionByEmployees.containsKey(pos)) {
             throw  new IllegalArgumentException("there is no position exist");
         }
