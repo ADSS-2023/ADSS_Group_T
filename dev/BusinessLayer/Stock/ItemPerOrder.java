@@ -21,8 +21,9 @@ public class ItemPerOrder {
      * @param cost_price
      * @param location
      * @param validity
+     * @param orderId
      */
-    public ItemPerOrder(int amount_warehouse, int amount_store, double cost_price, String location, LocalDate validity) {
+    public ItemPerOrder(int orderId,int amount_warehouse, int amount_store, double cost_price, String location, LocalDate validity) {
         this.amount_warehouse = amount_warehouse;
         this.amount_store = amount_store;
         this.cost_price = cost_price;
@@ -75,4 +76,15 @@ public class ItemPerOrder {
      * @ int
      */
     public int amount() {return amount_store+amount_warehouse;}
+
+    public void reduce(int amount) {
+        if (amount_store<amount){
+            amount = amount - amount_store;
+            amount_store = 0;
+            amount_warehouse = amount_warehouse - amount;
+        }
+        else {
+            amount_store = amount_store-amount;
+        }
+    }
 }
