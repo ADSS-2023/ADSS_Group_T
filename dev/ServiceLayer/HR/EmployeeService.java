@@ -5,6 +5,7 @@ import BusinessLayer.HR.Employee;
 import BusinessLayer.HR.EmployeeController;
 import UtilSuper.PositionType;
 
+import java.util.List;
 import java.util.Vector;
 
 public class EmployeeService {
@@ -23,14 +24,13 @@ public class EmployeeService {
         catch (Exception ex){
             return ("somthing went wrong");
         }
-        return null;
     }
     public String addNewConstraint(int id ,String date ,boolean type, boolean temp){
         Response res = new Response();
         try
         {
             Employee employee = ec.getEmployee(id);
-            employee.addConstraint(date,type,temp);
+            employee.addSubmittedShift(date,type,temp);
         }
         catch (Exception ex){
         }
@@ -48,12 +48,12 @@ public class EmployeeService {
         }
         return null;
     }
-    public String getListOfAssignedShift(){
+    public String getListOfAssignedShift(int id ){
         Response res = new Response();
         try
         {
             Employee employee = ec.getEmployee(id);
-            return employee.getListOfAssignedShift();
+            return employee.getListOfSubmittedConstraints();
         }
         catch (Exception ex){
         }
@@ -67,7 +67,7 @@ public class EmployeeService {
             boolean bool = true;
             if(type.equals("e"))
                 bool = false;
-            return employee.addRestrictionToEmployee(id,date,bool);
+            employee.addRestriction(date,bool);
         }
         catch (Exception ex){
         }
