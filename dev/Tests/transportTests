@@ -1,0 +1,68 @@
+import static org.junit.Assert.*;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.LinkedHashMap;
+
+import org.junit.Before;
+import org.junit.Test;
+import BusinessLayer.Transport.*;
+
+public class LogisticsCenterTest {
+
+    private LogisticsCenter logisticsCenter;
+
+    @Before
+    public void setUp() {
+        LinkedHashMap<Integer, Truck> trucks = new LinkedHashMap<>();
+        LinkedHashMap<Integer, Delivery> deliveries = new LinkedHashMap<>();
+        LinkedHashMap<Product, Integer> productsInStock = new LinkedHashMap<>();
+        LinkedHashMap<Integer, Driver> drivers = new LinkedHashMap<>();
+        logisticsCenter = new LogisticsCenter(trucks, deliveries, productsInStock, drivers);
+    }
+
+    @Test
+    public void testOrderDelivery_noExistingDeliveries_success() {
+        Branch branch = new Branch("Test Branch", "Test Address", "Test Shipping Area");
+        LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> suppliers = new LinkedHashMap<>();
+        suppliers.put(new Supplier("Test Supplier", "Test Address", CoolingLevel.FROZEN), new LinkedHashMap<>());
+        suppliers.get(0).put(new Product("Test Product", 1), 10);
+        LocalDate requiredDate = LocalDate.of(2023, 4, 3);
+        LinkedHashMap<Supplier, Integer> supplierWeight = new LinkedHashMap<>();
+        supplierWeight.put(suppliers.keySet().iterator().next(), 100);
+        LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> remainingSuppliers =
+                logisticsCenter.orderDelivery(branch, suppliers, requiredDate, supplierWeight);
+        assertNull(remainingSuppliers);
+    }
+
+    @Test
+    public void testOrderDelivery_existingDeliveryToSameBranch_success() {
+        Branch branch = new Branch("Test Branch", "Test Address", "Test Shipping Area");
+        LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> suppliers = new LinkedHashMap<>();
+        suppliers.put(new Supplier("Test Supplier", "Test Address", CoolingLevel.FROZEN), new LinkedHashMap<>());
+        suppliers.get(0).put(new Product("Test Product", 1), 10);
+        LocalDate requiredDate = LocalDate.of(2023, 4, 3);
+        LinkedHashMap<Supplier, Integer> supplierWeight = new LinkedHashMap<>();
+        supplierWeight.put(suppliers.keySet().iterator().next(), 100);
+        logisticsCenter.orderDelivery(branch, suppliers, requiredDate, supplierWeight);
+
+        LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> remainingSuppliers =
+                logisticsCenter.orderDelivery(branch, suppliers, requiredDate, supplierWeight);
+        assertNull(remainingSuppliers);
+    }
+
+    @Test
+    public void testOrderDelivery_existingDeliveryToDifferentBranch_failure() {
+        Branch branch = new Branch("Test Branch", "Test Address", "Test Shipping Area");
+        LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> suppliers = new LinkedHashMap<>();
+        suppliers.put(new Supplier("Test Supplier", "Test Address", CoolingLevel.FROZEN), new LinkedHashMap<>());
+        suppliers.get(0).put(new Product("Test Product", 1), 10);
+        LocalDate requiredDate = LocalDate.of(2023, 4, 3);
+        LinkedHashMap<Supplier, Integer> supplierWeight = new LinkedHashMap<>();
+        supplierWeight.put(suppliers.keySet().iterator().next(), 100);
+        logisticsCenter.orderDelivery(branch, suppliers, requiredDate, supplierWeight);
+
+        Branch differentBranch = new Branch("Different Branch", "Different Address", "Different Shipping Area");
+        LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> remainingSuppliers
+    }
+}
