@@ -51,8 +51,13 @@ public class EmployeeController {
         Employee emp = employeesMapper.get(empolyeeId);
         if ( emp != null){
             if (emp.getPassword().equals(password))
-                return true;
+                if (emp.isManager())
+                    return true;
+            else
+                throw  new IllegalArgumentException("wron password");
         }
+        else
+            throw  new IllegalArgumentException("wron ID");
         return false;
     }
 
