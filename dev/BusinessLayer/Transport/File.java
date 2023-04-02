@@ -1,16 +1,16 @@
 package BusinessLayer.Transport;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class File {
     private int id;
-    private HashMap<Product,Integer> products; 
+    private LinkedHashMap<Product,Integer> products; 
 
     public File(int id){
         this.id = id;
-        this.products = new HashMap<Product, Integer>();
+        this.products = new LinkedHashMap<Product, Integer>();
     }
 
-    public HashMap<Product, Integer> getProducts() {
+    public LinkedHashMap<Product, Integer> getProducts() {
         return products;
     }
     public int getId() {
