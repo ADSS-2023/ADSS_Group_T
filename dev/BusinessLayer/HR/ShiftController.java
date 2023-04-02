@@ -18,9 +18,9 @@ public class ShiftController {
     }
 */
 
-    public void assignShiftnyManager{
+  /*  public void assignShiftnyManager{
 
-    }
+    }*/
     public void CreateShift(int shiftId, int managerID, String date,  String shiftType){
         Shift newShift = new Shift(shiftId, managerID, date, shiftType);
         shifts.put(shiftId,newShift);
