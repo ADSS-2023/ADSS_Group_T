@@ -7,9 +7,12 @@ public class Driver {
     private CoolingLevel coolingLevel;
     
 
-    public Driver(String name, LicenseType licenseType) {
+
+    public Driver(int id, String name, LicenseType licenseType, CoolingLevel coolingLevel) {
+        this.id = id;
         this.name = name;
         this.licenseType = licenseType;
+        this.coolingLevel = coolingLevel;
     }
 
     public String getName() {
@@ -20,6 +23,10 @@ public class Driver {
         this.name = name;
     }
 
+    public CoolingLevel getCoolingLevel() {
+        return coolingLevel;
+    }
+
     public LicenseType getLicenseLevel() {
         return this.licenseType;
     }
@@ -27,10 +34,10 @@ public class Driver {
     public void setLicenseLevel(LicenseType licenseType) {
         this.licenseType = licenseType;
     }
-    enum LicenseType {
+    public enum LicenseType {
         C, C1, E
     }
-    enum CoolingLevel {
+    public enum CoolingLevel {
        non ,fridge , freezer
     }
 }

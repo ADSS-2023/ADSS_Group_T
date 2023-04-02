@@ -1,16 +1,23 @@
 package BusinessLayer.Transport;
 
-public class Site {
-    private String address;
-    private String telNumber;
-    private String contactName;
-    private String shippingArea;
+public abstract class Site {
+    protected String address;
+    protected String telNumber;
+    protected String contactName;
 
-    public Site(String address,String telNumber,String contactName,String shippingArea){
+    public Site(String address,String telNumber,String contactName){
         this.address = address;
         this.telNumber = telNumber;
-        this. contactName = contactName;
-        this.shippingArea = shippingArea;
+        this.contactName = contactName;
     }
 
+    public String getAddress() {
+        return address;
+    }
+    public String getTelNumber() {
+        return telNumber;
+    }
+    public String getContactName() {
+        return contactName;
+    }
 }
