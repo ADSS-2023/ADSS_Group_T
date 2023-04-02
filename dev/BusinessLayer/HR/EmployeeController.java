@@ -2,6 +2,7 @@ package BusinessLayer.HR;
 
 import UtilSuper.PositionType;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -21,6 +22,24 @@ public class EmployeeController {
     }
 
 
+
+    public void addRestrictionToall(String date, boolean isMorning) {
+        for (Employee employee : employeesMapper.values()) {
+            if (employee.getShiftsRestriction().containsKey(date)) {
+                if (!employee.getShiftsRestriction().get(date).contains(isMorning)) {
+                    employee.getShiftsRestriction().get(date).add(isMorning);
+                }
+            } else {
+                List<Boolean> shiftTypes = new ArrayList<>();
+                shiftTypes.add(isMorning);
+                employee.getShiftsRestriction().put(date, shiftTypes);
+            }
+        }
+    }
+
+
+
+
     public HashMap<Integer, Employee> getEmployeesMapper(){
         return employeesMapper;
     }
@@ -30,10 +49,11 @@ public class EmployeeController {
     }
     public boolean login (int empolyeeId, String password){
         Employee emp = employeesMapper.get(empolyeeId);
-        if ( emp == null)
-            throw new NoSuchElementException("employee Id not exist");
-        else
-            emp.isManager();
+        if ( emp != null){
+            if (emp.getPassword().equals(password))
+                return true;
+        }
+        return false;
     }
 
     public void deleteEmployee(int emploeeyId){
@@ -41,6 +61,5 @@ public class EmployeeController {
             throw new NoSuchElementException("employee Id not exist");
         else
             employeesMapper.remove(emploeeyId);
-
     }
 }
