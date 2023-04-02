@@ -137,7 +137,8 @@ public class LogisticsCenter {
         if(!suppliers.isEmpty()){   //open new delivery
             Set<CoolingLevel> newDeliveriesCoolingLevels = countCoolingOptions(suppliers);
             for(CoolingLevel coolingLevel: newDeliveriesCoolingLevels){
-                date2deliveries.put(requiredDate,new ArrayList<>());
+                if(!date2deliveries.containsKey(requiredDate))
+                    date2deliveries.put(requiredDate,new ArrayList<>());
                 Truck t = scheduleTruck(requiredDate,coolingLevel);
                 if(t == null)       //in case there is no truck available for this delivery
                     return suppliers;
@@ -149,12 +150,16 @@ public class LogisticsCenter {
                 Delivery d = new Delivery(deliveryCounter,requiredDate, LocalTime.NOON,t.getWeight(),new HashMap<>(),
                         null,driver.getName(),t.getLicenseNumber(),branch.getShippingArea());
                 deliveryCounter++;
+                deliveries.put(d.getId(), d);
+                date2deliveries.get(requiredDate).add(d);
                 //add supply to the new delivery
                 for(Supplier supplier: suppliers.keySet()){
                     if(supplier.getCoolingLevel() == coolingLevel){
                         for(Product p: suppliers.get(supplier).keySet()){
                             if(d.getSource() == null)
                                 d.setSource(supplier);
+                            if(!d.getSuppliers().containsKey(supplier))
+                                d.addSupplier(supplier,filesCounter++);
                             d.addProductsToSupplier(supplier, p, suppliers.get(supplier).get(p));
                             suppliers.get(supplier).remove(p);
                         }
@@ -334,6 +339,7 @@ public class LogisticsCenter {
                 deliveries.get(deliveryID).getSuppliers().get(supplier).getProducts().replace(p, amount - unloadAmount);
             }
         }
+        deliveries.get(deliveryID).setTruckWeight(maxWeight);
     }
 
     public void replaceOrDropSite(int deliveryID){
@@ -361,8 +367,19 @@ public class LogisticsCenter {
         return deliveries.get(id);
     }
 
+    public ArrayList<Site> getSites() {
+        ArrayList<Site> sites = new ArrayList<>();
+        sites.addAll(suppliers.values());
+        sites.addAll(branches.values());
+        return sites;
+    }
 
+    public HashMap<Supplier, ArrayList<Product>> getSuppliers() {
 
+        return suppliersProducts;
+    }
 
-    
+    public ArrayList<Branch> getBranches() {
+        return new ArrayList<>(branches.values());
+    }
 }
