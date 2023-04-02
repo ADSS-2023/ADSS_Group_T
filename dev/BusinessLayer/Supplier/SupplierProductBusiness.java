@@ -25,19 +25,19 @@ public class SupplierProductBusiness {
         this.expiredDate = expiredDate;
     }
 
-    public void editDiscount(int productAmount, int discount){
+    public void editProductDiscount(int productAmount, int discount){
         quantitiesAgreement.put(productAmount, discount);
     }
 
-    public void addDiscount(int productAmount, int discount){
+    public void addProductDiscount(int productAmount, int discount){
         quantitiesAgreement.put(productAmount,discount);
     }
 
-    public void deleteDiscount(int productAmount, int discount){
+    public void deleteProductDiscount(int productAmount, int discount){
         quantitiesAgreement.remove(productAmount,discount);
     }
 
-    public boolean isEnough(int quantity){
+    public boolean hasEnoughQuantity(int quantity){
         return quantity >= quantity;
     }
 

@@ -1,6 +1,7 @@
 package BusinessLayer.Supplier;
 
-import java.util.Dictionary;
+import Util.Discounts;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +17,11 @@ public class    SupplierBusiness {
     private boolean selfDelivery;
     private HashMap<Integer, SupplierProductBusiness> products;
 
-    public SupplierBusiness(String name, String address, int supplierNum,int bankAccountNum, HashMap<String, Integer> contacts, List<String> constDeliveryDays, boolean selfDelivery, HashMap<Integer, SupplierProductBusiness> products){
+    private HashMap<Integer, Integer> discountPerTotalQuantity;
+
+    private HashMap<Integer, Integer> discountPerTotalPrice;
+
+    public SupplierBusiness(String name, String address, int supplierNum,int bankAccountNum, HashMap<String, Integer> contacts, List<String> constDeliveryDays, boolean selfDelivery, HashMap<Integer, SupplierProductBusiness> products, HashMap<Integer, Integer> discountPerTotalQuantity, HashMap<Integer, Integer> discountPerTotalPrice){
         this.name = name;
         this.address = address;
         this.supplierNum = supplierNum;
@@ -25,12 +30,14 @@ public class    SupplierBusiness {
         this.constDeliveryDays = constDeliveryDays;
         this.selfDelivery = selfDelivery;
         this.products = products;
+        this.discountPerTotalQuantity = discountPerTotalQuantity;
+        this.discountPerTotalPrice = discountPerTotalPrice;
     }
 
     public boolean isProductExists(String productName, String manufacturer) {
         for (Map.Entry<Integer, SupplierProductBusiness> entry : products.entrySet()) {
             SupplierProductBusiness sp = entry.getValue();
-            if (sp.getManufacturer() == manufacturer && sp.getName() == productName)
+            if (sp.getManufacturer().equals(manufacturer) && sp.getName().equals(productName))
                 return true;
         }
         return false;
@@ -46,22 +53,58 @@ public class    SupplierBusiness {
     public void deleteProduct(int productNum){
         products.remove(productNum);
     }
-    public void editDiscount(int productNum, int productAmount, int discount){
-        getSupplierProduct(productNum).editDiscount(productAmount, discount);
+    public void editProductDiscount(int productNum, int productAmount, int discount){
+        getSupplierProduct(productNum).editProductDiscount(productAmount, discount);
     }
 
-    public void addDiscount(int productNum, int productAmount, int discount){
-        getSupplierProduct(productNum).addDiscount(productAmount, discount);
+    public void addProductDiscount(int productNum, int productAmount, int discount){
+        getSupplierProduct(productNum).addProductDiscount(productAmount, discount);
     }
-    public void deleteDiscount(int productNum, int productAmount, int discount){
-        getSupplierProduct(productNum).deleteDiscount(productAmount, discount);
+
+    public void deleteProductDiscount(int productNum, int productAmount, int discount){
+        getSupplierProduct(productNum).deleteProductDiscount(productAmount, discount);
+    }
+
+    public void editSupplierDiscount(Discounts discountEnum, int amount, int discount) {
+        switch(discountEnum){
+            case DISCOUNT_BY_TOTAL_PRICE :
+                if (discountPerTotalPrice.containsKey(amount))
+                    discountPerTotalPrice.put(amount, discount);
+                break;
+            case DISCOUNT_BY_TOTAL_QUANTITY:
+                if (discountPerTotalQuantity.containsKey(amount))
+                    discountPerTotalQuantity.put(amount, discount);
+                break;
+        }
+    }
+
+    public void addSupplierDiscount(Discounts discountEnum, int amount, int discount) {
+        switch(discountEnum){
+            case DISCOUNT_BY_TOTAL_PRICE :
+                discountPerTotalPrice.put(amount, discount);
+                break;
+            case DISCOUNT_BY_TOTAL_QUANTITY:
+                discountPerTotalQuantity.put(amount, discount);
+                break;
+        }
+    }
+
+    public void deleteSupplierDiscount(Discounts discountEnum, int amount, int discount) {
+        switch(discountEnum){
+            case DISCOUNT_BY_TOTAL_PRICE :
+                discountPerTotalPrice.remove(amount, discount);
+                break;
+            case DISCOUNT_BY_TOTAL_QUANTITY:
+                discountPerTotalQuantity.remove(amount, discount);
+                break;
+        }
     }
 
     public SupplierProductBusiness getSupplierProduct(int productNumber){
         return products.get(productNumber);
     }
 
-    public void editSupplier(String name, String address, int supplierNum,int bankAccountNum, HashMap<String, Integer> contacts, List<String> constDeliveryDays, boolean selfDelivery, HashMap<Integer, SupplierProductBusiness> products){
+    public void editSupplier(String name, String address, int supplierNum,int bankAccountNum, HashMap<String, Integer> contacts, List<String> constDeliveryDays, boolean selfDelivery, HashMap<Integer, SupplierProductBusiness> products, HashMap<Integer, Integer> discountPerTotalQuantity, HashMap<Integer, Integer> discountPerTotalPrice){
         this.name = name;
         this.address = address;
         this.supplierNum = supplierNum;
@@ -70,12 +113,14 @@ public class    SupplierBusiness {
         this.constDeliveryDays = constDeliveryDays;
         this.selfDelivery = selfDelivery;
         this.products = products;
+        this.discountPerTotalQuantity = discountPerTotalQuantity;
+        this.discountPerTotalPrice = discountPerTotalPrice;
     }
 
     public SupplierProductBusiness getProduct(String productName, String manufacturer) {
         for (Map.Entry<Integer, SupplierProductBusiness> entry : products.entrySet()) {
             SupplierProductBusiness sp = entry.getValue();
-            if (sp.getManufacturer() == manufacturer && sp.getName() == productName)
+            if (sp.getManufacturer().equals(manufacturer) && sp.getName().equals(productName))
                 return sp;
         }
         return null;
