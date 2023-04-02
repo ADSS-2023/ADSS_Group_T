@@ -22,11 +22,14 @@ import java.util.Scanner;
 
 public class DeliveryManagerService {
     private DeliveryController dc;
-    private List<Site> sites;
-    private HashMap<Site,List<Product>> suppliers;
+   // private List<Site> sites;
+    private ArrayList<Branch> branches;
+    private HashMap<Supplier, ArrayList<Product>> suppliers;
+    private  HashMap<Supplier,Integer> weightOfOrder;
     
     public DeliveryManagerService() {
         dc = new DeliveryController();
+        HashMap<Supplier,Integer> weightOfOrder = new HashMap<>();
         //sites = new ArrayList<>();
        // suppliers = new HashMap<>();
         
@@ -59,11 +62,11 @@ public class DeliveryManagerService {
 
         
          //---------- init suppliers ----------//
-        Site site_tnuva = new Supplier("Tnuva", "111111111", "Contact 1", CoolingLevel.fridge);
-        Site site_bakery = new Supplier("Beverages", "22222222", "Contact 2", CoolingLevel.non);
-        Site site_snacks = new Supplier("Snacks", "333333333", "Contact 3",CoolingLevel.non);
-        Site site_beverages = new Supplier("Beverages", "444444444", "Contact 4", CoolingLevel.non);
-        Site site_golda = new Supplier("Golda", "555555555", "Contact 5", CoolingLevel.freezer);
+        Supplier site_tnuva = new Supplier("Tnuva", "111111111", "Contact 1", CoolingLevel.fridge);
+        Supplier site_bakery = new Supplier("Bakery", "22222222", "Contact 2", CoolingLevel.non);
+        Supplier site_snacks = new Supplier("Snacks", "333333333", "Contact 3",CoolingLevel.non);
+        Supplier site_beverages = new Supplier("Beverages", "444444444", "Contact 4", CoolingLevel.non);
+        Supplier site_golda = new Supplier("Golda", "555555555", "Contact 5", CoolingLevel.freezer);
     
        
         
@@ -89,24 +92,24 @@ public class DeliveryManagerService {
      
 
         // Create product lists for each supplier
-        List<Product> tnuvaProducts = new ArrayList<>();
+        ArrayList<Product> tnuvaProducts = new ArrayList<>();
         tnuvaProducts.add(product_milk);
         tnuvaProducts.add(product_cheese);
         tnuvaProducts.add(product_eggs);
-        List<Product> bakeryProducts = new ArrayList<>();
+        ArrayList<Product> bakeryProducts = new ArrayList<>();
         bakeryProducts.add(product_bread);
         bakeryProducts.add(product_pita);
         bakeryProducts.add(product_cake);
-        List<Product> snacksProducts = new ArrayList<>();
+        ArrayList<Product> snacksProducts = new ArrayList<>();
         snacksProducts.add(product_chocolate);
         snacksProducts.add(product_chips);
         snacksProducts.add(product_doritos);
-        List<Product> beveragesProducts = new ArrayList<>();
+        ArrayList<Product> beveragesProducts = new ArrayList<>();
         beveragesProducts.add(product_coke);
         beveragesProducts.add(product_sprite);
         beveragesProducts.add(product_fanta);
         beveragesProducts.add(product_fuzeTea);
-        List<Product> goldaProducts = new ArrayList<>();
+        ArrayList<Product> goldaProducts = new ArrayList<>();
         goldaProducts.add(product_mintChocolateChip);
         goldaProducts.add(product_cookiesAndCream);
         goldaProducts.add(product_strawberryCheesecake);
@@ -122,8 +125,9 @@ public class DeliveryManagerService {
 
 
         //if we add more its not update!!!!!!!!!!1!!!!!!
-        this.sites = dc.getSites();
+        //this.sites = dc.getSites();
         this.suppliers = dc.getSuppliers();
+        this.branches = dc.getBranches();
 
 
 
@@ -170,31 +174,33 @@ public class DeliveryManagerService {
     
     // option 1
     void skipDay() {
-        sites = dc.getSites();
+        //sites = dc.getSites();
 
 
-        ArrayList<Delivery> deliveriesWithProblems = dc.skipDay();
+        ArrayList<Integer> deliveriesWithProblems = dc.skipDay();
         Scanner scanner = new Scanner(System.in);
-        for (Delivery delivery : deliveriesWithProblems) {
-            System.out.println("Delivery " + delivery.getId() + " has problems. Please choose a solution:");
-            System.out.println("1. Switch/replace destination");
-            System.out.println("2. Change truck");
-            System.out.println("3. Remove products");
-            int choice = scanner.nextInt();
-            
-            switch (choice) {
-                case 1:
-                    dc.handleProblem(delivery.getId(), "switch/replace");
-                    break;
-                case 2:
-                    dc.handleProblem(delivery.getId(), "change truck");
-                    break;
-                case 3:
-                    dc.handleProblem(delivery.getId(), "remove product");
-                    break;
-                default:
-                    System.out.println("Invalid choice.");
-                    break;
+        if(deliveriesWithProblems != null){
+            for (int deliveryID : deliveriesWithProblems) {
+                System.out.println("Delivery " + deliveryID + " has problems. Please choose a solution:");
+                System.out.println("1. Switch/replace destination");
+                System.out.println("2. Change truck");
+                System.out.println("3. Remove products");
+                int choice = scanner.nextInt();
+                
+                switch (choice) {
+                    case 1:
+                        dc.handleProblem(deliveryID, 1);
+                        break;
+                    case 2:
+                        dc.handleProblem(deliveryID, 2);
+                        break;
+                    case 3:
+                        dc.handleProblem(deliveryID, 3);
+                        break;
+                    default:
+                        System.out.println("Invalid choice.");
+                        break;
+                }
             }
         }
         
@@ -204,31 +210,33 @@ public class DeliveryManagerService {
 
     // option 2
     private void addNewDelivery() {
+        this.weightOfOrder = new HashMap<>();
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter the delivery details:");
-        Site destinationSite = chooseDestinationSite(scanner);
-        HashMap<Site, HashMap<Product, Integer>> selectedProducts = selectProducts(scanner, destinationSite);
+        Branch destinationSite = chooseDestinationSite(scanner);
+        HashMap<Supplier, HashMap<Product, Integer>> selectedProducts = selectProducts(scanner);
         LocalDate deliveryDate = chooseDeliveryDate(scanner);
+        dc.orderDelivery(destinationSite,selectedProducts , deliveryDate,weightOfOrder);
         
     }
     
-    private Site chooseDestinationSite(Scanner scanner) {
+    private Branch chooseDestinationSite(Scanner scanner) {
         System.out.println("\nPlease choose a destination site:");
-        for (int i = 0; i < sites.size(); i++) {
-            System.out.println((i + 1) + ". " + sites.get(i).getAddress());
+        for (int i = 0; i < branches.size(); i++) {
+            System.out.println((i + 1) + ". " + branches.get(i).getAddress());
         }
         int siteIndex = scanner.nextInt() - 1;
-        if (siteIndex < 0 || siteIndex >= sites.size()) {
+        if (siteIndex < 0 || siteIndex >= branches.size()) {
             System.out.println("Invalid site choice.");
             return null;
         }
-        return sites.get(siteIndex);
+        return branches.get(siteIndex);
     }
     
-    private HashMap<Site, HashMap<Product, Integer>> selectProducts(Scanner scanner, Site destinationSite) {
-        HashMap<Site, HashMap<Product, Integer>> selectedProducts = new HashMap<>();
-        List<Site> selectedSuppliers = new ArrayList<>();
-        HashMap<Site,Integer> weightOfOrder = new HashMap<>();
+    private HashMap<Supplier, HashMap<Product, Integer>> selectProducts(Scanner scanner) {
+        HashMap<Supplier, HashMap<Product, Integer>> selectedProducts = new HashMap<>();
+        List<Supplier> selectedSuppliers = new ArrayList<>();
+       
     
         while (true) {
             System.out.println("\nDo you want to add products from a supplier? (Y/N)");
@@ -237,7 +245,7 @@ public class DeliveryManagerService {
                 break;
             }
     
-            Site selectedSupplier = chooseSupplier(scanner, selectedSuppliers, destinationSite);
+            Supplier selectedSupplier = chooseSupplier(scanner, selectedSuppliers);
             if (selectedSupplier == null) {
                 break;
             }
@@ -257,7 +265,7 @@ public class DeliveryManagerService {
                 System.out.println("Invalid quantity.");
                 break;
             }
-            weightOfOrder.put(selectedSupplier, weight);
+            this.weightOfOrder.put(selectedSupplier, weight);
         }
     
         return selectedProducts;
@@ -267,7 +275,7 @@ public class DeliveryManagerService {
 
     private HashMap<Product, Integer> selectSupplierProducts(Scanner scanner, Site selectedSupplier) {
         System.out.println("\nPlease choose products from " + selectedSupplier.getAddress() + ":");
-        List<Product> products = suppliers.get(selectedSupplier);
+        List<Product> products = new ArrayList<>(suppliers.get(selectedSupplier));
         if (products == null || products.isEmpty()) {
             System.out.println("No products available from " + selectedSupplier.getAddress() + ".");
             return new HashMap<>();
@@ -309,13 +317,14 @@ public class DeliveryManagerService {
         }
         return selectedProducts;
     }
+
     
 
-    private Site chooseSupplier(Scanner scanner, List<Site> selectedSuppliers, Site destinationSite) {
+    private Supplier chooseSupplier(Scanner scanner, List<Supplier> selectedSuppliers) {
         System.out.println("\nPlease choose a supplier:");
         int supplierIndex = 0;
         for (Site supplier : this.suppliers.keySet()) {
-            if (selectedSuppliers.contains(supplier) || supplier.equals(destinationSite)) {
+            if (selectedSuppliers.contains(supplier) ) {
                 continue; // Skip already selected and destination site
             }
             System.out.println((supplierIndex + 1) + ". " + supplier.getAddress());
@@ -333,9 +342,9 @@ public class DeliveryManagerService {
         }
     
         supplierIndex = 0;
-        Site selectedSupplier = null;
-        for (Site supplier : suppliers.keySet()) {
-            if (selectedSuppliers.contains(supplier) || supplier.equals(destinationSite)) {
+        Supplier selectedSupplier = null;
+        for (Supplier supplier : suppliers.keySet()) {
+            if (selectedSuppliers.contains(supplier) ) {
                 continue; // Skip already selected and destination site
             }
             if (supplierIndex == selectedSupplierIndex) {

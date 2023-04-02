@@ -20,9 +20,9 @@ public class DeliveryController {
         lc.orderDelivery(branch, suppliers , requiredDate, supplierWeight);
         return null;
     }
-    public ArrayList<Delivery> skipDay(){
-        //return lc.skipDay();
-        return null;
+    public ArrayList<Integer> skipDay(){
+        return lc.skipDay();
+        
     }
     public boolean addTruck(int licenseNumber, String model, int weight, int maxWeight ,
                          LicenseType licenseType, CoolingLevel coolingLevel){
@@ -67,26 +67,25 @@ public class DeliveryController {
     public List<Site> getSites(){
         return lc.getSites();
     }
-    public HashMap<Site, List<Product>> getSuppliers(){
+    public HashMap<Supplier, ArrayList<Product>> getSuppliers(){
         return lc.getSuppliers();
     }
 
-    public void handleProblem(int id, String string) {
+    public void handleProblem(int id, int action) {
+        lc.overWeightAction(id,action);
     }
 
-    public HashMap<Site,List<Product>> getBranches(){
+    public ArrayList<Branch> getBranches(){
         return lc.getBranches();
     }
 
     public void addBranch(Branch newBranch){
         lc.addBranch(newBranch);
     }
-    public void addSupplier(Site supplier,List <Product> listOfProducts ){
+    public void addSupplier(Supplier supplier,ArrayList <Product> listOfProducts ){
         lc.addSupplier(supplier,listOfProducts);
     }
-    public void addSupplier(Supplier newSupplier){
-        lc.addSupplier(newSupplier);
-    }
+ 
 
 
 

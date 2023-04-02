@@ -110,4 +110,7 @@ public class Delivery {
     public void setTruckNumber(int truckNumber) {
         this.truckNumber = truckNumber;
     }
+    public void addSupplier(Supplier supplier,int fileID){
+        this.suppliers.put(supplier, new File(id));
+    }
 }
