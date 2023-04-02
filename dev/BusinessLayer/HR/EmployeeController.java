@@ -1,8 +1,11 @@
 package BusinessLayer.HR;
 
+import UtilSuper.PositionType;
+
 import java.util.HashMap;
+import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Vector;
+
 
 public class EmployeeController {
     private HashMap<Integer,Employee> employeesMapper;
@@ -12,8 +15,9 @@ public class EmployeeController {
         employeesMapper = new HashMap<Integer,Employee>();
         this.manager =manager;
     }
-    public void addNewEmployee(String employeeName,String bankAccount,Vector<Position> qualifedPositions, String joiningDay, int employeeId, String password){
+    public void addNewEmployee(String employeeName, String bankAccount, List<PositionType> qualifedPositions, String joiningDay, int employeeId, String password){
         Employee newEmployee = new Employee(employeeName, bankAccount, qualifedPositions, joiningDay, employeeId, password);
+        employeesMapper.putIfAbsent(employeeId, newEmployee);
     }
 
 
@@ -24,7 +28,7 @@ public class EmployeeController {
     public Employee getEmployee(int id){
         return employeesMapper.get(id);
     }
-    public void login (int empolyeeId, String password){
+    public boolean login (int empolyeeId, String password){
         Employee emp = employeesMapper.get(empolyeeId);
         if ( emp == null)
             throw new NoSuchElementException("employee Id not exist");

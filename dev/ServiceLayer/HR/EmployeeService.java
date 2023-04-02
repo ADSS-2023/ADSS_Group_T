@@ -3,7 +3,7 @@ package ServiceLayer.HR;
 import BusinessLayer.HR.Constraint;
 import BusinessLayer.HR.Employee;
 import BusinessLayer.HR.EmployeeController;
-import BusinessLayer.HR.Position;
+import UtilSuper.PositionType;
 
 import java.util.Vector;
 
@@ -13,7 +13,7 @@ public class EmployeeService {
     public EmployeeService(EmployeeController ec){
 
     }
-    public String addNewEmployee(String employeeName, String bankAccount, Vector<Position> qualifedPositions, Vector<Constraint> constraints, String joiningDay,int id , String password){
+    public String addNewEmployee(String employeeName, String bankAccount, List<PositionType> qualifedPositions, Vector<Constraint> constraints, String joiningDay, int id , String password){
         Response res = new Response();
         try
         {
