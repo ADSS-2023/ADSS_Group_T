@@ -20,4 +20,5 @@ public abstract class Site {
     public String getContactName() {
         return contactName;
     }
+
 }

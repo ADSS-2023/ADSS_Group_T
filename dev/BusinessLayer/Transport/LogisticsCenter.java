@@ -375,7 +375,6 @@ public class LogisticsCenter {
     }
 
     public HashMap<Supplier, ArrayList<Product>> getSuppliers() {
-
         return suppliersProducts;
     }
 
