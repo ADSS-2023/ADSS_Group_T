@@ -6,10 +6,13 @@ import java.util.Scanner;
 
 public class Presentaition {
     private EmployeeService employeeService;
-    private MangerService mangerService;
     private ShifService shifService;
 
-    public Presentaition (EmployeeService employeeService , MangerService mangerService) {}
+    public Presentaition (EmployeeService employeeService , ShifService shifService ) {
+        this.employeeService = employeeService;
+        this.shifService = shifService;
+
+    }
     public void begin(){
         Scanner input = new Scanner(System.in);
         System.out.println("Welcome to Shefa-yissaschar : please enter your ID number");
@@ -18,8 +21,9 @@ public class Presentaition {
         String ans_password = input.next();
         String type = employeeService.login(ans_id,ans_password);
         if (type.equals("m")) {//manger menu
-            int chosen_num = 0;
-            while (chosen_num != 7)
+            boolean repeat = true;
+            while (repeat)
+                repeat = false;
                 System.out.println("" +
                         "manger menu - choose action number" +
                         " \n 1.approve constraint" +
@@ -29,7 +33,7 @@ public class Presentaition {
                         " \n 5.show shift history" +
                         " \n 6.add shift requirements" +
                         " \n 7.exit ");
-            chosen_num = input.nextInt();
+            int chosen_num = input.nextInt();
             switch (chosen_num) {
                 case 1:
                     break;
@@ -44,6 +48,7 @@ public class Presentaition {
                     System.out.println("add restriction to employee - enter morning(m)/evening(e)");
                     String ans_type_3 = input.next();
                     employeeService.addRestrictionToEmployee(ans_employee_id_3,ans_date_3,ans_type_3);
+                    repeat = true;
                     break;
                 case 4:
                     break;
@@ -52,6 +57,7 @@ public class Presentaition {
                 case 6:
                     break;
                 case 7:
+                    repeat = true;
                     break;
                 default:
                     System.out.println("Invalid input. Please enter a number between 1 and 5.");
