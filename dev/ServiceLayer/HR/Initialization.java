@@ -16,7 +16,7 @@ public class Initialization {
         EmployeeController employeeController = new EmployeeController();
         ShiftController shiftController = new ShiftController();
         EmployeeService Emp = new EmployeeService(employeeController);
-        ShifService shifService = new ShifService(shiftController);
+        ShiftService shiftService = new ShiftService(shiftController);
 
 
         List<PositionType> pt1 = new ArrayList<PositionType>();
@@ -33,7 +33,7 @@ public class Initialization {
 
 
 
-        Presentaition presentaition = new Presentaition(Emp,shifService);
+        Presentaition presentaition = new Presentaition(Emp,shiftService);
         presentaition.begin();
     }
 }

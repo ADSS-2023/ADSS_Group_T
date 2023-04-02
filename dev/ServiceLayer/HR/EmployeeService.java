@@ -5,77 +5,80 @@ import BusinessLayer.HR.Employee;
 import BusinessLayer.HR.EmployeeController;
 import UtilSuper.PositionType;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
 
 public class EmployeeService {
     private EmployeeController ec;
 
-    public EmployeeService(EmployeeController ec){
+    public EmployeeService(EmployeeController ec) {
         this.ec = ec;
+    }
 
-    }
-    public String addNewEmployee(String employeeName, String bankAccount, List<PositionType> qualifedPositions, Vector<Constraint> constraints, String joiningDay, int id , String password){
+    public String addNewConstraint(int id, String date, boolean type, boolean temp) {
         Response res = new Response();
-        try
-        {
-            ec.addNewEmployee(employeeName,bankAccount,qualifedPositions,joiningDay,id,password,false);
-            return ("great success");
-        }
-        catch (Exception ex){
-            return ("somthing went wrong");
-        }
-    }
-    public String addNewConstraint(int id ,String date ,boolean type, boolean temp){
-        Response res = new Response();
-        try
-        {
+        try {
             Employee employee = ec.getEmployee(id);
-            employee.addSubmittedShift(date,type,temp);
-        }
-        catch (Exception ex){
+            employee.addSubmittedShift(date, type, temp);
+        } catch (Exception ex) {
         }
         return null;
     }
-    public String login(int id , String password){
+
+    public String login(int id, String password) {
         Response res = new Response();
-        try
-        {
-            if(ec.login(id,password))
+        try {
+            if (ec.login(id, password))
                 return "m";
             else return "e";
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
         }
         return null;
     }
-    public String getListOfAssignedShift(int id ){
+
+    public String getListOfAssignedShift(int id) {
         Response res = new Response();
-        try
-        {
+        try {
             Employee employee = ec.getEmployee(id);
             return employee.getListOfSubmittedConstraints();
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
         }
         return null;
     }
-    public String addRestrictionToEmployee(int id,String date,String type){
+
+    public String addRestrictionToEmployee(int id, String date, String type) {
         Response res = new Response();
-        try
-        {
+        try {
             Employee employee = ec.getEmployee(id);
             boolean bool = true;
-            if(type.equals("e"))
+            if (type.equals("e"))
                 bool = false;
-            employee.addRestriction(date,bool);
+            employee.addRestriction(date, bool);
+        } catch (Exception ex) {
         }
-        catch (Exception ex){
+        return null;
+    }
+
+    public String addNewEmployee(String employeeName, String bankAccount, String joiningDay, int employeeId, String password, boolean isManger) {
+        Response res = new Response();
+        try {
+            ec.addNewEmployee(employeeName, bankAccount, null, joiningDay, employeeId, password, isManger);
+        } catch (Exception ex) {
         }
         return null;
 
     }
 
+    public String addQualification(int id, String quali) {
+        Response res = new Response();
+        try {
+            Employee employee = ec.getEmployee(id);
 
+        } catch (Exception ex) {
+        }
+        return null;
 
+    }
 }
+
