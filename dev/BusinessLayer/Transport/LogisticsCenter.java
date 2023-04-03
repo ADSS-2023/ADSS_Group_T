@@ -388,4 +388,8 @@ public class LogisticsCenter {
     public ArrayList<Branch> getBranches() {
         return new ArrayList<>(branches.values());
     }
+
+    public HashMap<Product, Integer> getProductsInStock() {
+        return productsInStock;
+    }
 }
