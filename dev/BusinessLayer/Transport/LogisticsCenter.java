@@ -319,7 +319,7 @@ public class LogisticsCenter {
             }
             else if(productsInStock.containsKey(p)) {  //product exist in stock but not in the requested amount
                 requestedSupply.replace(p,requestedSupply.get(p) - productsInStock.get(p));
-                productsInStock.replace(p, 0);
+                productsInStock.remove(p);
             }
         }
         return requestedSupply;
