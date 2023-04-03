@@ -66,11 +66,13 @@ public class OrderController {
     public void addToShoppingLists(ItemToOrder item) {
         HashMap<SupplierProductBusiness,Integer> productsToOrder  =  sc.findSuppliersProduct(item);
         for(Map.Entry<SupplierProductBusiness, Integer> product : productsToOrder.entrySet()) {
+            //generate new OrderProduct
             int productNumber = product.getKey().getProductNum();
-            int initialPrice = product.getKey().getPrice();
-            int discount = product.getKey().getDiscount(item.getQuantity());
-            int finalPrice = initialPrice*item.getQuantity()*(1-(discount/100));
+            int initialPrice = product.getKey().getPrice()* item.getQuantity();
+            int discount = initialPrice - product.getKey().getPriceByQuantity(item.getQuantity());
+            int finalPrice = initialPrice-discount;
             OrderProduct orderProduct = new OrderProduct(item.getProductName(),productNumber,item.getQuantity(),initialPrice,discount,finalPrice);
+           //update the suppliers shopping list
             int supplierNum = product.getKey().getSupplierNum();
             if(!shoppingLists.containsKey(supplierNum))
                 shoppingLists.put(supplierNum,new LinkedList());
