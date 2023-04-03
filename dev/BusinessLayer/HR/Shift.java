@@ -10,19 +10,18 @@ public class Shift {
     private boolean shiftType;
     private HashMap<String, Integer> employeesRequirement; // HashMap<PositionType, amount> - require employees per shift
     private HashMap<String, List<Employee>> assignedEmployee; // HashMap<PositionType, EmployeesToFullfill> - the Employees that assign to the shifts by manager
-    private HashMap<String, List<Employee>> submittedPositionByEmployeesUpdated;
-    private HashMap<String, List<Employee>> submittedPositionByEmployeesAll;
+    private HashMap<String, List<Employee>> submittedPositionByEmployees;
 
 
-    public Shift(int shiftId, int managerID, String date,  boolean shiftType) {
+
+    public Shift(int shiftId, int managerID, String date,  boolean shiftType ) {
         this.shiftId = shiftId;
         this.date = date;
         this.shiftType = shiftType;
         this.managerID = managerID;
         employeesRequirement = createNewEmployeesRequirement();
         assignedEmployee = createNewFulfillPositionByEmployees();
-        submittedPositionByEmployeesUpdated = createNewSubmittedPositionByEmployees();
-        submittedPositionByEmployeesAll = createNewSubmittedPositionByEmployees();
+        submittedPositionByEmployees = createNewSubmittedPositionByEmployees();
     }
 
     public Shift(int shiftId,  String date,  boolean shiftType) {
@@ -32,8 +31,7 @@ public class Shift {
         this.managerID = managerID;
         employeesRequirement = createNewEmployeesRequirement();
         assignedEmployee = createNewFulfillPositionByEmployees();
-        submittedPositionByEmployeesUpdated = createNewSubmittedPositionByEmployees();
-        submittedPositionByEmployeesAll = createNewSubmittedPositionByEmployees();
+        submittedPositionByEmployees= createNewSubmittedPositionByEmployees();
         managerID = -1;
     }
 
@@ -60,6 +58,8 @@ public class Shift {
         }
         return submittedPositionByEmployees;
     }
+
+
 
     public void addEmployeeRequirements(HashMap<String, Integer> requirements) {
         for (Map.Entry<String, Integer> entry : requirements.entrySet()) {
@@ -115,25 +115,26 @@ public class Shift {
 
 
 
-    public void submittedPosition(String pos, Employee emp) {
+    public void addSubmitPosition(String pos, Employee emp) {
         if (!assignedEmployee.containsKey(pos)) {
             throw  new IllegalArgumentException("there is no such position requierment");
         }
         else{
-            submittedPositionByEmployeesUpdated.get(pos).add(emp);
-            s
+
+            submittedPositionByEmployees.get(pos).add(emp);
         }
     }
 
 
-    public void assignEmployee(PositionType pos, Employee emp) {
-        if (!assignedEmployee.containsKey(pos)) {
-            throw  new IllegalArgumentException("there is no position exist");
-        }
-        else{
+    public void addAssignPosition(String pos, Employee emp) {
+       if (submittedPositionByEmployees.get(pos).contains(emp)) {
             assignedEmployee.get(pos).add(emp);
-        }
+            submittedPositionByEmployees.get(pos).remove(emp);
+        } else
+            throw new IllegalArgumentException("the employee didn't submit for this position");
     }
+
+
 
     public int getShiftId() {
         return shiftId;
