@@ -21,21 +21,20 @@ public class OrderController {
 
     public void createOrder(List<ItemToOrder> items) throws Exception {
         SupplierBusiness chosenSupplier = sc.findSingleSupplier(items);
-
-
         if(chosenSupplier==null) {
             for (ItemToOrder item : items) {
                 HashMap<SupplierProductBusiness,Integer> productsToOrder  =  sc.findSuppliersProduct(item);
-                for(Map.Entry<SupplierProductBusiness, Integer> product : productsToOrder.entrySet()) {
-                    addToShoppingLists(item.getProductName(),item.getManufacturer()),product.getValue();
-
-                }
+                for(Map.Entry<SupplierProductBusiness, Integer> product : productsToOrder.entrySet())
+                    addToShoppingList(product.getKey().getProductNum(),product.getKey().getSupplierNum(),product.getValue());
             }
-            createOrders();
         }
         else{
-            chosenSupplier.
+            for (ItemToOrder item : items) {
+                SupplierProductBusiness supplierProduct = chosenSupplier.getSupplierProduct(item.getProductName(), item.getManufacturer());
+                addToShoppingList(supplierProduct.getProductNum(), supplierProduct.getSupplierNum(), item.getQuantity());
+            }
         }
+        createOrders();
     }
 
 
@@ -59,11 +58,12 @@ public class OrderController {
            }
 
            //calculate supplier general discounts and final prices
-           int finalPrice = supplier.getPriceAfterTotalDiscount(totalProductsNum,totalorderPrice);
-           int discountPerProduct = (totalorderPrice-finalPrice)/products.size();
+           int finalTotalPrice = supplier.getPriceAfterTotalDiscount(totalProductsNum,totalorderPrice);
+
            for (OrderProduct product : products){
-               product.setDiscount(discountPerProduct+product.getDiscount());
-               product.setFinalPrice(product.getFinalPrice()-discountPerProduct);
+               int discountPerProducts = (product.getFinalPrice()/totalorderPrice)*(totalorderPrice-finalTotalPrice);
+               product.setDiscount(discountPerProducts+product.getDiscount());
+               product.setFinalPrice(product.getFinalPrice()-discountPerProducts);
            }
 
            //create order from products in the send and send to delivery if needed
@@ -85,19 +85,16 @@ public class OrderController {
         //activate module DELIVERY
     }
 
-    //this function gets an item, calculates which suppliers will supply the specific quantities
-    // and adds an orderProduct to a specific shopping list of a certain supplier
-    public void addToShoppingLists(String productName,String Manufacturer,int quantity,int supplierNum) throws Exception {
-
-            sc.getSupplier(supplierNum).get
+    //this function adds an item to a suppliers shopping list
+    public void addToShoppingList(int productNum,int supplierNum,int quantity) throws Exception {
+            SupplierProductBusiness product = sc.getSupplier(supplierNum).getSupplierProduct(productNum);
             //generate new OrderProduct
-            int productNumber = product.getKey().getProductNum();
-            int initialPrice = product.getKey().getPrice()* item.getQuantity();
-            int discount = initialPrice - product.getKey().getPriceByQuantity(item.getQuantity());
+            int productNumber = product.getProductNum();
+            int initialPrice = product.getPrice()* quantity;
+            int discount = initialPrice - product.getPriceByQuantity(quantity);
             int finalPrice = initialPrice-discount;
-            OrderProduct orderProduct = new OrderProduct(item.getProductName(),productNumber,item.getQuantity(),initialPrice,discount,finalPrice);
+            OrderProduct orderProduct = new OrderProduct(product.getName(),productNumber,quantity,initialPrice,discount,finalPrice);
            //update the suppliers shopping list
-            int supplierNum = product.getKey().getSupplierNum();
             if(!shoppingLists.containsKey(supplierNum))
                 shoppingLists.put(supplierNum,new LinkedList());
             shoppingLists.get(supplierNum).add(orderProduct);
