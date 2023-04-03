@@ -14,6 +14,7 @@ public class Shift {
 
 
 
+
     public Shift(int shiftId, int managerID, String date,  boolean shiftType) {
         this.shiftId = shiftId;
         this.date = date;
@@ -74,6 +75,7 @@ public class Shift {
 
     public String isLegalShift() {
         boolean hasManager = false;
+        String missing = "";
         // Check if all position requirements are fulfilled
         for (Map.Entry<String, Integer> entry : employeesRequirement.entrySet()) {
             String position = entry.getKey();
@@ -81,16 +83,19 @@ public class Shift {
             int assignedAmount = fulfillPositionByEmployees.get(position).size();
             if (assignedAmount != requiredAmount) {
                 int num = requiredAmount - assignedAmount;
-                return  num + " employees are missing in the position of " + position;
+                missing += num + " employees are missing in the position of " + position + "\n";
             }
             // Check if the shift contains a manager
             if (position.equals("shift_manager") && assignedAmount > 0)
                 hasManager = true;
         }
         if (!hasManager)
-            return  "Missing a shift manager";
-        return "0";
+            missing += "noticed- the shift must has a manager" + "\n";
+        if (missing.isEmpty())
+            return "0";
+        return missing;
     }
+
 
 
 
