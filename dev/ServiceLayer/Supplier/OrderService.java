@@ -13,7 +13,13 @@ public class OrderService {
     public OrderService(OrderController oc) {
         this.oc = oc;
     }
-    public void createOrder(List<ItemToOrder> itemsList) throws Exception {
-        oc.createOrder(itemsList);
+    public String createOrder(List<ItemToOrder> itemsList){
+        try {
+            oc.createOrder(itemsList);
+            return "Order created successfully";
+        }
+        catch (Exception e){
+            return e.getMessage();
+        }
     }
 }

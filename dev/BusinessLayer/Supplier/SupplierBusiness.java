@@ -16,7 +16,7 @@ public class    SupplierBusiness {
     private String address;
     private int supplierNum;
     private int bankAccountNum;
-    private HashMap<String, Integer> contacts;
+    private HashMap<String, String> contacts;
     private List<String> constDeliveryDays;
     private boolean selfDelivery;
     private HashMap<Integer, SupplierProductBusiness> products;
@@ -25,7 +25,7 @@ public class    SupplierBusiness {
 
     private List<Discount> discountPerTotalPrice;
 
-    public SupplierBusiness(String name, String address, int supplierNum,int bankAccountNum, HashMap<String, Integer> contacts, List<String> constDeliveryDays, boolean selfDelivery, HashMap<Integer, SupplierProductBusiness> products){
+    public SupplierBusiness(String name, String address, int supplierNum,int bankAccountNum, HashMap<String, String> contacts, List<String> constDeliveryDays, boolean selfDelivery){
         this.name = name;
         this.address = address;
         this.supplierNum = supplierNum;
@@ -33,7 +33,7 @@ public class    SupplierBusiness {
         this.contacts = contacts;
         this.constDeliveryDays = constDeliveryDays;
         this.selfDelivery = selfDelivery;
-        this.products = products;
+        this.products = new HashMap<>();
         this.discountPerTotalQuantity = new ArrayList<>();
         this.discountPerTotalPrice = new ArrayList<>();
     }
@@ -55,12 +55,12 @@ public class    SupplierBusiness {
         else
             products.put(productNum, new SupplierProductBusiness( supplierNum,productName,productNum, manufacturer, price, maxAmount, expiredDate));
     }
-    public void editProduct(int productNum, String productName, String manufacturer, int price, int maxAmount, LocalDateTime expiredDate) throws Exception {
+    public void editProduct(String productName, String manufacturer, int price, int maxAmount, LocalDateTime expiredDate) throws Exception {
         if(expiredDate.isBefore(LocalDateTime.now()))
             throw new Exception("expired date has passed.");
         SupplierProductBusiness sp = getProduct(productName,manufacturer);
         if (sp != null)
-            sp.editProduct(supplierNum, productName,productNum, manufacturer, price, maxAmount, expiredDate);
+            sp.editProduct(supplierNum, productName, manufacturer, price, maxAmount, expiredDate);
         else
             throw new Exception("product is not exists.");
     }
@@ -177,14 +177,11 @@ public class    SupplierBusiness {
         throw new Exception("the product is not exists.");
     }
 
-    public void editSupplier(String name, String address, int bankAccountNum, HashMap<String, Integer> contacts, List<String> constDeliveryDays, boolean selfDelivery, HashMap<Integer, SupplierProductBusiness> products){
+    public void editSupplier(String name, String address, int bankAccountNum, boolean selfDelivery){
         this.name = name;
         this.address = address;
         this.bankAccountNum = bankAccountNum;
-        this.contacts = contacts;
-        this.constDeliveryDays = constDeliveryDays;
         this.selfDelivery = selfDelivery;
-        this.products = products;
     }
 
     //this function gets products number in the order, and old total price and returns new price
@@ -232,7 +229,7 @@ public class    SupplierBusiness {
         return constDeliveryDays;
     }
 
-    public Map<String, Integer> getContacts() {
+    public Map<String, String> getContacts() {
         return contacts;
     }
 

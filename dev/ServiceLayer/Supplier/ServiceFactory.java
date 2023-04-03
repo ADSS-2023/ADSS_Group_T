@@ -4,19 +4,15 @@ import BusinessLayer.Supplier.OrderController;
 import BusinessLayer.Supplier.SupplierController;
 
 public class ServiceFactory {
-    private SupplierController sc;
-    private OrderController oc;
-    private SupplierService supplierService;
-    private OrderService orderService;
+    public SupplierController sc;
+    public OrderController oc;
+    public SupplierService supplierService;
+    public OrderService orderService;
 
-    public ServiceFactory(SupplierController sc, OrderController oc, SupplierService supplierService, OrderService orderService){
-        this.sc = sc;
-        this.oc = oc;
-        this.supplierService = supplierService;
-        this.orderService = orderService;
-    }
-
-    public void setUpData(){
-
+    public ServiceFactory(){
+        this.sc = new SupplierController();
+        this.oc = new OrderController(sc);
+        this.supplierService = new SupplierService(sc);
+        this.orderService = new OrderService(oc);
     }
 }

@@ -16,10 +16,10 @@ public class SupplierController {
         suppliers = new HashMap<>();
     }
 
-    public void addSupplier(String name, String address, int supplierNum, int bankAccountNum, HashMap<String, Integer> contacts, List<String> constDeliveryDays, boolean selfDelivery, HashMap<Integer, SupplierProductBusiness> products) throws Exception {
+    public void addSupplier(String name, String address, int supplierNum, int bankAccountNum, HashMap<String, String> contacts, List<String> constDeliveryDays, boolean selfDelivery) throws Exception {
         if(isSupplierExists(supplierNum))
             throw new Exception("supplier number is already exists.");
-        suppliers.put(supplierNum, new SupplierBusiness(name, address, supplierNum, bankAccountNum, contacts, constDeliveryDays, selfDelivery, products));
+        suppliers.put(supplierNum, new SupplierBusiness(name, address, supplierNum, bankAccountNum, contacts, constDeliveryDays, selfDelivery));
     }
 
     public void deleteSupplier(int supplierNum) throws Exception {

@@ -8,6 +8,6 @@ public class QuantityDiscount extends Discount{
 
     @Override
     public int getPriceAfterDiscount(int oldPrice) {
-        return oldPrice - amount*discount;
+        return oldPrice -discount;
     }
 }

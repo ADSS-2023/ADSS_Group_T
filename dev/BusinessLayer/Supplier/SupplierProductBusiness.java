@@ -133,9 +133,8 @@ public class SupplierProductBusiness {
         return supplierNum;
     }
 
-    public void editProduct(int supplierNum, String productName, int productNum, String manufacturer, int price, int maxAmount, LocalDateTime expiredDate) {
+    public void editProduct(int supplierNum, String productName, String manufacturer, int price, int maxAmount, LocalDateTime expiredDate) {
         this.supplierNum = supplierNum;
-        this.productNum = productNum;
         this.name = productName;
         this.manufacturer = manufacturer;
         this.price = price;
