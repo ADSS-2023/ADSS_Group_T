@@ -21,6 +21,10 @@ public class ShiftController {
         this.shifts = shifts;
     }
 
+    public String shiftState(String date, boolean shiftType){
+        Shift shift = shiftType ? shifts.get(date).get(0) : shifts.get(date).get(1);
+        return shift.shiftState();
+    }
 
 
     public String approveShift(String date, boolean shiftType) {

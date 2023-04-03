@@ -9,10 +9,9 @@ public class Shift {
     private int managerID;
     private boolean shiftType;
     private HashMap<String, Integer> employeesRequirement; // HashMap<PositionType, amount> - require employees per shift
-    private HashMap<String, List<Employee>> fulfillPositionByEmployees; // HashMap<PositionType, EmployeesToFullfill> - the Employees that assign to the shifts by manager
-    private HashMap<String, List<Employee>> submittedPositionByEmployees;
-
-
+    private HashMap<String, List<Employee>> assignedEmployee; // HashMap<PositionType, EmployeesToFullfill> - the Employees that assign to the shifts by manager
+    private HashMap<String, List<Employee>> submittedPositionByEmployeesUpdated;
+    private HashMap<String, List<Employee>> submittedPositionByEmployeesAll;
 
 
     public Shift(int shiftId, int managerID, String date,  boolean shiftType) {
@@ -21,8 +20,9 @@ public class Shift {
         this.shiftType = shiftType;
         this.managerID = managerID;
         employeesRequirement = createNewEmployeesRequirement();
-        fulfillPositionByEmployees = createNewFulfillPositionByEmployees();
-        submittedPositionByEmployees = createNewSubmittedPositionByEmployees();
+        assignedEmployee = createNewFulfillPositionByEmployees();
+        submittedPositionByEmployeesUpdated = createNewSubmittedPositionByEmployees();
+        submittedPositionByEmployeesAll = createNewSubmittedPositionByEmployees();
     }
 
     public Shift(int shiftId,  String date,  boolean shiftType) {
@@ -31,8 +31,9 @@ public class Shift {
         this.shiftType = shiftType;
         this.managerID = managerID;
         employeesRequirement = createNewEmployeesRequirement();
-        fulfillPositionByEmployees = createNewFulfillPositionByEmployees();
-        submittedPositionByEmployees = createNewSubmittedPositionByEmployees();
+        assignedEmployee = createNewFulfillPositionByEmployees();
+        submittedPositionByEmployeesUpdated = createNewSubmittedPositionByEmployees();
+        submittedPositionByEmployeesAll = createNewSubmittedPositionByEmployees();
         managerID = -1;
     }
 
@@ -80,7 +81,7 @@ public class Shift {
         for (Map.Entry<String, Integer> entry : employeesRequirement.entrySet()) {
             String position = entry.getKey();
             int requiredAmount = entry.getValue();
-            int assignedAmount = fulfillPositionByEmployees.get(position).size();
+            int assignedAmount = assignedEmployee.get(position).size();
             if (assignedAmount != requiredAmount) {
                 int num = requiredAmount - assignedAmount;
                 missing += num + " employees are missing in the position of " + position + "\n";
@@ -96,25 +97,41 @@ public class Shift {
         return missing;
     }
 
+    public String shiftState() {
+        String st = "Shift state :\n";
+        for (Map.Entry<String, Integer> entry : employeesRequirement.entrySet()) {
+            String position = entry.getKey();
+            int required = entry.getValue();
+            int assigned = 0;
+            List<Employee> asssignedEmployees = assignedEmployee.get(position);
+            if (asssignedEmployees != null)
+                assigned = asssignedEmployees.size();
+            st += position + ": " + assigned + "/" + required + "\n";
+        }
+        return st;
+    }
+
+
 
 
 
     public void submittedPosition(String pos, Employee emp) {
-        if (!fulfillPositionByEmployees.containsKey(pos)) {
+        if (!assignedEmployee.containsKey(pos)) {
             throw  new IllegalArgumentException("there is no such position requierment");
         }
         else{
-            submittedPositionByEmployees.get(pos).add(emp);
+            submittedPositionByEmployeesUpdated.get(pos).add(emp);
+            s
         }
     }
 
 
     public void assignEmployee(PositionType pos, Employee emp) {
-        if (!fulfillPositionByEmployees.containsKey(pos)) {
+        if (!assignedEmployee.containsKey(pos)) {
             throw  new IllegalArgumentException("there is no position exist");
         }
         else{
-            fulfillPositionByEmployees.get(pos).add(emp);
+            assignedEmployee.get(pos).add(emp);
         }
     }
 
@@ -139,7 +156,7 @@ public class Shift {
     }
 
     public HashMap<String, List<Employee>> getFulfillPositionByEmployees() {
-        return fulfillPositionByEmployees;
+        return assignedEmployee;
     }
 
     public HashMap<String, List<Employee>> getSubmittedPositionByEmployees() {
