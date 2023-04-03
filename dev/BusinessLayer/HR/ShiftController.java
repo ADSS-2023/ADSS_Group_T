@@ -9,12 +9,17 @@ import java.util.List;
 public class ShiftController {
     private HashMap<String, ArrayList<Shift>> shifts;
     private HashMap<String, ArrayList<Shift>> approvedShifts;
+    private HashMap<Integer,Employee> employeesMapper;
 
     private int shiftId;
 
     public ShiftController(){
         shifts = new HashMap<>();
         shiftId = 0;
+    }
+
+    public void initEmployeeMapper(HashMap<Integer,Employee> employeesMapper){
+       this.employeesMapper = employeesMapper;
     }
 
     public void loadDataShiftController(HashMap<String, ArrayList<Shift>> shifts){
@@ -41,6 +46,15 @@ public class ShiftController {
 
 
 
+//    public void addSubmittedShift(Constraint cons) {
+//        if (shifts.containsKey(date)) {
+//            Shift shift = shiftType ?  shifts.get(date).get(0) : shifts.get(date).get(1);
+//            shift.addEmployeeRequirements(requirements);
+//        }
+//        else
+//            throw new IllegalArgumentException("wrong date");
+//    }
+
 
     public void DeleteShift(String date, String shiftType) {
         if (shifts.containsKey(date)) {
@@ -48,6 +62,20 @@ public class ShiftController {
             int index = shiftType.equals("Morning") ? 0 : 1;
             shiftList.set(index, null); // set the shift to null to delete it
         }
+    }
+
+    public void submitShift(int id, String date, boolean shiftType, boolean isTemp, String positionType) {
+        Employee employee =    employeesMapper.get(id);
+        employee.addSubmittedShift(date, shiftType, isTemp);
+        Shift shift = shiftType ?  shifts.get(date).get(0) : shifts.get(date).get(1);
+        shift.addSubmitPosition(positionType, employeesMapper.get(id));
+
+    }
+
+    public void assignShift(int id, String date, boolean shiftType, boolean isTemp, String positionType) {
+        employeesMapper.get(id).addSAssignShift(date, shiftType, isTemp);
+        Shift shift = shiftType ?  shifts.get(date).get(0) : shifts.get(date).get(1);
+        shift.addAssignPosition(positionType, employeesMapper.get(id));
     }
 
         public void addRequirements(HashMap<String, Integer> requirements, String date, boolean shiftType) {

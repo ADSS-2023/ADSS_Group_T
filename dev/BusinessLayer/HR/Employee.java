@@ -46,7 +46,8 @@ public class Employee {
     public void addSubmittedShift(String date, boolean shiftType, boolean isTemp) {
         if (shiftsRestriction.containsKey(date) && shiftsRestriction.get(date).contains(shiftType)) {
             throw new IllegalArgumentException("Cannot submit to that shift");
-        } else {
+        }
+        else {
             Constraint cons = new Constraint(date, shiftType, isTemp);
             List<Constraint> constraints = submittedShifts.get(date);
             if (constraints == null) {
@@ -58,6 +59,40 @@ public class Employee {
             }
         }
     }
+
+    public void addSAssignShift(String date, boolean shiftType, boolean isTemp) {
+        Constraint constraint = getConstraint(date, shiftType);
+        if (constraint != null) {
+            List<Constraint> assigns = assignedShifts.get(date);
+            if (assigns == null) {
+                assigns = new ArrayList<Constraint>();
+                assigns.add(constraint);
+                assignedShifts.put(date, assigns);
+            }
+        }
+        else
+            throw  new IllegalArgumentException("no Such according constraint submitted");
+    }
+
+
+
+
+
+        public Constraint getConstraint(String date, boolean shiftType) {
+        for (Map.Entry<String, List<Constraint>> entry : submittedShifts.entrySet()) {
+            List<Constraint> constraints = entry.getValue();
+            for (Constraint constraint : constraints) {
+                if (constraint.getDate().equals(date) && constraint.getShiftType() == shiftType) {
+                    return constraint;
+                }
+            }
+        }
+        return null;
+    }
+
+
+
+
 
     public String getListOfSubmittedConstraints() {
         String concat = "";
@@ -116,12 +151,7 @@ public class Employee {
         this.description = description;
     }
 
-    public void addSAssignShift (int constraintId, Constraint constraint){
-        if (submittedShifts.containsKey(constraintId)){
-            submittedShifts.remove(constraintId);
-            assignedShifts.get(constraintId).add(constraint);
-        }
-    }
+
 
     public void addRestriction(String date, boolean isMorning) {
         if (shiftsRestriction.containsKey(date)) {

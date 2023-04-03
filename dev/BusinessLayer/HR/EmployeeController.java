@@ -10,6 +10,7 @@ import java.util.NoSuchElementException;
 
 public class EmployeeController {
     private HashMap<Integer,Employee> employeesMapper;
+    public ShiftController shiftController;
 
 
     public EmployeeController(){
@@ -20,6 +21,9 @@ public class EmployeeController {
         employeesMapper.putIfAbsent(employeeId, newEmployee);
     }
 
+public void initEmployeeConroller (ShiftController shiftController){
+        this.shiftController = shiftController;
+}
 
 
     public void addRestrictionToall(String date, boolean isMorning) {
@@ -36,8 +40,8 @@ public class EmployeeController {
         }
     }
 
-    public void submitShift(int id, String date, boolean shiftType, boolean isTemp) {
-        employeesMapper.get(id).addSubmittedShift(date, shiftType, isTemp);
+    public ShiftController getShiftController() {
+        return shiftController;
     }
 
     public String getListOfSubmittedConstraints(int Id) {
