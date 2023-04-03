@@ -19,7 +19,29 @@ public class OrderController {
         orderCounter=0;
     }
 
-    //createOrders goes over every shopping list per supplier consisted of OrderProducts and performs each order
+    public void createOrder(List<ItemToOrder> items) throws Exception {
+        SupplierBusiness chosenSupplier = sc.findSingleSupplier(items);
+
+
+        if(chosenSupplier==null) {
+            for (ItemToOrder item : items) {
+                HashMap<SupplierProductBusiness,Integer> productsToOrder  =  sc.findSuppliersProduct(item);
+                for(Map.Entry<SupplierProductBusiness, Integer> product : productsToOrder.entrySet()) {
+                    addToShoppingLists(item.getProductName(),item.getManufacturer()),product.getValue();
+
+                }
+            }
+            createOrders();
+        }
+        else{
+            chosenSupplier.
+        }
+    }
+
+
+
+    //createOrders goes over every shopping list per supplier consisted of OrderProducts and
+    // performs each order After total discounts
     public void createOrders() throws Exception {
        for(Map.Entry<Integer, List<OrderProduct>> shoppingList : shoppingLists.entrySet()){
            List<OrderProduct> products = shoppingList.getValue();
@@ -35,6 +57,7 @@ public class OrderController {
                 totalorderPrice+=product.getFinalPrice();
                 totalProductsNum+=product.getQuantity();
            }
+
            //calculate supplier general discounts and final prices
            int finalPrice = supplier.getPriceAfterTotalDiscount(totalProductsNum,totalorderPrice);
            int discountPerProduct = (totalorderPrice-finalPrice)/products.size();
@@ -42,6 +65,7 @@ public class OrderController {
                product.setDiscount(discountPerProduct+product.getDiscount());
                product.setFinalPrice(product.getFinalPrice()-discountPerProduct);
            }
+
            //create order from products in the send and send to delivery if needed
            OrderBusiness order = new OrderBusiness(orderCounter++,supplier.getName(),LocalDateTime.now(),supplier.getAddress(),
                    "SuperLi",supplier.getSupplierNum(),contactName,contactNum,products);
@@ -63,9 +87,9 @@ public class OrderController {
 
     //this function gets an item, calculates which suppliers will supply the specific quantities
     // and adds an orderProduct to a specific shopping list of a certain supplier
-    public void addToShoppingLists(ItemToOrder item) {
-        HashMap<SupplierProductBusiness,Integer> productsToOrder  =  sc.findSuppliersProduct(item);
-        for(Map.Entry<SupplierProductBusiness, Integer> product : productsToOrder.entrySet()) {
+    public void addToShoppingLists(String productName,String Manufacturer,int quantity,int supplierNum) throws Exception {
+
+            sc.getSupplier(supplierNum).get
             //generate new OrderProduct
             int productNumber = product.getKey().getProductNum();
             int initialPrice = product.getKey().getPrice()* item.getQuantity();
@@ -78,6 +102,6 @@ public class OrderController {
                 shoppingLists.put(supplierNum,new LinkedList());
             shoppingLists.get(supplierNum).add(orderProduct);
         }
-    }
+
 }
 

@@ -14,10 +14,7 @@ public class OrderService {
         this.oc = oc;
     }
     public void createOrder(List<ItemToOrder> itemsList) throws Exception {
-        sc.findSuppliersProduct(itemsList)
-        for (ItemToOrder item  : itemsList) {
-            oc.addToShoppingLists(item);
-        }
-        oc.createOrders();
+
+
     }
 }
