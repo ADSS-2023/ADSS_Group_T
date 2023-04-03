@@ -316,6 +316,8 @@ public class LogisticsCenter {
             if(productsInStock.containsKey(p) && productsInStock.get(p) >= requestedSupply.get(p)) {    //product exist in stock in the requested amount
                 productsInStock.replace(p, productsInStock.get(p) - requestedSupply.get(p));
                 requestedSupply.remove(p);
+                if(productsInStock.get(p) == 0)
+                    productsInStock.remove(p);
             }
             else if(productsInStock.containsKey(p)) {  //product exist in stock but not in the requested amount
                 requestedSupply.replace(p,requestedSupply.get(p) - productsInStock.get(p));
