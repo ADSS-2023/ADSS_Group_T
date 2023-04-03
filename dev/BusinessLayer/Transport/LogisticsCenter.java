@@ -274,13 +274,19 @@ public class LogisticsCenter {
         return true;
     }
 
-    public void addBranch(Branch branch){
+    public boolean addBranch(Branch branch){
+        if(branches.containsKey(branch.getAddress()))
+            return false;
         branches.put(branch.getAddress(),branch);
+        return true;
     }
 
-    public void addSupplier(Supplier supplier, ArrayList<Product> supplierProducts){
+    public boolean addSupplier(Supplier supplier, ArrayList<Product> supplierProducts){
+        if(suppliers.containsKey(supplier.getAddress()))
+            return false;
         suppliers.put(supplier.getAddress(),supplier);
         suppliersProducts.put(supplier,supplierProducts);
+        return true;
     }
 
     //condition is wrong
