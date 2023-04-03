@@ -224,6 +224,11 @@ public class LogisticsCenterTest {
 
     @Test
     public void skipDay() {
+        assertNull(lc.skipDay());
+        orderDelivery();
+        ArrayList<Integer> expectedResult = new ArrayList<>();
+        expectedResult.add(0);
+        assertEquals(expectedResult,lc.skipDay());
     }
 
     @Test
@@ -329,24 +334,12 @@ public class LogisticsCenterTest {
     public void replaceTruck() {
         lc.addTruck(1,"kia",6000,9000,LicenseType.C,CoolingLevel.fridge);
         lc.addTruck(2,"kia",6000,9000,LicenseType.C,CoolingLevel.fridge);
-        Product p1 = new Product("milk");
-        File f = new File(1);
-        f.addProduct(p1,750);
-        Supplier s = new Supplier("address1","000000","name1",CoolingLevel.fridge);
-        LinkedHashMap<Supplier,File> suppliers = new LinkedHashMap<>();
-        suppliers.put(s,f);
-        Delivery d = new Delivery(1,LocalDate.now(),LocalTime.NOON,10000,suppliers,s,"driver",1,"south");
-
-        assertFalse(lc.replaceTruck(1));
-
-    }
-
-    @Test
-    public void unloadProducts() {
-    }
-
-    @Test
-    public void replaceOrDropSite() {
+        orderDelivery();
+        assertFalse(lc.replaceTruck(0));
+        lc.addTruck(3,"kia",6000,20000,LicenseType.C,CoolingLevel.freezer);
+        assertFalse(lc.replaceTruck(0));
+        lc.addTruck(4,"kia",6000,20000,LicenseType.C,CoolingLevel.fridge);
+        assertTrue(lc.replaceTruck(0));
     }
 
     @Test
@@ -377,8 +370,9 @@ public class LogisticsCenterTest {
         LinkedHashMap<Supplier,LinkedHashMap<Product,Integer>> suppliers = new LinkedHashMap<>();
         suppliers.put(s1,supplier1Products);
         LinkedHashMap<Supplier,Integer> suppliersWeight = new LinkedHashMap<>();
-        suppliersWeight.put(s1,7000);
-        assertNull(lc.orderDelivery(b1,suppliers,LocalDate.now(),suppliersWeight));
+        suppliersWeight.put(s1,8000);
+        LocalDate date = LocalDate.now();
+        assertNull(lc.orderDelivery(b1,suppliers,date.plusDays(2),suppliersWeight));
     }
 
     @Test

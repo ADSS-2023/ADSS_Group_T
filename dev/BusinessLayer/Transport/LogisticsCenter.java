@@ -245,7 +245,9 @@ public class LogisticsCenter {
             if(d.getTruckWeight() > trucks.get(d.getTruckNumber()).getMaxWeight())
                 overWeightDeliveries.add(d.getId());
         }
-        return overWeightDeliveries;
+        if(!overWeightDeliveries.isEmpty())
+            return overWeightDeliveries;
+        return null;
     }
 
     public boolean addTruck(int licenseNumber, String model, int weight, int maxWeight ,
