@@ -311,7 +311,7 @@ public class LogisticsCenter {
     }
 
     public LinkedHashMap<Product,Integer> loadProductsFromStock(LinkedHashMap<Product,Integer> requestedSupply){
-        Set<Product> keys = requestedSupply.keySet();
+        HashSet<Product> keys = new HashSet<>(requestedSupply.keySet());
         for(Product p : keys){
             if(productsInStock.containsKey(p) && productsInStock.get(p) >= requestedSupply.get(p)) {    //product exist in stock in the requested amount
                 productsInStock.replace(p, productsInStock.get(p) - requestedSupply.get(p));

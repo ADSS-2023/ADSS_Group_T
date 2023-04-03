@@ -300,7 +300,7 @@ public class LogisticsCenterTest {
     }
 
     @Test
-    public void loadProducts() {
+    public void loadProductsFromStock() {
         Product p1 = new Product("milk");
         Product p2 = new Product("cheese");
         LinkedHashMap<Product,Integer> productsToStore = new LinkedHashMap<>();
@@ -310,11 +310,11 @@ public class LogisticsCenterTest {
         LinkedHashMap<Product,Integer> productsToLoad = new LinkedHashMap<>();
         productsToLoad.put(p1,200);
         productsToLoad.put(p2,400);
-        assertNull(lc.loadProducts(productsToLoad));
+        assertTrue((lc.loadProductsFromStock(productsToLoad)).isEmpty());
         assertEquals(2,lc.getProductsInStock().size());
-        assertNull(lc.loadProducts(productsToLoad));
+        assertTrue((lc.loadProductsFromStock(productsToLoad)).isEmpty());
         assertEquals(1,lc.getProductsInStock().size());
-        LinkedHashMap<Product,Integer> unavailableProducts = lc.loadProducts(productsToLoad);
+        LinkedHashMap<Product,Integer> unavailableProducts = lc.loadProductsFromStock(productsToLoad);
         LinkedHashMap<Product,Integer> compare = new LinkedHashMap<>();
         compare.put(p1,100);
         compare.put(p2,400);

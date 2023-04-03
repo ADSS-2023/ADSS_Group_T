@@ -40,8 +40,8 @@ public class DeliveryController {
      public void storeProducts(LinkedHashMap<Product,Integer> newSupply){
         lc.storeProducts(newSupply);
     }
-    public LinkedHashMap<Product,Integer> loadProducts(LinkedHashMap<Product,Integer> requestedSupply){
-       return lc.loadProducts(requestedSupply);
+    public LinkedHashMap<Product,Integer> loadProductsFromStock(LinkedHashMap<Product,Integer> requestedSupply){
+       return lc.loadProductsFromStock(requestedSupply);
     }
 
     public boolean replaceTruck(int deliveryID){
