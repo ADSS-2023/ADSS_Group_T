@@ -18,8 +18,14 @@ public class SupplierService {
         this.sc = sc;
     }
 
-    public void addSupplier(String name, String address, int supplierNum,int bankAccountNum, HashMap<String, Integer> contacts, List<String> constDeliveryDays, boolean selfDelivery, HashMap<Integer, SupplierProductBusiness> products){
-        sc.addSupplier(name,address,supplierNum,bankAccountNum,contacts,constDeliveryDays, selfDelivery,products);
+    public String addSupplier(String name, String address, int supplierNum,int bankAccountNum, HashMap<String, Integer> contacts, List<String> constDeliveryDays, boolean selfDelivery, HashMap<Integer, SupplierProductBusiness> products) throws Exception {
+        try{
+            sc.addSupplier(name,address,supplierNum,bankAccountNum,contacts,constDeliveryDays, selfDelivery,products);
+            return "";
+        }
+        catch(Exception e){
+            return e.getMessage();
+        }
     }
 
     public void deleteSupplier(int supplierNum){
@@ -27,7 +33,7 @@ public class SupplierService {
     }
 
     public void editSupplier(String name, String address, int supplierNum,int bankAccountNum, HashMap<String, Integer> contacts, List<String> constDeliveryDays, boolean selfDelivery, HashMap<Integer, SupplierProductBusiness> products) throws Exception {
-        sc.getSupplier(supplierNum).editSupplier(name,address,supplierNum,bankAccountNum,contacts,constDeliveryDays, selfDelivery,products);
+        sc.getSupplier(supplierNum).editSupplier(name, address, bankAccountNum, contacts, constDeliveryDays, selfDelivery, products);
     }
     public List<String> getProducts(int supplierNum){
         HashMap<Integer, SupplierProductBusiness> productMap =  sc.getProducts(supplierNum);
