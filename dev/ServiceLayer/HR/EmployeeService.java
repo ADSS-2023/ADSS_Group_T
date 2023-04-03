@@ -1,25 +1,19 @@
 package ServiceLayer.HR;
 
-import BusinessLayer.HR.Constraint;
 import BusinessLayer.HR.Employee;
 import BusinessLayer.HR.EmployeeController;
-import UtilSuper.PositionType;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Vector;
 
 public class EmployeeService {
-    private EmployeeController ec;
+    private EmployeeController employeeController;
 
     public EmployeeService(EmployeeController ec) {
-        this.ec = ec;
+        this.employeeController = ec;
     }
 
     public String addNewConstraint(int id, String date, boolean type, boolean temp) {
         Response res = new Response();
         try {
-            Employee employee = ec.getEmployee(id);
+            Employee employee = employeeController.getEmployee(id);
             employee.addSubmittedShift(date, type, temp);
         } catch (Exception ex) {
         }
@@ -29,7 +23,7 @@ public class EmployeeService {
     public String login(int id, String password) {
         Response res = new Response();
         try {
-            if (ec.login(id, password))
+            if (employeeController.login(id, password))
                 return "m";
             else return "e";
         } catch (Exception ex) {
@@ -40,7 +34,7 @@ public class EmployeeService {
     public String getListOfAssignedShift(int id) {
         Response res = new Response();
         try {
-            Employee employee = ec.getEmployee(id);
+            Employee employee = employeeController.getEmployee(id);
             return employee.getListOfSubmittedConstraints();
         } catch (Exception ex) {
         }
@@ -50,7 +44,7 @@ public class EmployeeService {
     public String addRestrictionToEmployee(int id, String date, String type) {
         Response res = new Response();
         try {
-            Employee employee = ec.getEmployee(id);
+            Employee employee = employeeController.getEmployee(id);
             boolean bool = true;
             if (type.equals("e"))
                 bool = false;
@@ -63,7 +57,7 @@ public class EmployeeService {
     public String addNewEmployee(String employeeName, String bankAccount, String joiningDay, int employeeId, String password, boolean isManger) {
         Response res = new Response();
         try {
-            ec.addNewEmployee(employeeName, bankAccount, null, joiningDay, employeeId, password, isManger);
+            employeeController.addNewEmployee(employeeName, bankAccount, null, joiningDay, employeeId, password, isManger);
         } catch (Exception ex) {
         }
         return null;
@@ -73,12 +67,23 @@ public class EmployeeService {
     public String addQualification(int id, String quali) {
         Response res = new Response();
         try {
-            Employee employee = ec.getEmployee(id);
-
-        } catch (Exception ex) {
+            employeeController.addQualification(id,quali);
+        }
+        catch (Exception ex) {
         }
         return null;
 
     }
+
+    public String getAssignedShifts(int id) {
+        Response res = new Response();
+        try {
+            Employee employee = employeeController.getEmployee(id);
+            return employee.getAssignedShifts().toString();
+        } catch (Exception ex) {
+        }
+        return null;
+    }
+
 }
 
