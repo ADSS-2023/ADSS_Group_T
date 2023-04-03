@@ -36,6 +36,10 @@ public class EmployeeController {
         }
     }
 
+    public void submitShift(int id, String date, boolean shiftType, boolean isTemp) {
+        employeesMapper.get(id).addSubmittedShift(date, shiftType, isTemp);
+    }
+
     public String getListOfSubmittedConstraints(int Id) {
         return employeesMapper.get(Id).getListOfSubmittedConstraints();
     }
@@ -56,13 +60,20 @@ public class EmployeeController {
     public Employee getEmployee(int id){
         return employeesMapper.get(id);
     }
+
     public boolean login (int empolyeeId, String password){
         Employee emp = employeesMapper.get(empolyeeId);
         if ( emp != null){
-            if (emp.getPassword().equals(password))
-                return true;
+            if (emp.getPassword().equals(password)){
+                if(emp.isManager())
+                    return true;
+                return false;
+            }
+            else
+                throw  new IllegalArgumentException("wrong password");
         }
-        return false;
+        else
+            throw  new IllegalArgumentException("wrong ID");
     }
 
     public void deleteEmployee(int emploeeyId){
