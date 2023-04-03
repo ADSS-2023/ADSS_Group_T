@@ -23,9 +23,6 @@ public class LogisticsCenterTest {
 
     private LogisticsCenter lc;
 
- 
-        
-        
     @Before
     public void setUp() {
         lc = new LogisticsCenter();
@@ -273,17 +270,26 @@ public class LogisticsCenterTest {
 
     @Test
     public void addBranch() {
-        Branch b = new Branch("address1","0000000","name1","south");
-        lc.addBranch(b);
-        assertEquals(1, lc.getBranches().size());
+        assertTrue(lc.addBranch(new Branch("address1","0000000","name1","south")));
+        assertTrue(lc.addBranch(new Branch("address2","0000000","name1","south")));
+        assertFalse(lc.addBranch(new Branch("address1","0000000","name1","south")));
+        assertEquals(2, lc.getBranches().size());
     }
 
     @Test
     public void addSupplier() {
+        Product p = new Product("milk");
+        ArrayList<Product> arr = new ArrayList<>();
+        arr.add(p);
+        assertTrue(lc.addSupplier(new Supplier("address1","0000000","name1", CoolingLevel.fridge),arr));
+        assertTrue(lc.addSupplier(new Supplier("address2","0000000","name1", CoolingLevel.fridge),arr));
+        assertFalse(lc.addSupplier(new Supplier("address2","0000000","name1", CoolingLevel.fridge),arr));
+        assertEquals(2, lc.getSuppliers().size());
     }
 
     @Test
     public void storeProducts() {
+        lc.pro
     }
 
     @Test
@@ -304,6 +310,14 @@ public class LogisticsCenterTest {
 
     @Test
     public void getSites() {
+        assertTrue(lc.addBranch(new Branch("address1","0000000","name1","south")));
+        assertTrue(lc.addBranch(new Branch("address2","0000000","name1","south")));
+        Product p = new Product("milk");
+        ArrayList<Product> arr = new ArrayList<>();
+        arr.add(p);
+        assertTrue(lc.addSupplier(new Supplier("address1","0000000","name1", CoolingLevel.fridge),arr));
+        assertTrue(lc.addSupplier(new Supplier("address2","0000000","name1", CoolingLevel.fridge),arr));
+        assertEquals(4,lc.getSites().size());
     }
 }
 
