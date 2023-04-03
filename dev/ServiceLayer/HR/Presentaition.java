@@ -1,7 +1,10 @@
 package ServiceLayer.HR;
 
 import BusinessLayer.HR.EmployeeController;
+import UtilSuper.PositionType;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Presentaition {
@@ -14,6 +17,7 @@ public class Presentaition {
 
     }
     public void begin(){
+        boolean exit = true;
         Scanner input = new Scanner(System.in);
         System.out.println("Welcome to Shefa-yissaschar : please enter your ID number");
         int ans_id = input.nextInt();
@@ -56,13 +60,24 @@ public class Presentaition {
                         int ans_employee_id_4 = input.nextInt();
                         System.out.println("add employee qualification - enter qualification");
                         String ans_quali_4 = input.next();
-                        //employeeService.
+                        employeeService.
                         break;
                     case 5:
-                        //shiftService
+                        //maybe?
                         break;
                     case 6:
-                        //shiftService
+                        System.out.println("add shift requirements - choose shift date");
+                        String ans_date_6 = input.next();
+                        System.out.println("add shift requirements - enter morning(m)/evening(e)");
+                        String ans_mORe_6 = input.next();
+                        System.out.println("add shift requirements - shift :"+ans_date_6+ " , " + ans_mORe_6);
+                        HashMap<String,Integer> howMany = new HashMap<>();
+                        for (PositionType p : PositionType.values()) {
+                            System.out.println("how many "+ p.name() + " for that shift ?" );
+                            int ans_quantity = input.nextInt();
+                            howMany.put(p.name(),ans_quantity);
+                        }
+                        shiftService.addShiftRequirements(howMany,ans_date_6,ans_mORe_6);
                         break;
                     case 7:
                         System.out.println("add new employee - enter employee id");
@@ -78,12 +93,13 @@ public class Presentaition {
                         employeeService.addNewEmployee(ans_name_7,ans_ba_7,ans_joiningday_7,ans_employee_id_7,ans_pass_7,false);
                         break;
                     case 8:
-                        repeat = true;
+                        exit = false;
                         break;
                     default:
                         System.out.println("Invalid input. Please enter a number between 1 and 5.");
                         break;
                      }
+                repeat = exit;
                 }
         }
         else if (type.equals("e")){//employee menu
@@ -98,9 +114,15 @@ public class Presentaition {
                 int chosen_num = input.nextInt();
                 switch (chosen_num) {
                     case 1:
+                        System.out.println("add new constraint - enter ");
+                        int ans_employe = input.nextInt();
+                        System.out.println("add new constraint - enter ");///////////////////////
+                        String ans_da = input.next();
+                        repeat = true;
                         break;
                     case 2:
-                        //shiftService.checkProblems();
+                        employeeService.getAssignedShifts(ans_id);
+                        repeat = true;
                         break;
                     case 3:
                         System.out.println("add restriction to employee - enter employee id");
@@ -116,9 +138,10 @@ public class Presentaition {
                         repeat = true;
                         break;
                     default:
-                        System.out.println("Invalid input. Please enter a number between 1 and 5.");
+                        System.out.println("Invalid input. Please enter a number between 1 and 4.");
                         break;
                 }
+                repeat = true;
             }
         }
         else System.out.println(type);

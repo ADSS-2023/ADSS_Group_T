@@ -56,7 +56,6 @@ public class EmployeeController {
         }
         else
             throw  new IllegalArgumentException("wrong ID");
-
     }
 
     public void deleteEmployee(int emploeeyId){
