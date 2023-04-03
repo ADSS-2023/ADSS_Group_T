@@ -22,8 +22,9 @@ public class ShiftService {
            shiftController.addRequirements(howMany,date,bool);
         }
         catch (Exception ex){
+            return ex.getMessage();
         }
-        return null;
+        return "succeed";
     }
 
     public String checkProblems(){
@@ -65,9 +66,23 @@ public class ShiftService {
         Response res = new Response();
         try
         {
-            shiftController.get
+
         }
         catch (Exception ex){
+        }
+        return null;
+    }
+
+    public String addShift(int id, String date, String type, String temp) {
+        Response res = new Response();
+        try {
+            boolean boolType = true;
+            if (type.equals("e"))
+                boolType = false;
+            boolean boolTemp = true;
+            if (type.equals("p"))
+                boolTemp = false;
+        } catch (Exception ex) {
         }
         return null;
     }

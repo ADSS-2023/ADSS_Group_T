@@ -85,7 +85,7 @@ public class Presentaition {
                             int ans_quantity = input.nextInt();
                             howMany.put(p.name(),ans_quantity);
                         }
-                        shiftService.addShiftRequirements(howMany,ans_date_6,ans_mORe_6);
+                        System.out.println(shiftService.addShiftRequirements(howMany,ans_date_6,ans_mORe_6));
                         break;
                     case 7:
                         System.out.println("add new employee - enter employee id");
@@ -115,20 +115,20 @@ public class Presentaition {
             while (repeat){
                 repeat = false;
                 System.out.println("employee menu - choose action number" +
-                        " \n 1.add new constraint" +
+                        " \n 1.submit shift " +
                         " \n 2.watch your assigned shifts" +
                         " \n 3.watch your submitted constrains" +
                         " \n 4.exit");
                 int chosen_num = input.nextInt();
                 switch (chosen_num) {
                     case 1:
-                        System.out.println("add new constraint - enter date");
+                        System.out.println("submit shift - enter date");
                         String ans_date_1 = input.next();
-                        System.out.println("add new constraint - enter morning(m)/evening(e)");
+                        System.out.println("submit shift - enter morning(m)/evening(e)");
                         String ans_type_1 = input.next();
-                        System.out.println("add new constraint - enter temp(t)/permanent(p)");
+                        System.out.println("submit shift - enter temp(t)/permanent(p)");
                         String ans_isTemp_1 = input.next();
-                        employeeService.addNewConstraint(ans_id,ans_date_1,ans_type_1,ans_isTemp_1);
+                        shiftService.addShift(ans_id,ans_date_1,ans_type_1,ans_isTemp_1);
                         repeat = true;
                         break;
                     case 2:
@@ -136,6 +136,7 @@ public class Presentaition {
                         repeat = true;
                         break;
                     case 3:
+                        shiftService.submittedConstraints(ans_id);
                         repeat = true;
                         break;
                     case 4:
