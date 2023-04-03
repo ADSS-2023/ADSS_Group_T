@@ -312,8 +312,12 @@ public class LogisticsCenterTest {
         productsToLoad.put(p2,400);
         assertTrue((lc.loadProductsFromStock(productsToLoad)).isEmpty());
         assertEquals(2,lc.getProductsInStock().size());
+        productsToLoad.put(p1,200);
+        productsToLoad.put(p2,400);
         assertTrue((lc.loadProductsFromStock(productsToLoad)).isEmpty());
         assertEquals(1,lc.getProductsInStock().size());
+        productsToLoad.put(p1,200);
+        productsToLoad.put(p2,400);
         LinkedHashMap<Product,Integer> unavailableProducts = lc.loadProductsFromStock(productsToLoad);
         LinkedHashMap<Product,Integer> compare = new LinkedHashMap<>();
         compare.put(p1,100);
