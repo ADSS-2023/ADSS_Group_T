@@ -50,23 +50,24 @@ public class SupplierProductBusiness {
     public void editProductDiscount(int productAmount, int discount, boolean isPercentage) throws Exception {
         if(!isDiscountExists(productAmount, discount, isPercentage))
             throw new Exception("Discount not found");
-        if(isDiscountValid(productAmount, discount, isPercentage)) {
-            for (Discount dis : quantitiesAgreement) {
+        if(!isDiscountValid(productAmount, discount, isPercentage))
+            throw new Exception("Discount details are not valid");
+        for (Discount dis : quantitiesAgreement) {
                 if (dis.isPercentage() == isPercentage && dis.getAmount() == productAmount)
                     dis.editDiscount(productAmount, discount);
             }
-        }
     }
 
     public void addProductDiscount(int productAmount, int discount, boolean isPercentage) throws Exception {
         if(isDiscountExists(productAmount, discount, isPercentage))
             throw new Exception("Discount already exists");
-        if(isDiscountValid(productAmount, discount, isPercentage)) {
+        if(!isDiscountValid(productAmount, discount, isPercentage))
+            throw new Exception("Discount details are not valid");
             if (isPercentage)
                 quantitiesAgreement.add(new PrecentDiscount(productAmount, discount, true));
             else
                 quantitiesAgreement.add(new QuantityDiscount(productAmount, discount, false));
-        }
+
     }
 
     public void deleteProductDiscount(int productAmount, int discount, boolean isPercentage) throws Exception {
@@ -94,7 +95,10 @@ public class SupplierProductBusiness {
                 maxAmount = currentDiscount.getAmount();
             }
         }
-        return dis.getPriceAfterDiscount(quantity*price);
+        if(dis!=null)
+            return dis.getPriceAfterDiscount(quantity*price);
+        else
+            return quantity*price;
         }
 
     public String getName() {
