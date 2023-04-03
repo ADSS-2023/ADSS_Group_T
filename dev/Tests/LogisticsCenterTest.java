@@ -323,12 +323,22 @@ public class LogisticsCenterTest {
         compare.put(p1,100);
         compare.put(p2,400);
         assertEquals(compare,unavailableProducts);
-
-
     }
 
     @Test
     public void replaceTruck() {
+        lc.addTruck(1,"kia",6000,9000,LicenseType.C,CoolingLevel.fridge);
+        lc.addTruck(2,"kia",6000,9000,LicenseType.C,CoolingLevel.fridge);
+        Product p1 = new Product("milk");
+        File f = new File(1);
+        f.addProduct(p1,750);
+        Supplier s = new Supplier("address1","000000","name1",CoolingLevel.fridge);
+        LinkedHashMap<Supplier,File> suppliers = new LinkedHashMap<>();
+        suppliers.put(s,f);
+        Delivery d = new Delivery(1,LocalDate.now(),LocalTime.NOON,10000,suppliers,s,"driver",1,"south");
+
+        assertFalse(lc.replaceTruck(1));
+
     }
 
     @Test
