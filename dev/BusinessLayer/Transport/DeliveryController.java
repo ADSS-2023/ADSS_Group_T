@@ -2,7 +2,7 @@ package BusinessLayer.Transport;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 
@@ -16,7 +16,7 @@ public class DeliveryController {
         lc = new LogisticsCenter();
     }
     
-    public HashMap<Supplier,HashMap<Product,Integer>> orderDelivery(Branch branch, HashMap<Supplier,HashMap<Product,Integer>> suppliers, LocalDate requiredDate, HashMap<Supplier,Integer> supplierWeight){
+    public LinkedHashMap<Supplier,LinkedHashMap<Product,Integer>> orderDelivery(Branch branch, LinkedHashMap<Supplier,LinkedHashMap<Product,Integer>> suppliers, LocalDate requiredDate, LinkedHashMap<Supplier,Integer> supplierWeight){
         lc.orderDelivery(branch, suppliers , requiredDate, supplierWeight);
         return null;
     }
@@ -37,11 +37,11 @@ public class DeliveryController {
     public boolean removeDriver(int id){
         return lc.removeDriver(id);
      }
-     public void storeProducts(HashMap<Product,Integer> newSupply){
+     public void storeProducts(LinkedHashMap<Product,Integer> newSupply){
         lc.storeProducts(newSupply);
     }
-    public HashMap<Product,Integer> loadProducts(HashMap<Product,Integer> requestedSupply){
-       return lc.loadProducts(requestedSupply);
+    public LinkedHashMap<Product,Integer> loadProductsFromStock(LinkedHashMap<Product,Integer> requestedSupply){
+       return lc.loadProductsFromStock(requestedSupply);
     }
 
     public boolean replaceTruck(int deliveryID){
@@ -67,7 +67,7 @@ public class DeliveryController {
     public List<Site> getSites(){
         return lc.getSites();
     }
-    public HashMap<Supplier, ArrayList<Product>> getSuppliers(){
+    public LinkedHashMap<Supplier, ArrayList<Product>> getSuppliers(){
         return lc.getSuppliers();
     }
 

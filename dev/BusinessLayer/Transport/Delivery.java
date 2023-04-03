@@ -8,14 +8,14 @@ public class Delivery {
     private LocalDate date;
     private LocalTime departureTime;
     private int truckWeight;
-    private HashMap<Supplier, File> suppliers;
-    private HashMap<Branch, File> branches;
+    private LinkedHashMap<Supplier, File> suppliers;
+    private LinkedHashMap<Branch, File> branches;
     private Site source;
     private String driverName;
     private int truckNumber;
     private String shippingArea;
        
-    public Delivery(int id, LocalDate date, LocalTime departureTime, int truckWeight, HashMap<Supplier, File> suppliers,
+    public Delivery(int id, LocalDate date, LocalTime departureTime, int truckWeight, LinkedHashMap<Supplier, File> suppliers,
             Site source, String driverName, int truckNumber, String shippingArea) {
         this.id = id;
         this.date = date;
@@ -25,7 +25,7 @@ public class Delivery {
         this.source = source;
         this.driverName = driverName;
         this.truckNumber = truckNumber;
-        this.branches = new HashMap<>();
+        this.branches = new LinkedHashMap<>();
         this.shippingArea = shippingArea;
     }
 
@@ -45,14 +45,14 @@ public class Delivery {
         return shippingArea;
     }
 
-    public HashMap<Product,Integer> getProductsOfSupplier(Supplier supplier){
+    public LinkedHashMap<Product,Integer> getProductsOfSupplier(Supplier supplier){
         return suppliers.get(supplier).getProducts();
     }
     public int getId() {
         return this.id;
     }
 
-    public HashMap<Branch, File> getBranches() {
+    public LinkedHashMap<Branch, File> getBranches() {
         return branches;
     }
 
@@ -84,7 +84,7 @@ public class Delivery {
         this.truckWeight = truckWeight;
     }
 
-    public HashMap<Supplier, File> getSuppliers() {
+    public LinkedHashMap<Supplier, File> getSuppliers() {
         return suppliers;
     }
     public Site getSource() {

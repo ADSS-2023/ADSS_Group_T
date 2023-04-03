@@ -7,50 +7,50 @@ import BusinessLayer.Transport.Driver.CoolingLevel;
 
 public class LogisticsCenter {
 
-    private  HashMap<Integer,Truck> trucks;
-    private  HashMap<Integer,Delivery> deliveries;
-    private  HashMap<Product,Integer> productsInStock;
-    private  HashMap<Integer,Driver> drivers;
-    private  HashMap<LocalDate,ArrayList<Truck>> date2trucks;
-    private  HashMap<LocalDate,ArrayList<Driver>> date2drivers;
-    private  HashMap<LocalDate,ArrayList<Delivery>> date2deliveries;
-    private HashMap<String,Branch> branches;
-    private HashMap<String,Supplier> suppliers;
-    private HashMap<Supplier,ArrayList<Product>> suppliersProducts;
-    private HashMap<String,Product> products;
+    private  LinkedHashMap<Integer,Truck> trucks;
+    private  LinkedHashMap<Integer,Delivery> deliveries;
+    private  LinkedHashMap<Product,Integer> productsInStock;
+    private  LinkedHashMap<Integer,Driver> drivers;
+    private  LinkedHashMap<LocalDate,ArrayList<Truck>> date2trucks;
+    private  LinkedHashMap<LocalDate,ArrayList<Driver>> date2drivers;
+    private  LinkedHashMap<LocalDate,ArrayList<Delivery>> date2deliveries;
+    private LinkedHashMap<String,Branch> branches;
+    private LinkedHashMap<String,Supplier> suppliers;
+    private LinkedHashMap<Supplier,ArrayList<Product>> suppliersProducts;
+    private LinkedHashMap<String,Product> products;
     private int deliveryCounter = 0;
     private int filesCounter = 0;
     private LocalDate currDate;
 
 
-    public LogisticsCenter( HashMap<Integer,Truck> trucks,HashMap<Integer,Delivery> deliveries,
-                        HashMap<Product,Integer> productsInStock,HashMap<Integer,Driver> drivers){
+    public LogisticsCenter( LinkedHashMap<Integer,Truck> trucks,LinkedHashMap<Integer,Delivery> deliveries,
+                        LinkedHashMap<Product,Integer> productsInStock,LinkedHashMap<Integer,Driver> drivers){
         this.trucks = trucks;
         this.deliveries = deliveries;
         this.productsInStock = productsInStock;
         this.drivers = drivers;
-        this.date2trucks = new HashMap<>();
-        this.date2drivers = new HashMap<>();
-        this.date2deliveries = new HashMap<>();
-        this.branches = new HashMap<>();
-        this.suppliersProducts = new HashMap<>();
-        this.suppliers = new HashMap<>();
-        this.products = new HashMap<>();
+        this.date2trucks = new LinkedHashMap<>();
+        this.date2drivers = new LinkedHashMap<>();
+        this.date2deliveries = new LinkedHashMap<>();
+        this.branches = new LinkedHashMap<>();
+        this.suppliersProducts = new LinkedHashMap<>();
+        this.suppliers = new LinkedHashMap<>();
+        this.products = new LinkedHashMap<>();
         this.currDate = LocalDate.now();
     }
 
     public LogisticsCenter(){
-        this.trucks = new HashMap<>();
-        this.deliveries = new HashMap<>();
-        this.productsInStock = new HashMap<>();
-        this.drivers = new HashMap<>();
-        this.date2trucks = new HashMap<>();
-        this.date2drivers = new HashMap<>();
-        this.date2deliveries = new HashMap<>();
-        this.branches = new HashMap<>();
-        this.suppliersProducts = new HashMap<>();
-        this.suppliers = new HashMap<>();
-        this.products = new HashMap<>();
+        this.trucks = new LinkedHashMap<>();
+        this.deliveries = new LinkedHashMap<>();
+        this.productsInStock = new LinkedHashMap<>();
+        this.drivers = new LinkedHashMap<>();
+        this.date2trucks = new LinkedHashMap<>();
+        this.date2drivers = new LinkedHashMap<>();
+        this.date2deliveries = new LinkedHashMap<>();
+        this.branches = new LinkedHashMap<>();
+        this.suppliersProducts = new LinkedHashMap<>();
+        this.suppliers = new LinkedHashMap<>();
+        this.products = new LinkedHashMap<>();
         this.currDate = LocalDate.now();
     }
  
@@ -58,7 +58,7 @@ public class LogisticsCenter {
     //s1,<>,1.1
     //s2,<>,1.1
     //s3,<>,1.2
-//    public HashMap<Site,HashMap<Product,Integer>> orderDelivery(Site branch, HashMap<Site,HashMap<Product,Integer>> suppliers, LocalDate requiredDate){
+//    public LinkedHashMap<Site,LinkedHashMap<Product,Integer>> orderDelivery(Site branch, LinkedHashMap<Site,LinkedHashMap<Product,Integer>> suppliers, LocalDate requiredDate){
 //        if(date2deliveries.containsKey(requiredDate)){          //there is delivery in this date
 //            for(Delivery d: date2deliveries.get(requiredDate)){     //the delivery is to the required date
 //                if(branch.getShippingArea().equals(d.getShippingArea())){        //the delivery is to the required branch
@@ -91,7 +91,7 @@ public class LogisticsCenter {
 //                    date2trucks.get(requiredDate).remove(t); //remove truck from this day deliveries list
 //                    return suppliers;
 //                }
-//                Delivery d = new Delivery(deliveryCounter,requiredDate, LocalTime.NOON,t.getWeight(),new HashMap<>(),
+//                Delivery d = new Delivery(deliveryCounter,requiredDate, LocalTime.NOON,t.getWeight(),new LinkedHashMap<>(),
 //                        null,driver.getName(),t.getLicenseNumber(),branch.getShippingArea());
 //                deliveryCounter++;
 //                //add supply to the new delivery
@@ -112,7 +112,7 @@ public class LogisticsCenter {
 //        return null;
 //    }
 
-    public HashMap<Supplier,HashMap<Product,Integer>> orderDelivery(Branch branch, HashMap<Supplier,HashMap<Product,Integer>> suppliers, LocalDate requiredDate, HashMap<Supplier,Integer> supplierWeight){
+    public LinkedHashMap<Supplier,LinkedHashMap<Product,Integer>> orderDelivery(Branch branch, LinkedHashMap<Supplier,LinkedHashMap<Product,Integer>> suppliers, LocalDate requiredDate, LinkedHashMap<Supplier,Integer> supplierWeight){
         if(date2deliveries.containsKey(requiredDate)){          //there is delivery in this date
             for(Delivery d: date2deliveries.get(requiredDate)){     //the delivery is to the required date
                 if(branch.getShippingArea().equals(d.getShippingArea())){        //the delivery is to the required branch
@@ -120,9 +120,11 @@ public class LogisticsCenter {
                         d.addBranch(branch, filesCounter);
                         filesCounter ++;
                     }
-                    for(Supplier supplier: suppliers.keySet()){
+                    ArrayList<Supplier> suppliersTmp = new ArrayList<> ( suppliers.keySet());
+                    for(Supplier supplier: suppliersTmp){
                         if(supplier.getCoolingLevel() == trucks.get(d.getTruckNumber()).getCoolingLevel()){
-                            for(Product p: suppliers.get(supplier).keySet()) {
+                            Set<Product> productsTmp = new LinkedHashSet<>( suppliers.get(supplier).keySet());
+                            for(Product p: productsTmp) {
                                 d.addProductsToSupplier(supplier, p, suppliers.get(supplier).get(p));
                                 suppliers.get(supplier).remove(p);
                             }
@@ -141,21 +143,23 @@ public class LogisticsCenter {
                     date2deliveries.put(requiredDate,new ArrayList<>());
                 Truck t = scheduleTruck(requiredDate,coolingLevel);
                 if(t == null)       //in case there is no truck available for this delivery
-                    return suppliers;
+                    continue;
                 Driver driver = scheduleDriver(requiredDate,coolingLevel);
                 if(driver == null){     //in case there is no driver available for this delivery
                     date2trucks.get(requiredDate).remove(t); //remove truck from this day deliveries list
-                    return suppliers;
+                    continue;
                 }
-                Delivery d = new Delivery(deliveryCounter,requiredDate, LocalTime.NOON,t.getWeight(),new HashMap<>(),
+                Delivery d = new Delivery(deliveryCounter,requiredDate, LocalTime.NOON,t.getWeight(),new LinkedHashMap<>(),
                         null,driver.getName(),t.getLicenseNumber(),branch.getShippingArea());
                 deliveryCounter++;
                 deliveries.put(d.getId(), d);
                 date2deliveries.get(requiredDate).add(d);
                 //add supply to the new delivery
-                for(Supplier supplier: suppliers.keySet()){
+                ArrayList<Supplier> suppliersTmp = new ArrayList<> ( suppliers.keySet());
+                for(Supplier supplier: suppliersTmp){
                     if(supplier.getCoolingLevel() == coolingLevel){
-                        for(Product p: suppliers.get(supplier).keySet()){
+                        Set<Product> productsTmp = new LinkedHashSet<>( suppliers.get(supplier).keySet());
+                        for(Product p: productsTmp){//change
                             if(d.getSource() == null)
                                 d.setSource(supplier);
                             if(!d.getSuppliers().containsKey(supplier))
@@ -169,50 +173,56 @@ public class LogisticsCenter {
                         suppliers.remove(supplier);
                 }
             }
+            if(!suppliers.isEmpty())
+                return suppliers;
         }
         return null;
     }
 
-    private Truck scheduleTruck(LocalDate date, CoolingLevel coolingLevel){
-        for(Truck truck : trucks.values()){
-            if(date2trucks.containsKey(date) &&
-                    !date2trucks.get(date).contains(truck) && truck.getCoolingLevel() == coolingLevel) {
-                date2trucks.get(date).add(truck);
-                return truck;
-            }
-            else if(!date2trucks.containsKey(date) && truck.getCoolingLevel() == coolingLevel){
-                date2trucks.put(date,new ArrayList<>());
-                date2trucks.get(date).add(truck);
-                return truck;
-            }
-        }
-        return null;
-    }
-
-    private Driver scheduleDriver(LocalDate date, CoolingLevel coolingLevel){
-        for(Driver driver : drivers.values()){
-            if(date2drivers.containsKey(date) &&
-            !date2drivers.get(date).contains(driver) && driver.getCoolingLevel().ordinal() >= coolingLevel.ordinal()){
-                date2drivers.get(date).add(driver);
-                return driver;
-            }
-            else if(!date2drivers.containsKey(date) && driver.getCoolingLevel().ordinal() >= coolingLevel.ordinal()){
-                date2drivers.put(date,new ArrayList<>());
-                date2drivers.get(date).add(driver);
-                return driver;
+    public Truck scheduleTruck(LocalDate date, CoolingLevel coolingLevel){
+        if(trucks != null){
+            for(Truck truck : trucks.values()){
+                if(date2trucks.containsKey(date) &&
+                        !date2trucks.get(date).contains(truck) && truck.getCoolingLevel() == coolingLevel) {
+                    date2trucks.get(date).add(truck);
+                    return truck;
+                }
+                else if(!date2trucks.containsKey(date) && truck.getCoolingLevel() == coolingLevel){
+                    date2trucks.put(date,new ArrayList<>());
+                    date2trucks.get(date).add(truck);
+                    return truck;
+                }
             }
         }
         return null;
     }
 
-    private Set<CoolingLevel> countCoolingOptions(HashMap<Supplier,HashMap<Product,Integer>> suppliers){
+    public Driver scheduleDriver(LocalDate date, CoolingLevel coolingLevel){
+        if(drivers != null){
+            for(Driver driver : drivers.values()){
+                if(date2drivers.containsKey(date) &&
+                !date2drivers.get(date).contains(driver) && driver.getCoolingLevel().ordinal() >= coolingLevel.ordinal()){
+                    date2drivers.get(date).add(driver);
+                    return driver;
+                }
+                else if(!date2drivers.containsKey(date) && driver.getCoolingLevel().ordinal() >= coolingLevel.ordinal()){
+                    date2drivers.put(date,new ArrayList<>());
+                    date2drivers.get(date).add(driver);
+                    return driver;
+                }
+            }
+        }
+        return null;
+    }
+
+    public Set<CoolingLevel> countCoolingOptions(LinkedHashMap<Supplier,LinkedHashMap<Product,Integer>> suppliers){
         Set<CoolingLevel> s = new HashSet<>();
         for(Supplier supplier: suppliers.keySet())
             s.add(supplier.getCoolingLevel());
         return s;
     }
 
-//    private Set<CoolingLevel> countCoolingOptions(HashMap<Site,HashMap<Product,Integer>> suppliers){
+//    private Set<CoolingLevel> countCoolingOptions(LinkedHashMap<Site,LinkedHashMap<Product,Integer>> suppliers){
 //        Set<CoolingLevel> s = new HashSet<>();
 //        for(Site supplier: suppliers.keySet()){
 //            for(Product product: suppliers.get(supplier).keySet()){
@@ -235,7 +245,9 @@ public class LogisticsCenter {
             if(d.getTruckWeight() > trucks.get(d.getTruckNumber()).getMaxWeight())
                 overWeightDeliveries.add(d.getId());
         }
-        return overWeightDeliveries;
+        if(!overWeightDeliveries.isEmpty())
+            return overWeightDeliveries;
+        return null;
     }
 
     public boolean addTruck(int licenseNumber, String model, int weight, int maxWeight ,
@@ -274,13 +286,19 @@ public class LogisticsCenter {
         return true;
     }
 
-    public void addBranch(Branch branch){
+    public boolean addBranch(Branch branch){
+        if(branches.containsKey(branch.getAddress()))
+            return false;
         branches.put(branch.getAddress(),branch);
+        return true;
     }
 
-    public void addSupplier(Supplier supplier, ArrayList<Product> supplierProducts){
+    public boolean addSupplier(Supplier supplier, ArrayList<Product> supplierProducts){
+        if(suppliers.containsKey(supplier.getAddress()))
+            return false;
         suppliers.put(supplier.getAddress(),supplier);
         suppliersProducts.put(supplier,supplierProducts);
+        return true;
     }
 
     //condition is wrong
@@ -288,7 +306,7 @@ public class LogisticsCenter {
 //        return trucks.get(licenseNumber).getWeight() > trucks.get(licenseNumber).getMaxWeight();
 //    }
 
-    public void storeProducts(HashMap<Product,Integer> newSupply){
+    public void storeProducts(LinkedHashMap<Product,Integer> newSupply){
         newSupply.forEach((key,value) -> {
             if(productsInStock.containsKey(key))                           //product exist in stock - update amount
                 productsInStock.replace(key, productsInStock.get(key) + value);
@@ -297,14 +315,18 @@ public class LogisticsCenter {
         });
     }
 
-    public HashMap<Product,Integer> loadProducts(HashMap<Product,Integer> requestedSupply){
-        Set<Product> keys = requestedSupply.keySet();
+    public LinkedHashMap<Product,Integer> loadProductsFromStock(LinkedHashMap<Product,Integer> requestedSupply){
+        HashSet<Product> keys = new HashSet<>(requestedSupply.keySet());
         for(Product p : keys){
-            if(productsInStock.containsKey(p) && productsInStock.get(p) >= requestedSupply.get(p))    //product exist in stock in the requested amount
+            if(productsInStock.containsKey(p) && productsInStock.get(p) >= requestedSupply.get(p)) {    //product exist in stock in the requested amount
                 productsInStock.replace(p, productsInStock.get(p) - requestedSupply.get(p));
+                requestedSupply.remove(p);
+                if(productsInStock.get(p) == 0)
+                    productsInStock.remove(p);
+            }
             else if(productsInStock.containsKey(p)) {  //product exist in stock but not in the requested amount
                 requestedSupply.replace(p,requestedSupply.get(p) - productsInStock.get(p));
-                productsInStock.replace(p, 0);
+                productsInStock.remove(p);
             }
         }
         return requestedSupply;
@@ -374,11 +396,15 @@ public class LogisticsCenter {
         return sites;
     }
 
-    public HashMap<Supplier, ArrayList<Product>> getSuppliers() {
+    public LinkedHashMap<Supplier, ArrayList<Product>> getSuppliers() {
         return suppliersProducts;
     }
 
     public ArrayList<Branch> getBranches() {
         return new ArrayList<>(branches.values());
+    }
+
+    public HashMap<Product, Integer> getProductsInStock() {
+        return productsInStock;
     }
 }
