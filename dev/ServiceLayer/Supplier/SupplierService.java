@@ -18,16 +18,16 @@ public class SupplierService {
         this.sc = sc;
     }
 
-    public void addSupplier(String name, String address, int supplierNum,int bankAccountNum, HashMap<String, Integer> contacts, List<String> constDeliveryDays, boolean selfDelivery, HashMap<Integer, SupplierProductBusiness> products, List<Discount> discountPerTotalQuantity, List<Discount> discountPerTotalPrice){
-        sc.addSupplier(name,address,supplierNum,bankAccountNum,contacts,constDeliveryDays, selfDelivery,products, discountPerTotalQuantity, discountPerTotalPrice);
+    public void addSupplier(String name, String address, int supplierNum,int bankAccountNum, HashMap<String, Integer> contacts, List<String> constDeliveryDays, boolean selfDelivery, HashMap<Integer, SupplierProductBusiness> products){
+        sc.addSupplier(name,address,supplierNum,bankAccountNum,contacts,constDeliveryDays, selfDelivery,products);
     }
 
     public void deleteSupplier(int supplierNum){
         sc.deleteSupplier(supplierNum);
     }
 
-    public void editSupplier(String name, String address, int supplierNum,int bankAccountNum, HashMap<String, Integer> contacts, List<String> constDeliveryDays, boolean selfDelivery, HashMap<Integer, SupplierProductBusiness> products, List<Discount> discountPerTotalQuantity, List<Discount> discountPerTotalPrice) throws Exception {
-        sc.getSupplier(supplierNum).editSupplier(name,address,supplierNum,bankAccountNum,contacts,constDeliveryDays, selfDelivery,products, discountPerTotalQuantity, discountPerTotalPrice);
+    public void editSupplier(String name, String address, int supplierNum,int bankAccountNum, HashMap<String, Integer> contacts, List<String> constDeliveryDays, boolean selfDelivery, HashMap<Integer, SupplierProductBusiness> products) throws Exception {
+        sc.getSupplier(supplierNum).editSupplier(name,address,supplierNum,bankAccountNum,contacts,constDeliveryDays, selfDelivery,products);
     }
     public List<String> getProducts(int supplierNum){
         HashMap<Integer, SupplierProductBusiness> productMap =  sc.getProducts(supplierNum);
@@ -38,12 +38,12 @@ public class SupplierService {
         return products;
     }
 
-    public void addProduct(int supplierNum, int productNum, String productName, String manufacturer, int price, int maxAmount, List<Discount> quantitiesAgreement, LocalDateTime expiredDate) throws Exception {
-        sc.getSupplier(supplierNum).addProduct(productNum, productName, manufacturer, price, maxAmount, quantitiesAgreement, expiredDate);
+    public void addProduct(int supplierNum, int productNum, String productName, String manufacturer, int price, int maxAmount, LocalDateTime expiredDate) throws Exception {
+        sc.getSupplier(supplierNum).addProduct(productNum, productName, manufacturer, price, maxAmount, expiredDate);
     }
 
-    public void editProduct(int supplierNum, int productNum, String productName, String manufacturer, int price, int maxAmount, List<Discount> quantitiesAgreement, LocalDateTime expiredDate) throws Exception {
-        sc.getSupplier(supplierNum).editProduct(productNum, productName, manufacturer, price, maxAmount, quantitiesAgreement, expiredDate);
+    public void editProduct(int supplierNum, int productNum, String productName, String manufacturer, int price, int maxAmount, LocalDateTime expiredDate) throws Exception {
+        sc.getSupplier(supplierNum).editProduct(productNum, productName, manufacturer, price, maxAmount, expiredDate);
     }
 
     public void deleteProduct(int supplierNum, int productNum) throws Exception {

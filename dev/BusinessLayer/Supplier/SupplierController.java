@@ -16,8 +16,8 @@ public class SupplierController {
         suppliers = new HashMap<>();
     }
 
-    public void addSupplier(String name, String address, int supplierNum, int bankAccountNum, HashMap<String, Integer> contacts, List<String> constDeliveryDays, boolean selfDelivery, HashMap<Integer, SupplierProductBusiness> products, List<Discount> discountPerTotalQuantity, List<Discount> discountPerTotalPrice){
-        suppliers.put(supplierNum, new SupplierBusiness(name, address, supplierNum, bankAccountNum, contacts, constDeliveryDays, selfDelivery, products, discountPerTotalQuantity, discountPerTotalPrice));
+    public void addSupplier(String name, String address, int supplierNum, int bankAccountNum, HashMap<String, Integer> contacts, List<String> constDeliveryDays, boolean selfDelivery, HashMap<Integer, SupplierProductBusiness> products){
+        suppliers.put(supplierNum, new SupplierBusiness(name, address, supplierNum, bankAccountNum, contacts, constDeliveryDays, selfDelivery, products));
     }
 
     public void deleteSupplier(int supplierNum){
@@ -35,7 +35,7 @@ public class SupplierController {
             int currentPrice = 0;
             boolean flag = true;
             for (ItemToOrder item : items) {
-                if ((entry.getValue().isProductExists(item.getProductName(), item.getManufacturer()) && entry.getValue().getProduct(item.getProductName(), item.getManufacturer()).hasEnoughQuantity(item.getQuantity())))
+                if ((entry.getValue().getProduct(item.getProductName(), item.getManufacturer()) != null && entry.getValue().getProduct(item.getProductName(), item.getManufacturer()).hasEnoughQuantity(item.getQuantity())))
                     currentPrice = currentPrice + entry.getValue().getProduct(item.getProductName(), item.getManufacturer()).getPriceByQuantity(item.getQuantity());
                 else
                     flag = false;

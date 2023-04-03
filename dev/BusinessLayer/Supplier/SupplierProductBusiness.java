@@ -1,11 +1,11 @@
 package BusinessLayer.Supplier;
 import BusinessLayer.Supplier.Discounts.Discount;
+import BusinessLayer.Supplier.Discounts.PrecentDiscount;
+import BusinessLayer.Supplier.Discounts.QuantityDiscount;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class SupplierProductBusiness {
     private int supplierNum;
@@ -17,14 +17,14 @@ public class SupplierProductBusiness {
     private List<Discount> quantitiesAgreement;
     private LocalDateTime expiredDate;
 
-    public SupplierProductBusiness(int supplierNum, String name, int productNum, String manufacturer, int price, int maxAmount, List<Discount> quantitiesAgreement, LocalDateTime expiredDate){
+    public SupplierProductBusiness(int supplierNum, String name, int productNum, String manufacturer, int price, int maxAmount, LocalDateTime expiredDate){
         this.supplierNum = supplierNum;
         this.name = name;
         this.productNum = productNum;
         this.manufacturer = manufacturer;
         this.price = price;
         this.maxAmount = maxAmount;
-        this.quantitiesAgreement = quantitiesAgreement;
+        this.quantitiesAgreement = new ArrayList<>();
         this.expiredDate = expiredDate;
     }
 
@@ -36,23 +36,48 @@ public class SupplierProductBusiness {
         return false;
     }
 
+    private boolean isDiscountValid(int productAmount, int discount, boolean isPercentage){
+        boolean valid = true;
+        for(Discount dis: quantitiesAgreement) {
+            if (dis.isPercentage() == isPercentage && productAmount > dis.getAmount() && discount <= dis.getDiscount()){
+                valid = false;
+                break;
+            }
+        }
+        return valid;
+    }
+
     public void editProductDiscount(int productAmount, int discount, boolean isPercentage) throws Exception {
         if(!isDiscountExists(productAmount, discount, isPercentage))
             throw new Exception("Discount not found");
-        for(Discount dis:quantitiesAgreement){
-            if(dis.isPercentage() == isPercentage && dis.getAmount() == productAmount)
-                dis.editDiscount(productAmount, discount);
+        if(isDiscountValid(productAmount, discount, isPercentage)) {
+            for (Discount dis : quantitiesAgreement) {
+                if (dis.isPercentage() == isPercentage && dis.getAmount() == productAmount)
+                    dis.editDiscount(productAmount, discount);
+            }
         }
     }
 
-    public void addProductDiscount(int productAmount, int discount){
+    public void addProductDiscount(int productAmount, int discount, boolean isPercentage) throws Exception {
         if(isDiscountExists(productAmount, discount, isPercentage))
-            throw new Exception("Discount not found");
-
+            throw new Exception("Discount already exists");
+        if(isDiscountValid(productAmount, discount, isPercentage)) {
+            if (isPercentage)
+                quantitiesAgreement.add(new PrecentDiscount(productAmount, discount, true));
+            else
+                quantitiesAgreement.add(new QuantityDiscount(productAmount, discount, false));
+        }
     }
 
-    public void deleteProductDiscount(int productAmount, int discount){
-        quantitiesAgreement.remove(productAmount,discount);
+    public void deleteProductDiscount(int productAmount, int discount, boolean isPercentage) throws Exception {
+        if(!isDiscountExists(productAmount, discount, isPercentage))
+            throw new Exception("Discount not found");
+        Discount curr = null;
+        for(Discount dis:quantitiesAgreement){
+            if(dis.isPercentage() == isPercentage && dis.getAmount() == productAmount && dis.getDiscount() == discount)
+                curr = dis;
+        }
+        quantitiesAgreement.remove(curr);
     }
 
     public boolean hasEnoughQuantity(int quantity){
@@ -61,10 +86,13 @@ public class SupplierProductBusiness {
 
     public int getPriceByQuantity(int quantity){
         quantity= Math.min(maxAmount, quantity);
+        int maxAmount = 0;
         Discount dis = null;
         for (Discount currentDiscount : quantitiesAgreement) {
-            if(currentDiscount.getAmount()<quantity)
+            if(currentDiscount.getAmount() > maxAmount && quantity >= currentDiscount.getAmount()) {
                 dis = currentDiscount;
+                maxAmount = currentDiscount.getAmount();
+            }
         }
         return dis.getPriceAfterDiscount(quantity*price);
         }
@@ -101,12 +129,13 @@ public class SupplierProductBusiness {
         return supplierNum;
     }
 
-    public int getDiscount(int quantity){
-        int discount = 0;
-        for () {
-            if (entry.getKey() <= quantity && entry.getValue() < discount)
-                discount = entry.getValue();
-        }
-        return discount;
+    public void editProduct(int supplierNum, String productName, int productNum, String manufacturer, int price, int maxAmount, LocalDateTime expiredDate) {
+        this.supplierNum = supplierNum;
+        this.productNum = productNum;
+        this.name = productName;
+        this.manufacturer = manufacturer;
+        this.price = price;
+        this.maxAmount = maxAmount;
+        this.expiredDate = expiredDate;
     }
 }
