@@ -38,5 +38,4 @@ public class Inventory {
         if (report.isEmpty()) return "no shortage";
         return report;
     }
-
 }

@@ -48,7 +48,7 @@ public class Item implements ProductCategoryManagement {
 
     @Override
     public List<String> produceInventoryReport() {
-         return Arrays.asList(String.format("product:%s manufacturer:%s amount:%d",name,manufacturer_name,current_amount()));
+         return Arrays.asList(String.format("product:%s manufacturer:%s amount in store:%d amount in warehouse:%d",name,manufacturer_name,));
     }
 
     @Override
@@ -65,12 +65,7 @@ public class Item implements ProductCategoryManagement {
      * @return
      */
     public int current_amount() {
-        int amount = 0;
-        for (Map.Entry<Integer, ItemPerOrder> entry : items.entrySet()) {
-            ItemPerOrder itemPerOrder = entry.getValue();
-            amount += itemPerOrder.amount();
-        }
-        return amount;
+        return amount_store()+amount_warehouse();
     }
     /**
         This function returns the calculated price of an item,
@@ -83,6 +78,13 @@ public class Item implements ProductCategoryManagement {
             price =  (original_price*(100-(discount_list.stream().mapToDouble(Discount::getAmount).max().orElse(1))))/100;
         return price;
     }
+
+    /**
+     * This function subtract the amount of this item in stock.
+     * If the amount in stock is smaller the amount needed, the function throws exception
+     * @param orderId
+     * @param amount
+     */
     public void reduce(int orderId,int amount){
         if(items.get(orderId).amount()<amount)
             throw new IllegalArgumentException("not enough items in inventory");
@@ -105,5 +107,21 @@ public class Item implements ProductCategoryManagement {
      */
     public void recive_order(int orderId,int amount_warehouse,int amount_store,double cost_price,String location, LocalDate validity){
         items.put(orderId,new ItemPerOrder(orderId,amount_warehouse,amount_store,cost_price,location, validity));
+    }
+    public int amount_warehouse(){
+        int amount = 0;
+        for (Map.Entry<Integer, ItemPerOrder> entry : items.entrySet()) {
+            ItemPerOrder itemPerOrder = entry.getValue();
+            amount += itemPerOrder.getAmount_warehouse();
+        }
+        return amount;
+    }
+    public int amount_store(){
+        int amount = 0;
+        for (Map.Entry<Integer, ItemPerOrder> entry : items.entrySet()) {
+            ItemPerOrder itemPerOrder = entry.getValue();
+            amount += itemPerOrder.getAmount_store();
+        }
+        return amount;
     }
 }
