@@ -10,11 +10,17 @@ public class EmployeeService {
         this.employeeController = ec;
     }
 
-    public String addNewConstraint(int id, String date, boolean type, boolean temp) {
+    public String addNewConstraint(int id, String date, String type, String temp) {
         Response res = new Response();
         try {
+            boolean boolType = true;
+            if (type.equals("e"))
+                boolType = false;
+            boolean boolTemp = true;
+            if (type.equals("p"))
+                boolTemp = false;
             Employee employee = employeeController.getEmployee(id);
-            employee.addSubmittedShift(date, type, temp);
+            employee.addSubmittedShift(date, boolType , boolTemp);
         } catch (Exception ex) {
         }
         return null;

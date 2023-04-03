@@ -60,7 +60,7 @@ public class Presentaition {
                         int ans_employee_id_4 = input.nextInt();
                         System.out.println("add employee qualification - enter qualification");
                         String ans_quali_4 = input.next();
-                        employeeService.
+
                         break;
                     case 5:
                         //maybe?
@@ -114,14 +114,17 @@ public class Presentaition {
                 int chosen_num = input.nextInt();
                 switch (chosen_num) {
                     case 1:
-                        System.out.println("add new constraint - enter ");
-                        int ans_employe = input.nextInt();
-                        System.out.println("add new constraint - enter ");///////////////////////
-                        String ans_da = input.next();
+                        System.out.println("add new constraint - enter date");
+                        String ans_date_1 = input.next();
+                        System.out.println("add new constraint - enter morning(m)/evening(e)");
+                        String ans_type_1 = input.next();
+                        System.out.println("add new constraint - enter temp(t)/permanent(p)");
+                        String ans_isTemp_1 = input.next();
+                        employeeService.addNewConstraint(ans_id,ans_date_1,ans_type_1,ans_isTemp_1);
                         repeat = true;
                         break;
                     case 2:
-                        employeeService.getAssignedShifts(ans_id);
+                        System.out.println(employeeService.getAssignedShifts(ans_id));
                         repeat = true;
                         break;
                     case 3:

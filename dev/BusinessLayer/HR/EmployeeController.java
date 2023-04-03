@@ -59,10 +59,16 @@ public class EmployeeController {
     public boolean login (int empolyeeId, String password){
         Employee emp = employeesMapper.get(empolyeeId);
         if ( emp != null){
-            if (emp.getPassword().equals(password))
-                return true;
+            if (emp.getPassword().equals(password)){
+                if(emp.isManager())
+                    return true;
+                return false;
+            }
+            else
+                throw  new IllegalArgumentException("wrong password");
         }
-        return false;
+        else
+            throw  new IllegalArgumentException("wrong ID");
     }
 
     public void deleteEmployee(int emploeeyId){
