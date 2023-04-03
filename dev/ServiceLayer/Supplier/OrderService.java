@@ -14,7 +14,6 @@ public class OrderService {
         this.oc = oc;
     }
     public void createOrder(List<ItemToOrder> itemsList) throws Exception {
-
-
+        oc.createOrder(itemsList);
     }
 }

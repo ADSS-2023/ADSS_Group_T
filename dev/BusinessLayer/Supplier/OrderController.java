@@ -30,7 +30,9 @@ public class OrderController {
         }
         else{
             for (ItemToOrder item : items) {
-                SupplierProductBusiness supplierProduct = chosenSupplier.getSupplierProduct(item.getProductName(), item.getManufacturer());
+
+                int productNumber= chosenSupplier.getSupplierProduct(item.getProductName(), item.getManufacturer());
+                SupplierProductBusiness supplierProduct = chosenSupplier.getSupplierProduct(productNumber);
                 addToShoppingList(supplierProduct.getProductNum(), supplierProduct.getSupplierNum(), item.getQuantity());
             }
         }
