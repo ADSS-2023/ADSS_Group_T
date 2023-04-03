@@ -8,6 +8,8 @@ import java.util.List;
 
 public class ShiftController {
     private HashMap<String, ArrayList<Shift>> shifts;
+    private HashMap<String, ArrayList<Shift>> approvedShifts;
+
     private int shiftId;
 
     public ShiftController(){
@@ -21,9 +23,16 @@ public class ShiftController {
 
 
 
-    public String approveShift (String date, boolean shiftType) {
+    public String approveShift(String date, boolean shiftType) {
         Shift shift = shiftType ? shifts.get(date).get(0) : shifts.get(date).get(1);
-        return shift.isLegalShift();
+        String isApproved = shift.isLegalShift();
+        if (isApproved.equals("0")) {
+            int num = shiftType ? 0 : 1 ;
+            ArrayList<Shift> approvedShiftList = approvedShifts.getOrDefault(date, new ArrayList<>(2));
+            approvedShiftList.add(num , shift);
+            approvedShifts.put(date, approvedShiftList);
+        }
+        return isApproved;
     }
 
 
