@@ -120,7 +120,7 @@ public class LogisticsCenter {
                         d.addBranch(branch, filesCounter);
                         filesCounter ++;
                     }
-                    ArrayList<Supplier> suppliersTmp = new ArrayList ( suppliers.keySet());
+                    ArrayList<Supplier> suppliersTmp = new ArrayList<> ( suppliers.keySet());
                     for(Supplier supplier: suppliersTmp){
                         if(supplier.getCoolingLevel() == trucks.get(d.getTruckNumber()).getCoolingLevel()){
                             Set<Product> productsTmp = new LinkedHashSet<>( suppliers.get(supplier).keySet());
@@ -143,11 +143,11 @@ public class LogisticsCenter {
                     date2deliveries.put(requiredDate,new ArrayList<>());
                 Truck t = scheduleTruck(requiredDate,coolingLevel);
                 if(t == null)       //in case there is no truck available for this delivery
-                    return suppliers;
+                    continue;
                 Driver driver = scheduleDriver(requiredDate,coolingLevel);
                 if(driver == null){     //in case there is no driver available for this delivery
                     date2trucks.get(requiredDate).remove(t); //remove truck from this day deliveries list
-                    return suppliers;
+                    continue;
                 }
                 Delivery d = new Delivery(deliveryCounter,requiredDate, LocalTime.NOON,t.getWeight(),new LinkedHashMap<>(),
                         null,driver.getName(),t.getLicenseNumber(),branch.getShippingArea());
@@ -155,7 +155,8 @@ public class LogisticsCenter {
                 deliveries.put(d.getId(), d);
                 date2deliveries.get(requiredDate).add(d);
                 //add supply to the new delivery
-                for(Supplier supplier: suppliers.keySet()){
+                ArrayList<Supplier> suppliersTmp = new ArrayList<> ( suppliers.keySet());
+                for(Supplier supplier: suppliersTmp){
                     if(supplier.getCoolingLevel() == coolingLevel){
                         Set<Product> productsTmp = new LinkedHashSet<>( suppliers.get(supplier).keySet());
                         for(Product p: productsTmp){//change
@@ -172,6 +173,8 @@ public class LogisticsCenter {
                         suppliers.remove(supplier);
                 }
             }
+            if(!suppliers.isEmpty())
+                return suppliers;
         }
         return null;
     }

@@ -360,5 +360,56 @@ public class LogisticsCenterTest {
         assertTrue(lc.addSupplier(new Supplier("address2","0000000","name1", CoolingLevel.fridge),arr));
         assertEquals(4,lc.getSites().size());
     }
+
+    @Test
+    public void orderDelivery() {
+        Branch b1 = new Branch("address1","0000000","name1","south");
+        Supplier s1 = new Supplier("address1","0000000","name1", CoolingLevel.fridge);
+        Product p1 = new Product("milk");
+        lc.addTruck(1,"skoda",8000,15000,LicenseType.C,CoolingLevel.fridge);
+        lc.addDriver(1,"name1",LicenseType.C,CoolingLevel.fridge);
+        lc.addBranch(b1);
+        LinkedHashMap<Product,Integer> supplier1Products = new LinkedHashMap<>();
+        supplier1Products.put(p1,750);
+        ArrayList<Product> productsOfSupplier1 = new ArrayList<>();
+        productsOfSupplier1.add(p1);
+        lc.addSupplier(s1,productsOfSupplier1);
+        LinkedHashMap<Supplier,LinkedHashMap<Product,Integer>> suppliers = new LinkedHashMap<>();
+        suppliers.put(s1,supplier1Products);
+        LinkedHashMap<Supplier,Integer> suppliersWeight = new LinkedHashMap<>();
+        suppliersWeight.put(s1,7000);
+        assertNull(lc.orderDelivery(b1,suppliers,LocalDate.now(),suppliersWeight));
+    }
+
+    @Test
+    public void orderDeliveryWhenNotAllProductsSchedule() {
+        Branch b1 = new Branch("address1","0000000","name1","south");
+        Supplier s1 = new Supplier("address1","0000000","name1", CoolingLevel.fridge);
+        Supplier s2 = new Supplier("address1","0000000","name1", CoolingLevel.freezer);
+        Product p1 = new Product("milk");
+        Product p2 = new Product("ice-cream");
+        lc.addTruck(1,"skoda",8000,15000,LicenseType.C,CoolingLevel.fridge);
+        lc.addDriver(1,"name1",LicenseType.C,CoolingLevel.fridge);
+        lc.addBranch(b1);
+        LinkedHashMap<Product,Integer> supplier1Products = new LinkedHashMap<>();
+        LinkedHashMap<Product,Integer> supplier2Products = new LinkedHashMap<>();
+        supplier1Products.put(p1,750);
+        supplier2Products.put(p2,500);
+        ArrayList<Product> productsOfSupplier1 = new ArrayList<>();
+        ArrayList<Product> productsOfSupplier2 = new ArrayList<>();
+        productsOfSupplier1.add(p1);
+        productsOfSupplier2.add(p2);
+        lc.addSupplier(s1,productsOfSupplier1);
+        lc.addSupplier(s2,productsOfSupplier2);
+        LinkedHashMap<Supplier,LinkedHashMap<Product,Integer>> suppliers = new LinkedHashMap<>();
+        suppliers.put(s1,supplier1Products);
+        suppliers.put(s2,supplier2Products);
+        LinkedHashMap<Supplier,Integer> suppliersWeight = new LinkedHashMap<>();
+        suppliersWeight.put(s1,5000);
+        suppliersWeight.put(s2,2000);
+        LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> expectedResult = new LinkedHashMap<>();
+        expectedResult.put(s2,supplier2Products);
+        assertEquals(expectedResult,lc.orderDelivery(b1,suppliers,LocalDate.now(),suppliersWeight));
+    }
 }
 
