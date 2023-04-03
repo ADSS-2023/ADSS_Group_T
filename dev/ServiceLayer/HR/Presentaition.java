@@ -128,7 +128,9 @@ public class Presentaition {
                         String ans_type_1 = input.next();
                         System.out.println("submit shift - enter temp(t)/permanent(p)");
                         String ans_isTemp_1 = input.next();
-                        shiftService.addShift(ans_id,ans_date_1,ans_type_1,ans_isTemp_1);
+                        System.out.println("submit shift - enter position");
+                        String ans_position_1 = input.next();
+                        shiftService.addShift(ans_id,ans_date_1,ans_type_1,ans_isTemp_1,ans_position_1);
                         repeat = true;
                         break;
                     case 2:

@@ -73,15 +73,16 @@ public class ShiftService {
         return null;
     }
 
-    public String addShift(int id, String date, String type, String temp) {
+    public String addShift(int id, String date, String type, String temp,String position) {
         Response res = new Response();
         try {
             boolean boolType = true;
             if (type.equals("e"))
                 boolType = false;
             boolean boolTemp = true;
-            if (type.equals("p"))
+            if (temp.equals("p"))
                 boolTemp = false;
+            shiftController.submitShift(id,date,boolType,boolTemp,position);
         } catch (Exception ex) {
         }
         return null;
