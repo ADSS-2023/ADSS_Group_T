@@ -36,7 +36,17 @@ public class EmployeeController {
         }
     }
 
+    public String getListOfSubmittedConstraints(int Id) {
+        return employeesMapper.get(Id).getListOfSubmittedConstraints();
+    }
 
+    public String getListOfAssignedShifts(int Id) {
+        return employeesMapper.get(Id).getListOfAssignedShifts();
+    }
+
+    public void addQualification(int Id,  String position) {
+       employeesMapper.get(Id).addQualification(position);
+    }
 
 
     public HashMap<Integer, Employee> getEmployeesMapper(){
@@ -50,12 +60,9 @@ public class EmployeeController {
         Employee emp = employeesMapper.get(empolyeeId);
         if ( emp != null){
             if (emp.getPassword().equals(password))
-                return emp.isManager();
-            else
-                throw  new IllegalArgumentException("wrong password");
+                return true;
         }
-        else
-            throw  new IllegalArgumentException("wrong ID");
+        return false;
     }
 
     public void deleteEmployee(int emploeeyId){

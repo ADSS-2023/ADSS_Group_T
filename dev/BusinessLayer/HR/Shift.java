@@ -7,14 +7,14 @@ public class Shift {
     private int shiftId;
     private String date;
     private int managerID;
-    private String shiftType;
+    private boolean shiftType;
     private HashMap<String, Integer> employeesRequirement; // HashMap<PositionType, amount> - require employees per shift
     private HashMap<String, List<Employee>> fulfillPositionByEmployees; // HashMap<PositionType, EmployeesToFullfill> - the Employees that assign to the shifts by manager
     private HashMap<String, List<Employee>> submittedPositionByEmployees;
 
 
 
-    public Shift(int shiftId, int managerID, String date,  String shiftType) {
+    public Shift(int shiftId, int managerID, String date,  boolean shiftType) {
         this.shiftId = shiftId;
         this.date = date;
         this.shiftType = shiftType;
@@ -22,6 +22,17 @@ public class Shift {
         employeesRequirement = createNewEmployeesRequirement();
         fulfillPositionByEmployees = createNewFulfillPositionByEmployees();
         submittedPositionByEmployees = createNewSubmittedPositionByEmployees();
+    }
+
+    public Shift(int shiftId,  String date,  boolean shiftType) {
+        this.shiftId = shiftId;
+        this.date = date;
+        this.shiftType = shiftType;
+        this.managerID = managerID;
+        employeesRequirement = createNewEmployeesRequirement();
+        fulfillPositionByEmployees = createNewFulfillPositionByEmployees();
+        submittedPositionByEmployees = createNewSubmittedPositionByEmployees();
+        managerID = -1;
     }
 
     public HashMap<String, Integer> createNewEmployeesRequirement() {
@@ -48,13 +59,39 @@ public class Shift {
         return submittedPositionByEmployees;
     }
 
-    public void addEmployeeRequirement(String pos, int amount) {
-        if (employeesRequirement.containsKey(pos)) {
-            employeesRequirement.put(pos, employeesRequirement.get(pos) + amount);
-        } else {// is needed???????
-            employeesRequirement.put(pos, amount);
+    public void addEmployeeRequirements(HashMap<String, Integer> requirements) {
+        for (Map.Entry<String, Integer> entry : requirements.entrySet()) {
+            String pos = entry.getKey();
+            int amount = entry.getValue();
+            if (employeesRequirement.containsKey(pos)) {
+                employeesRequirement.put(pos, employeesRequirement.get(pos) + amount);
+            } else {
+                employeesRequirement.put(pos, amount);
+            }
         }
     }
+
+
+    public String isLegalShift() {
+        boolean hasManager = false;
+        // Check if all position requirements are fulfilled
+        for (Map.Entry<String, Integer> entry : employeesRequirement.entrySet()) {
+            String position = entry.getKey();
+            int requiredAmount = entry.getValue();
+            int assignedAmount = fulfillPositionByEmployees.get(position).size();
+            if (assignedAmount != requiredAmount) {
+                int num = requiredAmount - assignedAmount;
+                return  num + " employees are missing in the position of " + position;
+            }
+            // Check if the shift contains a manager
+            if (position.equals("shift_manager") && assignedAmount > 0)
+                hasManager = true;
+        }
+        if (!hasManager)
+            return  "Missing a shift manager";
+        return "0";
+    }
+
 
 
     public void submittedPosition(String pos, Employee emp) {
@@ -88,7 +125,7 @@ public class Shift {
         return managerID;
     }
 
-    public String getShiftType() {
+    public boolean getShiftType() {
         return shiftType;
     }
 

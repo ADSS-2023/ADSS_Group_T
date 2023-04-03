@@ -62,8 +62,24 @@ public class Employee {
     public String getListOfSubmittedConstraints() {
         String concat = "";
         String type = "";
-        for (List<Constraint> constraints : assignedShifts.values()) {
+        for (List<Constraint> constraints : submittedShifts.values()) {
             for (Constraint cons : constraints) {
+                if (cons.getShiftType()) {
+                    type = "morning";
+                } else {
+                    type = "evening";
+                }
+                concat += "Date: " + cons.getDate() + " Type: " + type + "\n";
+            }
+        }
+        return concat;
+    }
+
+    public String getListOfAssignedShifts() {
+        String concat = "";
+        String type = "";
+        for (List<Constraint> assignedShifts : assignedShifts.values()) {
+            for (Constraint cons : assignedShifts) {
                 if (cons.getShiftType()) {
                     type = "morning";
                 } else {
@@ -121,6 +137,19 @@ public class Employee {
     }
 
 
+    public void addQualification(String position) {
+        if (! isLeagalPosition(position))
+            throw new IllegalArgumentException("The position " + position + " does not exist");
+        qualifiedPositions.add(PositionType.valueOf(position));
+    }
+
+    public boolean isLeagalPosition(String position) {
+       for (PositionType posType : PositionType.values()){
+           if (posType.name().equals(position))
+                   return true;
+       }
+       return  false;
+    }
 
 
 
