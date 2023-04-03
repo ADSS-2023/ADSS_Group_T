@@ -22,8 +22,9 @@ public class ShiftService {
            shiftController.addRequirements(howMany,date,bool);
         }
         catch (Exception ex){
+            return ex.getMessage();
         }
-        return null;
+        return "succeed";
     }
 
     public String checkProblems(){
@@ -47,5 +48,45 @@ public class ShiftService {
         }
         return null;
     }
+
+    public String approveShift(String date , String shiftType){
+        Response res = new Response();
+        try
+        {
+            boolean bool = true;
+            if (shiftType.equals("e"))
+                bool = false;
+            return shiftController.approveShift(date,bool);
+        }
+        catch (Exception ex){
+        }
+        return null;
+    }
+    public String submittedConstraints(int id){
+        Response res = new Response();
+        try
+        {
+
+        }
+        catch (Exception ex){
+        }
+        return null;
+    }
+
+    public String addShift(int id, String date, String type, String temp,String position) {
+        Response res = new Response();
+        try {
+            boolean boolType = true;
+            if (type.equals("e"))
+                boolType = false;
+            boolean boolTemp = true;
+            if (temp.equals("p"))
+                boolTemp = false;
+            shiftController.submitShift(id,date,boolType,boolTemp,position);
+        } catch (Exception ex) {
+        }
+        return null;
+    }
+
 
 }

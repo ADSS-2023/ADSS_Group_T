@@ -32,13 +32,6 @@ public class Initialization {
         pt1.add(PositionType.general_worker);pt1.add(PositionType.storekeeper);
         employeeController.addNewEmployee("Worker3","123456",pt3,"12.02.2022",3 , "3",false);
 
-        initShifts();
-
-        Presentaition presentaition = new Presentaition(Emp,shiftService);
-        presentaition.begin();
-    }
-
-    public static void initShifts() {
         HashMap<String, ArrayList<Shift>> shifts = new HashMap<String, ArrayList<Shift>>();
         int shiftId = 0;
 
@@ -54,7 +47,7 @@ public class Initialization {
             }
 
             for (int day = 1; day <= numDaysInMonth; day++) {
-                String date = String.format("%02d.%02d.2024", day, month); // format date as "DD.MM.YYYY"
+                String date = String.format("%02d.%02d.2023", day, month); // format date as "DD.MM.YYYY"
                 Shift morningShift = new Shift(shiftId, date, true); // morning shift
                 Shift eveningShift = new Shift(shiftId, date, false); // evening shift
                 ArrayList<Shift> shiftList = new ArrayList<Shift>(2);
@@ -64,5 +57,15 @@ public class Initialization {
                 shiftId+= 2;
             }
         }
+
+        shiftController.loadDataShiftController(shifts);
+
+        Presentaition presentaition = new Presentaition(Emp,shiftService);
+        presentaition.begin();
+    }
+
+    public static void initShifts() {
+
+
     }
 }
