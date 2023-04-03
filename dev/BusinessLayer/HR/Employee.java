@@ -30,6 +30,18 @@ public class Employee {
         this.assignedShifts = new HashMap<>();
         this.shiftsRestriction = new HashMap<String, List<Boolean>>();
     }
+    public Employee(String employeeName, String bankAccount, List<PositionType> qualifiedPositions, String joiningDay, int employeeId, String password, boolean isManager) {
+        this.employeeName = employeeName;
+        this.bankAccount = bankAccount;
+        this.qualifiedPositions = qualifiedPositions;
+        this.joiningDay = joiningDay;
+        this.id = employeeId;
+        this.password = password;
+        this.submittedShifts = new HashMap<>();
+        this.assignedShifts = new HashMap<>();
+        this.shiftsRestriction = new HashMap<String, List<Boolean>>();
+        this.isManager = isManager;
+    }
 
     public void addSubmittedShift(String date, boolean shiftType, boolean isTemp) {
         if (shiftsRestriction.containsKey(date) && shiftsRestriction.get(date).contains(shiftType)) {

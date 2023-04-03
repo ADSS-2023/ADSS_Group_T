@@ -12,13 +12,14 @@ public class EmployeeService {
     private EmployeeController ec;
 
     public EmployeeService(EmployeeController ec){
+        this.ec = ec;
 
     }
     public String addNewEmployee(String employeeName, String bankAccount, List<PositionType> qualifedPositions, Vector<Constraint> constraints, String joiningDay, int id , String password){
         Response res = new Response();
         try
         {
-            ec.addNewEmployee(employeeName,bankAccount,qualifedPositions,joiningDay,id,password);
+            ec.addNewEmployee(employeeName,bankAccount,qualifedPositions,joiningDay,id,password,false);
             return ("great success");
         }
         catch (Exception ex){

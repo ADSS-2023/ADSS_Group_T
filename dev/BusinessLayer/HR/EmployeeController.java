@@ -10,14 +10,13 @@ import java.util.NoSuchElementException;
 
 public class EmployeeController {
     private HashMap<Integer,Employee> employeesMapper;
-    private PersonnelManager manager;
 
-    public EmployeeController(PersonnelManager manager){
+
+    public EmployeeController(){
         employeesMapper = new HashMap<Integer,Employee>();
-        this.manager =manager;
     }
-    public void addNewEmployee(String employeeName, String bankAccount, List<PositionType> qualifedPositions, String joiningDay, int employeeId, String password){
-        Employee newEmployee = new Employee(employeeName, bankAccount, qualifedPositions, joiningDay, employeeId, password);
+    public void addNewEmployee(String employeeName, String bankAccount, List<PositionType> qualifedPositions, String joiningDay, int employeeId, String password,boolean isManger){
+        Employee newEmployee = new Employee(employeeName, bankAccount, qualifedPositions, joiningDay, employeeId, password,isManger);
         employeesMapper.putIfAbsent(employeeId, newEmployee);
     }
 
@@ -51,13 +50,8 @@ public class EmployeeController {
         Employee emp = employeesMapper.get(empolyeeId);
         if ( emp != null){
             if (emp.getPassword().equals(password))
-                if (emp.isManager())
-                    return true;
-            else
-                throw  new IllegalArgumentException("wron password");
+                return true;
         }
-        else
-            throw  new IllegalArgumentException("wron ID");
         return false;
     }
 
