@@ -48,4 +48,29 @@ public class ShiftService {
         return null;
     }
 
+    public String approveShift(String date , String shiftType){
+        Response res = new Response();
+        try
+        {
+            boolean bool = true;
+            if (shiftType.equals("e"))
+                bool = false;
+            return shiftController.approveShift(date,bool);
+        }
+        catch (Exception ex){
+        }
+        return null;
+    }
+    public String submittedConstraints(int id){
+        Response res = new Response();
+        try
+        {
+            shiftController.get
+        }
+        catch (Exception ex){
+        }
+        return null;
+    }
+
+
 }

@@ -30,8 +30,8 @@ public class Presentaition {
                 repeat = false;
                 System.out.println("" +
                         "manger menu - choose action number" +
-                        " \n 1.approve constraint" +
-                        " \n 2.check for shift problems" +
+                        " \n 1.approve shift for employee" +
+                        " \n 2.approve shift" +
                         " \n 3.add restriction to employee" +
                         " \n 4.add employee qualification " +
                         " \n 5.show shift history" +
@@ -41,9 +41,17 @@ public class Presentaition {
                 int chosen_num = input.nextInt();
                 switch (chosen_num) {
                     case 1:
+                        System.out.println("add restriction to employee - enter date");
+                        String ans_date_1 = input.next();
+                        System.out.println("add restriction to employee - enter morning(m)/evening(e)");
+                        String ans_type_1 = input.next();
                         break;
                     case 2:
-                        //shiftService.checkProblems();
+                        System.out.println("add restriction to employee - enter date");
+                        String ans_date_2 = input.next();
+                        System.out.println("add restriction to employee - enter morning(m)/evening(e)");
+                        String ans_type_2 = input.next();
+                        System.out.println(shiftService.approveShift(ans_date_2,ans_type_2));
                         break;
                     case 3:
                         System.out.println("add restriction to employee - enter employee id");
@@ -60,7 +68,7 @@ public class Presentaition {
                         int ans_employee_id_4 = input.nextInt();
                         System.out.println("add employee qualification - enter qualification");
                         String ans_quali_4 = input.next();
-
+                        employeeService.addQualification(ans_employee_id_4,ans_quali_4);
                         break;
                     case 5:
                         //maybe?
@@ -128,13 +136,6 @@ public class Presentaition {
                         repeat = true;
                         break;
                     case 3:
-                        System.out.println("add restriction to employee - enter employee id");
-                        int ans_employee_id_3 = input.nextInt();
-                        System.out.println("add restriction to employee - enter date");
-                        String ans_date_3 = input.next();
-                        System.out.println("add restriction to employee - enter morning(m)/evening(e)");
-                        String ans_type_3 = input.next();
-                        employeeService.addRestrictionToEmployee(ans_employee_id_3,ans_date_3,ans_type_3);
                         repeat = true;
                         break;
                     case 4:

@@ -37,16 +37,6 @@ public class EmployeeService {
         return null;
     }
 
-    public String getListOfAssignedShift(int id) {
-        Response res = new Response();
-        try {
-            Employee employee = employeeController.getEmployee(id);
-            return employee.getListOfSubmittedConstraints();
-        } catch (Exception ex) {
-        }
-        return null;
-    }
-
     public String addRestrictionToEmployee(int id, String date, String type) {
         Response res = new Response();
         try {
