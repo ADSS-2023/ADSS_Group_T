@@ -67,9 +67,9 @@ public class DeliveryManagerService {
         Product product_bread = new Product("bread");
         Product product_pita = new Product("pita");
         Product product_cake = new Product("cake");
-        Product product_mintChocolateChip = new Product("mint chocolate chip ice cream");
-        Product product_cookiesAndCream = new Product("cookies and cream ice cream");
-        Product product_strawberryCheesecake = new Product("strawberry cheesecake ice cream");
+        Product product_mintChocolateChip = new Product("mint");
+        Product product_cookiesAndCream = new Product("cookies");
+        Product product_strawberryCheesecake = new Product("strawberry");
      
         //---------- Create product lists for each supplier ----------//
         ArrayList<Product> tnuvaProducts = new ArrayList<>();
