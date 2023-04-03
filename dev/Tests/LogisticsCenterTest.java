@@ -289,7 +289,14 @@ public class LogisticsCenterTest {
 
     @Test
     public void storeProducts() {
-        lc.pro
+        assertTrue(lc.getProductsInStock().isEmpty());
+        Product p1 = new Product("milk");
+        Product p2 = new Product("cheese");
+        LinkedHashMap<Product,Integer> products = new LinkedHashMap<>();
+        products.put(p1,500);
+        products.put(p2,800);
+        lc.storeProducts(products);
+        assertEquals(2,lc.getProductsInStock().size());
     }
 
     @Test
