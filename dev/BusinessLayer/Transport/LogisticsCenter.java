@@ -303,11 +303,13 @@ public class LogisticsCenter {
         });
     }
 
-    public HashMap<Product,Integer> loadProducts(HashMap<Product,Integer> requestedSupply){
+    public HashMap<Product,Integer> loadProductsFromStock(HashMap<Product,Integer> requestedSupply){
         Set<Product> keys = requestedSupply.keySet();
         for(Product p : keys){
-            if(productsInStock.containsKey(p) && productsInStock.get(p) >= requestedSupply.get(p))    //product exist in stock in the requested amount
+            if(productsInStock.containsKey(p) && productsInStock.get(p) >= requestedSupply.get(p)) {    //product exist in stock in the requested amount
                 productsInStock.replace(p, productsInStock.get(p) - requestedSupply.get(p));
+                requestedSupply.remove(p);
+            }
             else if(productsInStock.containsKey(p)) {  //product exist in stock but not in the requested amount
                 requestedSupply.replace(p,requestedSupply.get(p) - productsInStock.get(p));
                 productsInStock.replace(p, 0);
