@@ -6,10 +6,11 @@ import java.util.Scanner;
 import java.util.Set;
 
 import java.time.LocalDate;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import BusinessLayer.Transport.*;
 import BusinessLayer.Transport.Driver.CoolingLevel;
@@ -22,29 +23,24 @@ import java.util.Scanner;
 
 public class DeliveryManagerService {
     private DeliveryController dc;
-   // private List<Site> sites;
-    private ArrayList<Branch> branches;
-    private HashMap<Supplier, ArrayList<Product>> suppliers;
-    private  HashMap<Supplier,Integer> weightOfOrder;
+   
+    private  LinkedHashMap<Supplier,Integer> weightOfOrder;
     
     public DeliveryManagerService() {
         dc = new DeliveryController();
-        HashMap<Supplier,Integer> weightOfOrder = new HashMap<>();
-        //sites = new ArrayList<>();
-       // suppliers = new HashMap<>();
+        this.weightOfOrder = new LinkedHashMap<Supplier,Integer>();
+      
         
        
 
     }
     public void init(){
+
          //---------- init drivers ----------//
         dc.addDriver(1001, "Driver1",LicenseType.C1,CoolingLevel.non);
         dc.addDriver(1002, "Driver2",LicenseType.C1,CoolingLevel.freezer);
         dc.addDriver(1003, "Driver3",LicenseType.C,CoolingLevel.fridge);
         dc.addDriver(1004, "Driver4",LicenseType.E,CoolingLevel.non);
-
-        
-
 
         //---------- init trucks ----------//
         dc.addTruck(2001, "Truck1", 4000 , 8000, LicenseType.C1,CoolingLevel.freezer);
@@ -59,8 +55,6 @@ public class DeliveryManagerService {
         dc.addBranch( new Branch("branch3", "000000003", "Contact B3", "Area 2"));
         dc.addBranch( new Branch("branch4", "000000004", "Contact B4", "Area 3"));
         
-
-        
          //---------- init suppliers ----------//
         Supplier site_tnuva = new Supplier("Tnuva", "111111111", "Contact 1", CoolingLevel.fridge);
         Supplier site_bakery = new Supplier("Bakery", "22222222", "Contact 2", CoolingLevel.non);
@@ -68,11 +62,7 @@ public class DeliveryManagerService {
         Supplier site_beverages = new Supplier("Beverages", "444444444", "Contact 4", CoolingLevel.non);
         Supplier site_golda = new Supplier("Golda", "555555555", "Contact 5", CoolingLevel.freezer);
     
-       
-        
-        
-
-        // Create products
+        //---------- Create products ----------//
         Product product_milk = new Product("milk");
         Product product_cheese = new Product("cheese");
         Product product_eggs = new Product("eggs");
@@ -90,8 +80,7 @@ public class DeliveryManagerService {
         Product product_cookiesAndCream = new Product("cookies and cream ice cream");
         Product product_strawberryCheesecake = new Product("strawberry cheesecake ice cream");
      
-
-        // Create product lists for each supplier
+        //---------- Create product lists for each supplier ----------//
         ArrayList<Product> tnuvaProducts = new ArrayList<>();
         tnuvaProducts.add(product_milk);
         tnuvaProducts.add(product_cheese);
@@ -113,24 +102,13 @@ public class DeliveryManagerService {
         goldaProducts.add(product_mintChocolateChip);
         goldaProducts.add(product_cookiesAndCream);
         goldaProducts.add(product_strawberryCheesecake);
-       
-
-        // Add product lists to suppliers map
-
+        
+        //---------- Add product lists to suppliers map ----------//
         dc.addSupplier(site_tnuva, tnuvaProducts);
         dc.addSupplier(site_bakery, bakeryProducts);
         dc.addSupplier(site_snacks, snacksProducts);
         dc.addSupplier(site_beverages, beveragesProducts);
         dc.addSupplier(site_golda, goldaProducts);
-
-
-        //if we add more its not update!!!!!!!!!!1!!!!!!
-        //this.sites = dc.getSites();
-        this.suppliers = dc.getSuppliers();
-        this.branches = dc.getBranches();
-
-
-
     }
     
     public void start() {
@@ -174,9 +152,6 @@ public class DeliveryManagerService {
     
     // option 1
     void skipDay() {
-        //sites = dc.getSites();
-
-
         ArrayList<Integer> deliveriesWithProblems = dc.skipDay();
         Scanner scanner = new Scanner(System.in);
         if(deliveriesWithProblems != null){
@@ -186,7 +161,6 @@ public class DeliveryManagerService {
                 System.out.println("2. Change truck");
                 System.out.println("3. Remove products");
                 int choice = scanner.nextInt();
-                
                 switch (choice) {
                     case 1:
                         dc.handleProblem(deliveryID, 1);
@@ -203,41 +177,35 @@ public class DeliveryManagerService {
                 }
             }
         }
-        
         start(); 
     }
     
-
     // option 2
     private void addNewDelivery() {
-        this.weightOfOrder = new HashMap<>();
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter the delivery details:");
         Branch destinationSite = chooseDestinationSite(scanner);
-        HashMap<Supplier, HashMap<Product, Integer>> selectedProducts = selectProducts(scanner);
+        LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> selectedProducts = selectProducts(scanner);
         LocalDate deliveryDate = chooseDeliveryDate(scanner);
         dc.orderDelivery(destinationSite,selectedProducts , deliveryDate,weightOfOrder);
-        
     }
     
     private Branch chooseDestinationSite(Scanner scanner) {
         System.out.println("\nPlease choose a destination site:");
-        for (int i = 0; i < branches.size(); i++) {
-            System.out.println((i + 1) + ". " + branches.get(i).getAddress());
+        for (int i = 0; i < dc.getBranches().size(); i++) {
+            System.out.println((i + 1) + ". " + dc.getBranches().get(i).getAddress());
         }
         int siteIndex = scanner.nextInt() - 1;
-        if (siteIndex < 0 || siteIndex >= branches.size()) {
+        if (siteIndex < 0 || siteIndex >= dc.getBranches().size()) {
             System.out.println("Invalid site choice.");
             return null;
         }
-        return branches.get(siteIndex);
+        return dc.getBranches().get(siteIndex);
     }
     
-    private HashMap<Supplier, HashMap<Product, Integer>> selectProducts(Scanner scanner) {
-        HashMap<Supplier, HashMap<Product, Integer>> selectedProducts = new HashMap<>();
+    private LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> selectProducts(Scanner scanner) {
+        LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> selectedProducts = new LinkedHashMap<>();
         List<Supplier> selectedSuppliers = new ArrayList<>();
-       
-    
         while (true) {
             System.out.println("\nDo you want to add products from a supplier? (Y/N)");
             String supplierChoice = scanner.next();
@@ -249,16 +217,12 @@ public class DeliveryManagerService {
             if (selectedSupplier == null) {
                 break;
             }
-
             selectedSuppliers.add(selectedSupplier);
-    
-            HashMap<Product, Integer> supplierProducts = selectSupplierProducts(scanner, selectedSupplier);
+            LinkedHashMap<Product, Integer> supplierProducts = selectSupplierProducts(scanner, selectedSupplier);
             if (supplierProducts.isEmpty()) {
                 break;
             }
-    
             selectedProducts.put(selectedSupplier, supplierProducts);
-    
             System.out.println("Enter weight of products from " + selectedSupplier.getAddress() + ":");
             int weight = scanner.nextInt();
             if (weight <= 0) {
@@ -267,20 +231,17 @@ public class DeliveryManagerService {
             }
             this.weightOfOrder.put(selectedSupplier, weight);
         }
-    
         return selectedProducts;
     }
-    
-    
 
-    private HashMap<Product, Integer> selectSupplierProducts(Scanner scanner, Site selectedSupplier) {
+    private LinkedHashMap<Product, Integer> selectSupplierProducts(Scanner scanner, Site selectedSupplier) {
         System.out.println("\nPlease choose products from " + selectedSupplier.getAddress() + ":");
-        List<Product> products = new ArrayList<>(suppliers.get(selectedSupplier));
+        List<Product> products = new ArrayList<>(dc.getSuppliers().get(selectedSupplier));
         if (products == null || products.isEmpty()) {
             System.out.println("No products available from " + selectedSupplier.getAddress() + ".");
-            return new HashMap<>();
+            return new LinkedHashMap<>();
         }
-        HashMap<Product, Integer> selectedProducts = new HashMap<>();
+        LinkedHashMap<Product, Integer> selectedProducts = new LinkedHashMap<>();
         while (true) {
             int productIndex = 0;
             for (Product product : products) {
@@ -318,12 +279,10 @@ public class DeliveryManagerService {
         return selectedProducts;
     }
 
-    
-
     private Supplier chooseSupplier(Scanner scanner, List<Supplier> selectedSuppliers) {
         System.out.println("\nPlease choose a supplier:");
         int supplierIndex = 0;
-        for (Site supplier : this.suppliers.keySet()) {
+        for (Site supplier : dc.getSuppliers().keySet()) {
             if (selectedSuppliers.contains(supplier) ) {
                 continue; // Skip already selected and destination site
             }
@@ -334,16 +293,14 @@ public class DeliveryManagerService {
             System.out.println("No more suppliers available.");
             return null;
         }
-    
         int selectedSupplierIndex = scanner.nextInt() - 1;
         if (selectedSupplierIndex < 0 || selectedSupplierIndex >= supplierIndex) {
             System.out.println("Invalid supplier choice.");
             return null;
         }
-    
         supplierIndex = 0;
         Supplier selectedSupplier = null;
-        for (Supplier supplier : suppliers.keySet()) {
+        for (Supplier supplier : dc.getSuppliers().keySet()) {
             if (selectedSuppliers.contains(supplier) ) {
                 continue; // Skip already selected and destination site
             }
@@ -356,12 +313,10 @@ public class DeliveryManagerService {
         if (selectedSupplier == null ) {
             System.out.println("Invalid supplier choice.");
         }
-    
         return selectedSupplier;
     }
 
     private LocalDate chooseDeliveryDate(Scanner scanner) {
-        // Get the delivery date
         int year, month, day;
         System.out.println("Please enter the delivery date:");
         while (true) {
@@ -385,38 +340,19 @@ public class DeliveryManagerService {
                 System.out.println("Delivery date cannot be before today's date.");
                 continue;
             }
-    
             return deliveryDate;
         }
     }
-    
-
-
-
-
-
-
-    
-
-
-
-    
     
     // option 3
     public void addNewDriver() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter the driver details:");
-    
-        // Get the driver ID
         System.out.println("Please enter the driver ID:");
         int driverId = scanner.nextInt();
         scanner.nextLine();
-    
-        // Get the driver name
         System.out.println("Please enter the driver name:");
         String driverName = scanner.nextLine();
-    
-        // Get the driver license type
         System.out.println("Please choose the driver license type:");
         System.out.println("1. C");
         System.out.println("2. C1");
@@ -427,8 +363,6 @@ public class DeliveryManagerService {
             return;
         }
         LicenseType licenseType = LicenseType.values()[licenseIndex];
-
-        
         System.out.println("Please choose the cooling level:");
         System.out.println("1. Non");
         System.out.println("2. Fridge");
@@ -439,36 +373,25 @@ public class DeliveryManagerService {
             return;
         }
         CoolingLevel coolingLevel = CoolingLevel.values()[coolingIndex];
-        
-    
-        // Create the driver object
         if(dc.addDriver(driverId, driverName, licenseType,coolingLevel))
             System.out.println("Driver added successfully.");
         else
              System.out.println("Driver not added.");
-        
-        start(); // Return to main menu
+        start(); 
     }
-
-
 
     // option 5
     void addNewTruck() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter the truck details:");
-        
         System.out.println("Please enter the truck's license number:");
         int licenseNumber = scanner.nextInt();
-    
         System.out.println("Please enter the truck's model:");
         String model = scanner.next();
-    
         System.out.println("Please enter the truck's weight:");
         int weight = scanner.nextInt();
-    
         System.out.println("Please enter the truck's maximum weight:");
         int maxWeight = scanner.nextInt();
-    
         System.out.println("Please choose the truck license type:");
         System.out.println("1. C");
         System.out.println("2. C1");
@@ -479,7 +402,6 @@ public class DeliveryManagerService {
             return;
         }
         LicenseType licenseType = LicenseType.values()[licenseIndex];
-    
         System.out.println("Please choose the truck cooling level:");
         System.out.println("1. non");
         System.out.println("2. fridge");
@@ -490,343 +412,10 @@ public class DeliveryManagerService {
             return;
         }
         CoolingLevel coolingLevel = CoolingLevel.values()[coolingIndex];
-
         if(dc.addTruck(licenseNumber, model, weight, maxWeight, licenseType, coolingLevel))
             System.out.println("New truck added successfully.");
         else
             System.out.println("truck not added.");
-        start(); // return to main menu
+        start(); 
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-public String addNewTruck(int licenseNumber, String model, int weight,int maxWeight, int licenseIndex  ){
-    return "not implemented yet";
 }
-public String addNewDriver(int id, String name, int licenseIndex){
-    return "not implemented yet";
-} 
-public String addNewOrder(int id, String name, int licenseIndex){
-    return "not implemented yet";
-} 
-
-
-
-    
-    
-
-    // /**
-    //  * @return DeliveryController return the dc
-    //  */
-    // public DeliveryController getDc() {
-    //     return dc;
-    // }
-
-    // /**
-    //  * @param dc the dc to set
-    //  */
-    // public void setDc(DeliveryController dc) {
-    //     this.dc = dc;
-    // }
-
-    // /**
-    //  * @return LocalDate return the curDay
-    //  */
-    // public LocalDate getCurDay() {
-    //     return curDay;
-    // }
-
-    // /**
-    //  * @param curDay the curDay to set
-    //  */
-    // public void setCurDay(LocalDate curDay) {
-    //     this.curDay = curDay;
-    // }
-
-    // /**
-    //  * @return LogisticsCenter return the lc
-    //  */
-    // public LogisticsCenter getLc() {
-    //     return lc;
-    // }
-
-    // /**
-    //  * @param lc the lc to set
-    //  */
-    // public void setLc(LogisticsCenter lc) {
-    //     this.lc = lc;
-    // }
-
-    // /**
-    //  * @return List<Delivery> return the deliveries
-    //  */
-    // public List<Delivery> getDeliveries() {
-    //     return deliveries;
-    // }
-
-    // /**
-    //  * @param deliveries the deliveries to set
-    //  */
-    // public void setDeliveries(List<Delivery> deliveries) {
-    //     this.deliveries = deliveries;
-    // }
-
-    // /**
-    //  * @return List<Driver> return the drivers
-    //  */
-    // public List<Driver> getDrivers() {
-    //     return drivers;
-    // }
-
-    // /**
-    //  * @param drivers the drivers to set
-    //  */
-    // public void setDrivers(List<Driver> drivers) {
-    //     this.drivers = drivers;
-    // }
-
-    // /**
-    //  * @return List<Truck> return the trucks
-    //  */
-    // public List<Truck> getTrucks() {
-    //     return trucks;
-    // }
-
-    // /**
-    //  * @param trucks the trucks to set
-    //  */
-    // public void setTrucks(List<Truck> trucks) {
-    //     this.trucks = trucks;
-    // }
-
-    // /**
-    //  * @return ArrayList<Site> return the sites
-    //  */
-    // public ArrayList<Site> getSites() {
-    //     return sites;
-    // }
-
-    // /**
-    //  * @param sites the sites to set
-    //  */
-    // public void setSites(ArrayList<Site> sites) {
-    //     this.sites = sites;
-    // }
-
-    // /**
-    //  * @return ArrayList<Product> return the products
-    //  */
-    // public ArrayList<Product> getProducts() {
-    //     return products;
-    // }
-
-    // /**
-    //  * @param products the products to set
-    //  */
-    // public void setProducts(ArrayList<Product> products) {
-    //     this.products = products;
-    // }
-
-    // /**
-    //  * @return HashMap<Site,List<Product>> return the suppliers
-    //  */
-    // public HashMap<Site,List<Product>> getSuppliers() {
-    //     return suppliers;
-    // }
-
-    // /**
-    //  * @param suppliers the suppliers to set
-    //  */
-    // public void setSuppliers(HashMap<Site,List<Product>> suppliers) {
-    //     this.suppliers = suppliers;
-    // }
-
-}
-
-
-
-
-
-    
-
-
-//     private void addNewDelivery() {
-
-//         //suppliers = dc.getSuppliers();
-
-
-//         Scanner scanner = new Scanner(System.in);
-//         System.out.println("Please enter the delivery details:");
-    
-//         // Get the destination site
-//         System.out.println("\nPlease choose a destination site:");
-//         for (int i = 0; i < sites.size(); i++) {
-//             System.out.println((i + 1) + ". " + sites.get(i).getName());
-//         }
-//         int siteIndex = scanner.nextInt() - 1;
-//         if (siteIndex < 0 || siteIndex >= sites.size()) {
-//             System.out.println("Invalid site choice.");
-//             return;
-//         }
-//         Site destinationSite = sites.get(siteIndex);
-    
-//         // Select supplier and product
-//         HashMap<Site, HashMap<Product, Integer>> selectedProducts = new HashMap<>();
-// List<Site> selectedSuppliers = new ArrayList<>();
-//         HashMap<Site,Integer> weightOfOrder = new HashMap<>();
-
-// while (true) {
-//     System.out.println("\nDo you want to add products from a supplier? (Y/N)");
-//     String supplierChoice = scanner.next();
-//     if (supplierChoice.equalsIgnoreCase("N")) {
-//         break;
-//     }
-//     System.out.println("\nPlease choose a supplier:");
-//     int supplierIndex = 0;
-//     for (Site supplier : this.suppliers.keySet()) {
-//         if (selectedSuppliers.contains(supplier) || supplier.equals(destinationSite)) {
-//             continue; // Skip already selected and destination site
-//         }
-//         System.out.println((supplierIndex + 1) + ". " + supplier.getName());
-//         supplierIndex++;
-//     }
-//     if (supplierIndex == 0) {
-//         System.out.println("No more suppliers available.");
-//         break;
-//     }
-//     int selectedSupplierIndex = scanner.nextInt() - 1;
-//     if (selectedSupplierIndex < 0 || selectedSupplierIndex >= supplierIndex) {
-//         System.out.println("Invalid supplier choice.");
-//         continue;
-//     }
-//     supplierIndex = 0;
-//     Site selectedSupplier = null;
-//     for (Site supplier : suppliers.keySet()) {
-//         if (selectedSuppliers.contains(supplier) || supplier.equals(destinationSite)) {
-//             continue; // Skip already selected and destination site
-//         }
-//         if (supplierIndex == selectedSupplierIndex) {
-//             selectedSupplier = supplier;
-//             break;
-//         }
-//         supplierIndex++;
-//     }
-//     if (selectedSupplier == null ) {
-//         System.out.println("Invalid supplier choice.");
-//         continue;
-//     }
-//     selectedSuppliers.add(selectedSupplier);
-//     HashMap<Product, Integer> supplierProducts = new HashMap<>();
-//     List<Product> selectedProductsList = new ArrayList<>();
-//     while (true) {
-//         System.out.println("\nPlease choose a product from the list of Schlutz products:");
-//         for (int i = 0; i < this.suppliers.get(selectedSupplier).size(); i++) {
-//             Product product = this.suppliers.get(selectedSupplier).get(i);
-//             if (selectedProductsList.contains(product)) {
-//                 continue; // Skip already selected products
-//             }
-//             System.out.println((i + 1) + ". " + product.getName());
-//         }
-//         if (selectedProductsList.size() == this.suppliers.get(selectedSupplier).size()) {
-//             System.out.println("You have already selected all products from " + selectedSupplier.getName() + ".");
-//             System.out.println("Enter weight of products from " + selectedSupplier.getName() + ":");
-//             int weight= scanner.nextInt();
-//             if (weight <= 0) {
-//                 System.out.println("Invalid quantity.");
-//                 continue;
-//             }
-//             weightOfOrder.put(selectedSupplier, weight);
-//             break;
-//         }
-//         int productIndex = scanner.nextInt() - 1;
-//         if (productIndex < 0 || productIndex >= this.suppliers.get(selectedSupplier).size()) {
-//             System.out.println("Invalid product choice.");
-//             continue;
-//         }
-//         Product selectedProduct = this.suppliers.get(selectedSupplier).get(productIndex);
-//         if (selectedProductsList.contains(selectedProduct)) {
-//             System.out.println("You have already selected this product.");
-//             continue;
-//         }
-//         System.out.println("Enter quantity for product " + selectedProduct.getName() + ":");
-//         int quantity = scanner.nextInt();
-//         if (quantity <= 0) {
-//             System.out.println("Invalid quantity.");
-//             continue;
-//         }
-//         supplierProducts.put(selectedProduct, quantity);
-//         selectedProductsList.add(selectedProduct);
-//         System.out.println("\nDo you want to add more products from " + selectedSupplier.getName() + "? (Y/N)");
-//         String moreProductsChoice = scanner.next();
-//         if (moreProductsChoice.equalsIgnoreCase("N")) {
-//             System.out.println("Enter weight of products from " + selectedSupplier.getName() + ":");
-//             int weight= scanner.nextInt();
-//             if (weight <= 0) {
-//                 System.out.println("Invalid quantity.");
-//                 continue;
-//             }
-//             weightOfOrder.put(selectedSupplier, weight);
-//             break;
-//         }
-//     }
-//     selectedProducts.put(selectedSupplier, supplierProducts);
-// }
-
-      
-    
-
-    
-    //     // Get the delivery date
-    //     int year, month, day;
-    //     System.out.println("Please enter the delivery date:");
-    //     while (true) {
-    //         System.out.println("\nPlease enter the year:");
-    //         year = scanner.nextInt();
-    //         System.out.println("Please enter the month (1-12):");
-    //         month = scanner.nextInt();
-    //         if (month < 1 || month > 12) {
-    //             System.out.println("Invalid month.");
-    //             continue;
-    //         }
-    //         System.out.println("Please enter the day (1-" + LocalDate.of(year, month, 1).lengthOfMonth() + "):");
-    //         day = scanner.nextInt();
-    //         if (day < 1 || day > LocalDate.of(year, month, 1).lengthOfMonth()) {
-    //             System.out.println("Invalid day.");
-    //             continue;
-    //         }
-    //         LocalDate deliveryDate = LocalDate.of(year, month, day);
-    
-    //         if (!dc.checkDate(deliveryDate)) {
-    //             System.out.println("Delivery date cannot be before today's date.");
-    //             continue;
-    //         }
-    
-    //         // Order the delivery
-    //         boolean success = dc.orderDelivery(destinationSite, selectedProducts, deliveryDate,null);
-    //         // Print result to user and return to start
-    //         if (success) {
-    //             System.out.println("Delivery ordered successfully.");
-    //         } else {
-    //             System.out.println("Failed to order delivery.");
-    //         }
-    //         start();
-    //         break;
-    //     }
-    
-    //     // Do something with destinationSite, productQuantities, and deliveryDate
-    
-    //     start(); // Return to main menu
-    // }
-    
