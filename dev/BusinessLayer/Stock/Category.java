@@ -1,7 +1,9 @@
 package BusinessLayer.Stock;
 
 import java.awt.*;
-import java.util.LinkedList;
+import java.util.*;
+import java.util.List;
+
 /*
     This class represent any kind of category, whether its a subcategory in
     the categories tree, or the first one.
@@ -11,7 +13,7 @@ public class Category implements ProductCategoryManagement{
     protected String name;
     protected LinkedList<ProductCategoryManagement> categories_list;
     @Override
-    public String produceInventoryReport() {
+    public List<String> produceInventoryReport() {
         return null;
     }
 

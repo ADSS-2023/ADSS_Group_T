@@ -48,9 +48,8 @@ public class Item implements ProductCategoryManagement {
 
     @Override
     public List<String> produceInventoryReport() {
-         return Arrays.asList(String.format("product:%s manufacturer:%s amount in store:%d amount in warehouse:%d",name,manufacturer_name,));
+         return Arrays.asList(String.format("product:%s manufacturer:%s amount in store:%d amount in warehouse:%d",name,manufacturer_name,amount_store(),amount_warehouse()));
     }
-
     @Override
     public void setDiscount(Discount discount) {
         discount_list.add(discount);
