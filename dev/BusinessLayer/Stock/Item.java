@@ -74,7 +74,7 @@ public class Item implements ProductCategoryManagement {
     public double get_price(){
         double price = original_price;
         if(!discount_list.isEmpty())
-            price =  (original_price*(100-(discount_list.stream().mapToDouble(Discount::getAmount).max().orElse(1))))/100;
+            price =  (original_price*(100-(discount_list.stream().mapToDouble(Discount::getPercentageAmount).max().orElse(1))))/100;
         return price;
     }
 

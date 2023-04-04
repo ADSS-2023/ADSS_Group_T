@@ -38,4 +38,7 @@ public class Inventory {
         if (report.isEmpty()) return "no shortage";
         return report;
     }
+//    public Category get_category(String index){
+//        int number_index = (Integer) index.split(".")[0];
+//    }
 }
