@@ -21,8 +21,9 @@ public class Damaged {
      * @param amount
      * @param description
      */
-    public void addDamagedItem(Item item , int amount , String description){
+    public void addDamagedItem(Item item ,int order_id, int amount , String description){
         damagedItems.add(new DamagedItem(item , amount , description));
+        item.reduce(order_id,amount);
     }
 
     /**

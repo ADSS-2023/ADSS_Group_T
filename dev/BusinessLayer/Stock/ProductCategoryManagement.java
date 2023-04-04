@@ -8,6 +8,7 @@ import java.util.List;
  */
 public interface ProductCategoryManagement {
 
-    List<String> produceInventoryReport();
+    String produceInventoryReport(String index);
     void setDiscount(Discount discount);
+    String show_data(String index);
 }

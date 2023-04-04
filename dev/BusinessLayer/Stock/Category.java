@@ -1,5 +1,7 @@
 package BusinessLayer.Stock;
 
+import BusinessLayer.Stock.Util.Util;
+
 import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
@@ -14,6 +16,7 @@ public class Category implements ProductCategoryManagement{
     protected LinkedList<ProductCategoryManagement> categories_list;
 
     public Category(String name,String index) {
+
         this.name = name;
         this.index = index;
         categories_list = new LinkedList<>();
@@ -25,12 +28,20 @@ public class Category implements ProductCategoryManagement{
      * @return
      */
     @Override
-    public List<String> produceInventoryReport() {
-        String reportString = "Category : " + name + "\n\n";
-        for(ProductCategoryManagement curCategory : categories_list){
-            reportString += "\t" + curCategory.produceInventoryReport() + "\n";
+    public String produceInventoryReport(String index) {
+        if(index == "") {
+            String reportString = "Category : " + name + "\n\n";
+            for (ProductCategoryManagement curCategory : categories_list) {
+                reportString += "\t" + curCategory.produceInventoryReport("") + "\n";
+            }
+            return reportString;
         }
-        return null;
+        else {
+            int current_index = Integer.parseInt(Util.extractFirstNumber(index));
+            String next_index = Util.extractNextIndex(index);
+            return categories_list.get(current_index).produceInventoryReport(next_index);
+        }
+
     }
 
     /**
@@ -46,6 +57,7 @@ public class Category implements ProductCategoryManagement{
         }
     }
 
+
     /**
      * This function gets an index as an argument and return the Category \ Item from
      * the specific category.
@@ -57,8 +69,14 @@ public class Category implements ProductCategoryManagement{
         return categories_list.get(index);
     }
 
-
-    public String toString(){
-        return "";
+    @Override
+    public String show_data(String index){
+        if(index == "")
+            return "myself";
+        else {
+            int current_index = Integer.parseInt(Util.extractFirstNumber(index));
+            String next_index = Util.extractNextIndex(index);
+            return categories_list.get(current_index).show_data(next_index);
+        }
     }
 }

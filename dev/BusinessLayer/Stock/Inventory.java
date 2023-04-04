@@ -1,5 +1,7 @@
 package BusinessLayer.Stock;
 
+import BusinessLayer.Stock.Util.Util;
+
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -13,6 +15,7 @@ public class Inventory {
     protected List<Category> categories;
     protected Dictionary<Integer,Item> items;
     protected List<Item> shortage_list;
+    protected Damaged damaged;
     public Inventory(){
         categories = new LinkedList<>();
         items = new Hashtable<>();
@@ -38,7 +41,30 @@ public class Inventory {
         if (report.isEmpty()) return "no shortage";
         return report;
     }
-//    public Category get_category(String index){
-//        int number_index = (Integer) index.split(".")[0];
-//    }
+
+    public void addDamagedItem(int item_id,int order_id,int amount,String description){
+        damaged.addDamagedItem(items.get(item_id),order_id,amount,description);
+    }
+
+    public String show_data(String index) {
+        if(index == "")
+            return "myself";
+        else {
+            int current_index = Integer.parseInt(Util.extractFirstNumber(index));
+            String next_index = Util.extractNextIndex(index);
+            return categories.get(current_index).show_data(next_index);
+        }
+
+    }
+
+    public String produce_inventory_report(LinkedList<String> categories_indexes){
+        String report = "";
+        for (String index:categories_indexes
+             ) {
+            int current_index = Integer.parseInt(Util.extractFirstNumber(index));
+            String next_index = Util.extractNextIndex(index);
+            report +="----"+ categories.get(current_index).produceInventoryReport(next_index);
+        }
+        return report;
+    }
 }

@@ -38,6 +38,14 @@ public class Item implements ProductCategoryManagement {
 
     }
 
+    public int getItem_id() {
+        return item_id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
     public int getMin_amount() {
         return min_amount;
     }
@@ -47,13 +55,19 @@ public class Item implements ProductCategoryManagement {
     }
 
     @Override
-    public List<String> produceInventoryReport() {
-         return Arrays.asList(String.format("product:%s manufacturer:%s amount in store:%d amount in warehouse:%d",name,manufacturer_name,amount_store(),amount_warehouse()));
+    public String produceInventoryReport(String index) {
+         return String.format("product:%s manufacturer:%s amount in store:%d amount in warehouse:%d",name,manufacturer_name,amount_store(),amount_warehouse());
     }
     @Override
     public void setDiscount(Discount discount) {
         discount_list.add(discount);
     }
+
+    @Override
+    public String show_data(String index) {
+        return String.format("product:%s manufacturer:%s",name,manufacturer_name);
+    }
+
     private String alert(){
         onAlertCallBack.on_alert();
         return  String.format("\u001B[31m%s\u001B[0m","%s has reached its minimal amount",name);
