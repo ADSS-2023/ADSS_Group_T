@@ -10,6 +10,7 @@ import java.util.List;
     Each category holds a list of the subcategories/items underneath it.
  */
 public class Category implements ProductCategoryManagement{
+
     protected String name;
     protected LinkedList<ProductCategoryManagement> categories_list;
     @Override

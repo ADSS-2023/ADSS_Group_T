@@ -80,16 +80,19 @@ public class Item implements ProductCategoryManagement {
 
     /**
      * This function subtract the amount of this item in stock.
-     * If the amount in stock is smaller the amount needed, the function throws exception
+     * If the amount in stock is smaller the amount needed, the function throws exception.
+     * The function returns a string, if it is not null,
+     * its an alert message that need to be presented.
      * @param orderId
      * @param amount
      */
-    public void reduce(int orderId,int amount){
+    public String reduce(int orderId,int amount){
         if(items.get(orderId).amount()<amount)
             throw new IllegalArgumentException("not enough items in inventory");
         items.get(orderId).reduce(amount);
         if (current_amount()==min_amount)
-            alert();
+            return alert();
+        return null;
     }
     public void set_on_alert_callback(OnAlertCallBack c) {
         onAlertCallBack = c;

@@ -22,6 +22,12 @@ public class Main {
 
         }
     }
+    public static void setDiscount(){
+        boolean chosen = false;
+        while (!chosen) {
+            presentCategories();
+        }
+    }
     public static void act(String choise){
         switch (choise) {
             case "1":
@@ -29,7 +35,7 @@ public class Main {
             case "2":
                 inventoryReport();
             case "3":
-
+                setDiscount();
             case "4":
         }
     }
