@@ -1,5 +1,9 @@
 package BusinessLayer.Stock.Util;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+
 public class Util {
     public static String extractFirstNumber(String inputString) {
         // Find the index of the first non-digit character
@@ -18,5 +22,16 @@ public class Util {
         }
         // Extract the remaining string using the substring method
         return inputString.substring(index);
+    }
+
+    public static LocalDate stringToDate(String dateString) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        try {
+            LocalDate date = LocalDate.parse(dateString, formatter);
+            return date;
+        } catch (DateTimeParseException e) {
+            System.out.println("Unable to parse date: " + dateString);
+            return null;
+        }
     }
 }

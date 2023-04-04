@@ -10,7 +10,7 @@ public class Discount {
     private LocalDate end_date;
     private int percentage;
 
-    public Discount(LocalDate start_date, LocalDate end_date, int Percentage) {
+    public Discount(LocalDate start_date, LocalDate end_date, double Percentage) {
         this.start_date = start_date;
         this.end_date = end_date;
         this.percentage = percentage;

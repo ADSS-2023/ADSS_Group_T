@@ -42,7 +42,7 @@ public class Item implements ProductCategoryManagement {
         return item_id;
     }
 
-    public String getName() {
+    public String get_name() {
         return name;
     }
 
@@ -58,14 +58,22 @@ public class Item implements ProductCategoryManagement {
     public String produceInventoryReport(String index) {
          return String.format("product:%s manufacturer:%s amount in store:%d amount in warehouse:%d",name,manufacturer_name,amount_store(),amount_warehouse());
     }
+
+
+
     @Override
-    public void setDiscount(Discount discount) {
+    public void setDiscount(String index , Discount discount) {
         discount_list.add(discount);
     }
 
     @Override
     public String show_data(String index) {
         return String.format("product:%s manufacturer:%s",name,manufacturer_name);
+    }
+
+    @Override
+    public void add_product(ProductCategoryManagement add_product) {
+        //do nothing.
     }
 
     private String alert(){
@@ -88,7 +96,7 @@ public class Item implements ProductCategoryManagement {
     public double get_price(){
         double price = original_price;
         if(!discount_list.isEmpty())
-            price =  (original_price*(100-(discount_list.stream().mapToDouble(Discount::getPercentageAmount).max().orElse(1))))/100;
+            price =  (original_price*(100-(discount_list.stream().filter(Discount::isDue).mapToDouble(Discount::getPercentageAmount).max().orElse(1))))/100;
         return price;
     }
 

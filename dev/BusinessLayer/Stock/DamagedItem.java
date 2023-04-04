@@ -34,7 +34,7 @@ public class DamagedItem {
      * @return
      */
     public String produceReport(){
-        return "Item name : " + item.getName() + " , Item ID : " + item.getItem_id() + " , Amount : " + amount + " , Description : " + description;
+        return "Item name : " + item.get_name() + " , Item ID : " + item.getItem_id() + " , Amount : " + amount + " , Description : " + description;
     }
 }
 

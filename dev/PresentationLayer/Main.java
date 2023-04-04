@@ -9,9 +9,11 @@ import java.util.LinkedList;
 import java.util.Scanner;
 
 public class Main {
-    public static CategoryService categoryService;
-    public static InventoryService inventoryService;
-    public static DamagedService damagedService;
+    public static InventoryService inventoryService = new InventoryService();
+    public static CategoryService categoryService = new CategoryService(inventoryService.get_inventory());
+    public static DamagedService damagedService = new DamagedService();
+
+
     public static void printOptions(){
         System.out.println("1.See categories");
         System.out.println("2.Produce inventory report");
@@ -20,7 +22,7 @@ public class Main {
     }
     public static String presentCategories(){
         Scanner scanner = new Scanner(System.in);
-        categoryService.show_data("");
+        System.out.println(inventoryService.show_data());
         boolean is_active = true;
         String next_index="";
 
@@ -41,6 +43,7 @@ public class Main {
         return next_index;
 
     }
+
     private static void inventoryReport() {
         Scanner scanner = new Scanner(System.in);
         LinkedList<String> categories = new LinkedList<>();
@@ -60,12 +63,20 @@ public class Main {
             System.out.println(inventoryService.produce_inventory_report(categories));
 
     }
+
     public static void setDiscount(){
-        boolean chosen = false;
-        while (!chosen) {
-            presentCategories();
-        }
+        Scanner scanner = new Scanner(System.in);
+        String product = presentCategories();
+        System.out.println("Choose dates by the next format : yyyy-mm-dd");
+        System.out.println("Choose start date :");
+        String end_date_string = scanner.nextLine();
+        System.out.println("Choose end date :");
+        String start_date_string = scanner.nextLine();
+        System.out.println("Choose percentage amount :");
+        double percentageAmount = scanner.nextDouble();
+        inventoryService.set_discount(product , percentageAmount , end_date_string , start_date_string);
     }
+
     public static void act(String choise){
         switch (choise) {
             case "1":
@@ -95,12 +106,11 @@ public class Main {
 
 
     public static void main(String[] args) {
-        categoryService = new CategoryService();
+        inventoryService.setUp();
         Scanner scanner = new Scanner(System.in);
         System.out.println("Welcome to Superly inventory.\nWhat would you like to do?");
         printOptions();
         String choise = scanner.nextLine();
         act(choise);
     }
-
 }

@@ -10,11 +10,26 @@ public class InventoryService {
         return null;
     }
     public String show_data(){
-        return null;
+        return inventory.show_data("");
     }
+
+    public InventoryService(){
+        inventory = new Inventory();
+    }
+    public Inventory get_inventory(){
+        return inventory;
+    }
+
     public String produce_inventory_report(LinkedList<String> categories_list){
         return inventory.produce_inventory_report(categories_list);
     }
 
+    public void set_discount(String product, double percentageAmount, String end_date_string, String start_date_string) {
+        inventory.set_discount(product , percentageAmount , end_date_string , start_date_string);
+    }
+
+    public void setUp() {
+      inventory.setUp();
+    }
 }
 
