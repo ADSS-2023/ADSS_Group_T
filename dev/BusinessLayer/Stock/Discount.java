@@ -8,12 +8,12 @@ import java.time.LocalDate;
 public class Discount {
     private LocalDate start_date;
     private LocalDate end_date;
-    private int amount;
+    private int percentage;
 
-    public Discount(LocalDate start_date, LocalDate end_date, int amount) {
+    public Discount(LocalDate start_date, LocalDate end_date, int Percentage) {
         this.start_date = start_date;
         this.end_date = end_date;
-        this.amount = amount;
+        this.percentage = percentage;
     }
 
     public LocalDate getStart_date() {
@@ -24,6 +24,16 @@ public class Discount {
         this.start_date = start_date;
     }
 
+    /**
+     * This is a boolean function that let know if this specific discount is relevant or not.
+     * @return
+     */
+    public boolean isDue() {
+        LocalDate today = LocalDate.now();
+        return (today.isEqual(start_date) || today.isAfter(start_date))
+                && (today.isEqual(end_date) || today.isBefore(end_date));
+    }
+
     public LocalDate getEnd_date() {
         return end_date;
     }
@@ -32,11 +42,11 @@ public class Discount {
         this.end_date = end_date;
     }
 
-    public int getAmount() {
-        return amount;
+    public int getPercentageAmount() {
+        return percentage;
     }
 
-    public void setAmount(int amount) {
-        this.amount = amount;
+    public void setPercentageAmount(int Percentage) {
+        this.percentage = percentage;
     }
 }

@@ -10,11 +10,31 @@ import java.util.LinkedList;
 public class Category implements ProductCategoryManagement{
     protected String name;
     protected LinkedList<ProductCategoryManagement> categories_list;
-    @Override
-    public String produceInventoryReport() {
-        return null;
+
+    public Category(String name) {
+        this.name = name;
+        categories_list = new LinkedList<>();
     }
 
+    /**
+     *  This function called from CategoryService when there is a requirement to produce
+     *  an inventory report.
+     * @return
+     */
+    @Override
+    public String produceInventoryReport() {
+        String reportString = "Category : " + name + "\n\n";
+        for(ProductCategoryManagement curCategory : categories_list){
+            reportString += "\t" + curCategory.produceInventoryReport() + "\n";
+        }
+        return reportString;
+    }
+
+    /**
+     * This function gets a Discount as an argument for this current category,
+     * and update the sub-category with the new discount.
+     * @param discount
+     */
     @Override
     public void setDiscount(Discount discount) {
         for (ProductCategoryManagement p :categories_list
@@ -22,8 +42,20 @@ public class Category implements ProductCategoryManagement{
             p.setDiscount(discount);
         }
     }
-    public ProductCategoryManagement get_productCategoryManagement(){
-        return null;
+
+    /**
+     * This function gets an index as an argument and return the Category \ Item from
+     * the specific category.
+     *
+     * @param index
+     * @return
+     */
+    public ProductCategoryManagement get_productCategoryManagement(int index){
+        return categories_list.get(index);
     }
 
+
+    public String toString(){
+        return "";
+    }
 }
