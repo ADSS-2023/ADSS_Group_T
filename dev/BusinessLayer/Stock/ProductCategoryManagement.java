@@ -15,4 +15,5 @@ public interface ProductCategoryManagement {
     void add_product(ProductCategoryManagement add_product);
 
     String get_name();
+    void add_item(String index,Item item);
 }

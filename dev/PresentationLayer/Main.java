@@ -22,6 +22,8 @@ public class Main {
         System.out.println("3.Set discount");
         System.out.println("4.Report damaged item");
         System.out.println("5.Set minimal amount for a specific item");
+        System.out.println("6.Produce damaged items report");
+        System.out.println("7.Add new item");
     }
 
     public static String presentCategories(){
@@ -86,27 +88,7 @@ public class Main {
         inventoryService.set_discount(product , percentageAmount , end_date_string , start_date_string);
     }
 
-    public static void act(String choise){
-        switch (choise) {
-            case "1":
-                System.out.println("in order to exit press -1 in any time");
-                presentCategories();
-                break;
-            case "2":
-                inventoryReport();
-                break;
-            case "3":
-                setDiscount();
-                break;
-            case "4":
-                damagedItem();
-                break;
-            case "5":
-                setMinimalAmount();
-            case "logout":
-                break;
-        }
-    }
+
 
     private static void setMinimalAmount() {
         Scanner scanner = new Scanner(System.in);
@@ -130,6 +112,53 @@ public class Main {
         System.out.println(damagedService.report_damaged_item(item_id,order_id,amount,description));
     }
 
+    private static void damageItemReport() {
+        System.out.println(damagedService.produce_damaged_report());
+    }
+
+
+    private static void addItem() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("first choose the category of the item\n when reach to desired category press 0 to choose");
+        String choise = presentCategories();
+        System.out.println("insert item id:");
+        int item_id = scanner.nextInt();
+        scanner.nextLine();
+        System.out.println("insert name:");
+        String name = scanner.nextLine();
+        System.out.println("what is the minimal amount for alert for this item?");
+        int amount = scanner.nextInt();
+        System.out.println("insert manufacturer name:");
+        String manufacturer = scanner.next();
+        System.out.println("insert price for costumer:");
+        double price = scanner.nextDouble();
+        itemService.addItem(choise,item_id,name,amount,manufacturer,price);
+    }
+    public static void act(String choise){
+        switch (choise) {
+            case "1":
+                System.out.println("in order to exit press -1 in any time");
+                presentCategories();
+                break;
+            case "2":
+                inventoryReport();
+                break;
+            case "3":
+                setDiscount();
+                break;
+            case "4":
+                damagedItem();
+                break;
+            case "5":
+                setMinimalAmount();
+            case "6":
+                damageItemReport();
+            case "7":
+                addItem();
+            case "logout":
+                break;
+        }
+    }
 
     public static void main(String[] args) {
         inventoryService.setUp();

@@ -32,10 +32,10 @@ public class Damaged {
      *
      * @return
      */
-    public List<String> produce_damaged_report(){
-        List<String> returnReport = new LinkedList<>();
+    public String produce_damaged_report(){
+        String returnReport = "";
         for (DamagedItem curItem : damagedItems) {
-            returnReport.add(curItem.produceReport());
+            returnReport+=curItem.produceReport();
         }
         return returnReport;
     }

@@ -46,6 +46,11 @@ public class Item implements ProductCategoryManagement {
         return name;
     }
 
+    @Override
+    public void add_item(String index, Item item) {
+        //do nothing
+    }
+
     public int getMin_amount() {
         return min_amount;
     }
@@ -79,7 +84,7 @@ public class Item implements ProductCategoryManagement {
 
     private String alert(){
         onAlertCallBack.on_alert();
-        return  String.format("\u001B[31m%s\u001B[0m","%s has reached its minimal amount",name);
+        return  String.format("\u001B[31m%s has reached its minimal amount\u001B[0m", name);
     }
 
     /**

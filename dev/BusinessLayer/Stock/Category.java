@@ -14,11 +14,13 @@ public class Category implements ProductCategoryManagement{
     protected String index;
     protected String name;
     protected LinkedList<ProductCategoryManagement> categories_list;
+    protected List<Discount> discount_list;
 
     public Category(String name,String index) {
         this.name = name;
         this.index = index;
         categories_list = new LinkedList<>();
+        discount_list = new LinkedList<>();
     }
 
     public void add_category(ProductCategoryManagement new_product){
@@ -54,6 +56,7 @@ public class Category implements ProductCategoryManagement{
      */
     @Override
     public void setDiscount(String index , Discount discount) {
+        discount_list.add(discount);
         if(index == ""){
             for (ProductCategoryManagement p :categories_list
             ) {
@@ -116,4 +119,19 @@ public class Category implements ProductCategoryManagement{
         return categories_list;
     }
 
+    public void add_item(String index, Item i) {
+        for (Discount d:discount_list
+             ) {
+            i.setDiscount("",d);
+        }
+        if (index == ""){
+            categories_list.add(i);
+        }
+        else {
+            int current_index = Integer.parseInt(Util.extractFirstNumber(index));
+            String next_index = Util.extractNextIndex(index);
+            categories_list.get(current_index).add_item(next_index, i);
+        }
+
+    }
 }

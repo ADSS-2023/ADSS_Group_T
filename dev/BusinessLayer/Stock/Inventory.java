@@ -114,4 +114,18 @@ public class Inventory {
     public String set_minimal_amount(int item_id, int amount) {
         return items.get(item_id).setMin_amount(amount);
     }
+
+    public String produce_damaged_report() {
+        return damaged.produce_damaged_report();
+    }
+
+    public void add_item(String categoires_index,int item_id, String name, int min_amount, String manufacturer_name, double original_price){
+        Item i = new Item(item_id,name,min_amount,manufacturer_name,original_price);
+        set_item_call_back(i);
+        items.put(item_id,i);
+        int current_index = Integer.parseInt(Util.extractFirstNumber(categoires_index));
+        String next_index = Util.extractNextIndex(categoires_index);
+        categories.get(current_index).add_item(next_index,i);
+
+    }
 }

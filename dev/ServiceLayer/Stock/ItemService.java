@@ -14,5 +14,8 @@ public class ItemService {
         return inventory.set_minimal_amount(item_id,amount);
 
     }
+    public void addItem(String index,int item_id,String name,int min_amount,String manufacturer_name,double price){
+        inventory.add_item(index,item_id,name,min_amount,manufacturer_name,price);
+    }
 
 }
