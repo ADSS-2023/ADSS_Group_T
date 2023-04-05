@@ -128,4 +128,10 @@ public class Inventory {
         categories.get(current_index).add_item(next_index,i);
 
     }
+
+    public void receive_order(int order_id, int item_id, int amount,String location,LocalDate validity,double cost_price) {
+        int amount_warehouse = amount/2;
+        int amount_store = amount - amount_warehouse;
+        items.get(item_id).recive_order(order_id,amount_warehouse,amount_store,cost_price,location,validity);
+    }
 }

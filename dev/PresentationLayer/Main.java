@@ -1,4 +1,5 @@
 package PresentationLayer;
+import BusinessLayer.Stock.Util.Util;
 import ServiceLayer.Stock.CategoryService;
 import ServiceLayer.Stock.DamagedService;
 import ServiceLayer.Stock.InventoryService;
@@ -24,6 +25,7 @@ public class Main {
         System.out.println("5.Set minimal amount for a specific item");
         System.out.println("6.Produce damaged items report");
         System.out.println("7.Add new item");
+        System.out.println("8.Receive a new order (receive new supply of exists item)");
     }
 
     public static String presentCategories(){
@@ -43,12 +45,12 @@ public class Main {
             else {
                 next_index += "." + (choise-1);
                 String toShow = categoryService.show_data(next_index);
-                if(toShow == ""){
-                    return "";
-                }
-                else{
-
-                }
+//                if(toShow == ""){
+//                    return "";
+//                }
+//                else{
+//
+//                }
                 System.out.println(toShow);
             }
         }
@@ -80,9 +82,9 @@ public class Main {
         String product = presentCategories();
         System.out.println("Choose dates by the next format : yyyy-mm-dd");
         System.out.println("Choose start date :");
-        String end_date_string = scanner.nextLine();
-        System.out.println("Choose end date :");
         String start_date_string = scanner.nextLine();
+        System.out.println("Choose end date :");
+        String end_date_string = scanner.nextLine();
         System.out.println("Choose percentage amount :");
         double percentageAmount = scanner.nextDouble();
         inventoryService.set_discount(product , percentageAmount , end_date_string , start_date_string);
@@ -134,6 +136,24 @@ public class Main {
         double price = scanner.nextDouble();
         itemService.addItem(choise,item_id,name,amount,manufacturer,price);
     }
+    public static void receive_order(){
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter order id:");
+        int order_id = scanner.nextInt();
+        System.out.println("Enter item id:");
+        int item_id = scanner.nextInt();
+        System.out.println("Enter amount that have received:");
+        int amount = scanner.nextInt();
+        scanner.nextLine();
+        System.out.println("Enter location in store:");
+        String location = scanner.nextLine();
+        System.out.println("Choose dates by the next format : yyyy-mm-dd");
+        System.out.println("Choose validity date :");
+        String validity = scanner.nextLine();
+        System.out.println("what is the cost price?");
+        double cost_price = scanner.nextDouble();
+        itemService.receive_order(order_id,item_id,amount,location, Util.stringToDate(validity),cost_price);
+    }
     public static void act(String choise){
         switch (choise) {
             case "1":
@@ -155,6 +175,9 @@ public class Main {
                 damageItemReport();
             case "7":
                 addItem();
+            case "8":
+                receive_order();
+                break;
             case "logout":
                 break;
         }

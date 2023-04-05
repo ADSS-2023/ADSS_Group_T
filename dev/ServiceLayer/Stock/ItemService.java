@@ -2,6 +2,8 @@ package ServiceLayer.Stock;
 
 import BusinessLayer.Stock.Inventory;
 
+import java.time.LocalDate;
+
 public class ItemService {
     private Inventory inventory;
 
@@ -18,4 +20,16 @@ public class ItemService {
         inventory.add_item(index,item_id,name,min_amount,manufacturer_name,price);
     }
 
+    /**
+     * this methode receives a new amount of a specific item by order id.
+     * @param order_id
+     * @param item_id
+     * @param amount
+     * @param location
+     * @param validity
+     * @param cost_price
+     */
+    public void receive_order(int order_id, int item_id, int amount, String location,LocalDate validity,double cost_price) {
+        inventory.receive_order(order_id,item_id,amount,location,validity,cost_price);
+    }
 }
