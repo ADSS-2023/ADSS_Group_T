@@ -79,6 +79,10 @@ public class Category implements ProductCategoryManagement{
     }
 
     private String present_names(){
+        if(categories_list.size() == 0){
+            System.out.println("No products in this category");
+            return "";
+        }
         String names = "";
         int index = 1;
         for(ProductCategoryManagement cur_category : categories_list){

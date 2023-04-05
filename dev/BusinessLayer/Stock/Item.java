@@ -68,7 +68,7 @@ public class Item implements ProductCategoryManagement {
 
     @Override
     public String show_data(String index) {
-        return String.format("product:%s manufacturer:%s",name,manufacturer_name);
+        return String.format("product:%s , manufacturer:%s , price:%.2f .",name,manufacturer_name, get_price());
     }
 
     @Override

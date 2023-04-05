@@ -20,28 +20,34 @@ public class Main {
         System.out.println("3.Set discount");
         System.out.println("4.Report damaged item");
     }
+
     public static String presentCategories(){
         Scanner scanner = new Scanner(System.in);
         System.out.println(inventoryService.show_data());
         boolean is_active = true;
         String next_index="";
-
         while (is_active){
             System.out.println("choose category");
-            String choise = scanner.nextLine();
-            if (choise == "-1"){
+            int choise = scanner.nextInt();
+            if (choise == -1){
                 is_active = false;
                 next_index = "exit";
             }
-            else if(choise =="0")
+            else if(choise == 0)
                 is_active = false;
             else {
-                next_index += "." +choise;
-                System.out.println(categoryService.show_data(next_index));
+                next_index += "." + (choise-1);
+                String toShow = categoryService.show_data(next_index);
+                if(toShow == ""){
+                    return "";
+                }
+                else{
+
+                }
+                System.out.println(toShow);
             }
         }
         return next_index;
-
     }
 
     private static void inventoryReport() {
@@ -88,6 +94,8 @@ public class Main {
                 setDiscount();
             case "4":
                 damagedItem();
+            case "logout":
+                break;
         }
     }
 
@@ -108,9 +116,12 @@ public class Main {
     public static void main(String[] args) {
         inventoryService.setUp();
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Welcome to Superly inventory.\nWhat would you like to do?");
-        printOptions();
-        String choise = scanner.nextLine();
-        act(choise);
+        System.out.println("Welcome to Superly inventory.");
+        while(true) {
+            System.out.println("What would you like to do?");
+            printOptions();
+            String choise = scanner.nextLine();
+            act(choise);
+        }
     }
 }
