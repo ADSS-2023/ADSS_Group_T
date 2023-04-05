@@ -1,8 +1,10 @@
 package ServiceLayer.Supplier;
 
+import BusinessLayer.Supplier.OrderBusiness;
 import BusinessLayer.Supplier.OrderController;
 import BusinessLayer.Supplier.SupplierController;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class OrderService {
@@ -22,4 +24,21 @@ public class OrderService {
             return e.getMessage();
         }
     }
+    public List<String> getOrders(){
+        List<String>  orders = new LinkedList<>();
+        try{
+             List<OrderBusiness> orderBusinessList =  oc.getOrders();
+            for (OrderBusiness order:orderBusinessList) {
+               orders.add(order.toString());
+            }
+        }
+        catch (Exception e){
+            return orders;
+        }
+        finally {
+            return orders;
+        }
+    }
+
+
 }

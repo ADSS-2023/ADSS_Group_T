@@ -4,11 +4,11 @@ public class OrderProduct {
     private String productName;
     private int productNumber;
     private int quantity;
-    private int initialPrice;
-    private int discount;
-    private int finalPrice;
+    private float initialPrice;
+    private float discount;
+    private float finalPrice;
 
-    public OrderProduct(String productName, int productNumber, int quantity, int initialPrice, int discount, int finalPrice) {
+    public OrderProduct(String productName, int productNumber, int quantity, float initialPrice, float discount, float finalPrice) {
         this.productName = productName;
         this.productNumber = productNumber;
         this.quantity = quantity;
@@ -21,19 +21,31 @@ public class OrderProduct {
         return quantity;
     }
 
-    public int getFinalPrice() {
+    public float getFinalPrice() {
         return finalPrice;
     }
 
-    public void setDiscount(int discount) {
+    public void setDiscount(float discount) {
         this.discount = discount;
     }
 
-    public void setFinalPrice(int finalPrice) {
+    public void setFinalPrice(float finalPrice) {
         this.finalPrice = finalPrice;
     }
 
-    public int getDiscount() {
+    public float getDiscount() {
         return discount;
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "productName='" + productName + '\'' +
+                ", productNumber=" + productNumber +
+                ", quantity=" + quantity +
+                ", initialPrice=" + initialPrice +
+                ", discount=" + discount +
+                ", finalPrice=" + finalPrice +
+                '}'+'\n';
     }
 }

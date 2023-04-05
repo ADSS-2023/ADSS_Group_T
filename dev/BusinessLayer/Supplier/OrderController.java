@@ -31,8 +31,7 @@ public class OrderController {
         else{
             for (ItemToOrder item : items) {
 
-                int productNumber= chosenSupplier.getSupplierProduct(item.getProductName(), item.getManufacturer());
-                SupplierProductBusiness supplierProduct = chosenSupplier.getSupplierProduct(productNumber);
+                SupplierProductBusiness supplierProduct= chosenSupplier.getSupplierProduct(item.getProductName(), item.getManufacturer());
                 addToShoppingList(supplierProduct.getProductNum(), supplierProduct.getSupplierNum(), item.getQuantity());
             }
         }
@@ -47,9 +46,9 @@ public class OrderController {
        for(Map.Entry<Integer, List<OrderProduct>> shoppingList : shoppingLists.entrySet()){
            List<OrderProduct> products = shoppingList.getValue();
            SupplierBusiness supplier = sc.getSupplier(shoppingList.getKey());
-           Map.Entry<String,Integer> entry = supplier.getContacts().entrySet().iterator().next();
+           Map.Entry<String,String> entry = supplier.getContacts().entrySet().iterator().next();
            String contactName = entry.getKey();
-           int contactNum = entry.getValue();
+           String contactNum = entry.getValue();
 
            //calculate order quantities&prices
            int totalProductsNum = 0;
@@ -60,10 +59,10 @@ public class OrderController {
            }
 
            //calculate supplier general discounts and final prices
-           int finalTotalPrice = supplier.getPriceAfterTotalDiscount(totalProductsNum,totalorderPrice);
+           float finalTotalPrice = supplier.getPriceAfterTotalDiscount(totalProductsNum,totalorderPrice);
 
            for (OrderProduct product : products){
-               int discountPerProducts = (product.getFinalPrice()/totalorderPrice)*(totalorderPrice-finalTotalPrice);
+               float discountPerProducts = (product.getFinalPrice()/totalorderPrice)*(totalorderPrice-finalTotalPrice);
                product.setDiscount(discountPerProducts+product.getDiscount());
                product.setFinalPrice(product.getFinalPrice()-discountPerProducts);
            }
@@ -92,9 +91,9 @@ public class OrderController {
             SupplierProductBusiness product = sc.getSupplier(supplierNum).getSupplierProduct(productNum);
             //generate new OrderProduct
             int productNumber = product.getProductNum();
-            int initialPrice = product.getPrice()* quantity;
-            int discount = initialPrice - product.getPriceByQuantity(quantity);
-            int finalPrice = initialPrice-discount;
+            float initialPrice = product.getPrice()* quantity;
+            float discount = initialPrice - product.getPriceByQuantity(quantity);
+            float finalPrice = initialPrice-discount;
             OrderProduct orderProduct = new OrderProduct(product.getName(),productNumber,quantity,initialPrice,discount,finalPrice);
            //update the suppliers shopping list
             if(!shoppingLists.containsKey(supplierNum))

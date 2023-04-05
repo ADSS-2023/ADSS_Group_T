@@ -1,7 +1,8 @@
 package BusinessLayer.Supplier;
 
 import BusinessLayer.Supplier.Discounts.Discount;
-import BusinessLayer.Supplier.Discounts.PrecentDiscount;
+import BusinessLayer.Supplier.Discounts.PercentDiscount;
+import BusinessLayer.Supplier.Discounts.PercentDiscount;
 import BusinessLayer.Supplier.Discounts.QuantityDiscount;
 import Util.Discounts;
 
@@ -12,7 +13,7 @@ import java.util.Map;
 import java.time.LocalDateTime;
 
 public class    SupplierBusiness {
-    private String name;
+    private String supplierName;
     private String address;
     private int supplierNum;
     private int bankAccountNum;
@@ -25,8 +26,8 @@ public class    SupplierBusiness {
 
     private List<Discount> discountPerTotalPrice;
 
-    public SupplierBusiness(String name, String address, int supplierNum,int bankAccountNum, HashMap<String, String> contacts, List<String> constDeliveryDays, boolean selfDelivery){
-        this.name = name;
+    public SupplierBusiness(String supplierName, String address, int supplierNum,int bankAccountNum, HashMap<String, String> contacts, List<String> constDeliveryDays, boolean selfDelivery){
+        this.supplierName = supplierName;
         this.address = address;
         this.supplierNum = supplierNum;
         this.bankAccountNum = bankAccountNum;
@@ -89,7 +90,9 @@ public class    SupplierBusiness {
         getSupplierProduct(productNum).deleteProductDiscount(productAmount, discount, isPercentage);
     }
 
-    public void editSupplierDiscount(Discounts discountEnum, int amount, int discountToChange,boolean isPercentage) throws Exception {
+
+
+    public void editSupplierDiscount(Discounts discountEnum, int amount, int discountToChange, boolean isPercentage) throws Exception {
         if(!isDiscountExist(discountEnum,amount,isPercentage))
             throw new Exception("No such Discount");
         getDiscount(discountEnum,amount,isPercentage).editDiscount(amount,discountToChange);
@@ -101,13 +104,13 @@ public class    SupplierBusiness {
         switch(discountEnum){
             case DISCOUNT_BY_TOTAL_PRICE :
                 if(isPercentage)
-                     discountPerTotalPrice.add(new PrecentDiscount(amount,discount,true));
+                     discountPerTotalPrice.add(new PercentDiscount(amount,discount,true));
                 else
                     discountPerTotalPrice.add(new QuantityDiscount(amount,discount,false));
 
             case DISCOUNT_BY_TOTAL_QUANTITY:
                 if(isPercentage)
-                    discountPerTotalQuantity.add(new PrecentDiscount(amount,discount,true));
+                    discountPerTotalQuantity.add(new PercentDiscount(amount,discount,true));
                 else
                     discountPerTotalQuantity.add(new QuantityDiscount(amount,discount, false));
                 break;
@@ -169,16 +172,24 @@ public class    SupplierBusiness {
         return products.get(productNumber);
     }
 
-    public int getSupplierProduct(String productName, String manufacture) throws Exception {
+    public SupplierProductBusiness getSupplierProduct(String productName, String manufacture) throws Exception {
         for (Map.Entry<Integer, SupplierProductBusiness> entry : products.entrySet()) {
             if(entry.getValue().getName().equals(productName) && entry.getValue().getManufacturer().equals(manufacture))
-                return entry.getValue().getProductNum();
+                return entry.getValue();
         }
         throw new Exception("the product is not exists.");
     }
 
-    public void editSupplier(String name, String address, int bankAccountNum, boolean selfDelivery){
-        this.name = name;
+    public boolean isSupplierProuctExist(String productName, String manufacture) {
+        for (Map.Entry<Integer, SupplierProductBusiness> entry : products.entrySet()) {
+            if(entry.getValue().getName().equals(productName) && entry.getValue().getManufacturer().equals(manufacture))
+               return true;
+        }
+        return false;
+    }
+
+    public void editSupplier(String supplierName, String address, int bankAccountNum, boolean selfDelivery){
+        this.supplierName = supplierName;
         this.address = address;
         this.bankAccountNum = bankAccountNum;
         this.selfDelivery = selfDelivery;
@@ -186,35 +197,24 @@ public class    SupplierBusiness {
 
     //this function gets products number in the order, and old total price and returns new price
 //this function gets products number in the order, and old total price and returns new price
-    public int getPriceAfterTotalDiscount(int totalProductsNum, int totalOrderPrice) {
-        Discount dis1 = null;
-        int discount1 = 0;
-        Discount dis2 = null;
-        int discount2 = 0;
-
+    public float getPriceAfterTotalDiscount(int totalProductsNum, float totalOrderPrice) {
+        float discount1 = 0;
+        float discount2 = 0;
 
         //loop for number of products discounts
         for (Discount currentDiscount : discountPerTotalQuantity) {
-            if (currentDiscount.getAmount() > discount1 && currentDiscount.getAmount() < totalProductsNum) {
-                dis1 = currentDiscount;
-                discount1 = currentDiscount.getDiscount();
+            if (totalOrderPrice-currentDiscount.getPriceAfterDiscount(totalOrderPrice) > discount1 && currentDiscount.getAmount() <= totalProductsNum) {
+                discount1 = totalOrderPrice-currentDiscount.getPriceAfterDiscount(totalOrderPrice);
             }
         }
-        if (dis1 != null)
-            discount1 = totalOrderPrice - dis1.getPriceAfterDiscount(totalOrderPrice);
-
-
+        totalOrderPrice = totalOrderPrice- discount1;
         //loop for total price discounts
         for (Discount currentDiscount : discountPerTotalPrice) {
-            if (currentDiscount.getAmount() > discount2 && currentDiscount.getAmount() < totalOrderPrice) {
-                dis2 = currentDiscount;
+            if (totalOrderPrice-currentDiscount.getPriceAfterDiscount(totalOrderPrice) > discount2 && currentDiscount.getAmount() <= totalOrderPrice) {
                 discount2 = currentDiscount.getDiscount();
             }
         }
-        if (dis2 != null)
-            discount2 = totalOrderPrice - dis2.getPriceAfterDiscount(totalOrderPrice);
-
-        return totalOrderPrice - discount1 - discount2;
+        return totalOrderPrice - discount2;
     }
 
     public int getBankAccountNum() {
@@ -238,7 +238,7 @@ public class    SupplierBusiness {
     }
 
     public String getName() {
-        return name;
+        return supplierName;
     }
 
     public List<Discount> getDiscountPerTotalQuantity() {
@@ -257,8 +257,13 @@ public class    SupplierBusiness {
         return products;
     }
 
-    public boolean isSelfDelivery() {
-        return selfDelivery;
+    @Override
+    public String toString() {
+        return "{" +
+                "Supplier Name:" + supplierName + '\'' +
+                ", Address:'" + address + '\'' +
+                ", Supplier Number: " + supplierNum +
+                '}';
     }
 
 }
