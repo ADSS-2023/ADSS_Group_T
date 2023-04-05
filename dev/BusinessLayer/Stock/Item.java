@@ -50,8 +50,9 @@ public class Item implements ProductCategoryManagement {
         return min_amount;
     }
 
-    public void setMin_amount(int min_amount) {
+    public String setMin_amount(int min_amount) {
         this.min_amount = min_amount;
+        return name+" new minimal amount:"+min_amount;
     }
 
     @Override
@@ -112,7 +113,7 @@ public class Item implements ProductCategoryManagement {
         if(items.get(orderId).amount()<amount)
             throw new IllegalArgumentException("not enough items in inventory");
         items.get(orderId).reduce(amount);
-        if (current_amount()==min_amount)
+        if (current_amount()<=min_amount)
             return alert();
         return null;
     }

@@ -44,8 +44,8 @@ public class Inventory {
         return report;
     }
 
-    public void addDamagedItem(int item_id,int order_id,int amount,String description){
-        damaged.addDamagedItem(items.get(item_id),order_id,amount,description);
+    public String addDamagedItem(int item_id,int order_id,int amount,String description){
+        return damaged.addDamagedItem(items.get(item_id),order_id,amount,description);
     }
 
     private String present_names(){
@@ -88,14 +88,30 @@ public class Inventory {
     }
 
     public void setUp() {
+        Item milk_3 = new Item(0 , "3%" , 5 , "IDO LTD",  3.5);
+        set_item_call_back(milk_3);
+        Item milk_1_5=new Item(1 , "1.5%" , 2 , "IDO LTD",  3.5);
+        set_item_call_back(milk_1_5);
+        Item yellow_cheese = new Item(2,"yellow cheese",5,"Emeck",10);
+        set_item_call_back(yellow_cheese);
         categories.add(new Category("Milk-product", "0"));
         categories.get(0).add_product(new Category("Cheese" , "0"));
         categories.get(0).add_product(new Category("bottle milk" , "1"));
-        categories.get(0).getCategories_list().get(1).add_product(new Item(0 , "3%" , 5 , "IDO LTD",  3.5));
+        categories.get(0).getCategories_list().get(0).add_product(yellow_cheese);
+        categories.get(0).getCategories_list().get(1).add_product(milk_3);
+        categories.get(0).getCategories_list().get(1).add_product(milk_1_5);
+        items.put(2,yellow_cheese);
+        items.put(0,milk_3);
+        items.put(1,milk_1_5);
+        yellow_cheese.recive_order(20,2,3,5.3,"ile 2 shelf 3",Util.stringToDate("2023-04-25"));
 
         categories.add(new Category("Meat-product", "0"));
         categories.get(1).add_category(new Category("chicken" , "0"));
         categories.get(1).add_category(new Category("beef" , "1"));
 
+    }
+
+    public String set_minimal_amount(int item_id, int amount) {
+        return items.get(item_id).setMin_amount(amount);
     }
 }

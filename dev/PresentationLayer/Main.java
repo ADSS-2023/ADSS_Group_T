@@ -2,6 +2,8 @@ package PresentationLayer;
 import ServiceLayer.Stock.CategoryService;
 import ServiceLayer.Stock.DamagedService;
 import ServiceLayer.Stock.InventoryService;
+import ServiceLayer.Stock.ItemService;
+
 import java.util.List;
 
 import java.awt.*;
@@ -11,14 +13,15 @@ import java.util.Scanner;
 public class Main {
     public static InventoryService inventoryService = new InventoryService();
     public static CategoryService categoryService = new CategoryService(inventoryService.get_inventory());
-    public static DamagedService damagedService = new DamagedService();
-
+    public static DamagedService damagedService = new DamagedService(inventoryService.get_inventory());
+    public static ItemService itemService = new ItemService(inventoryService.get_inventory());
 
     public static void printOptions(){
         System.out.println("1.See categories");
         System.out.println("2.Produce inventory report");
         System.out.println("3.Set discount");
         System.out.println("4.Report damaged item");
+        System.out.println("5.Set minimal amount for a specific item");
     }
 
     public static String presentCategories(){
@@ -88,15 +91,30 @@ public class Main {
             case "1":
                 System.out.println("in order to exit press -1 in any time");
                 presentCategories();
+                break;
             case "2":
                 inventoryReport();
+                break;
             case "3":
                 setDiscount();
+                break;
             case "4":
                 damagedItem();
+                break;
+            case "5":
+                setMinimalAmount();
             case "logout":
                 break;
         }
+    }
+
+    private static void setMinimalAmount() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("insert item id:");
+        int item_id = scanner.nextInt();
+        System.out.println("insert minimal amount:");
+        int amount = scanner.nextInt();
+        System.out.println(itemService.setMinimalAmount(item_id,amount));
     }
 
     private static void damagedItem() {
@@ -108,8 +126,8 @@ public class Main {
         System.out.println("insert amount:");
         int amount = scanner.nextInt();
         System.out.println("insert reason of damaged");
-        String description = scanner.nextLine();
-        damagedService.report_damaged_item(item_id,order_id,amount,description);
+        String description = scanner.next();
+        System.out.println(damagedService.report_damaged_item(item_id,order_id,amount,description));
     }
 
 

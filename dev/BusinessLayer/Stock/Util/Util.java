@@ -24,6 +24,11 @@ public class Util {
         return inputString.substring(index);
     }
 
+    /**
+     * convert string to date in format "yyyy-MM-DD".
+     * @param dateString
+     * @return
+     */
     public static LocalDate stringToDate(String dateString) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         try {
