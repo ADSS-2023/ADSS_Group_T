@@ -115,7 +115,6 @@ public class Main {
 
     private static void addItem() {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("first choose the category of the item\n when reach to desired category press 0 to choose");
         String choise = presentCategories();
         System.out.println("insert item id:");
         int item_id = scanner.nextInt();
@@ -165,10 +164,13 @@ public class Main {
                 break;
             case "5":
                 setMinimalAmount();
+                break;
             case "6":
                 damageItemReport();
+                break;
             case "7":
                 addItem();
+                break;
             case "8":
                 receive_order();
                 break;

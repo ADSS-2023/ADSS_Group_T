@@ -135,7 +135,7 @@ public class Inventory {
         return items.get(item_id).setMin_amount(amount);
     }
 
-    public String produce_damaged_report() {
+    public String produce_damaged_report() throws Exception{
         return damaged.produce_damaged_report();
     }
 

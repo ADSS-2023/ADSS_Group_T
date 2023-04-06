@@ -32,7 +32,9 @@ public class Damaged {
      *
      * @return
      */
-    public String produce_damaged_report(){
+    public String produce_damaged_report() throws Exception {
+        if (damagedItems.isEmpty())
+            throw new Exception("no damaged items");
         String returnReport = "";
         for (DamagedItem curItem : damagedItems) {
             returnReport+=curItem.produceReport();
