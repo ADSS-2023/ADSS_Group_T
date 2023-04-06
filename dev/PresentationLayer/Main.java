@@ -54,7 +54,6 @@ public class Main {
     private static void inventoryReport() {
         Scanner scanner = new Scanner(System.in);
         LinkedList<String> categories = new LinkedList<>();
-        System.out.println("to exit press -1,\n and if you want to produce the report on the current category please press 0");
         boolean is_active = true;
         while (is_active){
             String result = presentCategories();

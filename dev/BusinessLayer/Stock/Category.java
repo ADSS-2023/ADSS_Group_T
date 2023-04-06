@@ -35,11 +35,14 @@ public class Category implements ProductCategoryManagement{
     @Override
     public String produceInventoryReport(String index) {
         if(index == "") {
-            String reportString = "----Category : " + name + "\n\n";
+            String outCome = "Category : " + name + "\n\n";
+            String reportString = "";
             for (ProductCategoryManagement curCategory : categories_list) {
                 reportString += "\t" + curCategory.produceInventoryReport("") + "\n";
             }
-            return reportString;
+            if (reportString.isBlank())
+                reportString =  "\t\tNo products in this category";
+            return outCome+reportString;
         }
         else {
             int current_index = Integer.parseInt(Util.extractFirstNumber(index));
@@ -86,7 +89,7 @@ public class Category implements ProductCategoryManagement{
             System.out.println("No products in this category");
             return "";
         }
-        String names = "";
+        String names = name+":\n";
         int index = 1;
         for(ProductCategoryManagement cur_category : categories_list){
             names += index++ + " : " + cur_category.get_name() + ", ";

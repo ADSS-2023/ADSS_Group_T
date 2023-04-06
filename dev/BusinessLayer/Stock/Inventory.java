@@ -93,12 +93,12 @@ public class Inventory {
 
         if(Util.no_categories(categories_indexes))
             throw new Exception("No categories have been chosen");
-        String report = "";
+        String report = "inventory report:";
         for (String index:categories_indexes
              ) {
             int current_index = Integer.parseInt(Util.extractFirstNumber(index));
             String next_index = Util.extractNextIndex(index);
-            report +="----"+ categories.get(current_index).produceInventoryReport(next_index);
+            report +="\n"+ categories.get(current_index).produceInventoryReport(next_index);
         }
         return report;
     }
@@ -114,6 +114,8 @@ public class Inventory {
         set_item_call_back(milk_1_5);
         Item yellow_cheese = new Item(2,"yellow cheese",5,"Emeck",10);
         set_item_call_back(yellow_cheese);
+        Item beef_sausage = new Item(3,"Beef Sausage",3,"Zogloveck",25);
+        set_item_call_back(beef_sausage);
         categories.add(new Category("Milk-product", "0"));
         categories.get(0).add_product(new Category("Cheese" , "0"));
         categories.get(0).add_product(new Category("bottle milk" , "1"));
@@ -124,10 +126,14 @@ public class Inventory {
         items.put(0,milk_3);
         items.put(1,milk_1_5);
         yellow_cheese.recive_order(20,2,3,5.3,"ile 2 shelf 3",Util.stringToDate("2023-04-25"));
-
+        milk_3.recive_order(155,20,20,2.15,"ile 5 shelf 10",Util.stringToDate("2023-05-20"));
+        milk_1_5.recive_order(120,10,10,2.55,"ile 5 shelf 11",Util.stringToDate("2023-05-23"));
+        beef_sausage.recive_order(345,5,15,12.25,"ile 6 shelf 2",Util.stringToDate("2023-10-20"));
         categories.add(new Category("Meat-product", "0"));
         categories.get(1).add_category(new Category("chicken" , "0"));
         categories.get(1).add_category(new Category("beef" , "1"));
+        categories.get(1).getCategories_list().get(1).add_product(beef_sausage);
+        items.put(3,beef_sausage);
 
     }
 
