@@ -3,6 +3,7 @@ package BusinessLayer.Stock.Util;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.LinkedList;
 
 public class Util {
     public static String extractFirstNumber(String inputString) {
@@ -38,5 +39,9 @@ public class Util {
             System.out.println("Unable to parse date: " + dateString);
             return null;
         }
+    }
+
+    public static boolean no_categories(LinkedList<String> categories_indexes) {
+        return categories_indexes.stream().anyMatch(String::isEmpty);
     }
 }

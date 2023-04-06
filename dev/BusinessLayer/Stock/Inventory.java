@@ -89,7 +89,10 @@ public class Inventory {
      * @param categories_indexes
      * @return
      */
-    public String produce_inventory_report(LinkedList<String> categories_indexes){
+    public String produce_inventory_report(LinkedList<String> categories_indexes) throws Exception {
+
+        if(Util.no_categories(categories_indexes))
+            throw new Exception("No categories have been chosen");
         String report = "";
         for (String index:categories_indexes
              ) {
