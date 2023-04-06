@@ -23,7 +23,8 @@ public class SupplierManager {
         HashMap<String, String> contactsSupplier2 = new HashMap<>();
         contactsSupplier2.put("menash", "18726312");
         serviceFactory.supplierService.addSupplier("Sapak2", "Golani 2, Ashkelon",
-                4810203, 947182, contactsSupplier2, List.of(new String[]{"wednesday"}), true, PaymentTerms.SHOTEF_PLUS_30);
+                4810203, 947182, contactsSupplier2, List.of(new String[]{"wednesday"}),
+                true, PaymentTerms.SHOTEF_PLUS_30);
 
 
         serviceFactory.supplierService.addProduct(5018475, 982673, "Bamba",
@@ -67,12 +68,9 @@ public class SupplierManager {
         itemsList.add(item2);
         itemsList.add(item3);
         System.out.println(serviceFactory.orderService.createOrder(itemsList));
-
-
     }
 
     public void start() {
-        setUpData();
         Scanner scanner = new Scanner(System.in);
         boolean over = false;
         while(!over) {
@@ -96,10 +94,11 @@ public class SupplierManager {
             System.out.println("16.Show all products supplied by a certain Supplier.");
             System.out.println("17.Show all discounts of a certain product's supplier.");
             System.out.println("18.Show all general discounts of a certain supplier.");
-            System.out.println("19.Exit System.");
+            System.out.println("19.Set up System.");
+            System.out.println("20.Exit System.");
             int choice = scanner.nextInt();
-            while (choice > 19 || choice < 1) {
-                System.out.println("Please select a number between 1-17.");
+            while (choice > 20 || choice < 1) {
+                System.out.println("Please select a number between 1-20.");
                 choice = scanner.nextInt();
             }
             switch (choice) {
@@ -158,6 +157,9 @@ public class SupplierManager {
                     getSupplierDiscount();
                     break;
                 case 19:
+                    setUpData();
+                    break;
+                case 20:
                     over = true;
                     break;
             }
@@ -346,7 +348,7 @@ public class SupplierManager {
         int supplierNum = scanner.nextInt();
         System.out.println("The products that supplier "+supplierNum+" supplies are:\n");
         List<String> products =  serviceFactory.supplierService.getProducts(supplierNum);
-        if(!products.get(0).contains("doesn't")&&!products.get(0).contains("exists")&&!products.get(0).contains("failed")&&!products.get(0).contains("Cannot")) {
+        if(products.size()==0||(!products.get(0).contains("doesn't")&&!products.get(0).contains("exists")&&!products.get(0).contains("failed")&&!products.get(0).contains("Cannot"))) {
             System.out.println(products);
 
             System.out.println("Please Enter the product number that will be deleted :");
@@ -365,7 +367,7 @@ public class SupplierManager {
         int supplierNum = scannerInt.nextInt();
         System.out.println("The products that supplier "+supplierNum+" supplies are:\n");
         List<String> products =  serviceFactory.supplierService.getProducts(supplierNum);
-        if(!products.get(0).contains("doesn't")&&!products.get(0).contains("exists")&&!products.get(0).contains("failed")&&!products.get(0).contains("Cannot")) {
+        if(products.size()==0||(!products.get(0).contains("doesn't")&&!products.get(0).contains("exists")&&!products.get(0).contains("failed")&&!products.get(0).contains("Cannot"))) {
             System.out.println(products);
 
             System.out.println("Enter the product name to be edited:");
@@ -393,13 +395,13 @@ public class SupplierManager {
         int supplierNum = scanner.nextInt();
         System.out.println("The products that supplier "+supplierNum+" supplies are:\n");
         List<String> products =  serviceFactory.supplierService.getProducts(supplierNum);
-        if(!products.get(0).contains("doesn't")&&!products.get(0).contains("exists")&&!products.get(0).contains("failed")&&!products.get(0).contains("Cannot")) {
+        if(products.size()==0||(!products.get(0).contains("doesn't")&&!products.get(0).contains("exists")&&!products.get(0).contains("failed")&&!products.get(0).contains("Cannot"))) {
             System.out.println(products);
             System.out.println("Enter the number of product");
             int productNum = scanner.nextInt();
             System.out.println("The products discounts are:");
             List<String> discounts=serviceFactory.supplierService.getProductDiscounts(supplierNum, productNum);
-            if(!discounts.get(0).contains("doesn't")&&!discounts.get(0).contains("exists")&&!discounts.get(0).contains("failed")&&!discounts.get(0).contains("Cannot")) {
+            if(discounts.size()==0||(!discounts.get(0).contains("doesn't")&&!discounts.get(0).contains("exists")&&!discounts.get(0).contains("failed")&&!discounts.get(0).contains("Cannot"))) {
                 System.out.println(discounts);
                 System.out.println("Enter the amount of products to be discounted");
                 int productAmount = scanner.nextInt();
@@ -423,14 +425,14 @@ public class SupplierManager {
 
 
         List<String> products =  serviceFactory.supplierService.getProducts(supplierNum);
-        if(!products.get(0).contains("doesn't")&&!products.get(0).contains("exists")&&!products.get(0).contains("failed")&&!products.get(0).contains("Cannot")) {
+        if(products.size()==0||(!products.get(0).contains("doesn't")&&!products.get(0).contains("exists")&&!products.get(0).contains("failed")&&!products.get(0).contains("Cannot"))) {
             System.out.println(products);
 
             System.out.println("Enter the number of product");
             int productNum = scanner.nextInt();
             System.out.println("The products discounts are:");
             List<String> discounts=serviceFactory.supplierService.getProductDiscounts(supplierNum, productNum);
-            if(!discounts.get(0).contains("doesn't")&&!discounts.get(0).contains("exists")&&!discounts.get(0).contains("failed")&&!discounts.get(0).contains("Cannot")) {
+            if(discounts.size()==0||(!discounts.get(0).contains("doesn't")&&!discounts.get(0).contains("exists")&&!discounts.get(0).contains("failed")&&!discounts.get(0).contains("Cannot"))) {
                 System.out.println(discounts);
 
                 System.out.println("Enter the amount of products of the discount to be deleted");
@@ -455,13 +457,13 @@ public class SupplierManager {
         System.out.println("The products that supplier "+supplierNum+" supplies are:\n");
 
         List<String> products =  serviceFactory.supplierService.getProducts(supplierNum);
-        if(!products.get(0).contains("doesn't")&&!products.get(0).contains("exists")&&!products.get(0).contains("failed")&&!products.get(0).contains("Cannot")) {
+        if(products.size()==0||(!products.get(0).contains("doesn't")&&!products.get(0).contains("exists")&&!products.get(0).contains("failed")&&!products.get(0).contains("Cannot"))) {
             System.out.println(products);
             System.out.println("Enter the number of product that you are willing to edit one of it's discounts");
             int productNum = scanner.nextInt();
             System.out.println("The products discounts are:");
             List<String> discounts=serviceFactory.supplierService.getProductDiscounts(supplierNum, productNum);
-            if(!discounts.get(0).contains("doesn't")&&!discounts.get(0).contains("exists")&&!discounts.get(0).contains("failed")&&!discounts.get(0).contains("Cannot")) {
+            if(discounts.size()==0||(!discounts.get(0).contains("doesn't")&&!discounts.get(0).contains("exists")&&!discounts.get(0).contains("failed")&&!discounts.get(0).contains("Cannot"))) {
                 System.out.println(discounts);
                 System.out.println("Enter the amount of products to be discounted");
                 int productAmount = scanner.nextInt();
@@ -482,7 +484,7 @@ public class SupplierManager {
         System.out.println("Please Enter the number of supplier that will have the discount");
         int supplierNum = scanner.nextInt();
         List<String> discounts = serviceFactory.supplierService.getSupplierDiscounts(supplierNum);
-        if (!discounts.get(0).contains("doesn't") &&! discounts.get(0).contains("exists") &&! discounts.get(0).contains("failed")&&!discounts.get(0).contains("Cannot")) {
+        if (discounts.size()==0||(!discounts.get(0).contains("doesn't") &&! discounts.get(0).contains("exists") &&! discounts.get(0).contains("failed")&&!discounts.get(0).contains("Cannot"))){
             System.out.println(discounts);
             System.out.println("Enter the type of the discount:\n1.Total products purchased.\n2.Total Price discount");
             int discountEnumNum = scanner.nextInt();
@@ -510,7 +512,7 @@ public class SupplierManager {
 
 
         List<String> discounts = serviceFactory.supplierService.getSupplierDiscounts(supplierNum);
-        if (!discounts.get(0).contains("doesn't") &&! discounts.get(0).contains("exists") &&! discounts.get(0).contains("failed")&&!discounts.get(0).contains("Cannot")) {
+        if (discounts.size()==0||(!discounts.get(0).contains("doesn't") &&! discounts.get(0).contains("exists") &&! discounts.get(0).contains("failed")&&!discounts.get(0).contains("Cannot"))) {
             System.out.println(discounts);
 
             System.out.println("Enter the type of the discount:\n1.Total products purchased.\n2.Total Price discount");
@@ -539,7 +541,7 @@ public class SupplierManager {
         System.out.println("The supplier discounts are:");
 
         List<String> discounts = serviceFactory.supplierService.getSupplierDiscounts(supplierNum);
-        if (!discounts.get(0).contains("doesn't") &&! discounts.get(0).contains("exists") &&! discounts.get(0).contains("failed")&&!discounts.get(0).contains("Cannot")) {
+        if (discounts.size()==0||(!discounts.get(0).contains("doesn't") &&! discounts.get(0).contains("exists") &&! discounts.get(0).contains("failed")&&!discounts.get(0).contains("Cannot"))) {
             System.out.println(discounts);
 
             System.out.println("Enter the type of the discount:\n1.Total products purchased.\n2.Total Price discount");
@@ -588,7 +590,7 @@ public class SupplierManager {
 
 
         List<String> products =  serviceFactory.supplierService.getProducts(supplierNum);
-        if(!products.get(0).contains("doesn't")&&!products.get(0).contains("exists")&&!products.get(0).contains("failed")&&!products.get(0).contains("Cannot")) {
+        if(products.size()==0||(!products.get(0).contains("doesn't")&&!products.get(0).contains("exists")&&!products.get(0).contains("failed")&&!products.get(0).contains("Cannot"))) {
             System.out.println(products);
             System.out.println("Please enter Product number to get its discounts ");
             int productNum = scan.nextInt();
@@ -604,6 +606,4 @@ public class SupplierManager {
         int supplierNum = scan.nextInt();
         System.out.println(serviceFactory.supplierService.getSupplierDiscounts(supplierNum));
     }
-
-
 }
