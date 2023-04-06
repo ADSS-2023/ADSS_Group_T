@@ -22,11 +22,11 @@ public class OrderBusiness {
         for (OrderProduct order:products) {
             s=s+" "+order.toString();
         }
-        return "{" +
+        return
                 "Order Number: " + orderNum +
                 ",Supplier Number: "+supplierNum+
-                ",Products=" + s +
-                '}';
+                ",Products: " +"\n"+ s+"\n";
+
     }
 
     public OrderBusiness(int orderNum, String supplierName, LocalDateTime  orderDate,

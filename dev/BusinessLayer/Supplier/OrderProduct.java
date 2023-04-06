@@ -39,13 +39,12 @@ public class OrderProduct {
 
     @Override
     public String toString() {
-        return "{" +
-                "productName='" + productName + '\'' +
-                ", productNumber=" + productNumber +
-                ", quantity=" + quantity +
-                ", initialPrice=" + initialPrice +
-                ", discount=" + discount +
-                ", finalPrice=" + finalPrice +
-                '}'+'\n';
+        return
+                "productName: " + productName + '\'' +
+                ", productNumber: " + productNumber +
+                ", quantity: " + quantity +
+                ", initialPrice: " + initialPrice +
+                ", discount: " + discount +
+                ", finalPrice: " + finalPrice + "\n";
     }
 }

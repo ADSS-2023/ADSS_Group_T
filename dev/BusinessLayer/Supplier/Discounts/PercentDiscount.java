@@ -13,8 +13,7 @@ public class PercentDiscount extends Discount {
 
     @Override
     public String toString() {
-        return "Discount Type :Price Discount{ " +
-                "Amount to be discounted: " + amount +
+        return "Amount to be discounted: " + amount +
                 ", Discount: " + discount +
                 ", is a Percent discount: " + isPercentage +
                 '}';

@@ -5,6 +5,7 @@ import BusinessLayer.Supplier.Discounts.PercentDiscount;
 import BusinessLayer.Supplier.Discounts.PercentDiscount;
 import BusinessLayer.Supplier.Discounts.QuantityDiscount;
 import Util.Discounts;
+import Util.PaymentTerms;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.time.LocalDateTime;
 
-public class    SupplierBusiness {
+public class  SupplierBusiness {
     private String supplierName;
     private String address;
     private int supplierNum;
@@ -20,13 +21,16 @@ public class    SupplierBusiness {
     private HashMap<String, String> contacts;
     private List<String> constDeliveryDays;
     private boolean selfDelivery;
+    private PaymentTerms paymentTerms;
+
     private HashMap<Integer, SupplierProductBusiness> products;
 
     private List<Discount> discountPerTotalQuantity;
 
     private List<Discount> discountPerTotalPrice;
 
-    public SupplierBusiness(String supplierName, String address, int supplierNum,int bankAccountNum, HashMap<String, String> contacts, List<String> constDeliveryDays, boolean selfDelivery){
+    public SupplierBusiness(String supplierName, String address, int supplierNum,int bankAccountNum, HashMap<String, String> contacts, List<String> constDeliveryDays, boolean selfDelivery,PaymentTerms paymentTerms){
+
         this.supplierName = supplierName;
         this.address = address;
         this.supplierNum = supplierNum;
@@ -37,6 +41,7 @@ public class    SupplierBusiness {
         this.products = new HashMap<>();
         this.discountPerTotalQuantity = new ArrayList<>();
         this.discountPerTotalPrice = new ArrayList<>();
+        this.paymentTerms=paymentTerms;
     }
 
     public SupplierProductBusiness getProduct(String productName, String manufacturer) {
@@ -52,41 +57,46 @@ public class    SupplierBusiness {
         if (getProduct(productName,manufacturer) != null)
             throw new Exception("product already exists.");
         else if(expiredDate.isBefore(LocalDateTime.now()))
-            throw new Exception("expired date has passed.");
+            throw new Exception("expiry date has passed.");
         else
             products.put(productNum, new SupplierProductBusiness( supplierNum,productName,productNum, manufacturer, price, maxAmount, expiredDate));
     }
     public void editProduct(String productName, String manufacturer, int price, int maxAmount, LocalDateTime expiredDate) throws Exception {
         if(expiredDate.isBefore(LocalDateTime.now()))
-            throw new Exception("expired date has passed.");
+            throw new Exception("expiry date has passed.");
         SupplierProductBusiness sp = getProduct(productName,manufacturer);
         if (sp != null)
             sp.editProduct(supplierNum, productName, manufacturer, price, maxAmount, expiredDate);
         else
-            throw new Exception("product is not exists.");
+            throw new Exception("product doesn't exist.");
     }
 
     public void deleteProduct(int productNum) throws Exception {
         if(!products.containsKey(productNum))
             throw new Exception("product is not exists.");
-        products.remove(productNum);
+        //delete first all of product's discounts
+        SupplierProductBusiness sp = products.get(productNum);
+            for (Discount dis:sp.getQuantitiesAgreement()){
+               sp.deleteProductDiscount(dis.getAmount(),dis.getDiscount(),dis.isPercentage());
+            }
+            products.remove(productNum);
     }
 
     public void editProductDiscount(int productNum, int productAmount, int discount, boolean isPercentage) throws Exception {
         if(getSupplierProduct(productNum) == null)
-            throw new Exception("product is not exists.");
+            throw new Exception("product doesn't exist.");
         getSupplierProduct(productNum).editProductDiscount(productAmount, discount, isPercentage);
     }
 
     public void addProductDiscount(int productNum, int productAmount, int discount, boolean isPercentage) throws Exception {
         if(getSupplierProduct(productNum) == null)
-            throw new Exception("product is not exists.");
+            throw new Exception("product doesn't exist.");
         getSupplierProduct(productNum).addProductDiscount(productAmount, discount, isPercentage);
     }
 
     public void deleteProductDiscount(int productNum, int productAmount, int discount, boolean isPercentage) throws Exception {
         if(getSupplierProduct(productNum) == null)
-            throw new Exception("product is not exists.");
+            throw new Exception("product doesn't exist.");
         getSupplierProduct(productNum).deleteProductDiscount(productAmount, discount, isPercentage);
     }
 
@@ -94,7 +104,7 @@ public class    SupplierBusiness {
 
     public void editSupplierDiscount(Discounts discountEnum, int amount, int discountToChange, boolean isPercentage) throws Exception {
         if(!isDiscountExist(discountEnum,amount,isPercentage))
-            throw new Exception("No such Discount");
+            throw new Exception("No such discount");
         getDiscount(discountEnum,amount,isPercentage).editDiscount(amount,discountToChange);
     }
 
@@ -107,7 +117,7 @@ public class    SupplierBusiness {
                      discountPerTotalPrice.add(new PercentDiscount(amount,discount,true));
                 else
                     discountPerTotalPrice.add(new QuantityDiscount(amount,discount,false));
-
+                break;
             case DISCOUNT_BY_TOTAL_QUANTITY:
                 if(isPercentage)
                     discountPerTotalQuantity.add(new PercentDiscount(amount,discount,true));
@@ -119,7 +129,7 @@ public class    SupplierBusiness {
 
     public void deleteSupplierDiscount(Discounts discountEnum, int amount, boolean isPercentage) throws Exception {
         if(!isDiscountExist(discountEnum,amount,isPercentage))
-            throw new Exception("No such Discount");
+            throw new Exception("Discount doesn't Exist");
         switch (discountEnum) {
             case DISCOUNT_BY_TOTAL_PRICE:
                 for (Discount dis : discountPerTotalPrice) {
@@ -143,27 +153,33 @@ public class    SupplierBusiness {
                     if (dis.getAmount() == amount && dis.isPercentage() == isPercentage)
                         return true;
                 }
+                break;
             case DISCOUNT_BY_TOTAL_QUANTITY:
                 for (Discount dis : discountPerTotalQuantity) {
                     if (dis.getAmount() == amount && dis.isPercentage() == isPercentage)
                         return true;
                 }
+                break;
         }
         return false;
     }
 
-    public Discount getDiscount(Discounts discountEnum,int amount, boolean isPercentage) {
+    public Discount getDiscount(Discounts discountEnum,int amount, boolean isPercentage) throws Exception {
+        if(!isDiscountExist(discountEnum,amount,isPercentage))
+            throw new Exception("Discount Doesnt exist");
         switch(discountEnum){
             case DISCOUNT_BY_TOTAL_PRICE :
                 for (Discount dis : discountPerTotalPrice) {
                     if (dis.getAmount() == amount && dis.isPercentage() == isPercentage)
                        return dis;
                 }
+                break;
             case DISCOUNT_BY_TOTAL_QUANTITY:
                 for (Discount dis : discountPerTotalQuantity) {
                     if (dis.getAmount() == amount && dis.isPercentage() == isPercentage)
                         return dis;
                 }
+                break;
         }
         return null;
     }
@@ -188,11 +204,13 @@ public class    SupplierBusiness {
         return false;
     }
 
-    public void editSupplier(String supplierName, String address, int bankAccountNum, boolean selfDelivery){
+    public void editSupplier(String supplierName, String address, int bankAccountNum, boolean selfDelivery,PaymentTerms paymentTerms){
         this.supplierName = supplierName;
         this.address = address;
         this.bankAccountNum = bankAccountNum;
         this.selfDelivery = selfDelivery;
+        this.paymentTerms=paymentTerms;
+
     }
 
     //this function gets products number in the order, and old total price and returns new price
@@ -261,8 +279,10 @@ public class    SupplierBusiness {
     public String toString() {
         return "{" +
                 "Supplier Name:" + supplierName + '\'' +
-                ", Address:'" + address + '\'' +
+                ", Address: " + address + '\'' +
                 ", Supplier Number: " + supplierNum +
+                ", Bank Account Number: " + bankAccountNum +
+                ", Payment Terms: " + paymentTerms +
                 '}';
     }
 

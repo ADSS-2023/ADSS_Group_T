@@ -2,6 +2,8 @@ package BusinessLayer.Supplier;
 
 import BusinessLayer.Supplier.Discounts.Discount;
 import ServiceLayer.Supplier.ItemToOrder;
+import Util.Discounts;
+import Util.PaymentTerms;
 
 import java.util.*;
 import java.time.LocalDateTime;
@@ -13,16 +15,31 @@ public class SupplierController {
         suppliers = new HashMap<>();
     }
 
-    public void addSupplier(String name, String address, int supplierNum, int bankAccountNum, HashMap<String, String> contacts, List<String> constDeliveryDays, boolean selfDelivery) throws Exception {
+    public void addSupplier(String name, String address, int supplierNum, int bankAccountNum, HashMap<String, String> contacts, List<String> constDeliveryDays, boolean selfDelivery, PaymentTerms paymentTerms) throws Exception {
         if(isSupplierExists(supplierNum))
             throw new Exception("supplier number is already exists.");
-        suppliers.put(supplierNum, new SupplierBusiness(name, address, supplierNum, bankAccountNum, contacts, constDeliveryDays, selfDelivery));
+        suppliers.put(supplierNum, new SupplierBusiness(name, address, supplierNum, bankAccountNum, contacts, constDeliveryDays, selfDelivery,paymentTerms));
     }
 
     public void deleteSupplier(int supplierNum) throws Exception {
         if(!isSupplierExists(supplierNum))
-            throw new Exception("supplier number is not exists.");
+            throw new Exception("supplier number doesn't exist.");
+        SupplierBusiness supplier = getSupplier(supplierNum);
+        //before deleting supplier delete all his Products.
+        for (Map.Entry<Integer, SupplierProductBusiness> entry : supplier.getProducts().entrySet()){
+            supplier.deleteProduct(entry.getValue().getProductNum());
+        }
+        //before deleting supplier delete all his quantity Discounts.
+        for (Discount dis : supplier.getDiscountPerTotalQuantity()){
+            supplier.deleteSupplierDiscount(Discounts.DISCOUNT_BY_TOTAL_QUANTITY,dis.getAmount(), dis.isPercentage());
+        }
+        //before deleting supplier delete all his Price Discounts.
+        for (Discount dis : supplier.getDiscountPerTotalPrice()){
+            supplier.deleteSupplierDiscount(Discounts.DISCOUNT_BY_TOTAL_PRICE,dis.getAmount(), dis.isPercentage());
+        }
+
         suppliers.remove(supplierNum);
+
     }
 
     public HashMap<Integer, SupplierProductBusiness> getProducts(int supplierNum) throws Exception {
@@ -35,7 +52,7 @@ public class SupplierController {
         SupplierBusiness sp = null;
         float minPrice = Integer.MAX_VALUE;
         if(suppliers.isEmpty())
-            throw new Exception("There are not supplier exists at all.");
+            throw new Exception("There is not supplier exists at all.");
         for (Map.Entry<Integer, SupplierBusiness> entry : suppliers.entrySet()) {
             float currentPrice = 0;
             boolean flag = true;

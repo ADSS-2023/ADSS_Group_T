@@ -75,8 +75,8 @@ public class OrderController {
 //           if(!supplier.isDelivering()){
 //               sendDelivery(order);
 //           }
-
        }
+        shoppingLists = new HashMap<>();
     }
     //support functionality of displaying all orders from different suppliers.
     public List<OrderBusiness> getOrders(){

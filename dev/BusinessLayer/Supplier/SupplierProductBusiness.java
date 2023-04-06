@@ -29,7 +29,7 @@ public class SupplierProductBusiness {
         this.expiryDate = expiryDate;
     }
 
-    private boolean isDiscountExists(int productAmount, int discount, boolean isPercentage){
+    private boolean isDiscountExists(int productAmount, boolean isPercentage){
         for(Discount dis:quantitiesAgreement) {
             if (dis.isPercentage() == isPercentage && dis.getAmount() == productAmount)
                 return true;
@@ -49,8 +49,8 @@ public class SupplierProductBusiness {
     }
 
     public void editProductDiscount(int productAmount, int discount, boolean isPercentage) throws Exception {
-        if(!isDiscountExists(productAmount, discount, isPercentage))
-            throw new Exception("Discount not found");
+        if(!isDiscountExists(productAmount, isPercentage))
+            throw new Exception("Discount doesn't exists");
         if(!isDiscountValid(productAmount, discount, isPercentage))
             throw new Exception("Discount details are not valid");
         for (Discount dis : quantitiesAgreement) {
@@ -60,7 +60,7 @@ public class SupplierProductBusiness {
     }
 
     public void addProductDiscount(int productAmount, int discount, boolean isPercentage) throws Exception {
-        if(isDiscountExists(productAmount, discount, isPercentage))
+        if(isDiscountExists(productAmount, isPercentage))
             throw new Exception("Discount already exists");
         if(!isDiscountValid(productAmount, discount, isPercentage))
             throw new Exception("Discount details are not valid");
@@ -71,9 +71,9 @@ public class SupplierProductBusiness {
 
     }
 
-    public void deleteProductDiscount(int productAmount, int discount, boolean isPercentage) throws Exception {
-        if(!isDiscountExists(productAmount, discount, isPercentage))
-            throw new Exception("Discount not found");
+    public void deleteProductDiscount(int productAmount, float discount, boolean isPercentage) throws Exception {
+        if(!isDiscountExists(productAmount, isPercentage))
+            throw new Exception("Discount doesn't exists");
         Discount curr = null;
         for(Discount dis:quantitiesAgreement){
             if(dis.isPercentage() == isPercentage && dis.getAmount() == productAmount && dis.getDiscount() == discount)
@@ -142,14 +142,14 @@ public class SupplierProductBusiness {
 
     @Override
     public String toString() {
-        return "{" +
+        return
                 "Supplier Number: " + supplierNum +
                 ", Product Name: " + name + "  " +
                 ", Product Number: " + productNum +
                 ", Manufacturer: " + manufacturer + "  " +
                 ", Price: " + price +
-                ", Max quantity to supply: " + maxAmount +
-                ", expiryDate: " + expiryDate +
-                '}';
+                ", Max quantity in stock: " + maxAmount +
+                ", expiryDate: " + expiryDate;
+
     }
 }

@@ -11,12 +11,13 @@ public class OrderService {
     private OrderController oc;
     private SupplierController sc;
 
-
     public OrderService(OrderController oc) {
         this.oc = oc;
     }
     public String createOrder(List<ItemToOrder> itemsList){
         try {
+            if(itemsList.size()==0)
+                return "No Item has been ordered";
             oc.createOrder(itemsList);
             return "Order created successfully";
         }
