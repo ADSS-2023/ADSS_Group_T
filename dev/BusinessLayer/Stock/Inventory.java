@@ -68,6 +68,13 @@ public class Inventory {
 
     }
 
+    /**
+     * Set discount to a specific category or specific item
+     * @param index the index of the category/item in the categories tree
+     * @param percentageAmount
+     * @param end_date_string
+     * @param start_date_string
+     */
     public void set_discount(String index , double percentageAmount , String end_date_string , String start_date_string) {
         int current_index = Integer.parseInt(Util.extractFirstNumber(index));
         String next_index = Util.extractNextIndex(index);
@@ -76,6 +83,12 @@ public class Inventory {
         categories.get(current_index).setDiscount(next_index , new Discount(start_date , end_date , percentageAmount));
     }
 
+    /**
+     * This function receives a list of indexes that represent categories,
+     * and produce an inventory report for all of those categories.
+     * @param categories_indexes
+     * @return
+     */
     public String produce_inventory_report(LinkedList<String> categories_indexes){
         String report = "";
         for (String index:categories_indexes
@@ -87,6 +100,10 @@ public class Inventory {
         return report;
     }
 
+    /**
+     * This function is a setup function with specific items and categories
+     * in order to test the system.
+     */
     public void setUp() {
         Item milk_3 = new Item(0 , "3%" , 5 , "IDO LTD",  3.5);
         set_item_call_back(milk_3);
@@ -119,6 +136,15 @@ public class Inventory {
         return damaged.produce_damaged_report();
     }
 
+    /**
+     * Add new item to the system
+     * @param categoires_index
+     * @param item_id
+     * @param name
+     * @param min_amount
+     * @param manufacturer_name
+     * @param original_price
+     */
     public void add_item(String categoires_index,int item_id, String name, int min_amount, String manufacturer_name, double original_price){
         Item i = new Item(item_id,name,min_amount,manufacturer_name,original_price);
         set_item_call_back(i);
@@ -129,6 +155,15 @@ public class Inventory {
 
     }
 
+    /**
+     * Receive a new order for a specific item
+     * @param order_id each order must have unique id.
+     * @param item_id
+     * @param amount
+     * @param location
+     * @param validity
+     * @param cost_price the price that the store paid for this item, after discounts.
+     */
     public void receive_order(int order_id, int item_id, int amount,String location,LocalDate validity,double cost_price) {
         int amount_warehouse = amount/2;
         int amount_store = amount - amount_warehouse;

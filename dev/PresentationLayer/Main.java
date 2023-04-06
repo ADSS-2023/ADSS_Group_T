@@ -29,12 +29,12 @@ public class Main {
     }
 
     public static String presentCategories(){
+        System.out.println("press index of category/item in order to dive in,\npress 0 in order to choose the current category\npress -1 to exit");
         Scanner scanner = new Scanner(System.in);
         System.out.println(inventoryService.show_data());
         boolean is_active = true;
         String next_index="";
         while (is_active){
-            System.out.println("choose category");
             int choise = scanner.nextInt();
             if (choise == -1){
                 is_active = false;
@@ -45,12 +45,6 @@ public class Main {
             else {
                 next_index += "." + (choise-1);
                 String toShow = categoryService.show_data(next_index);
-//                if(toShow == ""){
-//                    return "";
-//                }
-//                else{
-//
-//                }
                 System.out.println(toShow);
             }
         }

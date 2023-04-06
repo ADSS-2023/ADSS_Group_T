@@ -35,7 +35,7 @@ public class Category implements ProductCategoryManagement{
     @Override
     public String produceInventoryReport(String index) {
         if(index == "") {
-            String reportString = "Category : " + name + "\n\n";
+            String reportString = "----Category : " + name + "\n\n";
             for (ProductCategoryManagement curCategory : categories_list) {
                 reportString += "\t" + curCategory.produceInventoryReport("") + "\n";
             }
