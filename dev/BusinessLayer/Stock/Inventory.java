@@ -32,12 +32,16 @@ public class Inventory {
         item.set_on_alert_callback(()->shortage_list.add(item));
     }
 
+    /**
+     * returns a report of all the item in stock that have reached their minimum amount.
+     * @return
+     */
     public String produce_shortage_list(){
         String report="";
         for (Item item:shortage_list
              ) {
-            report += String.format("%s\nminimal amount: %d"+"\n"+"current amount: %d\namount to order: %d",
-                    item.name,item.min_amount,item.current_amount(), item.min_amount-item.current_amount());
+            report += String.format("%s, %s\n minimal amount: %d"+"\n"+"current amount: %d\namount to order: %d",
+                    item.name,item.manufacturer_name,item.min_amount,item.current_amount(), item.min_amount-item.current_amount());
                     report+="\n-------------------------------------------\n";
         }
         if (report.isEmpty()) return "no shortage";
@@ -112,9 +116,9 @@ public class Inventory {
      * in order to test the system.
      */
     public void setUp() {
-        Item milk_3 = new Item(0 , "3%" , 5 , "IDO LTD",  3.5);
+        Item milk_3 = new Item(0 , "3% milk" , 5 , "IDO LTD",  3.5);
         set_item_call_back(milk_3);
-        Item milk_1_5=new Item(1 , "1.5%" , 2 , "IDO LTD",  3.5);
+        Item milk_1_5=new Item(1 , "1.5% milk" , 2 , "IDO LTD",  3.5);
         set_item_call_back(milk_1_5);
         Item yellow_cheese = new Item(2,"yellow cheese",5,"Emeck",10);
         set_item_call_back(yellow_cheese);
