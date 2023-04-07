@@ -39,6 +39,7 @@ public class ShiftController {
             ArrayList<Shift> approvedShiftList = approvedShifts.getOrDefault(date, new ArrayList<>(2));
             approvedShiftList.add(num , shift);
             approvedShifts.put(date, approvedShiftList);
+            shift.setApproved(true);
         }
         return isApproved + shift.showCurrentSubmitionNotAssigned();
     }
@@ -49,9 +50,12 @@ public class ShiftController {
         ArrayList<Shift> approvedShiftList = approvedShifts.getOrDefault(date, new ArrayList<>(2));
         approvedShiftList.add(num , shift);
         approvedShifts.put(date, approvedShiftList);
+        shift.setApproved(true);
     }
 
+    public static String shiftHistory(String date, boolean shiftType) {
 
+    }
 //    public void addSubmittedShift(Constraint cons) {
 //        if (shifts.containsKey(date)) {
 //            Shift shift = shiftType ?  shifts.get(date).get(0) : shifts.get(date).get(1);
@@ -61,14 +65,15 @@ public class ShiftController {
 //            throw new IllegalArgumentException("wrong date");
 //    }
 
-
+/*
     public void DeleteShift(String date, String shiftType) {
         if (shifts.containsKey(date)) {
             ArrayList<Shift> shiftList = shifts.get(date);
             int index = shiftType.equals("Morning") ? 0 : 1;
             shiftList.set(index, null); // set the shift to null to delete it
+
         }
-    }
+    }*/
 
     public void submitShift(int id, String date, boolean shiftType, boolean isTemp, String positionType) {
         Employee employee =    employeesMapper.get(id);
