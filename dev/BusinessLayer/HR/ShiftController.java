@@ -54,7 +54,7 @@ public class ShiftController {
     }
 
     public static String shiftHistory(String date, boolean shiftType) {
-        
+
     }
 //    public void addSubmittedShift(Constraint cons) {
 //        if (shifts.containsKey(date)) {
