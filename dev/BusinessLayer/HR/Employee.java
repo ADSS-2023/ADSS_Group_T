@@ -43,14 +43,14 @@ public class Employee {
         this.isManager = isManager;
     }
 
-    public void addSubmittedShift(String date, boolean shiftType, boolean isTemp, PositionType position) {
+    public void addSubmittedShift(String date, boolean shiftType, boolean isTemp) {
         if (shiftsRestriction.containsKey(date) && shiftsRestriction.get(date).contains(shiftType)) {
             throw new IllegalArgumentException("Cannot submit to that shift");
         }
-        else if (isLeagalPosition(position.name()))
-            throw new IllegalArgumentException("Unfortunately, you are not qualified for the selected position.");
+  /*      else if (isLeagalPosition(position.name()))
+            throw new IllegalArgumentException("Unfortunately, you are not qualified for the selected position.");*/
         else {
-            Constraint cons = new Constraint(date, shiftType, isTemp, position);
+            Constraint cons = new Constraint(date, shiftType, isTemp);
             List<Constraint> constraints = submittedShifts.get(date);
             if (constraints == null) {
                 constraints = new ArrayList<>();
@@ -210,7 +210,7 @@ public class Employee {
     }
 
 
-    public List<String> getQualifiedPositions() {
+    public List<String> getListOfQualifiedPositions() {
         List<String> positionNames = new ArrayList<>();
         for (PositionType position : qualifiedPositions) {
             positionNames.add(position.name());

@@ -77,11 +77,11 @@ public class ShiftController {
         }
     }*/
 
-    public void submitShift(int id, String date, boolean shiftType, boolean isTemp, String positionType) {
+    public void submitShift(int id, String date, boolean shiftType, boolean isTemp) {
         Employee employee =    employeesMapper.get(id);
-        employee.addSubmittedShift(date, shiftType, isTemp, PositionType.valueOf(positionType));
+        employee.addSubmittedShift(date, shiftType, isTemp);
         Shift shift = shiftType ?  shifts.get(date).get(0) : shifts.get(date).get(1);
-        shift.addNewSubmittedPositionByEmpoyee(positionType, employeesMapper.get(id), isTemp);
+        shift.addNewSubmittedPositionByEmpoyee( employeesMapper.get(id), isTemp, employee.getListOfQualifiedPositions());
 
     }
 

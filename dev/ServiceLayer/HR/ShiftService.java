@@ -98,7 +98,7 @@ public class ShiftService {
         }
     }
 
-    public String addNewSubmittedPositionByEmployee(int id, String date, String type, String temp,String position) {
+    public String addNewSubmittedPositionByEmployee(int id, String date, String type, String temp) {
         Response res = new Response();
         try {
             boolean boolType = true;
@@ -107,7 +107,7 @@ public class ShiftService {
             boolean boolTemp = true;
             if (temp.equals("p"))
                 boolTemp = false;
-            shiftController.submitShift(id,date,boolType,boolTemp,position);
+            shiftController.submitShift(id,date,boolType,boolTemp);
         } catch (Exception ex) {
         }
         return null;

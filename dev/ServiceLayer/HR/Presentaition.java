@@ -156,7 +156,7 @@ public class Presentaition {
                         String ans_isTemp_1 = input.next();
                         System.out.println("submit shift - enter position");
                         String ans_position_1 = input.next();
-                        shiftService.addNewSubmittedPositionByEmployee(ans_id,ans_date_1,ans_type_1,ans_isTemp_1,ans_position_1);
+                        shiftService.addNewSubmittedPositionByEmployee(ans_id,ans_date_1,ans_type_1,ans_isTemp_1);
                         repeat = true;
                         break;
                     case 2:

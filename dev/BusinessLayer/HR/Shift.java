@@ -148,15 +148,12 @@ public class Shift {
         return st;
     }
 
-    public void addNewSubmittedPositionByEmpoyee(String pos, Employee emp, boolean isTemp) {
-        if (!submittedPositionByEmployees.containsKey(pos)) {
-            throw  new IllegalArgumentException("there is no such position requierment");
+    public void addNewSubmittedPositionByEmpoyee(Employee emp, boolean isTemp, List<String> qualigiedPosition) {
+            for (String pos : qualigiedPosition){
+                submittedPositionByEmployees.get(pos).add(emp);
+            }
         }
-        else{
 
-            submittedPositionByEmployees.get(pos).add(emp);
-        }
-    }
 
 
     public String assignEmployeeForShift(String pos, Employee emp) {
