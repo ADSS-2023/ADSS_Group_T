@@ -17,8 +17,8 @@ public class Initialization {
     }
     public static void init_data(){
         Branch branch = new Branch();
-        EmployeeController employeeController = branch.getEmployeesController();
-        ShiftController shiftController = branch.getEmployeesController();
+        EmployeeController employeeController = branch.getEmployeesController(1);
+        ShiftController shiftController = branch.getShiftController(1);
         employeeController.initEmployeeConroller(shiftController);
         EmployeeService Emp = new EmployeeService(employeeController);
         ShiftService shiftService = new ShiftService(shiftController);
