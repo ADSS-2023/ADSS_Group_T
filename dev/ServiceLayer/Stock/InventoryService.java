@@ -6,6 +6,7 @@ import java.util.LinkedList;
 
 public class InventoryService {
     private Inventory inventory;
+
     public String produce_shortage_report(){
         return null;
     }
