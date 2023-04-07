@@ -35,6 +35,9 @@ public class Shift {
         managerID = -1;
     }
 
+    public ShiftHistory( String date,  boolean shiftType ) {
+
+    }
     public HashMap<String, Integer> createNewEmployeesRequirement() {
         HashMap<String, Integer> employeeRequirements = new HashMap<>();
         for (PositionType positionType : PositionType.values()) {
