@@ -81,6 +81,7 @@ public class Main {
         System.out.println("Choose percentage amount :");
         double percentageAmount = scanner.nextDouble();
         inventoryService.set_discount(product , percentageAmount , end_date_string , start_date_string);
+
     }
 
 
