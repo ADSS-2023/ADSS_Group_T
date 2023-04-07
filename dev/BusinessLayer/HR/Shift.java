@@ -8,6 +8,7 @@ public class Shift {
     private String date;
     private int managerID;
     private boolean shiftType;
+    private boolean isApproved;
     private HashMap<String, Integer> employeesRequirement; // HashMap<PositionType, amount> - require employees per shift
     private HashMap<String, List<Employee>> assignedEmployee; // HashMap<PositionType, EmployeesToFullfill> - the Employees that assign to the shifts by manager
     private HashMap<String, List<Employee>> submittedPositionByEmployees;
@@ -22,6 +23,7 @@ public class Shift {
         employeesRequirement = createNewEmployeesRequirement();
         assignedEmployee = createNewFulfillPositionByEmployees();
         submittedPositionByEmployees = createNewSubmittedPositionByEmployees();
+        isApproved = false;
     }
 
     public Shift(int shiftId,  String date,  boolean shiftType) {
@@ -33,11 +35,28 @@ public class Shift {
         assignedEmployee = createNewFulfillPositionByEmployees();
         submittedPositionByEmployees= createNewSubmittedPositionByEmployees();
         managerID = -1;
+        isApproved = false;
     }
 
-    public ShiftHistory( String date,  boolean shiftType ) {
 
+    public static String shiftHistory(String date, boolean shiftType) {
+        String output = "";
+        for (Shift shift : shiftList) {
+            if (shift.date.equals(date) && shift.shiftType == shiftType) {
+                output += "Shift ID: " + shift.shiftId + "\n";
+                output += "Shift Date: " + shift.date + "\n";
+                output += "Shift Type: " + (shift.shiftType ? "Morning" : "Evening") + "\n";
+                output += shift.ShowShiftStatus();
+            }
+        }
+        if (output.isEmpty()) {
+            output = "No shifts found for the specified date and type.";
+        }
+        return output;
     }
+
+    // rest of the class implementation...
+
     public HashMap<String, Integer> createNewEmployeesRequirement() {
         HashMap<String, Integer> employeeRequirements = new HashMap<>();
         for (PositionType positionType : PositionType.values()) {
@@ -182,5 +201,7 @@ public class Shift {
         return date;
     }
 
-
+    public void setApproved(boolean approved) {
+        isApproved = approved;
+    }
 }
