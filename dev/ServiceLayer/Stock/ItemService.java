@@ -11,12 +11,26 @@ public class ItemService {
         this.inventory = inventory;
     }
 
-    public void setDiscount(){}
-
+    /**
+     * This function sets the minimal amount of items in the specific item.
+     * @param item_id
+     * @param amount
+     * @return
+     */
     public String setMinimalAmount(int item_id,int amount){
         return inventory.set_minimal_amount(item_id,amount);
 
     }
+
+    /**
+     * Add new item to the system
+     * @param index
+     * @param item_id
+     * @param name
+     * @param min_amount
+     * @param manufacturer_name
+     * @param price
+     */
     public void addItem(String index,int item_id,String name,int min_amount,String manufacturer_name,double price){
         try {
             inventory.add_item(index,item_id,name,min_amount,manufacturer_name,price);
