@@ -120,7 +120,7 @@ public class Item implements ProductCategoryManagement {
         items.get(orderId).reduce(amount);
         if (current_amount()<=min_amount)
             return alert();
-        return null;
+        return "The operation was carried out successfully";
     }
     public void set_on_alert_callback(OnAlertCallBack c) {
         onAlertCallBack = c;

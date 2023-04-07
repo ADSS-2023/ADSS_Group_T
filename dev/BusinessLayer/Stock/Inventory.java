@@ -93,7 +93,7 @@ public class Inventory {
 
         if(Util.no_categories(categories_indexes))
             throw new Exception("No categories have been chosen");
-        String report = "inventory report:";
+        String report = "inventory report:\n" ;
         for (String index:categories_indexes
              ) {
             int current_index = Integer.parseInt(Util.extractFirstNumber(index));
@@ -129,12 +129,11 @@ public class Inventory {
         milk_3.recive_order(155,20,20,2.15,"ile 5 shelf 10",Util.stringToDate("2023-05-20"));
         milk_1_5.recive_order(120,10,10,2.55,"ile 5 shelf 11",Util.stringToDate("2023-05-23"));
         beef_sausage.recive_order(345,5,15,12.25,"ile 6 shelf 2",Util.stringToDate("2023-10-20"));
-        categories.add(new Category("Meat-product", "0"));
+        categories.add(new Category("Meat-product", "1"));
         categories.get(1).add_category(new Category("chicken" , "0"));
         categories.get(1).add_category(new Category("beef" , "1"));
         categories.get(1).getCategories_list().get(1).add_product(beef_sausage);
         items.put(3,beef_sausage);
-
     }
 
     public String set_minimal_amount(int item_id, int amount) {
@@ -147,19 +146,19 @@ public class Inventory {
 
     /**
      * Add new item to the system
-     * @param categoires_index
+     * @param categories_index
      * @param item_id
      * @param name
      * @param min_amount
      * @param manufacturer_name
      * @param original_price
      */
-    public void add_item(String categoires_index,int item_id, String name, int min_amount, String manufacturer_name, double original_price){
+    public void add_item(String categories_index,int item_id, String name, int min_amount, String manufacturer_name, double original_price){
         Item i = new Item(item_id,name,min_amount,manufacturer_name,original_price);
         set_item_call_back(i);
         items.put(item_id,i);
-        int current_index = Integer.parseInt(Util.extractFirstNumber(categoires_index));
-        String next_index = Util.extractNextIndex(categoires_index);
+        int current_index = Integer.parseInt(Util.extractFirstNumber(categories_index));
+        String next_index = Util.extractNextIndex(categories_index);
         categories.get(current_index).add_item(next_index,i);
 
     }
@@ -177,5 +176,13 @@ public class Inventory {
         int amount_warehouse = amount/2;
         int amount_store = amount - amount_warehouse;
         items.get(item_id).recive_order(order_id,amount_warehouse,amount_store,cost_price,location,validity);
+    }
+
+    public List<Category> getCategories() {
+        return categories;
+    }
+
+    public Item get_item_by_id(int id){
+        return items.get(id);
     }
 }
