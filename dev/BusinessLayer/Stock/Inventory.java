@@ -79,7 +79,7 @@ public class Inventory {
         int current_index = Integer.parseInt(Util.extractFirstNumber(index));
         String next_index = Util.extractNextIndex(index);
         LocalDate end_date = Util.stringToDate(end_date_string);
-        LocalDate start_date = Util.stringToDate(end_date_string);
+        LocalDate start_date = Util.stringToDate(start_date_string);
         categories.get(current_index).setDiscount(next_index , new Discount(start_date , end_date , percentageAmount));
     }
 
@@ -160,11 +160,11 @@ public class Inventory {
         int current_index = Integer.parseInt(Util.extractFirstNumber(categories_index));
         String next_index = Util.extractNextIndex(categories_index);
         categories.get(current_index).add_item(next_index,i);
-
     }
 
     /**
      * Receive a new order for a specific item
+     * Takes the amount and split by half to the warehouse and half to the store
      * @param order_id each order must have unique id.
      * @param item_id
      * @param amount

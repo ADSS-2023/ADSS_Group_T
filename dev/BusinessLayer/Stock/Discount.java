@@ -8,9 +8,9 @@ import java.time.LocalDate;
 public class Discount {
     private LocalDate start_date;
     private LocalDate end_date;
-    private int percentage;
+    private double percentage;
 
-    public Discount(LocalDate start_date, LocalDate end_date, double Percentage) {
+    public Discount(LocalDate start_date, LocalDate end_date, double percentage) {
         this.start_date = start_date;
         this.end_date = end_date;
         this.percentage = percentage;
@@ -42,11 +42,11 @@ public class Discount {
         this.end_date = end_date;
     }
 
-    public int getPercentageAmount() {
+    public double getPercentageAmount() {
         return percentage;
     }
 
-    public void setPercentageAmount(int Percentage) {
+    public void setPercentageAmount(double percentage) {
         this.percentage = percentage;
     }
 }
