@@ -32,19 +32,23 @@ public class Inventory {
         item.set_on_alert_callback(()->shortage_list.add(item));
     }
 
+    /**
+     * returns a report of all the item in stock that have reached their minimum amount.
+     * @return
+     */
     public String produce_shortage_list(){
         String report="";
         for (Item item:shortage_list
              ) {
-            report += String.format("%s\nminimal amount: %d"+"\n"+"current amount: %d\namount to order: %d",
-                    item.name,item.min_amount,item.current_amount(), item.min_amount-item.current_amount());
+            report += String.format("%s, %s\n minimal amount: %d"+"\n"+"current amount: %d\namount to order: %d",
+                    item.name,item.manufacturer_name,item.min_amount,item.current_amount(), item.min_amount-item.current_amount());
                     report+="\n-------------------------------------------\n";
         }
         if (report.isEmpty()) return "no shortage";
         return report;
     }
 
-    public String addDamagedItem(int item_id,int order_id,int amount,String description){
+    public String addDamagedItem(int item_id,int order_id,int amount,String description) throws Exception {
         return damaged.addDamagedItem(items.get(item_id),order_id,amount,description);
     }
 
@@ -57,12 +61,14 @@ public class Inventory {
         return names.substring(0,names.length()-2);
     }
 
-    public String show_data(String index) {
+    public String show_data(String index) throws Exception {
         if(index == "")
             return present_names();
         else {
             int current_index = Integer.parseInt(Util.extractFirstNumber(index));
             String next_index = Util.extractNextIndex(index);
+            if (categories.size()<= current_index)
+                throw new Exception("Illegal index has been chosen");
             return categories.get(current_index).show_data(next_index);
         }
 
@@ -75,11 +81,13 @@ public class Inventory {
      * @param end_date_string
      * @param start_date_string
      */
-    public void set_discount(String index , double percentageAmount , String end_date_string , String start_date_string) {
+    public void set_discount(String index , double percentageAmount , String end_date_string , String start_date_string) throws Exception {
         int current_index = Integer.parseInt(Util.extractFirstNumber(index));
         String next_index = Util.extractNextIndex(index);
         LocalDate end_date = Util.stringToDate(end_date_string);
-        LocalDate start_date = Util.stringToDate(start_date_string);
+        LocalDate start_date = Util.stringToDate(end_date_string);
+        if (categories.size()<= current_index)
+            throw new Exception("Illegal index");
         categories.get(current_index).setDiscount(next_index , new Discount(start_date , end_date , percentageAmount));
     }
 
@@ -108,9 +116,9 @@ public class Inventory {
      * in order to test the system.
      */
     public void setUp() {
-        Item milk_3 = new Item(0 , "3%" , 5 , "IDO LTD",  3.5);
+        Item milk_3 = new Item(0 , "3% milk" , 5 , "IDO LTD",  3.5);
         set_item_call_back(milk_3);
-        Item milk_1_5=new Item(1 , "1.5%" , 2 , "IDO LTD",  3.5);
+        Item milk_1_5=new Item(1 , "1.5% milk" , 2 , "IDO LTD",  3.5);
         set_item_call_back(milk_1_5);
         Item yellow_cheese = new Item(2,"yellow cheese",5,"Emeck",10);
         set_item_call_back(yellow_cheese);
@@ -153,18 +161,18 @@ public class Inventory {
      * @param manufacturer_name
      * @param original_price
      */
-    public void add_item(String categories_index,int item_id, String name, int min_amount, String manufacturer_name, double original_price){
+    public void add_item(String categories_index,int item_id, String name, int min_amount, String manufacturer_name, double original_price) throws Exception {
         Item i = new Item(item_id,name,min_amount,manufacturer_name,original_price);
         set_item_call_back(i);
         items.put(item_id,i);
         int current_index = Integer.parseInt(Util.extractFirstNumber(categories_index));
         String next_index = Util.extractNextIndex(categories_index);
         categories.get(current_index).add_item(next_index,i);
+
     }
 
     /**
      * Receive a new order for a specific item
-     * Takes the amount and split by half to the warehouse and half to the store
      * @param order_id each order must have unique id.
      * @param item_id
      * @param amount

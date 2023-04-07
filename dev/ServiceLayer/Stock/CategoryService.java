@@ -11,7 +11,12 @@ public class CategoryService {
         this.inventory = inventory;
     }
     public String show_data(String index){
-        return inventory.show_data(index);
+        try {
+            return inventory.show_data(index);
+        }
+        catch (Exception e) {
+            return e.getMessage();
+        }
     }
 
 }

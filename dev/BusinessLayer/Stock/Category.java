@@ -58,7 +58,7 @@ public class Category implements ProductCategoryManagement{
      * @param discount
      */
     @Override
-    public void setDiscount(String index , Discount discount) {
+    public void setDiscount(String index , Discount discount) throws Exception {
         discount_list.add(discount);
         if(index == ""){
             for (ProductCategoryManagement p :categories_list
@@ -69,6 +69,8 @@ public class Category implements ProductCategoryManagement{
         else {
             int current_index = Integer.parseInt(Util.extractFirstNumber(index));
             String next_index = Util.extractNextIndex(index);
+            if (categories_list.size()<= current_index)
+                throw new Exception("Illegal index");
             categories_list.get(current_index).setDiscount(next_index , discount);
         }
     }
@@ -98,12 +100,14 @@ public class Category implements ProductCategoryManagement{
     }
 
     @Override
-    public String show_data(String index){
+    public String show_data(String index) throws Exception {
         if(index == "")
             return present_names();
         else {
             int current_index = Integer.parseInt(Util.extractFirstNumber(index));
             String next_index = Util.extractNextIndex(index);
+            if (categories_list.size()<=current_index)
+                throw new Exception("Illegal index has been chosen");
             return categories_list.get(current_index).show_data(next_index);
         }
     }
@@ -122,7 +126,7 @@ public class Category implements ProductCategoryManagement{
         return categories_list;
     }
 
-    public void add_item(String index, Item i) {
+    public void add_item(String index, Item i) throws Exception {
         for (Discount d:discount_list
              ) {
             i.setDiscount("",d);
@@ -133,6 +137,8 @@ public class Category implements ProductCategoryManagement{
         else {
             int current_index = Integer.parseInt(Util.extractFirstNumber(index));
             String next_index = Util.extractNextIndex(index);
+            if (categories_list.size()<=current_index)
+                throw new Exception("Illegal index");
             categories_list.get(current_index).add_item(next_index, i);
         }
 

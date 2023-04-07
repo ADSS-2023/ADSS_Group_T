@@ -73,7 +73,7 @@ public class Item implements ProductCategoryManagement {
     }
 
     @Override
-    public String show_data(String index) {
+    public String show_data(String index) throws Exception {
         return String.format("--product:%s , manufacturer:%s , price:%.2f --",name,manufacturer_name, get_price());
     }
 
@@ -114,7 +114,9 @@ public class Item implements ProductCategoryManagement {
      * @param orderId
      * @param amount
      */
-    public String reduce(int orderId,int amount){
+    public String reduce(int orderId,int amount) throws Exception {
+        if (!items.containsKey(orderId))
+            throw new Exception(String.format("No such order with order id:%d",orderId));
         if(items.get(orderId).amount()<amount)
             throw new IllegalArgumentException("not enough items in inventory");
         items.get(orderId).reduce(amount);
