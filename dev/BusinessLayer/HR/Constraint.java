@@ -9,11 +9,10 @@ public class Constraint {
     private PositionType position;
     private boolean isAssigned;
 
-    public  Constraint(String date, boolean shiftType, boolean isTemp, PositionType position){
+    public  Constraint(String date, boolean shiftType, boolean isTemp){
         this.date= date;
         this.morningOrEveningl = shiftType;
         this.isTemp =  isTemp;
-        this.position = position;
         this.isAssigned = false;
     }
 

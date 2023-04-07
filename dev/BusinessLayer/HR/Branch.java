@@ -29,7 +29,7 @@ public class Branch {
         return employeesController.get(key);
     }
 
-    public ShiftController getShiftController(int key) {
+    public ShiftController getShiftControlle(int key) {
         return shiftController.get(key);
     }
 

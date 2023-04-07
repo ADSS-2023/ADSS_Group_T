@@ -17,8 +17,8 @@ public class EmployeeService {
                 return "m";
             else return "e";
         } catch (Exception ex) {
-            return "wrong password or id number";
         }
+        return null;
     }
 
     public String addRestrictionToEmployee(int id, String date, String type) {
