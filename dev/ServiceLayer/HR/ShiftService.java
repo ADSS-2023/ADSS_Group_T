@@ -9,9 +9,11 @@ import java.util.HashMap;
 
 public class ShiftService {
     public ShiftController shiftController ;
+
     public ShiftService(ShiftController shiftController){
         this.shiftController = shiftController;
     }
+
     public String addShiftRequirements(HashMap<String,Integer> howMany , String date , String shiftType){
         Response res = new Response();
         try
@@ -27,22 +29,14 @@ public class ShiftService {
         return "succeed";
     }
 
-    public String checkProblems(){
+    public String shiftHistory(String date , String shiftType){
         Response res = new Response();
         try
         {
-            //shiftController.addRequirements(String date , boolean shiftType ,);
-        }
-        catch (Exception ex){
-        }
-        return null;
-    }
-
-    public String shiftsHistory(){////////////////לשמור לסוף
-        Response res = new Response();
-        try
-        {
-            //shiftController.addRequirements(String date , boolean shiftType ,);
+            boolean bool = true;
+            if (shiftType.equals("e"))
+                bool = false;
+            return shiftController.shiftHistory(date,bool);
         }
         catch (Exception ex){
         }
@@ -103,16 +97,6 @@ public class ShiftService {
         catch (Exception ex){
         }
     }
-    /*public String getListOfSubmittedConstraints(int id){
-        Response res = new Response();
-        try
-        {
-
-        }
-        catch (Exception ex){
-        }
-        return null;
-    }*/
 
     public String addNewSubmittedPositionByEmployee(int id, String date, String type, String temp,String position) {
         Response res = new Response();
