@@ -43,7 +43,7 @@ public class InventoryService {
 
     }
     public String produce_shortage_report(){
-        return null;
+        return inventory.produce_shortage_list();
     }
     public void setUp() {
       inventory.setUp();

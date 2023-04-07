@@ -148,6 +148,9 @@ public class Main {
         double cost_price = scanner.nextDouble();
         itemService.receive_order(order_id,item_id,amount,location, Util.stringToDate(validity),cost_price);
     }
+    private static void produceShortageReport() {
+        System.out.println(inventoryService.produce_shortage_report());
+    }
     public static void act(String choise){
         switch (choise) {
             case "1":
@@ -175,10 +178,15 @@ public class Main {
             case "8":
                 receive_order();
                 break;
+            case "9":
+                produceShortageReport();
+                break;
             case "logout":
                 break;
         }
     }
+
+
 
     public static void main(String[] args) {
         inventoryService.setUp();
