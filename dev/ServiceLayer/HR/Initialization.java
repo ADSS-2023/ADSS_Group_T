@@ -23,20 +23,6 @@ public class Initialization {
         EmployeeService Emp = new EmployeeService(employeeController);
         ShiftService shiftService = new ShiftService(shiftController);
 
-       /* List<PositionType> pt1 = new ArrayList<PositionType>();
-        pt1.add(PositionType.general_worker);pt1.add(PositionType.cashier);
-        employeeController.addNewEmployee("Worker1","123456",pt1,"11.03.2023",1 , "1",true);
-
-        List<PositionType> pt2 = new ArrayList<PositionType>();
-        pt1.add(PositionType.general_worker);pt1.add(PositionType.shift_manager);
-        employeeController.addNewEmployee("Worker2","123456",pt2,"11.01.2021",2 , "2",false);
-
-        List<PositionType> pt3 = new ArrayList<PositionType>();
-        pt1.add(PositionType.general_worker);pt1.add(PositionType.storekeeper);
-        employeeController.addNewEmployee("Worker3","123456",pt3,"12.02.2022",3 , "3",false);*/
-
-
-
         HashMap<String, ArrayList<Shift>> shifts = new HashMap<String, ArrayList<Shift>>();
         int shiftId = 0;
 
@@ -131,5 +117,4 @@ public class Initialization {
         shiftService.addNewSubmittedPositionByEmployee(8, "14.03.2023", "m", "y");
     }
 
-    }
-
+}
