@@ -18,6 +18,12 @@ public class DamagedService {
         }
     }
     public String report_damaged_item(int item_id,int order_id,int amount,String description){
-        return inventory.addDamagedItem(item_id, order_id, amount, description);
+        try {
+            return inventory.addDamagedItem(item_id, order_id, amount, description);
+        }
+        catch (Exception e){
+            return e.getMessage();
+        }
+
     }
 }

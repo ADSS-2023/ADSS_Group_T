@@ -9,11 +9,11 @@ import java.util.List;
 public interface ProductCategoryManagement {
 
     String produceInventoryReport(String index);
-    void setDiscount(String index , Discount discount);
-    String show_data(String index);
+    void setDiscount(String index , Discount discount) throws Exception;
+    String show_data(String index) throws Exception;
 
     void add_product(ProductCategoryManagement add_product);
 
     String get_name();
-    void add_item(String index,Item item);
+    void add_item(String index,Item item) throws Exception;
 }

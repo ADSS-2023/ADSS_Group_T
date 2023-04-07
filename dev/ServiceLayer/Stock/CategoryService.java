@@ -12,7 +12,12 @@ public class CategoryService {
     }
     public void setDiscount(LocalDate end_date,LocalDate start_date,double precentage){}
     public String show_data(String index){
-        return inventory.show_data(index);
+        try {
+            return inventory.show_data(index);
+        }
+        catch (Exception e) {
+            return e.getMessage();
+        }
     }
 
 }

@@ -44,7 +44,7 @@ public class Inventory {
         return report;
     }
 
-    public String addDamagedItem(int item_id,int order_id,int amount,String description){
+    public String addDamagedItem(int item_id,int order_id,int amount,String description) throws Exception {
         return damaged.addDamagedItem(items.get(item_id),order_id,amount,description);
     }
 
@@ -57,12 +57,14 @@ public class Inventory {
         return names.substring(0,names.length()-2);
     }
 
-    public String show_data(String index) {
+    public String show_data(String index) throws Exception {
         if(index == "")
             return present_names();
         else {
             int current_index = Integer.parseInt(Util.extractFirstNumber(index));
             String next_index = Util.extractNextIndex(index);
+            if (categories.size()<= current_index)
+                throw new Exception("Illegal index has been chosen");
             return categories.get(current_index).show_data(next_index);
         }
 
@@ -75,11 +77,13 @@ public class Inventory {
      * @param end_date_string
      * @param start_date_string
      */
-    public void set_discount(String index , double percentageAmount , String end_date_string , String start_date_string) {
+    public void set_discount(String index , double percentageAmount , String end_date_string , String start_date_string) throws Exception {
         int current_index = Integer.parseInt(Util.extractFirstNumber(index));
         String next_index = Util.extractNextIndex(index);
         LocalDate end_date = Util.stringToDate(end_date_string);
         LocalDate start_date = Util.stringToDate(end_date_string);
+        if (categories.size()<= current_index)
+            throw new Exception("Illegal index");
         categories.get(current_index).setDiscount(next_index , new Discount(start_date , end_date , percentageAmount));
     }
 
@@ -153,7 +157,7 @@ public class Inventory {
      * @param manufacturer_name
      * @param original_price
      */
-    public void add_item(String categories_index,int item_id, String name, int min_amount, String manufacturer_name, double original_price){
+    public void add_item(String categories_index,int item_id, String name, int min_amount, String manufacturer_name, double original_price) throws Exception {
         Item i = new Item(item_id,name,min_amount,manufacturer_name,original_price);
         set_item_call_back(i);
         items.put(item_id,i);

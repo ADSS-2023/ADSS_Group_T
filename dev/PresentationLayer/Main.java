@@ -18,14 +18,15 @@ public class Main {
     public static ItemService itemService = new ItemService(inventoryService.get_inventory());
 
     public static void printOptions(){
-        System.out.println("1.See categories");
-        System.out.println("2.Produce inventory report");
-        System.out.println("3.Set discount");
-        System.out.println("4.Report damaged item");
-        System.out.println("5.Set minimal amount for a specific item");
-        System.out.println("6.Produce damaged items report");
-        System.out.println("7.Add new item");
-        System.out.println("8.Receive a new order (receive new supply of exists item)");
+        System.out.println("\u001B[32m1.See categories\u001B[0m");
+        System.out.println("\u001B[32m2.Produce inventory report\u001B[0m");
+        System.out.println("\u001B[32m3.Set discount\u001B[0m");
+        System.out.println("\u001B[32m4.Report damaged item\u001B[0m");
+        System.out.println("\u001B[32m5.Set minimal amount for a specific item\u001B[0m");
+        System.out.println("\u001B[32m6.Produce damaged items report\u001B[0m");
+        System.out.println("\u001B[32m7.Add new item\u001B[0m");
+        System.out.println("\u001B[32m8.Receive a new order (receive new supply of exists item)\u001B[0m");
+        System.out.println("\u001B[32m9.Produce shortage report\u001B[0m");
     }
 
     public static String presentCategories(){
