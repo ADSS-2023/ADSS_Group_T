@@ -31,16 +31,43 @@ public class ItemPerOrder {
         this.validity = validity;
     }
 
+    /**
+     * This function return the amount of this item from a specific order at the warehouse.
+     * @return
+     */
     public int getAmount_warehouse() {
         return amount_warehouse;
+    }
+    /**
+     * This function return the amount of this item from a specific order at the store.
+     * @return
+     */
+    public int getAmount_store() {
+        return amount_store;
+    }
+    /**
+     * This function returns the total amount of this item from this order
+     * @ int
+     */
+    public int amount() {return amount_store+amount_warehouse;}
+
+    /**
+     * This function reduces the amount of this current item
+     * @param amount
+     */
+    public void reduce(int amount) {
+        if (amount_store<amount){
+            amount = amount - amount_store;
+            amount_store = 0;
+            amount_warehouse = amount_warehouse - amount;
+        }
+        else {
+            amount_store = amount_store-amount;
+        }
     }
 
     public void setAmount_warehouse(int amount_warehouse) {
         this.amount_warehouse = amount_warehouse;
-    }
-
-    public int getAmount_store() {
-        return amount_store;
     }
 
     public void setAmount_store(int amount_store) {
@@ -69,22 +96,5 @@ public class ItemPerOrder {
 
     public void setValidity(LocalDate validity) {
         this.validity = validity;
-    }
-
-    /**
-     * This function returns the total amount of this item from this order
-     * @ int
-     */
-    public int amount() {return amount_store+amount_warehouse;}
-
-    public void reduce(int amount) {
-        if (amount_store<amount){
-            amount = amount - amount_store;
-            amount_store = 0;
-            amount_warehouse = amount_warehouse - amount;
-        }
-        else {
-            amount_store = amount_store-amount;
-        }
     }
 }

@@ -16,14 +16,6 @@ public class Discount {
         this.percentage = percentage;
     }
 
-    public LocalDate getStart_date() {
-        return start_date;
-    }
-
-    public void setStart_date(LocalDate start_date) {
-        this.start_date = start_date;
-    }
-
     /**
      * This is a boolean function that let know if this specific discount is relevant or not.
      * @return
@@ -34,19 +26,11 @@ public class Discount {
                 && (today.isEqual(end_date) || today.isBefore(end_date));
     }
 
-    public LocalDate getEnd_date() {
-        return end_date;
-    }
-
-    public void setEnd_date(LocalDate end_date) {
-        this.end_date = end_date;
-    }
-
+    /**
+     * This function returns the number of percentage of discount.
+     * @return
+     */
     public double getPercentageAmount() {
         return percentage;
-    }
-
-    public void setPercentageAmount(double percentage) {
-        this.percentage = percentage;
     }
 }

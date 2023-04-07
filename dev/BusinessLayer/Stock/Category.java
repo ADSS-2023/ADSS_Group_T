@@ -23,10 +23,6 @@ public class Category implements ProductCategoryManagement{
         discount_list = new LinkedList<>();
     }
 
-    public void add_category(ProductCategoryManagement new_product){
-        categories_list.add(new_product);
-    }
-
     /**
      *  This function called from CategoryService when there is a requirement to produce
      *  an inventory report.
@@ -49,13 +45,13 @@ public class Category implements ProductCategoryManagement{
             String next_index = Util.extractNextIndex(index);
             return categories_list.get(current_index).produceInventoryReport(next_index);
         }
-
     }
 
     /**
      * This function gets a Discount as an argument for this current category,
      * and update the sub-category with the new discount.
      * @param discount
+     * @param index
      */
     @Override
     public void setDiscount(String index , Discount discount) throws Exception {
@@ -86,6 +82,10 @@ public class Category implements ProductCategoryManagement{
         return categories_list.get(index);
     }
 
+    /**
+     * This function present the names of this specific category
+     * @return
+     */
     private String present_names(){
         if(categories_list.size() == 0){
             System.out.println("No products in this category");
@@ -99,6 +99,12 @@ public class Category implements ProductCategoryManagement{
         return names.substring(0,names.length()-2);
     }
 
+    /**
+     * This function show the details on "index" sub-category
+     * @param index
+     * @return
+     * @throws Exception
+     */
     @Override
     public String show_data(String index) throws Exception {
         if(index == "")
@@ -112,20 +118,39 @@ public class Category implements ProductCategoryManagement{
         }
     }
 
+    /**
+     * This function adds an item \ category to the list of the products.
+     * @param add_product
+     */
     @Override
     public void add_product(ProductCategoryManagement add_product) {
         categories_list.add(add_product);
     }
 
+    /**
+     * This function returns the name of the current category
+     * @return
+     */
     @Override
     public String get_name() {
         return name;
     }
 
+    /**
+     * This function returns the list of the products in this category
+     * @return
+     */
     public LinkedList<ProductCategoryManagement> getCategories_list() {
         return categories_list;
     }
 
+    /**
+     * This function insert an item to the sub-category name of "index" and updates
+     * the item with the relevant details.
+     * @param index
+     * @param i
+     * @throws Exception
+     */
     public void add_item(String index, Item i) throws Exception {
         for (Discount d:discount_list
              ) {
@@ -141,6 +166,5 @@ public class Category implements ProductCategoryManagement{
                 throw new Exception("Illegal index");
             categories_list.get(current_index).add_item(next_index, i);
         }
-
     }
 }

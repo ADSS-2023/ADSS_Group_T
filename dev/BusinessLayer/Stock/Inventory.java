@@ -48,10 +48,23 @@ public class Inventory {
         return report;
     }
 
+    /**
+     * This function adds a damaged item to the list of the damaged items.
+     * @param item_id
+     * @param order_id
+     * @param amount
+     * @param description
+     * @return
+     * @throws Exception
+     */
     public String addDamagedItem(int item_id,int order_id,int amount,String description) throws Exception {
         return damaged.addDamagedItem(items.get(item_id),order_id,amount,description);
     }
 
+    /**
+     * This function present the names of this specific category
+     * @return
+     */
     private String present_names(){
         String names = "";
         int index = 1;
@@ -60,6 +73,12 @@ public class Inventory {
         }
         return names.substring(0,names.length()-2);
     }
+    /**
+     * This function show the details on "index" sub-category
+     * @param index
+     * @return
+     * @throws Exception
+     */
 
     public String show_data(String index) throws Exception {
         if(index == "")
@@ -138,16 +157,27 @@ public class Inventory {
         milk_1_5.recive_order(120,10,10,2.55,"ile 5 shelf 11",Util.stringToDate("2023-05-23"));
         beef_sausage.recive_order(345,5,15,12.25,"ile 6 shelf 2",Util.stringToDate("2023-10-20"));
         categories.add(new Category("Meat-product", "1"));
-        categories.get(1).add_category(new Category("chicken" , "0"));
-        categories.get(1).add_category(new Category("beef" , "1"));
+        categories.get(1).add_product(new Category("chicken" , "0"));
+        categories.get(1).add_product(new Category("beef" , "1"));
         categories.get(1).getCategories_list().get(1).add_product(beef_sausage);
         items.put(3,beef_sausage);
     }
 
+    /**
+     * This function sets the minimal amount of items in the specific item.
+     * @param item_id
+     * @param amount
+     * @return
+     */
     public String set_minimal_amount(int item_id, int amount) {
         return items.get(item_id).setMin_amount(amount);
     }
 
+    /**
+     * This function produces the report of the damaged items.
+     * @return
+     * @throws Exception
+     */
     public String produce_damaged_report() throws Exception{
         return damaged.produce_damaged_report();
     }
@@ -186,10 +216,11 @@ public class Inventory {
         items.get(item_id).recive_order(order_id,amount_warehouse,amount_store,cost_price,location,validity);
     }
 
-    public List<Category> getCategories() {
-        return categories;
-    }
-
+    /**
+     * This functions returns a specific Item by an id as a parameter.
+     * @param id
+     * @return
+     */
     public Item get_item_by_id(int id){
         return items.get(id);
     }

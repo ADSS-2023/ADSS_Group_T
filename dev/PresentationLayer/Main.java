@@ -197,6 +197,7 @@ public class Main {
             printOptions();
             String choise = scanner.nextLine();
             act(choise);
+            System.out.println("\n");
         }
     }
 }

@@ -17,6 +17,7 @@ public class DamagedService {
             return e.getMessage();
         }
     }
+
     public String report_damaged_item(int item_id,int order_id,int amount,String description){
         try {
             return inventory.addDamagedItem(item_id, order_id, amount, description);

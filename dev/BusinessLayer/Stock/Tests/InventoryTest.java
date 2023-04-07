@@ -18,6 +18,7 @@ class InventoryTest {
     public static DamagedService damagedService;
     public static ItemService itemService;
     private Inventory inventory;
+
     @BeforeEach
     public void setUp() {
         inventoryService = new InventoryService();
@@ -62,7 +63,14 @@ class InventoryTest {
 
     @Test
     void produce_shortage_report() {
-
+        itemService.setMinimalAmount(1 , 300);
+        String result = inventoryService.produce_shortage_report();
+        String expected = "1.5% milk, IDO LTD\n" +
+                " minimal amount: 300\n" +
+                "current amount: 20\n" +
+                "amount to order: 280\n" +
+                "-------------------------------------------\n";
+        assertEquals(expected , result);
     }
 
     @Test

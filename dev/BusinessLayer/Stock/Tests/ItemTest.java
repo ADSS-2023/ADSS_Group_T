@@ -25,6 +25,7 @@ class ItemTest {
     public static DamagedService damagedService;
     public static ItemService itemService;
     private Inventory inventory;
+
     @BeforeEach
     public void setUp() {
         inventoryService = new InventoryService();

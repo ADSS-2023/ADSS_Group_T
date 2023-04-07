@@ -12,6 +12,7 @@ public class ItemService {
     }
 
     public void setDiscount(){}
+
     public String setMinimalAmount(int item_id,int amount){
         return inventory.set_minimal_amount(item_id,amount);
 

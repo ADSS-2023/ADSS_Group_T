@@ -10,6 +10,7 @@ public class InventoryService {
     public InventoryService(){
         inventory = new Inventory();
     }
+
     public String show_data(){
         try {
             return inventory.show_data("");
@@ -18,7 +19,6 @@ public class InventoryService {
             return e.getMessage();
         }
     }
-
 
     public Inventory get_inventory(){
         return inventory;
@@ -42,9 +42,11 @@ public class InventoryService {
         }
 
     }
+
     public String produce_shortage_report(){
         return inventory.produce_shortage_list();
     }
+
     public void setUp() {
       inventory.setUp();
     }
