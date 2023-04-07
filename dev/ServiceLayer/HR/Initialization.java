@@ -1,5 +1,6 @@
 package ServiceLayer.HR;
 
+import BusinessLayer.HR.Branch;
 import BusinessLayer.HR.EmployeeController;
 import BusinessLayer.HR.Shift;
 import BusinessLayer.HR.ShiftController;
@@ -15,8 +16,9 @@ public class Initialization {
         init_data();
     }
     public static void init_data(){
-        EmployeeController employeeController = new EmployeeController();
-        ShiftController shiftController = new ShiftController();
+        Branch branch = new Branch();
+        EmployeeController employeeController = branch.getEmployeesController();
+        ShiftController shiftController = branch.getEmployeesController();
         employeeController.initEmployeeConroller(shiftController);
         EmployeeService Emp = new EmployeeService(employeeController);
         ShiftService shiftService = new ShiftService(shiftController);
