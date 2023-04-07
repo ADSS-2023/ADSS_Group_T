@@ -8,8 +8,9 @@ public class Branch {
 
     public Branch() {
         employeesController = new HashMap<Integer, EmployeeController>();
-        shiftController = new HashMap<Integer, ShiftController>();
+        shiftController = new HashMap<Integer, ShiftController> () ;
         initBranches();
+
 
 
     }
@@ -34,5 +35,11 @@ public class Branch {
 
     public void setEmployeesController(HashMap<Integer, EmployeeController> employeesController) {
         this.employeesController = employeesController;
+    }
+
+
+
+    public void setShiftControlle(HashMap<Integer, ShiftController> shiftControlle) {
+        this.shiftController = shiftControlle;
     }
 }

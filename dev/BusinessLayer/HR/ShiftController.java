@@ -53,10 +53,11 @@ public class ShiftController {
         shift.setApproved(true);
     }
 
-    public static String shiftHistory(String date, boolean shiftType) {
-        return null;
-
+    public  String shiftHistory(String date, boolean shiftType) {
+        int num = shiftType ? 0 : 1 ;
+        return shifts.get(date).get(num).shiftHistory();
     }
+
 //    public void addSubmittedShift(Constraint cons) {
 //        if (shifts.containsKey(date)) {
 //            Shift shift = shiftType ?  shifts.get(date).get(0) : shifts.get(date).get(1);
