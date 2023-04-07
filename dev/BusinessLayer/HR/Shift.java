@@ -39,21 +39,21 @@ public class Shift {
     }
 
 
-    public static String shiftHistory(String date, boolean shiftType) {
-        String output = "";
-        for (Shift shift : shiftList) {
-            if (shift.date.equals(date) && shift.shiftType == shiftType) {
-                output += "Shift ID: " + shift.shiftId + "\n";
-                output += "Shift Date: " + shift.date + "\n";
-                output += "Shift Type: " + (shift.shiftType ? "Morning" : "Evening") + "\n";
-                output += shift.ShowShiftStatus();
-            }
-        }
-        if (output.isEmpty()) {
-            output = "No shifts found for the specified date and type.";
-        }
-        return output;
-    }
+//    public static String shiftHistory(String date, boolean shiftType) {
+//        String output = "";
+//        for (Shift shift : shiftList) {
+//            if (shift.date.equals(date) && shift.shiftType == shiftType) {
+//                output += "Shift ID: " + shift.shiftId + "\n";
+//                output += "Shift Date: " + shift.date + "\n";
+//                output += "Shift Type: " + (shift.shiftType ? "Morning" : "Evening") + "\n";
+//                output += shift.ShowShiftStatus();
+//            }
+//        }
+//        if (output.isEmpty()) {
+//            output = "No shifts found for the specified date and type.";
+//        }
+//        return output;
+//    }
 
     // rest of the class implementation...
 

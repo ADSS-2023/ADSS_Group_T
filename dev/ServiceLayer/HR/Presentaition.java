@@ -98,6 +98,7 @@ public class Presentaition {
                         String ans_date_5 = input.next();
                         System.out.println("show shift history - enter morning(m)/evening(e)");
                         String ans_type_5 = input.next();
+                        System.out.println(shiftService.shiftHistory(ans_date_5,ans_type_5));
                         break;
                     case 6:
                         System.out.println("add shift requirements - choose shift date");
@@ -160,7 +161,7 @@ public class Presentaition {
                         repeat = true;
                         break;
                     case 2:
-
+                        System.out.println(employeeService.getListOfSubmittedConstraints(ans_id));
                         repeat = true;
                         break;
                     case 3:
