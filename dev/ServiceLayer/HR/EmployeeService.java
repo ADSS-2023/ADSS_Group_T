@@ -55,11 +55,20 @@ public class EmployeeService {
 
     }
 
-    public String getAssignedShifts(int id) {
+
+    public String getListOfSubmittedConstraints(int id) {
         Response res = new Response();
         try {
-            Employee employee = employeeController.getEmployee(id);
-            return employee.getAssignedShifts().toString();
+            return employeeController.getListOfSubmittedConstraints(id);
+        } catch (Exception ex) {
+        }
+        return null;
+    }
+
+    public String getListOfAssignedShifts(int id) {
+        Response res = new Response();
+        try {
+            return employeeController.getListOfAssignedShifts(id);
         } catch (Exception ex) {
         }
         return null;

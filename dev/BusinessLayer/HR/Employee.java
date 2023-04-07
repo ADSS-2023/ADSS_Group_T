@@ -43,42 +43,56 @@ public class Employee {
         this.isManager = isManager;
     }
 
-    public void addSubmittedShift(String date, boolean shiftType, boolean isTemp) {
+    public void addSubmittedShift(String date, boolean shiftType, boolean isTemp, PositionType position) {
         if (shiftsRestriction.containsKey(date) && shiftsRestriction.get(date).contains(shiftType)) {
             throw new IllegalArgumentException("Cannot submit to that shift");
         }
+        else if (isLeagalPosition(position.name()))
+            throw new IllegalArgumentException("Unfortunately, you are not qualified for the selected position.");
         else {
-            Constraint cons = new Constraint(date, shiftType, isTemp);
+            Constraint cons = new Constraint(date, shiftType, isTemp, position);
             List<Constraint> constraints = submittedShifts.get(date);
             if (constraints == null) {
                 constraints = new ArrayList<>();
                 constraints.add(cons);
                 submittedShifts.put(date, constraints);
             } else {
-                submittedShifts.get(date).add(cons);
+                constraints.add(cons);
             }
         }
     }
 
-    public void addSAssignShift(String date, boolean shiftType, boolean isTemp) {
-        Constraint constraint = getConstraint(date, shiftType);
-        if (constraint != null) {
-            List<Constraint> assigns = assignedShifts.get(date);
-            if (assigns == null) {
-                assigns = new ArrayList<Constraint>();
-                assigns.add(constraint);
-                assignedShifts.put(date, assigns);
-            }
+
+    public void addSAssignShifts(String date, boolean shiftType, String positionType) {
+        if (!submittedShifts.containsKey(date)) {
+            throw new IllegalArgumentException("No such submitted shift exists for the date: " + date);
         }
-        else
-            throw  new IllegalArgumentException("no Such according constraint submitted");
+        int shType = shiftType ? 0 : 1;
+        Constraint constraint =  submittedShifts.get(date).get(shType);
+        if (constraint == null) {
+            throw new IllegalArgumentException("No constraint exists for the submitted shift on the date: " + date);
+        }
+
+
+
+        // Move the constraint from submittedShifts to assignedShifts
+        List<Constraint> assigns = assignedShifts.get(date);
+        if (assigns == null) {
+            assigns = new ArrayList<>();
+        }
+        assigns.add(constraint);
+        assignedShifts.put(date, assigns);
+
+        // Remove the constraint from submittedShifts
+        submittedShifts.remove(date);
     }
 
 
 
 
 
-        public Constraint getConstraint(String date, boolean shiftType) {
+
+    public Constraint getSubmittedShiftByP(String date, boolean shiftType, String position ) {
         for (Map.Entry<String, List<Constraint>> entry : submittedShifts.entrySet()) {
             List<Constraint> constraints = entry.getValue();
             for (Constraint constraint : constraints) {
@@ -195,9 +209,6 @@ public class Employee {
         return employeeName;
     }
 
-    public String getBankAccount() {
-        return bankAccount;
-    }
 
     public List<String> getQualifiedPositions() {
         List<String> positionNames = new ArrayList<>();
@@ -215,10 +226,9 @@ public class Employee {
         return salary;
     }
 
-    public String getJoiningDay() {
-        return joiningDay;
+
 
     }
 
 
-}
+

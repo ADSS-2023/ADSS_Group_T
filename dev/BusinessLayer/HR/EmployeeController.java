@@ -40,10 +40,6 @@ public void initEmployeeConroller (ShiftController shiftController){
         }
     }
 
-    public ShiftController getShiftController() {
-        return shiftController;
-    }
-
     public String getListOfSubmittedConstraints(int Id) {
         return employeesMapper.get(Id).getListOfSubmittedConstraints();
     }

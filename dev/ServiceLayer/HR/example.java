@@ -1,3 +1,4 @@
+/*
 package ServiceLayer.HR;
 
 import BusinessLayer.HR.EmployeeController;
@@ -9,12 +10,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-
-public class Initialization {
+public class Initialization_exm {
     public static void main(String[] args) {
         init_data();
     }
-    public static void init_data(){
+
+    public static void init_data() {
         EmployeeController employeeController = new EmployeeController();
         ShiftController shiftController = new ShiftController();
         employeeController.initEmployeeConroller(shiftController);
@@ -22,16 +23,19 @@ public class Initialization {
         ShiftService shiftService = new ShiftService(shiftController);
 
         List<PositionType> pt1 = new ArrayList<PositionType>();
-        pt1.add(PositionType.general_worker);pt1.add(PositionType.cashier);
-        employeeController.addNewEmployee("Worker1","123456",pt1,"11.03.2023",1 , "1",true);
+        pt1.add(PositionType.general_worker);
+        pt1.add(PositionType.cashier);
+        employeeController.addNewEmployee("Worker1", "123456", pt1, "11.03.2023", 1, "1", true);
 
         List<PositionType> pt2 = new ArrayList<PositionType>();
-        pt1.add(PositionType.general_worker);pt1.add(PositionType.shift_manager);
-        employeeController.addNewEmployee("Worker2","123456",pt2,"11.01.2021",2 , "2",false);
+        pt2.add(PositionType.general_worker);
+        pt2.add(PositionType.shift_manager);
+        employeeController.addNewEmployee("Worker2", "123456", pt2, "11.01.2021", 2, "2", false);
 
         List<PositionType> pt3 = new ArrayList<PositionType>();
-        pt1.add(PositionType.general_worker);pt1.add(PositionType.storekeeper);
-        employeeController.addNewEmployee("Worker3","123456",pt3,"12.02.2022",3 , "3",false);
+        pt3.add(PositionType.general_worker);
+        pt3.add(PositionType.storekeeper);
+        employeeController.addNewEmployee("Worker3", "123456", pt3, "12.02.2022", 3, "3", false);
 
         HashMap<String, ArrayList<Shift>> shifts = new HashMap<String, ArrayList<Shift>>();
         int shiftId = 0;
@@ -48,24 +52,5 @@ public class Initialization {
             }
 
             for (int day = 1; day <= numDaysInMonth; day++) {
-                String date = String.format("%02d.%02d.2023", day, month); // format date as "DD.MM.YYYY"
-                Shift morningShift = new Shift(shiftId, date, true); // morning shift
-                Shift eveningShift = new Shift(shiftId, date, false); // evening shift
-                ArrayList<Shift> shiftList = new ArrayList<Shift>(2);
-                shiftList.add(morningShift);
-                shiftList.add(eveningShift);
-                shifts.put(date, shiftList);
-                shiftId+= 2;
-            }
-        }
-
-        shiftController.init(shifts, employeeController.getEmployeesMapper());
-        Presentaition presentaition = new Presentaition(Emp,shiftService);
-        presentaition.begin();
-    }
-
-    public static void initShifts() {
-
-
-    }
-}
+                String date = String.format("%02d.%02d.2023
+*/

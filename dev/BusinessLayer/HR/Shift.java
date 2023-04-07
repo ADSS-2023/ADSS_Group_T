@@ -97,8 +97,16 @@ public class Shift {
         return missing;
     }
 
-    public String shiftState() {
+    public String ShowShiftStatus() {
         String st = "Shift state :\n";
+        st = st + ShowCurrentShiftState();
+        st = st +"\n";
+        st = st + showCurrentSubmitionNotAssigned();
+        return  st;
+    }
+
+    public String ShowCurrentShiftState() {
+        String st = "The current status of the shift: \n";
         for (Map.Entry<String, Integer> entry : employeesRequirement.entrySet()) {
             String position = entry.getKey();
             int required = entry.getValue();
@@ -111,12 +119,23 @@ public class Shift {
         return st;
     }
 
+    public String showCurrentSubmitionNotAssigned() {
+        String st = "\n Submission to shift - needs to be assigned: \n";
+        for (Map.Entry<String, List<Employee>> entry : submittedPositionByEmployees.entrySet()) {
+            String position = entry.getKey();
+            List<Employee> employees = entry.getValue();
+            if (employees != null) { // Check if any position submitted
+                st = st + employees.size() + " Shifts submitted to: " + position + "\n";
+                for (Employee employee : employees){
+                    st = st + "Name" + employee.getEmployeeName() + "    ID: " +  employee.getId() + "\n"; // Add employee name and ID to string
+                }
+            }
+        }
+        return st;
+    }
 
-
-
-
-    public void addSubmitPosition(String pos, Employee emp) {
-        if (!assignedEmployee.containsKey(pos)) {
+    public void addNewSubmittedPositionByEmpoyee(String pos, Employee emp, boolean isTemp) {
+        if (!submittedPositionByEmployees.containsKey(pos)) {
             throw  new IllegalArgumentException("there is no such position requierment");
         }
         else{
@@ -126,41 +145,39 @@ public class Shift {
     }
 
 
-    public void addAssignPosition(String pos, Employee emp) {
-       if (submittedPositionByEmployees.get(pos).contains(emp)) {
-            assignedEmployee.get(pos).add(emp);
+    public String assignEmployeeForShift(String pos, Employee emp) {
+        if (isContainInassignedEmployee(pos, emp)) {
+            throw new IllegalArgumentException("Employee " + emp.getEmployeeName() + " is already assigned to position " + pos);
+        }
+        else if (!isContainInSumittedPositionByEmployee(pos, emp)) {
+            throw new IllegalArgumentException("Employee " + emp.getEmployeeName() + " did not submit for position " + pos);
+        }
+        else {
+            assignedEmployee.computeIfAbsent(pos, k -> new ArrayList<>()).add(emp);
             submittedPositionByEmployees.get(pos).remove(emp);
-        } else
-            throw new IllegalArgumentException("the employee didn't submit for this position");
+            return "Employee " + emp.getEmployeeName() + " has been assigned to position " + pos;
+        }
     }
 
+    public boolean isContainInSumittedPositionByEmployee(String pos, Employee emp) {
+        if (submittedPositionByEmployees.containsKey(pos)) {
+            return submittedPositionByEmployees.get(pos).contains(emp);
+        } else {
+            return false;
+        }
+    }
 
-
-    public int getShiftId() {
-        return shiftId;
+    public boolean isContainInassignedEmployee(String pos, Employee emp) {
+        if (assignedEmployee.containsKey(pos)) {
+            return assignedEmployee.get(pos).contains(emp);
+        } else {
+            return false;
+        }
     }
 
     public String getDate() {
         return date;
     }
 
-    public int getManagerID() {
-        return managerID;
-    }
 
-    public boolean getShiftType() {
-        return shiftType;
-    }
-
-    public HashMap<String, Integer> getEmployeesRequirement() {
-        return employeesRequirement;
-    }
-
-    public HashMap<String, List<Employee>> getFulfillPositionByEmployees() {
-        return assignedEmployee;
-    }
-
-    public HashMap<String, List<Employee>> getSubmittedPositionByEmployees() {
-        return submittedPositionByEmployees;
-    }
 }
