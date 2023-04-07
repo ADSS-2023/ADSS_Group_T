@@ -18,17 +18,16 @@ public class ShiftController {
         shiftId = 0;
     }
 
-    public void initEmployeeMapper(HashMap<Integer,Employee> employeesMapper){
+    public void init( HashMap<String, ArrayList<Shift>> shifts, HashMap<Integer,Employee> employeesMapper){
+        this.shifts = shifts;
        this.employeesMapper = employeesMapper;
     }
 
-    public void loadDataShiftController(HashMap<String, ArrayList<Shift>> shifts){
-        this.shifts = shifts;
-    }
 
-    public String shiftState(String date, boolean shiftType){
+
+    public String ShowShiftStatus(String date, boolean shiftType){
         Shift shift = shiftType ? shifts.get(date).get(0) : shifts.get(date).get(1);
-        return shift.shiftState();
+        return shift.ShowShiftStatus();
     }
 
 
@@ -41,9 +40,16 @@ public class ShiftController {
             approvedShiftList.add(num , shift);
             approvedShifts.put(date, approvedShiftList);
         }
-        return isApproved;
+        return isApproved + shift.showCurrentSubmitionNotAssigned();
     }
 
+    public void approveShiftAnyWay(String date, boolean shiftType) {
+        Shift shift = shiftType ? shifts.get(date).get(0) : shifts.get(date).get(1);
+        int num = shiftType ? 0 : 1 ;
+        ArrayList<Shift> approvedShiftList = approvedShifts.getOrDefault(date, new ArrayList<>(2));
+        approvedShiftList.add(num , shift);
+        approvedShifts.put(date, approvedShiftList);
+    }
 
 
 //    public void addSubmittedShift(Constraint cons) {
@@ -66,16 +72,17 @@ public class ShiftController {
 
     public void submitShift(int id, String date, boolean shiftType, boolean isTemp, String positionType) {
         Employee employee =    employeesMapper.get(id);
-        employee.addSubmittedShift(date, shiftType, isTemp);
+        employee.addSubmittedShift(date, shiftType, isTemp, PositionType.valueOf(positionType));
         Shift shift = shiftType ?  shifts.get(date).get(0) : shifts.get(date).get(1);
-        shift.addSubmitPosition(positionType, employeesMapper.get(id));
+        shift.addNewSubmittedPositionByEmpoyee(positionType, employeesMapper.get(id), isTemp);
 
     }
 
-    public void assignShift(int id, String date, boolean shiftType, boolean isTemp, String positionType) {
-        employeesMapper.get(id).addSAssignShift(date, shiftType, isTemp);
+    public String assignEmployeeForShift(int id, String date, boolean shiftType, String positionType) {
         Shift shift = shiftType ?  shifts.get(date).get(0) : shifts.get(date).get(1);
-        shift.addAssignPosition(positionType, employeesMapper.get(id));
+        String st = shift.assignEmployeeForShift(positionType, employeesMapper.get(id));
+        employeesMapper.get(id).addSAssignShifts(date, shiftType, positionType);
+        return st;
     }
 
         public void addRequirements(HashMap<String, Integer> requirements, String date, boolean shiftType) {

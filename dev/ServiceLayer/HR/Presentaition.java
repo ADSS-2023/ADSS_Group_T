@@ -30,7 +30,7 @@ public class Presentaition {
                 repeat = false;
                 System.out.println("" +
                         "manger menu - choose action number" +
-                        " \n 1.approve shift for employee" +
+                        " \n 1.assign employees for a shift" +
                         " \n 2.approve shift" +
                         " \n 3.add restriction to employee" +
                         " \n 4.add employee qualification " +
@@ -41,17 +41,56 @@ public class Presentaition {
                 int chosen_num = input.nextInt();
                 switch (chosen_num) {
                     case 1:
-                        System.out.println("add restriction to employee - enter date");
+                        /*System.out.println("subimt shift for employee- enter date");
                         String ans_date_1 = input.next();
-                        System.out.println("add restriction to employee - enter morning(m)/evening(e)");
+                        System.out.println("subimt shift for employee - enter morning(m)/evening(e)");
                         String ans_type_1 = input.next();
+
+                        System.out.println("subimt shift for employee - employee id");
+                        String ans_id_emp = input.next();
+                        System.out.println(shiftService.assignEmployeeForShift(ans_id, ans_date_1,ans_type_1);
+                        System.out.println(shiftService.assignEmployeeForShift(ans_id, ans_date_1,ans_type_1).show;*/
                         break;
                     case 2:
-                        System.out.println("add restriction to employee - enter date");
+                        /*String ans_id_emp = input.next();
+                        System.out.println(shiftService.assignEmployeeForShift(ans_id, ans_date_1,ans_type_1);
+                        System.out.println(shiftService.assignEmployeeForShift(ans_id, ans_da*/
+
+                        System.out.println("Approve shift - enter date");
                         String ans_date_2 = input.next();
-                        System.out.println("add restriction to employee - enter morning(m)/evening(e)");
+                        System.out.println("Approve shift - enter morning(m)/evening(e)");
                         String ans_type_2 = input.next();
-                        System.out.println(shiftService.approveShift(ans_date_2,ans_type_2));
+                        System.out.println(shiftService.ShowShiftStatus(ans_date_2,ans_type_2));
+
+
+
+                        System.out.println("\n 1. To approve the shift - enter 0");
+                        System.out.println("\n 2. To approve submission for emploteey - enter id");
+                        String ans_approve_2_1 = input.next();
+                        if (ans_approve_2_1.equals("0")){
+                            String ans_isLegal_2 =  shiftService.approveShift(ans_date_2,ans_type_2);
+                            if (ans_approve_2_1.equals("0"))
+                                System.out.println("The shift has been successfuly approved");
+                            else{
+                                System.out.println(ans_isLegal_2 + "\n ");
+                                System.out.println("\n 1. Enforce the approvement anyway - enter 0");
+                                System.out.println("\n 2. To approve submission for employee - enter id");
+                                String ans_approve_2_2 = input.next();
+                                if (ans_approve_2_2.equals("0"))
+                                    shiftService.approveShiftAnyWay(ans_date_2,ans_type_2);
+                                else{
+                                    int id = Integer.parseInt(ans_approve_2_2);
+                                    System.out.println("\n 2. To approve submission for employee - enter Position");
+                                    String ans_position= input.next();
+                                    System.out.println(shiftService.assignEmployeeForShift(id,  ans_date_2, ans_type_2, ans_position));
+
+                                }
+                            }
+                        }
+
+
+
+
                         break;
                     case 3:
                         System.out.println("add restriction to employee - enter employee id");
@@ -130,15 +169,15 @@ public class Presentaition {
                         String ans_isTemp_1 = input.next();
                         System.out.println("submit shift - enter position");
                         String ans_position_1 = input.next();
-                        shiftService.addShift(ans_id,ans_date_1,ans_type_1,ans_isTemp_1,ans_position_1);
+                        shiftService.addNewSubmittedPositionByEmployee(ans_id,ans_date_1,ans_type_1,ans_isTemp_1,ans_position_1);
                         repeat = true;
                         break;
                     case 2:
-                        System.out.println(employeeService.getAssignedShifts(ans_id));
+
                         repeat = true;
                         break;
                     case 3:
-                        shiftService.submittedConstraints(ans_id);
+                        System.out.println(employeeService.getListOfAssignedShifts(ans_id));
                         repeat = true;
                         break;
                     case 4:

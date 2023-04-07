@@ -49,6 +49,34 @@ public class ShiftService {
         return null;
     }
 
+    public String ShowShiftStatus(String date , String shiftType){
+        Response res = new Response();
+        try
+        {
+            boolean bool = true;
+            if (shiftType.equals("e"))
+                bool = false;
+            return shiftController.ShowShiftStatus(date,bool);
+        }
+        catch (Exception ex){
+        }
+        return null;
+    }
+
+    public String assignEmployeeForShift(int ans_id, String ans_date, String ans_type, String position){
+        Response res = new Response();
+        try
+        {
+            boolean bool = true;
+            if (ans_type.equals("e"))
+                bool = false;
+            return shiftController.assignEmployeeForShift(ans_id, ans_date, bool, position);
+        }
+        catch (Exception ex){
+        }
+        return null;
+    }
+
     public String approveShift(String date , String shiftType){
         Response res = new Response();
         try
@@ -62,7 +90,20 @@ public class ShiftService {
         }
         return null;
     }
-    public String submittedConstraints(int id){
+
+    public void approveShiftAnyWay(String date , String shiftType){
+        Response res = new Response();
+        try
+        {
+            boolean bool = true;
+            if (shiftType.equals("e"))
+                bool = false;
+            shiftController.approveShiftAnyWay(date,bool);
+        }
+        catch (Exception ex){
+        }
+    }
+    /*public String getListOfSubmittedConstraints(int id){
         Response res = new Response();
         try
         {
@@ -71,9 +112,9 @@ public class ShiftService {
         catch (Exception ex){
         }
         return null;
-    }
+    }*/
 
-    public String addShift(int id, String date, String type, String temp,String position) {
+    public String addNewSubmittedPositionByEmployee(int id, String date, String type, String temp,String position) {
         Response res = new Response();
         try {
             boolean boolType = true;
