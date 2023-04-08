@@ -1,16 +1,14 @@
 package ServiceLayer.Supplier;
 
 import BusinessLayer.Supplier.Discounts.Discount;
+import BusinessLayer.Supplier.SupplierBusiness;
 import BusinessLayer.Supplier.SupplierController;
 import BusinessLayer.Supplier.SupplierProductBusiness;
 import Util.Discounts;
-import netscape.javascript.JSObject;
+import Util.PaymentTerms;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class SupplierService {
     private SupplierController sc;
@@ -19,9 +17,9 @@ public class SupplierService {
         this.sc = sc;
     }
 
-    public String addSupplier(String name, String address, int supplierNum,int bankAccountNum, HashMap<String, String> contacts, List<String> constDeliveryDays, boolean selfDelivery){
+    public String addSupplier(String name, String address, int supplierNum, int bankAccountNum, HashMap<String, String> contacts, List<String> constDeliveryDays, boolean selfDelivery, PaymentTerms paymentTerms){
         try{
-            sc.addSupplier(name,address,supplierNum,bankAccountNum,contacts,constDeliveryDays, selfDelivery);
+            sc.addSupplier(name,address,supplierNum,bankAccountNum,contacts,constDeliveryDays, selfDelivery,paymentTerms);
             return "Supplier added successfully";
         }
         catch(Exception e){
@@ -38,29 +36,51 @@ public class SupplierService {
             return e.getMessage();
         }
     }
-    public String editSupplier(String name, String address, int supplierNum,int bankAccountNum, boolean selfDelivery){
+
+    public String editSupplier(String name, String address, int supplierNum, int bankAccountNum, boolean selfDelivery, PaymentTerms paymentTerms){
         try {
-            sc.getSupplier(supplierNum).editSupplier(name, address, bankAccountNum, selfDelivery);
+            sc.getSupplier(supplierNum).editSupplier(name, address, bankAccountNum, selfDelivery,paymentTerms);
             return "Supplier edited successfully";
         }
         catch (Exception e){
             return e.getMessage();
         }
     }
+
     public List<String> getProducts(int supplierNum) {
-        List<String> products = new ArrayList<String>();
+        List<String> products = new LinkedList<>();
         try {
             HashMap<Integer, SupplierProductBusiness> productMap = sc.getProducts(supplierNum);
             for (Map.Entry<Integer, SupplierProductBusiness> entry : productMap.entrySet())
-                products.add(entry.getKey() + " " + entry.getValue().toString() + '\n');
+                products.add(entry.getValue().toString() + '\n');
         }
         catch (Exception e){
+            products = new LinkedList<>();
             products.add(e.getMessage());
         }
         finally {
             return products;
         }
+    }
 
+    public List<String> getAllProducts() {
+        List<String> productsStrings = new LinkedList<>();
+        HashMap<Integer, SupplierProductBusiness> products = new HashMap<>();
+        try {
+            HashMap<Integer, SupplierBusiness> suppliers=sc.getSuppliers();
+            for (Map.Entry<Integer, SupplierBusiness> entry : suppliers.entrySet()) {
+                products = entry.getValue().getProducts();
+                for (Map.Entry<Integer, SupplierProductBusiness> entry2 : products.entrySet())
+                    productsStrings.add(entry2.getValue().toString() + '\n');
+            }
+        }
+        catch (Exception e){
+            productsStrings = new LinkedList<>();
+            productsStrings.add(e.getMessage());
+        }
+        finally {
+            return productsStrings;
+        }
     }
 
     public String addProduct(int supplierNum, int productNum, String productName, String manufacturer, int price, int maxAmount, LocalDateTime expiredDate){
@@ -152,4 +172,70 @@ public class SupplierService {
             return e.getMessage();
         }
     }
+
+    public List<String> getSuppliers(){
+       List<String> suppliersStrings = new LinkedList<>();
+        try {
+            HashMap<Integer, SupplierBusiness> suppliers = sc.getSuppliers();
+            for (Map.Entry<Integer, SupplierBusiness> entry : suppliers.entrySet()) {
+                suppliersStrings.add(entry.getValue().toString()+"\n");
+            }
+        }
+        catch (Exception e){
+            List<String> err = new LinkedList<>();
+            err.add(e.getMessage());
+            return err;
+        }
+        finally {
+            return suppliersStrings;
+        }
+    }
+
+    public List<String> getSupplierDiscounts(int supplierNum) {
+        List<String> discounts = new LinkedList<>();
+        try {
+            discounts.add("------Total Price Discounts------\n");
+            List<Discount> discountsPerTotalPrice = sc.getSupplier(supplierNum).getDiscountPerTotalPrice();
+            List<Discount> discountsPerProductQuantity = sc.getSupplier(supplierNum).getDiscountPerTotalQuantity();
+
+            for (Discount dis: discountsPerTotalPrice){
+                discounts.add(dis.toString());
+                discounts.add("\n");
+            }
+            discounts.add("------Total Quantity Discounts------\n");
+            for (Discount dis: discountsPerProductQuantity){
+                discounts.add(dis.toString());
+                discounts.add("\n");
+            }
+        }
+        catch (Exception e){
+            discounts = new LinkedList<>();
+            discounts.add(e.getMessage());
+        }
+        finally {
+            return discounts;
+        }
+
+    }
+
+    public List<String> getProductDiscounts(int supplierNum,int productNum) {
+        List<String> discounts = new LinkedList<>();
+        try {
+            List<Discount> discountList = sc.getSupplier(supplierNum).getSupplierProduct(productNum).getQuantitiesAgreement();
+            for (Discount dis: discountList){
+                discounts.add(dis.toString());
+                discounts.add("\n");
+
+            }
+        }
+        catch (Exception e){
+            discounts = new LinkedList<>();
+            discounts.add(e.getMessage());
+        }
+        finally {
+            return discounts;
+        }
+
+    }
+
 }

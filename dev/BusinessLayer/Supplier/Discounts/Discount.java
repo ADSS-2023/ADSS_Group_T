@@ -2,17 +2,17 @@ package BusinessLayer.Supplier.Discounts;
 
 public abstract class Discount {
     protected int amount;
-    protected int discount;
+    protected float discount;
     protected  boolean isPercentage;
 
-    public abstract int getPriceAfterDiscount(int oldPrice) ;
+    public abstract float getPriceAfterDiscount(float oldPrice) ;
 
-    public Discount(int amount,int discount,boolean isPercentage){
+    public Discount(int amount,float discount,boolean isPercentage){
         this.amount=amount;
         this.discount =discount;
         this.isPercentage = isPercentage;
     }
-    public void editDiscount(int amount, int discount){
+    public void editDiscount(int amount, float discount){
         this.discount=discount;
         this.amount=amount;
     }
@@ -21,7 +21,7 @@ public abstract class Discount {
         return amount;
     }
 
-    public int getDiscount() {
+    public float getDiscount() {
         return discount;
     }
 
