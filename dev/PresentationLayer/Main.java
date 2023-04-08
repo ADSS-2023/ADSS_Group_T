@@ -27,6 +27,7 @@ public class Main {
         System.out.println("\u001B[32m7.Add new item\u001B[0m");
         System.out.println("\u001B[32m8.Receive a new order (receive new supply of exists item)\u001B[0m");
         System.out.println("\u001B[32m9.Produce shortage report\u001B[0m");
+        System.out.println("\u001B[32m10.Add new category\u001B[0m");
     }
 
     public static String presentCategories(){
@@ -180,11 +181,21 @@ public class Main {
             case "9":
                 produceShortageReport();
                 break;
+            case "10":
+                addCategory();
+                break;
             case "logout":
                 break;
         }
     }
 
+    private static void addCategory() {
+        Scanner scanner = new Scanner(System.in);
+        String index = presentCategories();
+        System.out.println("Insert name of category:");
+        String name = scanner.nextLine();
+        categoryService.add_category(index,name);
+    }
 
 
     public static void main(String[] args) {

@@ -26,5 +26,13 @@ public class CategoryService {
             return e.getMessage();
         }
     }
-
+    public String add_category(String index,String name){
+        try {
+              inventory.add_category(index,name);
+        }
+        catch (Exception e){
+            return e.getMessage();
+        }
+        return "Category added";
+    }
 }

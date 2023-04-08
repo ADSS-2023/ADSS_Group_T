@@ -202,6 +202,15 @@ public class Inventory {
         categories.get(current_index).add_item(next_index,i);
 
     }
+    public void add_category(String categories_index, String name) throws Exception {
+        if (categories_index == "")
+            categories.add(new Category(name,""+categories.size()));
+        else {
+            int current_index = Integer.parseInt(Util.extractFirstNumber(categories_index));
+            String next_index = Util.extractNextIndex(categories_index);
+            categories.get(current_index).add_product(next_index,name);
+        }
+    }
 
     /**
      * Receive a new order for a specific item

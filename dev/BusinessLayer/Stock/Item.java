@@ -129,6 +129,11 @@ public class Item implements ProductCategoryManagement {
         //do nothing.
     }
 
+    @Override
+    public void add_product(String index, String name) {
+        //do nothing.
+    }
+
     /**
      * This function awakes the callback when the amount of this current item is lower than
      * the minimum amount due to a change that happened.

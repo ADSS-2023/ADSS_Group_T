@@ -128,6 +128,22 @@ public class Category implements ProductCategoryManagement{
     }
 
     /**
+     * Adding product by its name and index- for adding new categories
+     * @param index
+     * @param name
+     */
+    @Override
+    public void add_product(String index, String name) {
+        if (index == "")
+            categories_list.add(new Category(name,""+categories_list.size()));
+        else {
+            int current_index = Integer.parseInt(Util.extractFirstNumber(index));
+            String next_index = Util.extractNextIndex(index);
+            categories_list.get(current_index).add_product(next_index,name);
+        }
+    }
+
+    /**
      * This function returns the name of the current category
      * @return
      */

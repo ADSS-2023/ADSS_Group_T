@@ -15,7 +15,7 @@ public interface ProductCategoryManagement {
     String show_data(String index) throws Exception;
 
     void add_product(ProductCategoryManagement add_product);
-
+    void add_product(String index,String name);
     String get_name();
     
     void add_item(String index,Item item) throws Exception;
