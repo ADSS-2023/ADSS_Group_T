@@ -16,7 +16,8 @@ public class Employee {
     private String description;
     private int salary;
     private String joiningDay;
-    private boolean isManager;
+    private boolean isHRManager;
+    private boolean isShiftManager;
     private String password;
 
     public Employee(String employeeName, String bankAccount, List<PositionType> qualifiedPositions, String joiningDay, int employeeId, String password) {
@@ -40,15 +41,19 @@ public class Employee {
         this.submittedShifts = new HashMap<>();
         this.assignedShifts = new HashMap<>();
         this.shiftsRestriction = new HashMap<String, List<Boolean>>();
-        this.isManager = isManager;
+        this.isHRManager = isManager;
+        boolean isShiftManager = false;
     }
 
     public void addSubmittedShift(String date, boolean shiftType, boolean isTemp) {
         if (shiftsRestriction.containsKey(date) && shiftsRestriction.get(date).contains(shiftType)) {
             throw new IllegalArgumentException("Cannot submit to that shift");
         }
-  /*      else if (isLeagalPosition(position.name()))
-            throw new IllegalArgumentException("Unfortunately, you are not qualified for the selected position.");*/
+        else if (submittedShifts.containsKey(date) && submittedShifts.get(date).stream().anyMatch(c -> c.getShiftType() == shiftType)) {
+            throw new IllegalArgumentException("Shift for that date and shift type already exists");
+        }
+    /* else if (isLeagalPosition(position.name()))
+        throw new IllegalArgumentException("Unfortunately, you are not qualified for the selected position.");*/
         else {
             Constraint cons = new Constraint(date, shiftType, isTemp);
             List<Constraint> constraints = submittedShifts.get(date);
@@ -61,6 +66,7 @@ public class Employee {
             }
         }
     }
+
 
 
     public void addSAssignShifts(String date, boolean shiftType, String positionType) {
@@ -92,7 +98,7 @@ public class Employee {
 
 
 
-    public Constraint getSubmittedShiftByP(String date, boolean shiftType, String position ) {
+    public Constraint getSubmittedShiftByPosition(String date, boolean shiftType, String position ) {
         for (Map.Entry<String, List<Constraint>> entry : submittedShifts.entrySet()) {
             List<Constraint> constraints = entry.getValue();
             for (Constraint constraint : constraints) {
@@ -180,6 +186,9 @@ public class Employee {
         }
     }
 
+    public String getJoiningDay() {
+        return joiningDay;
+    }
 
     public void addQualification(String position) {
         if (! isLeagalPosition(position))
@@ -198,7 +207,7 @@ public class Employee {
 
 
     public boolean isManager() {
-        return isManager;
+        return isHRManager;
     }
 
     public int getId() {
@@ -216,6 +225,10 @@ public class Employee {
             positionNames.add(position.name());
         }
         return positionNames;
+    }
+
+    public void setShiftManager(boolean shiftManager) {
+        isShiftManager = shiftManager;
     }
 
     public void setSalary(int salary) {
