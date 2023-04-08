@@ -117,7 +117,7 @@ public class Item implements ProductCategoryManagement {
      */
     @Override
     public String show_data(String index) throws Exception {
-        return String.format("--product:%s , manufacturer:%s , price:%.2f --",name,manufacturer_name, get_price());
+        return String.format("--id:%d, product:%s , manufacturer:%s , price:%.2f --",item_id,name,manufacturer_name, get_price());
     }
 
     /**

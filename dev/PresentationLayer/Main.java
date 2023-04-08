@@ -86,8 +86,6 @@ public class Main {
 
     }
 
-
-
     private static void setMinimalAmount() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("insert item id:");
@@ -114,7 +112,6 @@ public class Main {
         System.out.println(damagedService.produce_damaged_report());
     }
 
-
     private static void addItem() {
         Scanner scanner = new Scanner(System.in);
         String choise = presentCategories();
@@ -131,6 +128,7 @@ public class Main {
         double price = scanner.nextDouble();
         itemService.addItem(choise,item_id,name,amount,manufacturer,price);
     }
+
     public static void receive_order(){
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter order id:");
@@ -149,9 +147,11 @@ public class Main {
         double cost_price = scanner.nextDouble();
         itemService.receive_order(order_id,item_id,amount,location, Util.stringToDate(validity),cost_price);
     }
+
     private static void produceShortageReport() {
         System.out.println(inventoryService.produce_shortage_report());
     }
+
     public static void act(String choise){
         switch (choise) {
             case "1":
