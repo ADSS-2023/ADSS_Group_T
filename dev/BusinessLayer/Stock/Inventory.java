@@ -224,7 +224,10 @@ public class Inventory {
     public void receive_order(int order_id, int item_id, int amount,String location,LocalDate validity,double cost_price) {
         int amount_warehouse = amount/2;
         int amount_store = amount - amount_warehouse;
-        items.get(item_id).recive_order(order_id,amount_warehouse,amount_store,cost_price,location,validity);
+        Item cur_item = items.get(item_id);
+        cur_item.recive_order(order_id,amount_warehouse,amount_store,cost_price,location,validity);
+        if (cur_item.current_amount()> cur_item.min_amount)
+            shortage_list.remove(cur_item);
     }
 
     /**
