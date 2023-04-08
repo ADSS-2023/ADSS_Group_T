@@ -201,7 +201,7 @@ public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("Welcome to Superly inventory.\n\u001B[32m" +
+        System.out.println("\033[1mWelcome to Superly inventory\033[0m\n\u001B[32m" +
                 "Would you like to load data or continue on an empty system?\n" +
                 "1.Load data\n2.Empty system\u001B[0m");
 
