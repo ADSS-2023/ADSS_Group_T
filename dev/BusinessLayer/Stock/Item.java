@@ -7,6 +7,8 @@ import java.util.*;
     This class represents a specific item, each item holds a list of its kind
     classified by validity.
  */
+
+
 public class Item implements ProductCategoryManagement {
     protected int item_id;
     protected String name;

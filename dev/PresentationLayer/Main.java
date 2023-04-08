@@ -188,9 +188,17 @@ public class Main {
 
 
     public static void main(String[] args) {
-        inventoryService.setUp();
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Welcome to Superly inventory.");
+
+        System.out.println("Welcome to Superly inventory.\n\u001B[32m" +
+                "Would you like to load data or continue on an empty system?\n" +
+                "1.Load data\n2.Empty system\u001B[0m");
+
+        int action = scanner.nextInt();
+        scanner.nextLine();
+        if(action==1)
+            inventoryService.setUp();
+
         while(true) {
             System.out.println("What would you like to do?");
             printOptions();

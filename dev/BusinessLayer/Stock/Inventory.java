@@ -66,6 +66,8 @@ public class Inventory {
      * @return
      */
     private String present_names(){
+        if (categories.isEmpty())
+            return "No categories";
         String names = "";
         int index = 1;
         for(Category cur_category : categories){

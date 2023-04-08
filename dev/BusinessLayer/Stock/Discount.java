@@ -10,6 +10,12 @@ public class Discount {
     private LocalDate end_date;
     private double percentage;
 
+    /**
+     *
+     * @param start_date
+     * @param end_date
+     * @param percentage
+     */
     public Discount(LocalDate start_date, LocalDate end_date, double percentage) {
         this.start_date = start_date;
         this.end_date = end_date;
