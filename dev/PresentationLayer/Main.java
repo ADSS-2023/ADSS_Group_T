@@ -154,7 +154,6 @@ public class Main {
     public static void act(String choise){
         switch (choise) {
             case "1":
-                System.out.println("in order to exit press -1 in any time");
                 presentCategories();
                 break;
             case "2":

@@ -93,7 +93,7 @@ public class Item implements ProductCategoryManagement {
      */
     @Override
     public String produceInventoryReport(String index) {
-         return String.format("\tproduct:%s manufacturer:%s amount in store:%d amount in warehouse:%d",name,manufacturer_name,amount_store(),amount_warehouse());
+         return String.format("\tid:%d, product:%s, manufacturer:%s, amount in store:%d, amount in warehouse:%d",item_id,name,manufacturer_name,amount_store(),amount_warehouse());
     }
 
 
