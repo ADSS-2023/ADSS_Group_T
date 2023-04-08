@@ -50,7 +50,7 @@ public class ShiftService {
             boolean bool = true;
             if (shiftType.equals("e"))
                 bool = false;
-            return shiftController.ShowShiftStatus(date,bool);
+            return shiftController.showShiftStatus(date,bool);
         }
         catch (Exception ex){
         }
@@ -69,6 +69,24 @@ public class ShiftService {
         catch (Exception ex){
         }
         return null;
+    }
+
+    public String assignAll(String date, String shiftType) {
+        Response res = new Response();
+        String st = "";
+        try {
+            boolean bool = true;
+            if (shiftType.equals("e"))
+                bool = false;
+            st = shiftController.assignAll(date, bool);
+        } catch (Exception ex) {
+            // handle exception by printing error message
+
+        }
+        finally {
+            return st;
+        }
+
     }
 
     public String approveShift(String date , String shiftType){

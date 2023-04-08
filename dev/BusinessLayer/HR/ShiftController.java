@@ -25,9 +25,9 @@ public class ShiftController {
 
 
 
-    public String ShowShiftStatus(String date, boolean shiftType){
+    public String showShiftStatus(String date, boolean shiftType){
         Shift shift = shiftType ? shifts.get(date).get(0) : shifts.get(date).get(1);
-        return shift.ShowShiftStatus();
+        return shift.showShiftStatus();
     }
 
 
@@ -41,7 +41,7 @@ public class ShiftController {
             approvedShifts.put(date, approvedShiftList);
             shift.setApproved(true);
         }
-        return isApproved + shift.showCurrentSubmitionNotAssigned();
+        return isApproved;
     }
 
     public void approveShiftAnyWay(String date, boolean shiftType) {
@@ -88,7 +88,12 @@ public class ShiftController {
     public String assignEmployeeForShift(int id, String date, boolean shiftType, String positionType) {
         Shift shift = shiftType ?  shifts.get(date).get(0) : shifts.get(date).get(1);
         String st = shift.assignEmployeeForShift(positionType, employeesMapper.get(id));
-        employeesMapper.get(id).addSAssignShifts(date, shiftType, positionType);
+        return st;
+    }
+
+    public String assignAll(String date, boolean shiftType) {
+        Shift shift = shiftType ?  shifts.get(date).get(0) : shifts.get(date).get(1);
+        String st = shift.assignAll();
         return st;
     }
 

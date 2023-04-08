@@ -61,21 +61,22 @@ public void initEmployeeConroller (ShiftController shiftController){
         return employeesMapper.get(id);
     }
 
-    public boolean login (int empolyeeId, String password){
-        Employee emp = employeesMapper.get(empolyeeId);
-        if ( emp != null){
-            if (emp.getPassword().equals(password)){
-                if(emp.isManager())
-                    return true;
-                return false;
-            }
-            else
-                throw  new IllegalArgumentException("wrong password");
+    public boolean login(int employeeId, String password) {
+        Employee employee = employeesMapper.get(employeeId);
+        if (employee == null) {
+            throw new IllegalArgumentException("Employee ID does not exist");
+        } else if (!employee.getPassword().equals(password)) {
+            throw new IllegalArgumentException("Wrong password");
+        } else if (employee.isManager()) {
+            return true;
+        } else {
+            return false;
         }
-        else
-            throw  new IllegalArgumentException("wrong ID");
     }
 
+    public void setEmployeeAsShiftManager(int id) {
+        employeesMapper.get(id).setShiftManager(true);
+    }
     public void deleteEmployee(int emploeeyId){
         if (! employeesMapper.containsKey(emploeeyId))
             throw new NoSuchElementException("employee Id not exist");
