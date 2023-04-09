@@ -175,13 +175,13 @@ public class DeliveryManagerService {
                 int choice = scanner.nextInt();
                 switch (choice) {
                     case 1:
-                        dc.handleProblem(deliveryID, 1);
+                        dc.overWeightAction(deliveryID, 1);
                         break;
                     case 2:
-                        dc.handleProblem(deliveryID, 2);
+                        dc.overWeightAction(deliveryID, 2);
                         break;
                     case 3:
-                        dc.handleProblem(deliveryID, 3);
+                        dc.overWeightAction(deliveryID, 3);
                         break;
                     default:
                         System.out.println("Invalid choice.");
