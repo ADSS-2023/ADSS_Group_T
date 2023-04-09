@@ -1,39 +1,30 @@
-
 package ServiceLayer.Transport;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Scanner;
 import java.util.Set;
-
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.LinkedHashMap;
-
 import BusinessLayer.Transport.*;
 import BusinessLayer.Transport.Driver.CoolingLevel;
 import BusinessLayer.Transport.Driver.LicenseType;
-
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class DeliveryManagerService {
     private DeliveryController dc;
-   
     private  LinkedHashMap<Supplier,Integer> weightOfOrder;
-    
+
     public DeliveryManagerService() {
         dc = new DeliveryController();
         this.weightOfOrder = new LinkedHashMap<Supplier,Integer>();
-      
-        
-       
-
     }
+
     public void init(){
 
          //---------- init drivers ----------//
@@ -111,7 +102,23 @@ public class DeliveryManagerService {
         dc.addSupplier(site_golda, goldaProducts);
     }
     
-    public void start() {
+    public void start(){
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("------ START -------");
+        System.out.println("Please choose an option:");
+        System.out.println("1. start new pogram");
+        System.out.println("2. load old data");
+        int choice = scanner.nextInt();
+        scanner.nextLine();
+        if (choice == 1)
+            mainWindow();
+        if(choice == 2){
+            init();
+            mainWindow();
+        }
+    }
+    
+    public void mainWindow() {
         Scanner scanner = new Scanner(System.in);
         boolean running = true;
         while (running) {
@@ -123,10 +130,11 @@ public class DeliveryManagerService {
             System.out.println("2. Enter new delivery");
             System.out.println("3. Enter new driver");
             System.out.println("4. Enter new truck");
-            System.out.println("5. Exit");
+            System.out.println("5. Enter new supplier");
+            System.out.println("6. Enter new branch");
+            System.out.println("7. Exit");
             int choice = scanner.nextInt();
             scanner.nextLine(); // Consume the newline character
-            
             switch (choice) {
                 case 1:
                     skipDay();
@@ -141,6 +149,12 @@ public class DeliveryManagerService {
                     addNewTruck();
                     break;
                 case 5:
+                    addNewSupplier();
+                    break;
+                case 6:
+                    addNewBranch();
+                    break;
+                case 7:
                     running = false;
                     break;
                 default:
@@ -177,11 +191,19 @@ public class DeliveryManagerService {
                 }
             }
         }
-        start(); 
+       mainWindow(); 
     }
     
     // option 2
     private void addNewDelivery() {
+        if(dc.getBranches().isEmpty()){
+            System.out.println("no branches in the system, pls add at least one branch");
+            mainWindow();
+        }
+        if(dc.getSuppliers().isEmpty()){
+            System.out.println("no suppliers in the system, pls add at least one supplier");
+            mainWindow();
+        }
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter the delivery details:");
         Branch destinationSite = chooseDestinationSite(scanner);
@@ -377,10 +399,10 @@ public class DeliveryManagerService {
             System.out.println("Driver added successfully.");
         else
              System.out.println("Driver not added.");
-        start(); 
+       mainWindow(); 
     }
 
-    // option 5
+    // option 4
     void addNewTruck() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter the truck details:");
@@ -416,6 +438,64 @@ public class DeliveryManagerService {
             System.out.println("New truck added successfully.");
         else
             System.out.println("truck not added.");
-        start(); 
+       mainWindow(); 
     }
+
+    // option 5
+    public void addNewSupplier() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Please enter the supplier details:");
+        System.out.println("Please enter the supplier address:");
+        String supplierAddress = scanner.nextLine();
+        System.out.println("Please enter the supplier telephone number:");
+        String supplierTelNumber = scanner.nextLine();
+        System.out.println("Please enter the supplier contact name:");
+        String supplierContactName = scanner.nextLine();
+        System.out.println("Please choose the supplier cooling level:");
+        System.out.println("1. Non");
+        System.out.println("2. Fridge");
+        System.out.println("3. Freezer");
+        int coolingIndex = scanner.nextInt() - 1;
+        scanner.nextLine(); // consume newline character
+        if (coolingIndex < 0 || coolingIndex >= CoolingLevel.values().length) {
+            System.out.println("Invalid cooling choice.");
+            return;
+        }
+        CoolingLevel coolingLevel = CoolingLevel.values()[coolingIndex];
+        
+        Supplier supplier = new Supplier(supplierAddress, supplierTelNumber, supplierContactName, coolingLevel);
+        ArrayList<Product> products = new ArrayList<Product>();
+        System.out.println("Please enter the product name (enter 0 to finish):");
+        String productName = scanner.nextLine();
+        while (!productName.equals("0")) {
+            Product product = new Product(productName);
+            products.add(product);
+            System.out.println("Please enter the product name (enter 0 to finish):");
+            productName = scanner.nextLine();
+        }
+        if (products.isEmpty()) {
+            System.out.println("Supplier must have at least one product");
+            return;
+        } 
+        dc.addSupplier(supplier, products);   
+        mainWindow(); 
+    }
+
+    // option 6
+    public void addNewBranch() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Please enter the branch details:");
+        System.out.println("Please enter the branch address:");
+        String branchAddress = scanner.nextLine();
+        System.out.println("Please enter the branch telephone number:");
+        String branchTelNumber = scanner.nextLine();
+        System.out.println("Please enter the branch contact name:");
+        String branchContactName = scanner.nextLine();
+        System.out.println("Please enetr the branch transport area:");
+        String branchShippingArea = scanner.nextLine();
+        Branch branch = new Branch(branchAddress, branchTelNumber, branchContactName, branchShippingArea);
+        dc.addBranch(branch);
+        mainWindow(); 
+    }
+    
 }
