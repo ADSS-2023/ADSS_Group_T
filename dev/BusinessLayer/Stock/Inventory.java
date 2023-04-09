@@ -12,13 +12,13 @@ import java.util.*;
  */
 public class Inventory {
     protected List<Category> categories;
-    protected Dictionary<Integer,Item> items;
+    protected HashMap<Integer,Item> items;
     protected List<Item> shortage_list;
     protected Damaged damaged;
 
     public Inventory(){
         categories = new LinkedList<>();
-        items = new Hashtable<>();
+        items = new HashMap<>();
         shortage_list = new LinkedList<>();
         damaged = new Damaged();
     }
@@ -86,9 +86,13 @@ public class Inventory {
         if(index == "")
             return present_names();
         else {
-            int current_index = Integer.parseInt(Util.extractFirstNumber(index));
+            String cur = Util.extractFirstNumber(index);
+            if(cur == ""){
+                throw new Exception("illegal choise of index");
+            }
+            int current_index = Integer.parseInt(cur);
             String next_index = Util.extractNextIndex(index);
-            if (categories.size()<= current_index)
+            if (categories.size() <= current_index || current_index < 0)
                 throw new Exception("Illegal index has been chosen");
             return categories.get(current_index).show_data(next_index);
         }
@@ -171,8 +175,15 @@ public class Inventory {
      * @param amount
      * @return
      */
-    public String set_minimal_amount(int item_id, int amount) {
-        return items.get(item_id).setMin_amount(amount);
+    public String set_minimal_amount(int item_id, int amount) throws Exception {
+        if(amount < 0){
+            throw new Exception("illegal amount");
+        }
+        if(items.containsKey(item_id))
+            return items.get(item_id).setMin_amount(amount);
+        else{
+            throw new Exception("illegal item id");
+        }
     }
 
     /**
@@ -196,12 +207,19 @@ public class Inventory {
     public void add_item(String categories_index,int item_id, String name, int min_amount, String manufacturer_name, double original_price) throws Exception {
         Item i = new Item(item_id,name,min_amount,manufacturer_name,original_price);
         set_item_call_back(i);
-        items.put(item_id,i);
-        int current_index = Integer.parseInt(Util.extractFirstNumber(categories_index));
-        String next_index = Util.extractNextIndex(categories_index);
-        categories.get(current_index).add_item(next_index,i);
+        if(items.containsKey(item_id)) {
+            items.put(item_id, i);
+            int current_index = Integer.parseInt(Util.extractFirstNumber(categories_index));
+            String next_index = Util.extractNextIndex(categories_index);
+            categories.get(current_index).add_item(next_index, i);
+        }
+        else{
+            throw new Exception("illegal item id");
+        }
+
 
     }
+
     public void add_category(String categories_index, String name) throws Exception {
         if (categories_index == "")
             categories.add(new Category(name,""+categories.size()));
@@ -221,13 +239,25 @@ public class Inventory {
      * @param validity
      * @param cost_price the price that the store paid for this item, after discounts.
      */
-    public void receive_order(int order_id, int item_id, int amount,String location,LocalDate validity,double cost_price) {
+    public void receive_order(int order_id, int item_id, int amount,String location,LocalDate validity,double cost_price) throws Exception {
+        if(amount < 0)
+            throw new Exception("illegal amount");
+        if(cost_price < 0)
+            throw new Exception("illegal cost price");
         int amount_warehouse = amount/2;
         int amount_store = amount - amount_warehouse;
-        Item cur_item = items.get(item_id);
-        cur_item.recive_order(order_id,amount_warehouse,amount_store,cost_price,location,validity);
-        if (cur_item.current_amount()> cur_item.min_amount)
-            shortage_list.remove(cur_item);
+        //check if exist
+        if(items.containsKey(item_id)) {
+            Item cur_item = items.get(item_id);
+            cur_item.recive_order(order_id, amount_warehouse, amount_store, cost_price, location, validity);
+            if (cur_item.current_amount() > cur_item.min_amount)
+                shortage_list.remove(cur_item);
+        }
+        else{
+            throw new Exception("illegal item id");
+        }
+
+
     }
 
     /**

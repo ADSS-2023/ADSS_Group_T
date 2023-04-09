@@ -5,6 +5,8 @@ import ServiceLayer.Stock.DamagedService;
 import ServiceLayer.Stock.InventoryService;
 import ServiceLayer.Stock.ItemService;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 import java.awt.*;
@@ -75,6 +77,7 @@ public class Main {
     public static void setDiscount(){
         Scanner scanner = new Scanner(System.in);
         String product = presentCategories();
+
         System.out.println("Choose dates by the next format : yyyy-mm-dd");
         System.out.println("Choose start date :");
         String start_date_string = scanner.nextLine();
@@ -83,7 +86,6 @@ public class Main {
         System.out.println("Choose percentage amount :");
         double percentageAmount = scanner.nextDouble();
         inventoryService.set_discount(product , percentageAmount , end_date_string , start_date_string);
-
     }
 
     private static void setMinimalAmount() {

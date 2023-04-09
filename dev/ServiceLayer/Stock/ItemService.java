@@ -18,8 +18,12 @@ public class ItemService {
      * @return
      */
     public String setMinimalAmount(int item_id,int amount){
-        return inventory.set_minimal_amount(item_id,amount);
-
+        try {
+            return inventory.set_minimal_amount(item_id, amount);
+        }
+        catch (Exception e) {
+            return e.getMessage();
+        }
     }
 
     /**
@@ -50,7 +54,13 @@ public class ItemService {
      * @param validity
      * @param cost_price
      */
-    public void receive_order(int order_id, int item_id, int amount, String location,LocalDate validity,double cost_price) {
-        inventory.receive_order(order_id,item_id,amount,location,validity,cost_price);
+    public String receive_order(int order_id, int item_id, int amount, String location,LocalDate validity,double cost_price) {
+        try {
+            inventory.receive_order(order_id, item_id, amount, location, validity, cost_price);
+        }
+        catch(Exception e){
+            return e.getMessage();
+        }
+        return "";
     }
 }
