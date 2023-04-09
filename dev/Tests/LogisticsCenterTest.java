@@ -3,21 +3,14 @@ package Tests;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
-
 import org.junit.Before;
-import org.junit.Test;
 import BusinessLayer.Transport.*;
 import BusinessLayer.Transport.Driver.CoolingLevel;
 import BusinessLayer.Transport.Driver.LicenseType;
-
 
 public class LogisticsCenterTest {
 
@@ -28,7 +21,6 @@ public class LogisticsCenterTest {
         lc = new LogisticsCenter();
     }
 
-    //----------- scheduleTruck ----------
     @Test
     public void testScheduleTruckWithoutTrucks() {
         LocalDate date = LocalDate.of(2023, 4, 2);
@@ -50,13 +42,6 @@ public class LogisticsCenterTest {
         LocalDate date = LocalDate.of(2023, 4, 2);
         assertEquals(licenseNumber,lc.scheduleTruck(date,CoolingLevel.non).getLicenseNumber());
     }
-
-    //----------- scheduleDriver ----------
-//        @Test
-//        public void testScheduleDriverWithoutDrivers() {
-//            LocalDate date = LocalDate.of(2023, 4, 2);
-//            assertNull("Expected no driver to be scheduled when there are no drivers available.", lc.scheduleDriver(date, CoolingLevel.non));
-//        }
 
     @Test
     public void testScheduleDriverWithNonCoolingDrivers() {
@@ -114,32 +99,6 @@ public class LogisticsCenterTest {
         assertNull("Expected no driver to be scheduled for fridge job when only non cooling driver is available.", lc.scheduleDriver(date, CoolingLevel.fridge));
     }
 
-
-
-//        @Test
-//        public void testScheduleDriverWithCoolingDriverForNon() {
-//            Driver driver = new Driver(1, "name1", LicenseType.C, CoolingLevel.non);
-//            lc.addDriver(1, "name1", LicenseType.C, CoolingLevel.non);
-//            LocalDate date = LocalDate.of(2023, 4, 2);
-//            assertEquals(driver.getName(), lc.scheduleDriver(date, CoolingLevel.non).getName());
-//        }
-
-//        @Test
-//        public void testScheduleDriverWithCoolingDriverForFridge() {
-//            Driver driver = new Driver(1, "name1", LicenseType.C, CoolingLevel.fridge);
-//            lc.addDriver(1, "name1", LicenseType.C, CoolingLevel.fridge);
-//            LocalDate date = LocalDate.of(2023, 4, 2);
-//            assertEquals(driver.getName(), lc.scheduleDriver(date, CoolingLevel.fridge).getName());
-//        }
-
-//        @Test
-//        public void testScheduleDriverWithCoolingDriverForFreezer() {
-//            Driver driver = new Driver(1, "name1", LicenseType.C, CoolingLevel.freezer);
-//            lc.addDriver(1, "name1", LicenseType.C, CoolingLevel.freezer);
-//            LocalDate date = LocalDate.of(2023, 4, 2);
-//            assertEquals(driver.getName(), lc.scheduleDriver(date, CoolingLevel.freezer).getName());
-//        }
-
     @Test
     public void testScheduleDriverWithCoolingDriverForFridgeAndNon() {
         String name1 = "name1";
@@ -159,7 +118,6 @@ public class LogisticsCenterTest {
         assertEquals(name1, lc.scheduleDriver(date, CoolingLevel.freezer).getName());
     }
 
-    //----------- countCoolingOptions ----------
     @Test
     public void testCountCoolingOptionsEmptyList() {
         LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> suppliers = new LinkedHashMap<>();
@@ -174,18 +132,14 @@ public class LogisticsCenterTest {
         Supplier supplier1 = new Supplier("Address1", "123456789", "Contact1", CoolingLevel.non);
         Supplier supplier2 = new Supplier("Address2", "123456789", "Contact2", CoolingLevel.fridge);
         Supplier supplier3 = new Supplier("Address3", "123456789", "Contact3", CoolingLevel.freezer);
-
         suppliers.put(supplier1, new LinkedHashMap<>());
         suppliers.put(supplier2, new LinkedHashMap<>());
         suppliers.put(supplier3, new LinkedHashMap<>());
-
         Set<CoolingLevel> expectedCoolingOptions = new HashSet<>();
         expectedCoolingOptions.add(CoolingLevel.non);
         expectedCoolingOptions.add(CoolingLevel.fridge);
         expectedCoolingOptions.add(CoolingLevel.freezer);
-
         Set<CoolingLevel> actualCoolingOptions = lc.countCoolingOptions(suppliers);
-
         assertEquals(expectedCoolingOptions, actualCoolingOptions);
     }
     @Test
