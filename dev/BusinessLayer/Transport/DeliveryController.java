@@ -17,8 +17,7 @@ public class DeliveryController {
     }
     
     public LinkedHashMap<Supplier,LinkedHashMap<Product,Integer>> orderDelivery(Branch branch, LinkedHashMap<Supplier,LinkedHashMap<Product,Integer>> suppliers, LocalDate requiredDate, LinkedHashMap<Supplier,Integer> supplierWeight){
-        lc.orderDelivery(branch, suppliers , requiredDate, supplierWeight);
-        return null;
+        return  lc.orderDelivery(branch, suppliers , requiredDate, supplierWeight);
     }
     public ArrayList<Integer> skipDay(){
         return lc.skipDay();
