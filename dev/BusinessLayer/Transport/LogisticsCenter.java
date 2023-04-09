@@ -511,4 +511,13 @@ public class LogisticsCenter {
     public HashMap<Product, Integer> getProductsInStock() {
         return productsInStock;
     }
+
+    /**
+     * the function checks if the received date is after the current date
+     * @param date - the date to check
+     * @return true if the received date is after the current date, false otherwise
+     */
+    public boolean checkDate(LocalDate date){
+        return date.isAfter(currDate);
+    }
 }
