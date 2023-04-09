@@ -110,7 +110,7 @@ public class Inventory {
         int current_index = Integer.parseInt(Util.extractFirstNumber(index));
         String next_index = Util.extractNextIndex(index);
         LocalDate end_date = Util.stringToDate(end_date_string);
-        LocalDate start_date = Util.stringToDate(end_date_string);
+        LocalDate start_date = Util.stringToDate(start_date_string);
         if (categories.size()<= current_index)
             throw new Exception("Illegal index");
         categories.get(current_index).setDiscount(next_index , new Discount(start_date , end_date , percentageAmount));
