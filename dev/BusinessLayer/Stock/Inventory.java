@@ -29,7 +29,7 @@ public class Inventory {
      * @param item
      */
     public void set_item_call_back(Item item){
-        item.set_on_alert_callback(()->shortage_list.add(item));
+        item.set_on_alert_callback(()->{if(!shortage_list.contains(item)){shortage_list.add(item);}});
     }
 
     /**
@@ -40,7 +40,7 @@ public class Inventory {
         String report="";
         for (Item item:shortage_list
              ) {
-            report += String.format("%s, %s\n minimal amount: %d"+"\n"+"current amount: %d\namount to order: %d",
+            report += String.format("%s, %s\n minimal amount: %d, current amount: %d, amount to order: %d",
                     item.name,item.manufacturer_name,item.min_amount,item.current_amount(), item.min_amount-item.current_amount());
                     report+="\n-------------------------------------------\n";
         }
@@ -158,7 +158,7 @@ public class Inventory {
         items.put(2,yellow_cheese);
         items.put(0,milk_3);
         items.put(1,milk_1_5);
-        yellow_cheese.recive_order(20,2,3,5.3,"ile 2 shelf 3",Util.stringToDate("2023-04-25"));
+        yellow_cheese.recive_order(20,3,3,5.3,"ile 2 shelf 3",Util.stringToDate("2023-04-25"));
         milk_3.recive_order(155,20,20,2.15,"ile 5 shelf 10",Util.stringToDate("2023-05-20"));
         milk_1_5.recive_order(120,10,10,2.55,"ile 5 shelf 11",Util.stringToDate("2023-05-23"));
         beef_sausage.recive_order(345,5,15,12.25,"ile 6 shelf 2",Util.stringToDate("2023-10-20"));
@@ -208,16 +208,13 @@ public class Inventory {
         Item i = new Item(item_id,name,min_amount,manufacturer_name,original_price);
         set_item_call_back(i);
         if(items.containsKey(item_id)) {
-            items.put(item_id, i);
-            int current_index = Integer.parseInt(Util.extractFirstNumber(categories_index));
-            String next_index = Util.extractNextIndex(categories_index);
-            categories.get(current_index).add_item(next_index, i);
+            throw new Exception("Item id already exists");
         }
-        else{
-            throw new Exception("illegal item id");
-        }
-
-
+        items.put(item_id, i);
+        int current_index = Integer.parseInt(Util.extractFirstNumber(categories_index));
+        String next_index = Util.extractNextIndex(categories_index);
+        categories.get(current_index).add_item(next_index, i);
+        shortage_list.add(i);
     }
 
     public void add_category(String categories_index, String name) throws Exception {
@@ -239,7 +236,8 @@ public class Inventory {
      * @param validity
      * @param cost_price the price that the store paid for this item, after discounts.
      */
-    public void receive_order(int order_id, int item_id, int amount,String location,LocalDate validity,double cost_price) throws Exception {
+    public String receive_order(int order_id, int item_id, int amount,String location,LocalDate validity,double cost_price) throws Exception {
+        String to_return="";
         if(amount < 0)
             throw new Exception("illegal amount");
         if(cost_price < 0)
@@ -249,13 +247,16 @@ public class Inventory {
         //check if exist
         if(items.containsKey(item_id)) {
             Item cur_item = items.get(item_id);
-            cur_item.recive_order(order_id, amount_warehouse, amount_store, cost_price, location, validity);
-            if (cur_item.current_amount() > cur_item.min_amount)
-                shortage_list.remove(cur_item);
+            to_return =  cur_item.recive_order(order_id, amount_warehouse, amount_store, cost_price, location, validity);
+            if (shortage_list.contains(cur_item)) {
+                if (cur_item.current_amount() >= cur_item.min_amount)
+                    shortage_list.remove(cur_item);
+            }
         }
         else{
             throw new Exception("illegal item id");
         }
+        return to_return;
 
 
     }

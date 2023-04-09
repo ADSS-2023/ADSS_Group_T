@@ -147,7 +147,7 @@ public class Main {
         String validity = scanner.nextLine();
         System.out.println("what is the cost price?");
         double cost_price = scanner.nextDouble();
-        itemService.receive_order(order_id,item_id,amount,location, Util.stringToDate(validity),cost_price);
+        System.out.println(itemService.receive_order(order_id,item_id,amount,location, Util.stringToDate(validity),cost_price));
     }
 
     private static void produceShortageReport() {

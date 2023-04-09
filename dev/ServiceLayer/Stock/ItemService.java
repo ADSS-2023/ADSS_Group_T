@@ -56,11 +56,11 @@ public class ItemService {
      */
     public String receive_order(int order_id, int item_id, int amount, String location,LocalDate validity,double cost_price) {
         try {
-            inventory.receive_order(order_id, item_id, amount, location, validity, cost_price);
+            return inventory.receive_order(order_id, item_id, amount, location, validity, cost_price);
         }
         catch(Exception e){
             return e.getMessage();
         }
-        return "";
+
     }
 }

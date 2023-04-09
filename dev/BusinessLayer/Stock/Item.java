@@ -198,8 +198,11 @@ public class Item implements ProductCategoryManagement {
      * @param location
      * @param validity
      */
-    public void recive_order(int orderId,int amount_warehouse,int amount_store,double cost_price,String location, LocalDate validity){
+    public String recive_order(int orderId,int amount_warehouse,int amount_store,double cost_price,String location, LocalDate validity){
         items.put(orderId,new ItemPerOrder(orderId,amount_warehouse,amount_store,cost_price,location, validity));
+        if (current_amount()<=min_amount)
+            return alert();
+        return "";
     }
 
     /**
