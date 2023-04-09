@@ -112,6 +112,14 @@ public class LogisticsCenter {
 //        return null;
 //    }
 
+    /**
+     * handle the request for a new delivery
+     * @param branch - the branch to deliver the products to
+     * @param suppliers - the products ordered from each supplier
+     * @param requiredDate - required date for delivery
+     * @param supplierWeight - map that holds the weight of the products for each supplier
+     * @return map of the suppliers products that have not been schedule for delivery due to lack of drivers/trucks in that date
+     */
     public LinkedHashMap<Supplier,LinkedHashMap<Product,Integer>> orderDelivery(Branch branch, LinkedHashMap<Supplier,LinkedHashMap<Product,Integer>> suppliers, LocalDate requiredDate, LinkedHashMap<Supplier,Integer> supplierWeight){
         if(date2deliveries.containsKey(requiredDate)){          //there is delivery in this date
             for(Delivery d: date2deliveries.get(requiredDate)){     //the delivery is to the required date
@@ -179,6 +187,12 @@ public class LogisticsCenter {
         return null;
     }
 
+    /**
+     * schedule an available truck to a delivery
+     * @param date - the delivery date
+     * @param coolingLevel - the cooling level required for this delivery
+     * @return the Truck that scheduled for the delivery if exist , null otherwise
+     */
     public Truck scheduleTruck(LocalDate date, CoolingLevel coolingLevel){
         if(trucks != null){
             for(Truck truck : trucks.values()){
@@ -197,6 +211,12 @@ public class LogisticsCenter {
         return null;
     }
 
+    /**
+     * schedule an available driver to a delivery
+     * @param date - the delivery date
+     * @param coolingLevel - the cooling level required for this delivery
+     * @return the Driver that scheduled for the delivery if exist , null otherwise
+     */
     public Driver scheduleDriver(LocalDate date, CoolingLevel coolingLevel){
         if(drivers != null){
             for(Driver driver : drivers.values()){
@@ -215,6 +235,11 @@ public class LogisticsCenter {
         return null;
     }
 
+    /**
+     * the function gathered the cooling levels that new delivery should be opened for them
+     * @param suppliers - map that holds the products who steel need a delivery for each supplier
+     * @return Set with the cooling levels founds
+     */
     public Set<CoolingLevel> countCoolingOptions(LinkedHashMap<Supplier,LinkedHashMap<Product,Integer>> suppliers){
         Set<CoolingLevel> s = new HashSet<>();
         for(Supplier supplier: suppliers.keySet())
@@ -236,6 +261,10 @@ public class LogisticsCenter {
         return currDate;
     }
 
+    /**
+     * advanced to the next day and checks if there are deliveries with overweight problem in this day
+     * @return List of the delivery ids that scheduled for the new day and have overweight problem
+     */
     public ArrayList<Integer> skipDay(){
         this.currDate = this.currDate.plusDays(1);
         if(date2deliveries.get(currDate) == null || date2deliveries.get(currDate).isEmpty())
@@ -250,6 +279,16 @@ public class LogisticsCenter {
         return null;
     }
 
+    /**
+     * add a new truck to the trucks map
+     * @param licenseNumber - the license number of the truck
+     * @param model - the truck model
+     * @param weight - the weight of the truck without supply
+     * @param maxWeight - max weight of the truck with supply
+     * @param licenseType - the license type required to drive the truck
+     * @param coolingLevel - the cooling level of the truck
+     * @return true if the truck added successfully , and false otherwise
+     */
     public boolean addTruck(int licenseNumber, String model, int weight, int maxWeight ,
                          LicenseType licenseType, CoolingLevel coolingLevel){
         if(trucks.containsKey(licenseNumber))
@@ -258,6 +297,11 @@ public class LogisticsCenter {
         return true;
     }
 
+    /**
+     * remove a truck from the trucks map
+     * @param licenseNumber of the truck
+     * @return true if the truck removed successfully , false otherwise
+     */
     public boolean removeTruck(int licenseNumber){
         if(!trucks.containsKey(licenseNumber))
             return false;
@@ -265,6 +309,14 @@ public class LogisticsCenter {
         return true;
     }
 
+    /**
+     * add a new driver to the drivers map
+     * @param id - the id of the driver
+     * @param name - the name of the driver
+     * @param licenseType - the license type of the driver
+     * @param coolingLevel - the cooling level to which the driver is qualified
+     * @return true if the driver added successfully , and false otherwise
+     */
     public boolean addDriver(int id, String name, LicenseType licenseType, CoolingLevel coolingLevel){
         if(drivers.containsKey(id))
             return false;
@@ -272,6 +324,11 @@ public class LogisticsCenter {
         return true;
     }
 
+    /**
+     * remove a driver from the drivers map
+     * @param id - thr id of the driver
+     * @return true if the driver removed successfully , and false otherwise
+     */
     public boolean removeDriver(int id){
         if(!drivers.containsKey(id))
             return false;
@@ -279,6 +336,11 @@ public class LogisticsCenter {
         return true;
     }
 
+    /**
+     * add product to the products map
+     * @param name - the name of the product
+     * @return true if the product added successfully , and false otherwise
+     */
     public boolean addProduct(String name){
         if(products.containsKey(name))
             return false;
@@ -286,6 +348,11 @@ public class LogisticsCenter {
         return true;
     }
 
+    /**
+     * add a new branch to the branches map
+     * @param branch - the branch to add
+     * @return true if the branch added successfully , and false otherwise
+     */
     public boolean addBranch(Branch branch){
         if(branches.containsKey(branch.getAddress()))
             return false;
@@ -293,6 +360,12 @@ public class LogisticsCenter {
         return true;
     }
 
+    /**
+     * add a new supplier to the suppliers map
+     * @param supplier - the supplier to add
+     * @param supplierProducts - List of the products of the supplier
+     * @return true if the supplier added successfully , and false otherwise
+     */
     public boolean addSupplier(Supplier supplier, ArrayList<Product> supplierProducts){
         if(suppliers.containsKey(supplier.getAddress()))
             return false;
@@ -306,6 +379,10 @@ public class LogisticsCenter {
 //        return trucks.get(licenseNumber).getWeight() > trucks.get(licenseNumber).getMaxWeight();
 //    }
 
+    /**
+     * store products in the logistics center stocks
+     * @param newSupply - map with the amount for each product required to store
+     */
     public void storeProducts(LinkedHashMap<Product,Integer> newSupply){
         newSupply.forEach((key,value) -> {
             if(productsInStock.containsKey(key))                           //product exist in stock - update amount
@@ -315,6 +392,11 @@ public class LogisticsCenter {
         });
     }
 
+    /**
+     * load products from the stock of the logistics center
+     * @param requestedSupply - map of the products and amounts required to load
+     * @return map of products and amounts that are not available in the logistics center stock
+     */
     public LinkedHashMap<Product,Integer> loadProductsFromStock(LinkedHashMap<Product,Integer> requestedSupply){
         HashSet<Product> keys = new HashSet<>(requestedSupply.keySet());
         for(Product p : keys){
@@ -332,6 +414,11 @@ public class LogisticsCenter {
         return requestedSupply;
     }
 
+    /**
+     * replace a truck for a delivery
+     * @param deliveryID - the delivery who needed a truck replacement
+     * @return true if the truck was replaced, false otherwise(there is no available truck)
+     */
     public boolean replaceTruck(int deliveryID){
         Truck t = trucks.get(deliveries.get(deliveryID).getTruckNumber());
         LocalDate date = deliveries.get(deliveryID).getDate();
@@ -350,6 +437,10 @@ public class LogisticsCenter {
         return false;
     }
 
+    /**
+     * unload products from the delivery due to overweight
+     * @param deliveryID the delivery id to unload products from
+     */
     public void unloadProducts(int deliveryID){
         double currWeight = deliveries.get(deliveryID).getTruckWeight();
         int maxWeight = trucks.get(deliveries.get(deliveryID).getTruckNumber()).getMaxWeight();
@@ -364,10 +455,19 @@ public class LogisticsCenter {
         deliveries.get(deliveryID).setTruckWeight(maxWeight);
     }
 
+    /**
+     * replace or drop one of the suppliers from the delivery due to overweight
+     * @param deliveryID - the id of the delivery that the action required for
+     */
     public void replaceOrDropSite(int deliveryID){
         deliveries.get(deliveryID).removeSupplier();
     }
 
+    /**
+     * handle the required action for the overweight problem for specific delivery
+     * @param deliveryID - the id of the delivery that has overweight
+     * @param action - the action required
+     */
     public void overWeightAction(int deliveryID, int action){
         if(action == 1)
             replaceOrDropSite(deliveryID);
@@ -389,6 +489,10 @@ public class LogisticsCenter {
         return deliveries.get(id);
     }
 
+    /**
+     * gathered all the sites in the logistics center data
+     * @return List of all sites saved in the logistics center(suppliers and branches)
+     */
     public ArrayList<Site> getSites() {
         ArrayList<Site> sites = new ArrayList<>();
         sites.addAll(suppliers.values());

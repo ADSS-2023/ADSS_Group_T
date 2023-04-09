@@ -29,25 +29,41 @@ public class Delivery {
         this.shippingArea = shippingArea;
     }
 
+    /**
+     * remove the first supplier from the suppliers map
+     */
     public void removeSupplier(){
         suppliers.remove(suppliers.entrySet().iterator().next().getKey());
     }
 
+    /**
+     * add branch to the branches map
+     * @param branch
+     * @param fileID
+     */
     public void addBranch(Branch branch, int fileID){
         File f = new File(fileID);
         branches.put(branch,f);
     }
 
+    /**
+     * add products in required amount to the supplier file for this delivery
+     * @param supplier
+     * @param p - the product to add
+     * @param amount
+     */
     public void addProductsToSupplier(Supplier supplier, Product p, int amount){
         suppliers.get(supplier).addProduct(p,amount);
     }
     public String getShippingArea() {
         return shippingArea;
     }
-
+/*
+    //for future use
     public LinkedHashMap<Product,Integer> getProductsOfSupplier(Supplier supplier){
         return suppliers.get(supplier).getProducts();
     }
+ */
     public int getId() {
         return this.id;
     }
@@ -56,24 +72,8 @@ public class Delivery {
         return branches;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public LocalDate getDate() {
         return this.date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
-    public LocalTime getDepartureTime() {
-        return this.departureTime;
-    }
-
-    public void setDepartureTime(LocalTime departureTime) {
-        this.departureTime = departureTime;
     }
 
     public int getTruckWeight() {
@@ -94,7 +94,8 @@ public class Delivery {
     public void setSource(Site source) {
         this.source = source;
     }
-
+/*
+    //for future use
     public String getDriverName() {
         return this.driverName;
     }
@@ -102,6 +103,7 @@ public class Delivery {
     public void setDriverName(String driverName) {
         this.driverName = driverName;
     }
+ */
 
     public int getTruckNumber() {
         return this.truckNumber;
@@ -111,6 +113,11 @@ public class Delivery {
         this.truckNumber = truckNumber;
     }
 
+    /**
+     * add supplier to the suppliers list of this delivery
+     * @param supplier
+     * @param fileID
+     */
     public void addSupplier(Supplier supplier , int fileID){
         this.suppliers.put(supplier, new File(fileID));
 
