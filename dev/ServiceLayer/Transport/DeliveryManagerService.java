@@ -1,20 +1,12 @@
 package ServiceLayer.Transport;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.Scanner;
-import java.util.Set;
-import java.time.LocalDate;
-import java.util.LinkedHashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.LinkedHashMap;
 import BusinessLayer.Transport.*;
 import BusinessLayer.Transport.Driver.CoolingLevel;
 import BusinessLayer.Transport.Driver.LicenseType;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class DeliveryManagerService {
     private DeliveryController dc;
@@ -67,9 +59,9 @@ public class DeliveryManagerService {
         Product product_bread = new Product("bread");
         Product product_pita = new Product("pita");
         Product product_cake = new Product("cake");
-        Product product_mintChocolateChip = new Product("mint chocolate chip ice cream");
-        Product product_cookiesAndCream = new Product("cookies and cream ice cream");
-        Product product_strawberryCheesecake = new Product("strawberry cheesecake ice cream");
+        Product product_mintChocolateChip = new Product("mint");
+        Product product_cookiesAndCream = new Product("cookies");
+        Product product_strawberryCheesecake = new Product("strawberry");
      
         //---------- Create product lists for each supplier ----------//
         ArrayList<Product> tnuvaProducts = new ArrayList<>();
@@ -118,6 +110,9 @@ public class DeliveryManagerService {
         }
     }
     
+     /**
+     * the main window of the system
+     */
     public void mainWindow() {
         Scanner scanner = new Scanner(System.in);
         boolean running = true;
@@ -132,7 +127,7 @@ public class DeliveryManagerService {
             System.out.println("4. Enter new truck");
             System.out.println("5. Enter new supplier");
             System.out.println("6. Enter new branch");
-            System.out.println("7. Exit");
+            //System.out.println("7. Exit");
             int choice = scanner.nextInt();
             scanner.nextLine(); // Consume the newline character
             switch (choice) {
@@ -154,9 +149,9 @@ public class DeliveryManagerService {
                 case 6:
                     addNewBranch();
                     break;
-                case 7:
-                    running = false;
-                    break;
+                // case 7:
+                //     running = false;
+                //     break;
                 default:
                     System.out.println("Invalid choice. Please try again.");
                     break;
@@ -165,6 +160,9 @@ public class DeliveryManagerService {
     }
     
     // option 1
+    /**
+     * skip day and let user choose way of action in case of problem
+     */
     void skipDay() {
         ArrayList<Integer> deliveriesWithProblems = dc.skipDay();
         Scanner scanner = new Scanner(System.in);
@@ -195,6 +193,9 @@ public class DeliveryManagerService {
     }
     
     // option 2
+    /**
+     * add New Delivery to the system
+     */
     private void addNewDelivery() {
         if(dc.getBranches().isEmpty()){
             System.out.println("no branches in the system, pls add at least one branch");
@@ -212,6 +213,11 @@ public class DeliveryManagerService {
         dc.orderDelivery(destinationSite,selectedProducts , deliveryDate,weightOfOrder);
     }
     
+     /**
+     * allow the user to select a destination branch
+     * @param scanner 
+     * @return Branch that the user choose as desenation
+     */
     private Branch chooseDestinationSite(Scanner scanner) {
         System.out.println("\nPlease choose a destination site:");
         for (int i = 0; i < dc.getBranches().size(); i++) {
@@ -225,6 +231,11 @@ public class DeliveryManagerService {
         return dc.getBranches().get(siteIndex);
     }
     
+      /**
+     * allow the user to select Products
+     * @param scanner 
+     * @return map of supplier as key and map of products and amount of each product as value
+     */
     private LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> selectProducts(Scanner scanner) {
         LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> selectedProducts = new LinkedHashMap<>();
         List<Supplier> selectedSuppliers = new ArrayList<>();
@@ -256,6 +267,12 @@ public class DeliveryManagerService {
         return selectedProducts;
     }
 
+      /**
+     * allow the user to select Products
+     * @param scanner 
+     * @param selectedSupplier - The supplier from which the user will choose products
+     * @return map of product as key and amount of the product as value
+     */
     private LinkedHashMap<Product, Integer> selectSupplierProducts(Scanner scanner, Site selectedSupplier) {
         System.out.println("\nPlease choose products from " + selectedSupplier.getAddress() + ":");
         List<Product> products = new ArrayList<>(dc.getSuppliers().get(selectedSupplier));
@@ -301,6 +318,12 @@ public class DeliveryManagerService {
         return selectedProducts;
     }
 
+     /**
+     * allow the user to select a supplier
+     * @param scanner 
+     * @param selectedSuppliers - A list of suppliers from which the user has to choose one
+     * @return Supplier that the user choose
+     */
     private Supplier chooseSupplier(Scanner scanner, List<Supplier> selectedSuppliers) {
         System.out.println("\nPlease choose a supplier:");
         int supplierIndex = 0;
@@ -338,6 +361,11 @@ public class DeliveryManagerService {
         return selectedSupplier;
     }
 
+     /**
+     * allow the user enter date for delivery
+     * @param scanner 
+     * @return LocalDate
+     */
     private LocalDate chooseDeliveryDate(Scanner scanner) {
         int year, month, day;
         System.out.println("Please enter the delivery date:");
@@ -367,6 +395,9 @@ public class DeliveryManagerService {
     }
     
     // option 3
+    /**
+     * add new driver to the system
+     */
     public void addNewDriver() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter the driver details:");
@@ -403,6 +434,9 @@ public class DeliveryManagerService {
     }
 
     // option 4
+     /**
+     * add new truck to the system
+     */
     void addNewTruck() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter the truck details:");
@@ -442,6 +476,9 @@ public class DeliveryManagerService {
     }
 
     // option 5
+     /**
+     * add new supplier to the system
+     */
     public void addNewSupplier() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter the supplier details:");
@@ -462,7 +499,6 @@ public class DeliveryManagerService {
             return;
         }
         CoolingLevel coolingLevel = CoolingLevel.values()[coolingIndex];
-        
         Supplier supplier = new Supplier(supplierAddress, supplierTelNumber, supplierContactName, coolingLevel);
         ArrayList<Product> products = new ArrayList<Product>();
         System.out.println("Please enter the product name (enter 0 to finish):");
@@ -482,6 +518,9 @@ public class DeliveryManagerService {
     }
 
     // option 6
+     /**
+     * add new branch to the system
+     */
     public void addNewBranch() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter the branch details:");
