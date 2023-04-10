@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
-  <artifact type="jar" name="SuperLy:jar2">
-    <output-path>$PROJECT_DIR$/out/artifacts/SuperLy_jar2</output-path>
+  <artifact type="jar" name="SuperLy:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/SuperLy_jar</output-path>
     <root id="archive" name="SuperLy.jar">
       <element id="module-output" name="SuperLy" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/junit/jupiter/junit-jupiter/5.7.0/junit-jupiter-5.7.0.jar" path-in-jar="/" />
