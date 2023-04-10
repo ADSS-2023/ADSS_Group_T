@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ShiftTest {
     private Shift shift;
     private final int shiftId = 1;
-    private final String date = "2023-04-09";
+    private final String date = "14.03.2023";
     private final int managerID = 123;
     private final boolean shiftType = true;
 
@@ -88,8 +88,8 @@ class ShiftTest {
 
     @Test
     public void testAddNewSubmittedPositionByEmployee() {
-        Employee emp1 = new Employee("John", "12345", Arrays.asList(PositionType.cashier), "2022-01-01", 1, "password1");
-        Employee emp2 = new Employee("Jane", "67890", Arrays.asList(PositionType.cashier, PositionType.orderly), "2022-01-01", 2, "password2");
+        Employee emp1 = new Employee("Omer Tarshish", "12345", Arrays.asList(PositionType.cashier), "01.03.2023", 1, "password1");
+        Employee emp2 = new Employee("Israel Weitsman", "67890", Arrays.asList(PositionType.cashier, PositionType.orderly), "2022-01-01", 2, "password2");
         List<String> positions = Arrays.asList(PositionType.cashier.toString(), PositionType.orderly.toString());
 
         shift.addNewSubmittedPositionByEmpoyee(emp1, true, positions);

@@ -15,26 +15,26 @@ public class EmployeeTests {
     public void setUp() {
         List<PositionType> qualifiedPositions = new ArrayList<>();
         qualifiedPositions.add(PositionType.cashier);
-        employee = new Employee("John", "123456789", qualifiedPositions, "2022-01-01", 1, "password");
+        employee = new Employee("Omer Tarshish", "123456789", qualifiedPositions, "14.03.2023", 1, "password");
     }
 
     @Test
     public void testAddSubmittedShift_ShouldThrowException() {
         assertThrows(IllegalArgumentException.class, () -> {
-            employee.addSubmittedShift("2022-01-01", true, false);
-            employee.addSubmittedShift("2022-01-01", true, false);
+            employee.addSubmittedShift("14.03.2023", true, false);
+            employee.addSubmittedShift("14.03.2023", true, false);
         });
     }
 
     @Test
     public void testAddSubmittedShift_ShouldAddToSubmittedShifts() {
-        employee.addSubmittedShift("2022-01-01", true, false);
+        employee.addSubmittedShift("14.03.2023", true, false);
         Map<String, List<Constraint>> submittedShifts = employee.getSubmittedShifts();
         assertEquals(1, submittedShifts.size());
-        assertTrue(submittedShifts.containsKey("2022-01-01"));
-        assertEquals(1, submittedShifts.get("2022-01-01").size());
-        Constraint constraint = submittedShifts.get("2022-01-01").get(0);
-        assertEquals("2022-01-01", constraint.getDate());
+        assertTrue(submittedShifts.containsKey("14.03.2023"));
+        assertEquals(1, submittedShifts.get("14.03.2023").size());
+        Constraint constraint = submittedShifts.get("14.03.2023").get(0);
+        assertEquals("14.03.2023", constraint.getDate());
         assertTrue(constraint.getShiftType());
         assertFalse(constraint.isTemp());
     }
@@ -42,21 +42,21 @@ public class EmployeeTests {
     @Test
     public void testAddAssignedShift_ShouldThrowException() {
         assertThrows(IllegalArgumentException.class, () -> {
-            employee.addSAssignShifts("2022-01-01", true, PositionType.cashier.name());
+            employee.addSAssignShifts("14.03.2023", true, PositionType.cashier.name());
         });
     }
 
     @Test
     public void testAddAssignedShift_ShouldAddToAssignedShiftsAndRemovedFromSubmittedShifts() {
-        employee.addSubmittedShift("2022-01-01", true, false);
-        employee.addSAssignShifts("2022-01-01", true, PositionType.cashier.name());
+        employee.addSubmittedShift("14.03.2023", true, false);
+        employee.addSAssignShifts("14.03.2023", true, PositionType.cashier.name());
         Map<String, List<Constraint>> assignedShifts = employee.getAssignedShifts();
         Map<String, List<Constraint>> submittedShifts = employee.getSubmittedShifts();
         assertEquals(1, assignedShifts.size());
-        assertTrue(assignedShifts.containsKey("2022-01-01"));
-        assertEquals(1, assignedShifts.get("2022-01-01").size());
-        Constraint constraint = assignedShifts.get("2022-01-01").get(0);
-        assertEquals("2022-01-01", constraint.getDate());
+        assertTrue(assignedShifts.containsKey("14.03.2023"));
+        assertEquals(1, assignedShifts.get("14.03.2023").size());
+        Constraint constraint = assignedShifts.get("14.03.2023").get(0);
+        assertEquals("14.03.2023", constraint.getDate());
         assertTrue(constraint.getShiftType());
         assertFalse(constraint.isTemp());
         assertTrue(submittedShifts.isEmpty());
@@ -65,35 +65,35 @@ public class EmployeeTests {
 
     @Test
     public void testGetSubmittedShiftByPosition_ShouldReturnNull() {
-        assertNull(employee.getSubmittedShiftByPosition("2022-01-01", true, PositionType.cashier.name()));
+        assertNull(employee.getSubmittedShiftByPosition("14.03.2023", true, PositionType.cashier.name()));
     }
 
     @Test
     public void testGetSubmittedShiftByPosition_ShouldReturnConstraint() {
-        employee.addSubmittedShift("2022-01-01", true, false);
-        Constraint constraint = employee.getSubmittedShiftByPosition("2022-01-01", true, "");
+        employee.addSubmittedShift("14.03.2023", true, false);
+        Constraint constraint = employee.getSubmittedShiftByPosition("14.03.2023", true, "");
         assertNotNull(constraint);
-        assertEquals("2022-01-01", constraint.getDate());
+        assertEquals("14.03.2023", constraint.getDate());
         assertTrue(constraint.getShiftType());
         assertFalse(constraint.isTemp());
     }
 
     @Test
     public void testAddRestriction_ShouldAddNewDateAndShiftTypeToRestrictions() {
-        employee.addRestriction("2022-01-01", true);
-        assertTrue(employee.getShiftsRestriction().containsKey("2022-01-01"));
-        assertTrue(employee.getShiftsRestriction().get("2022-01-01").contains(true));
-        assertFalse(employee.getShiftsRestriction().get("2022-01-01").contains(false));
+        employee.addRestriction("14.03.2023", true);
+        assertTrue(employee.getShiftsRestriction().containsKey("14.03.2023"));
+        assertTrue(employee.getShiftsRestriction().get("14.03.2023").contains(true));
+        assertFalse(employee.getShiftsRestriction().get("14.03.2023").contains(false));
 
-        employee.addRestriction("2022-01-01", false);
-        assertTrue(employee.getShiftsRestriction().containsKey("2022-01-01"));
-        assertTrue(employee.getShiftsRestriction().get("2022-01-01").contains(true));
-        assertTrue(employee.getShiftsRestriction().get("2022-01-01").contains(false));
+        employee.addRestriction("14.03.2023", false);
+        assertTrue(employee.getShiftsRestriction().containsKey("14.03.2023"));
+        assertTrue(employee.getShiftsRestriction().get("14.03.2023").contains(true));
+        assertTrue(employee.getShiftsRestriction().get("14.03.2023").contains(false));
 
-        employee.addRestriction("2022-01-02", true);
-        assertTrue(employee.getShiftsRestriction().containsKey("2022-01-02"));
-        assertTrue(employee.getShiftsRestriction().get("2022-01-02").contains(true));
-        assertFalse(employee.getShiftsRestriction().get("2022-01-02").contains(false));
+        employee.addRestriction("14.03.2023", true);
+        assertTrue(employee.getShiftsRestriction().containsKey("14.03.2023"));
+        assertTrue(employee.getShiftsRestriction().get("14.03.2023").contains(true));
+        assertTrue(employee.getShiftsRestriction().get("14.03.2023").contains(false));
     }
     @Test
     public void testIsLegalPosition_ShouldReturnTrueForQualifiedPosition() {

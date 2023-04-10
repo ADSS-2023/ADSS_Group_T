@@ -22,8 +22,8 @@ class EmployeeControllerTest {
 
     @Test
     void testAddNewEmployee() {
-        employeeController.addNewEmployee("John Doe", "123456789", new ArrayList<>(), "2022-01-01", 1, "password", false);
-        assertEquals("John Doe", employeeController.getEmployee(1).getEmployeeName());
+        employeeController.addNewEmployee("Omer Tarshish", "123456789", new ArrayList<>(), "14.03.2023", 1, "password", false);
+        assertEquals("Omer Tarshish", employeeController.getEmployee(1).getEmployeeName());
     }
 
     @Test
@@ -35,26 +35,26 @@ class EmployeeControllerTest {
 
     @Test
     void testAddRestrictionToAll() {
-        employeeController.addNewEmployee("John Doe", "123456789", new ArrayList<>(), "2022-01-01", 1, "password", false);
-        employeeController.addRestrictionToall("2022-01-01", true);
-        assertTrue(employeeController.getEmployee(1).getShiftsRestriction().get("2022-01-01").contains(true));
+        employeeController.addNewEmployee("Omer Tarshish", "123456789", new ArrayList<>(), "14.03.2023", 1, "password", false);
+        employeeController.addRestrictionToall("14.03.2023", true);
+        assertTrue(employeeController.getEmployee(1).getShiftsRestriction().get("14.03.2023").contains(true));
     }
 
     @Test
     void testGetListOfSubmittedConstraints() {
-        employeeController.addNewEmployee("John Doe", "123456789", new ArrayList<>(), "2022-01-01", 1, "password", false);
+        employeeController.addNewEmployee("Omer Tarshish", "123456789", new ArrayList<>(), "14.03.2023", 1, "password", false);
         assertEquals("", employeeController.getListOfSubmittedConstraints(1));
     }
 
     @Test
     void testGetListOfAssignedShifts() {
-        employeeController.addNewEmployee("John Doe", "123456789", new ArrayList<>(), "2022-01-01", 1, "password", false);
+        employeeController.addNewEmployee("Omer Tarshish", "123456789", new ArrayList<>(), "14.03.2023", 1, "password", false);
         assertEquals("", employeeController.getListOfAssignedShifts(1));
     }
 
     @Test
     void testAddQualification() {
-        employeeController.addNewEmployee("John Doe", "123456789", new ArrayList<>(), "2022-01-01", 1, "password", false);
+        employeeController.addNewEmployee("Omer Tarshish", "123456789", new ArrayList<>(), "14.03.20231", 1, "password", false);
         employeeController.addQualification(1, "cashier");
         assertTrue(employeeController.getEmployee(1).getListOfQualifiedPositions().contains("cashier"));
     }
@@ -66,13 +66,13 @@ class EmployeeControllerTest {
 
     @Test
     void testGetEmployee() {
-        employeeController.addNewEmployee("John Doe", "123456789", new ArrayList<>(), "2022-01-01", 1, "password", false);
+        employeeController.addNewEmployee("Omer Tarshish", "123456789", new ArrayList<>(), "14.03.2023", 1, "password", false);
         assertSame(employeeController.getEmployee(1), employeeController.getEmployeesMapper().get(1));
     }
 
     @Test
     void testLogin() {
-        employeeController.addNewEmployee("John Doe", "123456789", new ArrayList<>(), "2022-01-01", 1, "password", true);
+        employeeController.addNewEmployee("Omer Tarshish", "123456789", new ArrayList<>(), "14.03.2023", 1, "password", true);
         assertTrue(employeeController.login(1, "password"));
         assertThrows(IllegalArgumentException.class, () -> employeeController.login(2, "password"));
         assertThrows(IllegalArgumentException.class, () -> employeeController.login(1, "wrongpassword"));
