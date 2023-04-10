@@ -10,32 +10,12 @@ public class EmployeeService {
         this.employeeController = ec;
     }
 
-    public String addNewConstraint(int id, String date, boolean type, boolean temp) {
-        Response res = new Response();
-        try {
-            Employee employee = employeeController.getEmployee(id);
-            employee.addSubmittedShift(date, type, temp);
-        } catch (Exception ex) {
-        }
-        return null;
-    }
-
     public String login(int id, String password) {
         Response res = new Response();
         try {
             if (employeeController.login(id, password))
                 return "m";
             else return "e";
-        } catch (Exception ex) {
-        }
-        return null;
-    }
-
-    public String getListOfAssignedShift(int id) {
-        Response res = new Response();
-        try {
-            Employee employee = employeeController.getEmployee(id);
-            return employee.getListOfSubmittedConstraints();
         } catch (Exception ex) {
         }
         return null;
@@ -75,11 +55,20 @@ public class EmployeeService {
 
     }
 
-    public String getAssignedShifts(int id) {
+
+    public String getListOfSubmittedConstraints(int id) {
         Response res = new Response();
         try {
-            Employee employee = employeeController.getEmployee(id);
-            return employee.getAssignedShifts().toString();
+            return employeeController.getListOfSubmittedConstraints(id);
+        } catch (Exception ex) {
+        }
+        return null;
+    }
+
+    public String getListOfAssignedShifts(int id) {
+        Response res = new Response();
+        try {
+            return employeeController.getListOfAssignedShifts(id);
         } catch (Exception ex) {
         }
         return null;
