@@ -24,20 +24,6 @@ public class SupplierController {
     public void deleteSupplier(int supplierNum) throws Exception {
         if(!isSupplierExists(supplierNum))
             throw new Exception("supplier number doesn't exist.");
-        SupplierBusiness supplier = getSupplier(supplierNum);
-        //before deleting supplier delete all his Products.
-        for (Map.Entry<Integer, SupplierProductBusiness> entry : supplier.getProducts().entrySet()){
-            supplier.deleteProduct(entry.getValue().getProductNum());
-        }
-        //before deleting supplier delete all his quantity Discounts.
-        for (Discount dis : supplier.getDiscountPerTotalQuantity()){
-            supplier.deleteSupplierDiscount(Discounts.DISCOUNT_BY_TOTAL_QUANTITY,dis.getAmount(), dis.isPercentage());
-        }
-        //before deleting supplier delete all his Price Discounts.
-        for (Discount dis : supplier.getDiscountPerTotalPrice()){
-            supplier.deleteSupplierDiscount(Discounts.DISCOUNT_BY_TOTAL_PRICE,dis.getAmount(), dis.isPercentage());
-        }
-
         suppliers.remove(supplierNum);
 
     }
