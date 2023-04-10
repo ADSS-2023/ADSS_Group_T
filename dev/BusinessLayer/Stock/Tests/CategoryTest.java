@@ -5,8 +5,13 @@ import ServiceLayer.Stock.CategoryService;
 import ServiceLayer.Stock.DamagedService;
 import ServiceLayer.Stock.InventoryService;
 import ServiceLayer.Stock.ItemService;
+import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,14 +29,20 @@ class CategoryTest {
         damagedService = new DamagedService(inventoryService.get_inventory());
         itemService = new ItemService(inventoryService.get_inventory());
         inventory = inventoryService.get_inventory();
-        inventory.setUp();
     }
 
     @Test
-    void add_category() {
-
+    void present_categories_on_empty_data() {
+        String output = inventory.present_names();
+        assertEquals("No categories", output);
     }
 
+    @Test
+    void present_categories() {
+        inventory.setUp();
+        String output = inventory.present_names();
+        assertEquals("1 : Milk-product, 2 : Meat-product", output);
+    }
 
 }
 

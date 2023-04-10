@@ -65,7 +65,7 @@ public class Inventory {
      * This function present the names of this specific category
      * @return
      */
-    private String present_names(){
+    public String present_names(){
         if (categories.isEmpty())
             return "No categories";
         String names = "";
