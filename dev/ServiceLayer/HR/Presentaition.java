@@ -93,7 +93,10 @@ public class Presentaition {
                                 String ans_date_3 = input.next();
                                 System.out.println("add restriction to employee - enter morning(m)/evening(e)");
                                 String ans_type_3 = input.next();
-                                employeeService.addRestrictionToEmployee(ans_employee_id_3,ans_date_3,ans_type_3);
+                                if (employeeService.addRestrictionToEmployee(ans_employee_id_3,ans_date_3,ans_type_3) == null)
+                                    System.out.print(ans_employee_id_3 + " restricted " + ans_date_3 + " successfully \n");
+                                else
+                                    System.out.print("restricted not approve");
                                 break;
                             case 4:
                                 System.out.println("add employee qualification - enter employee id");
