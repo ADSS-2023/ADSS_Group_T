@@ -5,6 +5,7 @@ public class Main {
 
             while(true)
             {
+                //k
                 try{
                     DeliveryManagerService DMS = new DeliveryManagerService();
                     DMS.start();
