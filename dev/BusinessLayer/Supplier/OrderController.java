@@ -19,11 +19,11 @@ public class OrderController {
         orderCounter=0;
     }
 
-    public void createOrder(List<ItemToOrder> items) throws Exception {
-        SupplierBusiness chosenSupplier = sc.findSingleSupplier(items);
+    public void createOrder(List<ItemToOrder> items, boolean isRegular, boolean isUrgent) throws Exception {
+        SupplierBusiness chosenSupplier = sc.findSingleSupplier(items, isRegular);
         if(chosenSupplier==null) {
             for (ItemToOrder item : items) {
-                HashMap<SupplierProductBusiness,Integer> productsToOrder  =  sc.findSuppliersProduct(item);
+                HashMap<SupplierProductBusiness,Integer> productsToOrder  =  sc.findSuppliersProduct(item, isRegular, isUrgent);
                 for(Map.Entry<SupplierProductBusiness, Integer> product : productsToOrder.entrySet())
                     addToShoppingList(product.getKey().getProductNum(),product.getKey().getSupplierNum(),product.getValue());
             }

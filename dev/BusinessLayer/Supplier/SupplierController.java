@@ -34,25 +34,28 @@ public class SupplierController {
         return suppliers.get(supplierNum).getProducts();
     }
 
-    public SupplierBusiness findSingleSupplier(List<ItemToOrder> items) throws Exception {
+    public SupplierBusiness findSingleSupplier(List<ItemToOrder> items, boolean isRegular) throws Exception {
         SupplierBusiness sp = null;
         float minPrice = Integer.MAX_VALUE;
         if(suppliers.isEmpty())
             throw new Exception("There is not supplier exists at all.");
         for (Map.Entry<Integer, SupplierBusiness> entry : suppliers.entrySet()) {
-            float currentPrice = 0;
-            boolean flag = true;
-            for (ItemToOrder item : items) {
-                if ((entry.getValue().getProduct(item.getProductName(), item.getManufacturer()) != null && entry.getValue().getProduct(item.getProductName(), item.getManufacturer()).hasEnoughQuantity(item.getQuantity())))
-                    currentPrice = currentPrice + entry.getValue().getProduct(item.getProductName(), item.getManufacturer()).getPriceByQuantity(item.getQuantity());
-                else {
-                    flag = false;
-                    break;
+            SupplierBusiness spCurr = entry.getValue();
+            if(isRegular && !spCurr.getConstDeliveryDays().isEmpty() || !isRegular) {//if the isRegular is true, then find suppliers with constant days only.
+                float currentPrice = 0;
+                boolean flag = true;
+                for (ItemToOrder item : items) {
+                    if ((spCurr.getProduct(item.getProductName(), item.getManufacturer()) != null && spCurr.getProduct(item.getProductName(), item.getManufacturer()).hasEnoughQuantity(item.getQuantity())))
+                        currentPrice = currentPrice + spCurr.getProduct(item.getProductName(), item.getManufacturer()).getPriceByQuantity(item.getQuantity());
+                    else {
+                        flag = false;
+                        break;
+                    }
                 }
             }
             if (flag && minPrice > currentPrice) {
                 minPrice = currentPrice;
-                sp = entry.getValue();
+                sp = spCurr;
             }
         }
         return sp;

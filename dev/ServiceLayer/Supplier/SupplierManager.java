@@ -60,7 +60,7 @@ public class SupplierManager {
         serviceFactory.supplierService.addSupplierDiscount(4810203,Discounts.DISCOUNT_BY_TOTAL_QUANTITY,40,5,true);
         serviceFactory.supplierService.addSupplierDiscount(4810203,Discounts.DISCOUNT_BY_TOTAL_PRICE,300,40,false);
 
-        ItemToOrder item1  = new ItemToOrder("Bamba","Osem",550);
+        ItemToOrder item1  = new ItemToOrder("Bamba","Osem",550,);
         ItemToOrder item2  = new ItemToOrder("Ketchup","Heinz",50);
         ItemToOrder item3  = new ItemToOrder("Click","Elite",175);
         List<ItemToOrder> itemsList = new LinkedList<>();
