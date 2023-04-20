@@ -1,9 +1,14 @@
 package BusinessLayer.Supplier.Discounts;
 
-public class QuantityDiscount extends Discount{
-    //in this class discount per product presented in shekels
-    public QuantityDiscount(int amount, float discount, boolean isPercentage) {
+public class PercentDiscount extends Discount {
+    //in this class discount per product presented in percentage
+    public PercentDiscount(int amount, float discount,boolean isPercentage) {
         super(amount, discount,isPercentage);
+    }
+
+    @Override
+    public float getPriceAfterDiscount(float oldPrice) {
+       return (1-(discount/100))*oldPrice;
     }
 
     @Override
@@ -12,10 +17,5 @@ public class QuantityDiscount extends Discount{
                 ", Discount: " + discount +
                 ", is a Percent discount: " + isPercentage +
                 '}';
-    }
-
-    @Override
-    public float getPriceAfterDiscount(float oldPrice) {
-        return oldPrice -discount;
     }
 }

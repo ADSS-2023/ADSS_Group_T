@@ -1,14 +1,21 @@
 package ServiceLayer.Supplier;
 
+import java.time.LocalDateTime;
+
 public class ItemToOrder {
     private String productName;
     private String manufacturer;
     private int quantity;
 
-    public ItemToOrder(String productName, String manufacturer, int quantity){
+    private LocalDateTime expiryDate;
+
+
+
+    public ItemToOrder(String productName, String manufacturer, int quantity,LocalDateTime expiryDate){
         this.productName = productName;
         this.manufacturer = manufacturer;
         this.quantity = quantity;
+        this.expiryDate=expiryDate;
     }
 
     public String getProductName() {

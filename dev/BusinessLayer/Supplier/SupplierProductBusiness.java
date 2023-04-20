@@ -1,6 +1,7 @@
 package BusinessLayer.Supplier;
 import BusinessLayer.Supplier.Discounts.Discount;
-import BusinessLayer.Supplier.Discounts.PrecentDiscount;
+import BusinessLayer.Supplier.Discounts.PercentDiscount;
+import BusinessLayer.Supplier.Discounts.PercentDiscount;
 import BusinessLayer.Supplier.Discounts.QuantityDiscount;
 
 import java.time.LocalDateTime;
@@ -12,12 +13,12 @@ public class SupplierProductBusiness {
     private String name;
     private int productNum;
     private String manufacturer;
-    private int price;
+    private float price;
     private int maxAmount;
     private List<Discount> quantitiesAgreement;
-    private LocalDateTime expiredDate;
+    private LocalDateTime expiryDate;
 
-    public SupplierProductBusiness(int supplierNum, String name, int productNum, String manufacturer, int price, int maxAmount, LocalDateTime expiredDate){
+    public SupplierProductBusiness(int supplierNum, String name, int productNum, String manufacturer, float price, int maxAmount, LocalDateTime expiryDate){
         this.supplierNum = supplierNum;
         this.name = name;
         this.productNum = productNum;
@@ -25,10 +26,10 @@ public class SupplierProductBusiness {
         this.price = price;
         this.maxAmount = maxAmount;
         this.quantitiesAgreement = new ArrayList<>();
-        this.expiredDate = expiredDate;
+        this.expiryDate = expiryDate;
     }
 
-    private boolean isDiscountExists(int productAmount, int discount, boolean isPercentage){
+    private boolean isDiscountExists(int productAmount, boolean isPercentage){
         for(Discount dis:quantitiesAgreement) {
             if (dis.isPercentage() == isPercentage && dis.getAmount() == productAmount)
                 return true;
@@ -48,8 +49,8 @@ public class SupplierProductBusiness {
     }
 
     public void editProductDiscount(int productAmount, int discount, boolean isPercentage) throws Exception {
-        if(!isDiscountExists(productAmount, discount, isPercentage))
-            throw new Exception("Discount not found");
+        if(!isDiscountExists(productAmount, isPercentage))
+            throw new Exception("Discount doesn't exists");
         if(!isDiscountValid(productAmount, discount, isPercentage))
             throw new Exception("Discount details are not valid");
         for (Discount dis : quantitiesAgreement) {
@@ -59,20 +60,20 @@ public class SupplierProductBusiness {
     }
 
     public void addProductDiscount(int productAmount, int discount, boolean isPercentage) throws Exception {
-        if(isDiscountExists(productAmount, discount, isPercentage))
+        if(isDiscountExists(productAmount, isPercentage))
             throw new Exception("Discount already exists");
         if(!isDiscountValid(productAmount, discount, isPercentage))
             throw new Exception("Discount details are not valid");
             if (isPercentage)
-                quantitiesAgreement.add(new PrecentDiscount(productAmount, discount, true));
+                quantitiesAgreement.add(new PercentDiscount(productAmount, discount, true));
             else
                 quantitiesAgreement.add(new QuantityDiscount(productAmount, discount, false));
 
     }
 
-    public void deleteProductDiscount(int productAmount, int discount, boolean isPercentage) throws Exception {
-        if(!isDiscountExists(productAmount, discount, isPercentage))
-            throw new Exception("Discount not found");
+    public void deleteProductDiscount(int productAmount, float discount, boolean isPercentage) throws Exception {
+        if(!isDiscountExists(productAmount, isPercentage))
+            throw new Exception("Discount doesn't exists");
         Discount curr = null;
         for(Discount dis:quantitiesAgreement){
             if(dis.isPercentage() == isPercentage && dis.getAmount() == productAmount && dis.getDiscount() == discount)
@@ -85,20 +86,17 @@ public class SupplierProductBusiness {
         return maxAmount >= quantity;
     }
 
-    public int getPriceByQuantity(int quantity){
+    public float getPriceByQuantity(int quantity){
         quantity= Math.min(maxAmount, quantity);
-        int maxAmount = 0;
+        float maxDiscount = 0;
         Discount dis = null;
         for (Discount currentDiscount : quantitiesAgreement) {
-            if(currentDiscount.getAmount() > maxAmount && quantity >= currentDiscount.getAmount()) {
+            if(quantity*price-currentDiscount.getPriceAfterDiscount(quantity*price) > maxDiscount && quantity >= currentDiscount.getAmount()) {
                 dis = currentDiscount;
-                maxAmount = currentDiscount.getAmount();
+                maxDiscount = quantity*price-currentDiscount.getPriceAfterDiscount(quantity*price);
             }
         }
-        if(dis!=null)
-            return dis.getPriceAfterDiscount(quantity*price);
-        else
-            return quantity*price;
+            return quantity*price-maxDiscount;
         }
 
     public String getName() {
@@ -109,7 +107,7 @@ public class SupplierProductBusiness {
         return maxAmount;
     }
 
-    public int getPrice() {
+    public float getPrice() {
         return price;
     }
 
@@ -118,7 +116,7 @@ public class SupplierProductBusiness {
     }
 
     public LocalDateTime getExpiredDate() {
-        return expiredDate;
+        return expiryDate;
     }
 
     public String getManufacturer() {
@@ -133,13 +131,25 @@ public class SupplierProductBusiness {
         return supplierNum;
     }
 
-    public void editProduct(int supplierNum, String productName, int productNum, String manufacturer, int price, int maxAmount, LocalDateTime expiredDate) {
+    public void editProduct(int supplierNum, String productName, String manufacturer, float price, int maxAmount, LocalDateTime expiryDate) {
         this.supplierNum = supplierNum;
-        this.productNum = productNum;
         this.name = productName;
         this.manufacturer = manufacturer;
         this.price = price;
         this.maxAmount = maxAmount;
-        this.expiredDate = expiredDate;
+        this.expiryDate = expiryDate;
+    }
+
+    @Override
+    public String toString() {
+        return
+                "Supplier Number: " + supplierNum +
+                ", Product Name: " + name + "  " +
+                ", Product Number: " + productNum +
+                ", Manufacturer: " + manufacturer + "  " +
+                ", Price: " + price +
+                ", Max quantity in stock: " + maxAmount +
+                ", expiryDate: " + expiryDate;
+
     }
 }

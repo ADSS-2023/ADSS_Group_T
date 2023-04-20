@@ -1,27 +1,38 @@
 package BusinessLayer.Supplier;
 
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 
 public class OrderBusiness {
 
-    private int orderNum;
+    private final int orderNum;
     private String supplierName;
     private LocalDateTime orderDate;
     private String supplierAddress;
     private String destinationAddress;
     private int supplierNum;
     private String contactName;
-    private int contactNumber;
+    private String contactNumber;
     private List<OrderProduct> products ;
+
+    @Override
+    public String toString() {
+        String s = "";
+        for (OrderProduct order:products) {
+            s=s+" "+order.toString();
+        }
+        return
+                "Order Number: " + orderNum +
+                ",Supplier Number: "+supplierNum+
+                ",Products: " +"\n"+ s+"\n";
+
+    }
 
     public OrderBusiness(int orderNum, String supplierName, LocalDateTime  orderDate,
                          String supplierAddress, String destinationAddress
-            ,int supplierNum, String contactName, int contactNumber,
-                       List<OrderProduct> products) {
+            , int supplierNum, String contactName, String contactNumber,
+                         List<OrderProduct> products) {
         this.orderNum = orderNum;
         this.supplierName = supplierName;
         this.orderDate = orderDate;
