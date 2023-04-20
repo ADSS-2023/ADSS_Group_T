@@ -2,15 +2,18 @@ package BusinessLayer.Supplier;
 
 import BusinessLayer.Supplier.Suppliers.SupplierBusiness;
 import ServiceLayer.Supplier.ItemToOrder;
+import Util.WeekDays;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.TextStyle;
 import java.util.*;
 
 public class OrderController {
     private List<OrderBusiness> orders;
     private SupplierController sc;
     private int orderCounter;
-    private HashMap<String,List<OrderProduct>> constantOrders;
+    private HashMap<WeekDays,List<OrderBusiness>> dayToConstantOrders;
 
     private HashMap<Integer,List<OrderProduct>> shoppingLists; // supplierNumber to list of products
 
@@ -19,9 +22,18 @@ public class OrderController {
         orders = new LinkedList<>();
         this.sc = sc;
         shoppingLists = new HashMap<>();
+        dayToConstantOrders = new HashMap<>();
         orderCounter=0;
+
     }
 
+    /**
+     * this function gets a list of items and priorities, find appropriate suppliers and execute orders
+     * @param items
+     * @param isRegular
+     * @param isUrgent
+     * @throws Exception
+     */
     public void createOrder(List<ItemToOrder> items, boolean isRegular, boolean isUrgent) throws Exception {
 
         if (isUrgent) {
@@ -46,19 +58,17 @@ public class OrderController {
                 }
             }
         }
-            createOrders();
-        if (isRegular){
-            for (Map.Entry<Integer, List<OrderProduct>> orderProduct : shoppingLists.entrySet()){
-
-            }
-        }
+            createOrders(isRegular);//execute orders and add order to regular orders map if needed
     }
 
 
-
-    //createOrders goes over every shopping list per supplier consisted of OrderProducts and
-    // performs each order After total discounts
-    public void createOrders() throws Exception {
+    /**
+     *  goes over every shopping list per supplier consisted of OrderProducts and
+     *  performs each order After total discounts, and adds a regular order to the map if needed.
+     * @param isRegular
+     * @throws Exception
+     */
+    public void createOrders(boolean isRegular) throws Exception {
        for(Map.Entry<Integer, List<OrderProduct>> shoppingList : shoppingLists.entrySet()){
            List<OrderProduct> products = shoppingList.getValue();
            SupplierBusiness supplier = sc.getSupplier(shoppingList.getKey());
@@ -86,25 +96,41 @@ public class OrderController {
            //create order from products in the send and send to delivery if needed
            OrderBusiness order = new OrderBusiness(orderCounter++,supplier.getName(),LocalDateTime.now(),supplier.getAddress(),
                    "SuperLi",supplier.getSupplierNum(),contactName,contactNum,products);
-                   orders.add(order);
-//              in case of delivery needed - connect with Delivery module
-//           if(!supplier.isDelivering()){
-//               sendDelivery(order);
-//           }
+           orders.add(order);
+           if (isRegular){//save Regular order
+               int deliveryDay = supplier.findEarliestSupplyDay();
+               LocalDate today = LocalDate.now();
+               LocalDate futureDay = today.plusDays(deliveryDay);
+               WeekDays orderDay = WeekDays.valueOf(futureDay.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ENGLISH));
+               if(!dayToConstantOrders.containsKey(orderDay))
+                   dayToConstantOrders.put(orderDay,new LinkedList<>());
+               dayToConstantOrders.get(orderDay).add(order);
+           }
        }
         shoppingLists = new HashMap<>();
     }
-    //support functionality of displaying all orders from different suppliers.
+
+
+    /**
+     * support functionality of displaying all orders from different suppliers.
+     * @return
+     */
     public List<OrderBusiness> getOrders(){
         return orders;
     }
+
     private void sendDelivery(OrderBusiness order){
         //activate module DELIVERY
     }
 
-    private void addConstantOrder(Order)
 
-    //this function adds an item to a suppliers shopping list
+    /**
+     * this function adds an item to a suppliers shopping list
+     * @param productNum
+     * @param supplierNum
+     * @param quantity
+     * @throws Exception
+     */
     public void addToShoppingList(int productNum,int supplierNum,int quantity) throws Exception {
             SupplierProductBusiness product = sc.getSupplier(supplierNum).getSupplierProduct(productNum);
             //generate new OrderProduct
@@ -119,5 +145,11 @@ public class OrderController {
             shoppingLists.get(supplierNum).add(orderProduct);
         }
 
+
+        //TODO: add a function that executes each day regular orders - by adding them to orders list
+
+        //TODO:: add a function that get all orders of a day of the week
+
+        //TODO:: add a function that can edit an item in a regular order
 }
 

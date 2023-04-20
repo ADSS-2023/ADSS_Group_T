@@ -14,6 +14,11 @@ public class OrderBusiness {
     private int supplierNum;
     private String contactName;
     private String contactNumber;
+
+    public List<OrderProduct> getProducts() {
+        return products;
+    }
+
     private List<OrderProduct> products ;
 
     @Override

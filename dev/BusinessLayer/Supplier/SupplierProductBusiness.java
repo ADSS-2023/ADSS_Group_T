@@ -115,7 +115,7 @@ public class SupplierProductBusiness {
         return productNum;
     }
 
-    public LocalDateTime getExpiredDate() {
+    public LocalDateTime getExpiryDate() {
         return expiryDate;
     }
 
