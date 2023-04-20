@@ -1,25 +1,24 @@
-package BusinessLayer.Supplier;
+package BusinessLayer.Supplier.Suppliers;
 
 import BusinessLayer.Supplier.Discounts.Discount;
 import BusinessLayer.Supplier.Discounts.PercentDiscount;
 import BusinessLayer.Supplier.Discounts.PercentDiscount;
 import BusinessLayer.Supplier.Discounts.QuantityDiscount;
+import BusinessLayer.Supplier.SupplierProductBusiness;
 import Util.Discounts;
 import Util.PaymentTerms;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.time.LocalDateTime;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 
-public class  SupplierBusiness {
+public abstract class  SupplierBusiness {
     private String supplierName;
     private String address;
     private int supplierNum;
     private int bankAccountNum;
     private HashMap<String, String> contacts;
-    private List<String> constDeliveryDays;
     private boolean selfDelivery;
     private PaymentTerms paymentTerms;
 
@@ -29,14 +28,13 @@ public class  SupplierBusiness {
 
     private List<Discount> discountPerTotalPrice;
 
-    public SupplierBusiness(String supplierName, String address, int supplierNum,int bankAccountNum, HashMap<String, String> contacts, List<String> constDeliveryDays, boolean selfDelivery,PaymentTerms paymentTerms){
+    public SupplierBusiness(String supplierName, String address, int supplierNum,int bankAccountNum, HashMap<String, String> contacts, boolean selfDelivery,PaymentTerms paymentTerms){
 
         this.supplierName = supplierName;
         this.address = address;
         this.supplierNum = supplierNum;
         this.bankAccountNum = bankAccountNum;
         this.contacts = contacts;
-        this.constDeliveryDays = constDeliveryDays;
         this.selfDelivery = selfDelivery;
         this.products = new HashMap<>();
         this.discountPerTotalQuantity = new ArrayList<>();
@@ -235,6 +233,10 @@ public class  SupplierBusiness {
         return totalOrderPrice - discount2;
     }
 
+
+    public abstract int findEarliestSupplyDay();
+
+
     public int getBankAccountNum() {
         return bankAccountNum;
     }
@@ -243,9 +245,7 @@ public class  SupplierBusiness {
         return supplierNum;
     }
 
-    public List<String> getConstDeliveryDays() {
-        return constDeliveryDays;
-    }
+
 
     public Map<String, String> getContacts() {
         return contacts;

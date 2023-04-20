@@ -1,5 +1,6 @@
 package BusinessLayer.Supplier;
 
+import BusinessLayer.Supplier.Suppliers.SupplierBusiness;
 import ServiceLayer.Supplier.ItemToOrder;
 
 import java.time.LocalDateTime;
@@ -9,6 +10,8 @@ public class OrderController {
     private List<OrderBusiness> orders;
     private SupplierController sc;
     private int orderCounter;
+    private HashMap<String,List<OrderProduct>> constantOrders;
+
     private HashMap<Integer,List<OrderProduct>> shoppingLists; // supplierNumber to list of products
 
 
@@ -20,22 +23,35 @@ public class OrderController {
     }
 
     public void createOrder(List<ItemToOrder> items, boolean isRegular, boolean isUrgent) throws Exception {
-        SupplierBusiness chosenSupplier = sc.findSingleSupplier(items, isRegular);
-        if(chosenSupplier==null) {
-            for (ItemToOrder item : items) {
-                HashMap<SupplierProductBusiness,Integer> productsToOrder  =  sc.findSuppliersProduct(item, isRegular, isUrgent);
-                for(Map.Entry<SupplierProductBusiness, Integer> product : productsToOrder.entrySet())
-                    addToShoppingList(product.getKey().getProductNum(),product.getKey().getSupplierNum(),product.getValue());
-            }
-        }
-        else{
-            for (ItemToOrder item : items) {
 
-                SupplierProductBusiness supplierProduct= chosenSupplier.getSupplierProduct(item.getProductName(), item.getManufacturer());
-                addToShoppingList(supplierProduct.getProductNum(), supplierProduct.getSupplierNum(), item.getQuantity());
+        if (isUrgent) {
+            for (ItemToOrder item : items) {
+                HashMap<SupplierProductBusiness, Integer> productsToOrder = sc.findUrgentSuppliers(item);
+                for (Map.Entry<SupplierProductBusiness, Integer> product : productsToOrder.entrySet())
+                    addToShoppingList(product.getKey().getProductNum(), product.getKey().getSupplierNum(), product.getValue());
             }
         }
-        createOrders();
+        else {
+            SupplierBusiness chosenSupplier = sc.findSingleSupplier(items, isRegular);
+            if (chosenSupplier == null) {
+                for (ItemToOrder item : items) {
+                    HashMap<SupplierProductBusiness, Integer> productsToOrder = sc.findSuppliersProduct(item, isRegular);
+                    for (Map.Entry<SupplierProductBusiness, Integer> product : productsToOrder.entrySet())
+                        addToShoppingList(product.getKey().getProductNum(), product.getKey().getSupplierNum(), product.getValue());
+                }
+            } else {
+                for (ItemToOrder item : items) {
+                    SupplierProductBusiness supplierProduct = chosenSupplier.getSupplierProduct(item.getProductName(), item.getManufacturer());
+                    addToShoppingList(supplierProduct.getProductNum(), supplierProduct.getSupplierNum(), item.getQuantity());
+                }
+            }
+        }
+            createOrders();
+        if (isRegular){
+            for (Map.Entry<Integer, List<OrderProduct>> orderProduct : shoppingLists.entrySet()){
+
+            }
+        }
     }
 
 
@@ -85,6 +101,8 @@ public class OrderController {
     private void sendDelivery(OrderBusiness order){
         //activate module DELIVERY
     }
+
+    private void addConstantOrder(Order)
 
     //this function adds an item to a suppliers shopping list
     public void addToShoppingList(int productNum,int supplierNum,int quantity) throws Exception {

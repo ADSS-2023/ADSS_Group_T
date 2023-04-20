@@ -1,7 +1,7 @@
 package ServiceLayer.Supplier;
 
 import BusinessLayer.Supplier.Discounts.Discount;
-import BusinessLayer.Supplier.SupplierBusiness;
+import BusinessLayer.Supplier.Suppliers.SupplierBusiness;
 import BusinessLayer.Supplier.SupplierController;
 import BusinessLayer.Supplier.SupplierProductBusiness;
 import Util.Discounts;
@@ -17,9 +17,9 @@ public class SupplierService {
         this.sc = sc;
     }
 
-    public String addSupplier(String name, String address, int supplierNum, int bankAccountNum, HashMap<String, String> contacts, List<String> constDeliveryDays, boolean selfDelivery, PaymentTerms paymentTerms){
+    public String addSupplier(String name, String address, int supplierNum, int bankAccountNum, int daysToDeliver, HashMap<String, String> contacts, List<String> constDeliveryDays, boolean selfDelivery, PaymentTerms paymentTerms){
         try{
-            sc.addSupplier(name,address,supplierNum,bankAccountNum,contacts,constDeliveryDays, selfDelivery,paymentTerms);
+            sc.addSupplier(name,address,supplierNum,bankAccountNum,contacts,constDeliveryDays, selfDelivery, paymentTerms, daysToDeliver);
             return "Supplier added successfully";
         }
         catch(Exception e){

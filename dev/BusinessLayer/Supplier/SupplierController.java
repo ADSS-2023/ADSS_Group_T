@@ -1,12 +1,12 @@
 package BusinessLayer.Supplier;
 
-import BusinessLayer.Supplier.Discounts.Discount;
+import BusinessLayer.Supplier.Suppliers.ConstantSupplier;
+import BusinessLayer.Supplier.Suppliers.OccasionalSupplier;
+import BusinessLayer.Supplier.Suppliers.SupplierBusiness;
 import ServiceLayer.Supplier.ItemToOrder;
-import Util.Discounts;
 import Util.PaymentTerms;
 
 import java.util.*;
-import java.time.LocalDateTime;
 
 public class SupplierController {
     HashMap<Integer, SupplierBusiness> suppliers;
@@ -15,10 +15,14 @@ public class SupplierController {
         suppliers = new HashMap<>();
     }
 
-    public void addSupplier(String name, String address, int supplierNum, int bankAccountNum, HashMap<String, String> contacts, List<String> constDeliveryDays, boolean selfDelivery, PaymentTerms paymentTerms) throws Exception {
+    public void addSupplier(String name, String address, int supplierNum, int bankAccountNum, HashMap<String, String> contacts, List<String> constDeliveryDays, boolean selfDelivery, PaymentTerms paymentTerms, int daysToDeliver) throws Exception {
         if(isSupplierExists(supplierNum))
             throw new Exception("supplier number is already exists.");
-        suppliers.put(supplierNum, new SupplierBusiness(name, address, supplierNum, bankAccountNum, contacts, constDeliveryDays, selfDelivery,paymentTerms));
+        if(constDeliveryDays.isEmpty())
+            suppliers.put(supplierNum, new OccasionalSupplier(name, address, supplierNum, bankAccountNum, contacts, daysToDeliver, selfDelivery, paymentTerms));
+        else{
+            suppliers.put(supplierNum, new ConstantSupplier(name, address, supplierNum, bankAccountNum, contacts, constDeliveryDays, selfDelivery, paymentTerms));
+        }
     }
 
     public void deleteSupplier(int supplierNum) throws Exception {
@@ -34,14 +38,53 @@ public class SupplierController {
         return suppliers.get(supplierNum).getProducts();
     }
 
+    public HashMap<SupplierProductBusiness,Integer> findUrgentSuppliers(ItemToOrder item) throws Exception {
+        List<SupplierBusiness> suppliersList = (List<SupplierBusiness>) suppliers.values();
+        Collections.sort(suppliersList, (sp1, sp2) -> {
+            int sp1daysOfDelivery =sp1.findEarliestSupplyDay();
+            float sp2daysOfDelivery =sp2.findEarliestSupplyDay();
+            if(sp1daysOfDelivery<sp2daysOfDelivery)
+                return -1;
+            if(sp1daysOfDelivery>sp2daysOfDelivery)
+                return 1;
+            return 0;
+        });
+        List<SupplierProductBusiness> productList = new LinkedList<>();
+        for (SupplierBusiness sp: suppliersList ) {
+            if(sp.isSupplierProuctExist(item.getProductName(), item.getManufacturer()))
+                productList.add(sp.getSupplierProduct(item.getProductName(), item.getManufacturer()));
+        }
+        HashMap<SupplierProductBusiness, Integer> suppliersPerProduct = new HashMap<>();
+
+        int quantity = item.getQuantity();
+        for(SupplierProductBusiness product : productList) {
+            if (quantity>0) {
+                int toReduce = Math.min(product.getMaxAmount(), quantity);
+                suppliersPerProduct.put(product, toReduce);
+                quantity = quantity - toReduce;
+            }
+        }
+        if(quantity>0 | suppliersPerProduct.size()==0)
+            throw new Exception("Order failed.\nProduct "+item.getProductName()+" manufactured by "+item.getManufacturer()+" can not be supplied.");
+        return suppliersPerProduct;
+
+    }
+
+    /**
+     *
+     * @param items - list of items to order
+     * @param isRegular - if the order required is a constant one.
+     * @return - a single supplier that supplies all products completely,if exists
+     * @throws Exception
+     */
     public SupplierBusiness findSingleSupplier(List<ItemToOrder> items, boolean isRegular) throws Exception {
         SupplierBusiness sp = null;
         float minPrice = Integer.MAX_VALUE;
-        if(suppliers.isEmpty())
+        if (suppliers.isEmpty())
             throw new Exception("There is not supplier exists at all.");
         for (Map.Entry<Integer, SupplierBusiness> entry : suppliers.entrySet()) {
             SupplierBusiness spCurr = entry.getValue();
-            if(isRegular && !spCurr.getConstDeliveryDays().isEmpty() || !isRegular) {//if the isRegular is true, then find suppliers with constant days only.
+            if ((isRegular && spCurr instanceof ConstantSupplier) || !isRegular) {//if the isRegular is true, then find suppliers with constant days only.
                 float currentPrice = 0;
                 boolean flag = true;
                 for (ItemToOrder item : items) {
@@ -52,28 +95,39 @@ public class SupplierController {
                         break;
                     }
                 }
-            }
-            if (flag && minPrice > currentPrice) {
-                minPrice = currentPrice;
-                sp = spCurr;
+
+                if (flag && minPrice > currentPrice) {
+                    minPrice = currentPrice;
+                    sp = spCurr;
+                }
             }
         }
         return sp;
     }
 
-    public HashMap<SupplierProductBusiness, Integer> findSuppliersProduct(ItemToOrder item) throws Exception {
+    /**
+     *
+     * @param item - to order
+     * @return map of products business to quntities that will be ordered
+     * @throws Exception
+     */
+    public HashMap<SupplierProductBusiness, Integer> findSuppliersProduct(ItemToOrder item,boolean isRegular) throws Exception {
         HashMap<SupplierProductBusiness, Integer> suppliersPerProduct = new HashMap<>();
         if(suppliers.isEmpty())
             throw new Exception("There are not supplier exists at all.");
         int quantity = item.getQuantity();
         List<SupplierProductBusiness> productList = new LinkedList<>();
-        SupplierProductBusiness sp =null;
+        SupplierProductBusiness sp;
+
         //make list of suppliers that fully supplies the product
         for (Map.Entry<Integer, SupplierBusiness> entry : suppliers.entrySet()) {
-            if(entry.getValue().isSupplierProuctExist(item.getProductName(), item.getManufacturer())) {
-                sp = entry.getValue().getSupplierProduct(item.getProductName(), item.getManufacturer());
-                if(sp.getMaxAmount()>=quantity)
-                    productList.add(sp);
+            SupplierBusiness spCurr = entry.getValue();
+            if ((isRegular && spCurr instanceof ConstantSupplier) || !isRegular) {//if the isRegular is true, then find suppliers with constant days only.
+                if (spCurr.isSupplierProuctExist(item.getProductName(), item.getManufacturer())) {
+                    sp = spCurr.getSupplierProduct(item.getProductName(), item.getManufacturer());
+                    if (sp.getMaxAmount() >= quantity)
+                        productList.add(sp);
+                }
             }
         }
         //if there is no supplier that fully supplies, add all suppliers that supplies the product to the list
@@ -81,9 +135,12 @@ public class SupplierController {
             productList = new LinkedList<>();
             sp =null;
             for (Map.Entry<Integer, SupplierBusiness> entry : suppliers.entrySet()) {
-                if(entry.getValue().isSupplierProuctExist(item.getProductName(), item.getManufacturer())) {
-                    sp = entry.getValue().getSupplierProduct(item.getProductName(), item.getManufacturer());
-                    productList.add(sp);
+                SupplierBusiness spCurr = entry.getValue();
+                if ((isRegular && spCurr instanceof ConstantSupplier) || !isRegular) {//if the isRegular is true, then find suppliers with constant days only.
+                    if (spCurr.isSupplierProuctExist(item.getProductName(), item.getManufacturer())) {
+                        sp = spCurr.getSupplierProduct(item.getProductName(), item.getManufacturer());
+                        productList.add(sp);
+                    }
                 }
             }
         }

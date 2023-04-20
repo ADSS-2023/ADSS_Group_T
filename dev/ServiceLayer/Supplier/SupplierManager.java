@@ -13,7 +13,7 @@ public class SupplierManager {
         this.serviceFactory = new ServiceFactory();
     }
 
-    public void setUpData() {
+    public void setUpData() throws Exception {
         HashMap<String, String> contactsSupplier1 = new HashMap<>();
         contactsSupplier1.put("yossi", "052284621");
         serviceFactory.supplierService.addSupplier("Sapak1", "Shoham 43, Tel Aviv",
@@ -60,17 +60,17 @@ public class SupplierManager {
         serviceFactory.supplierService.addSupplierDiscount(4810203,Discounts.DISCOUNT_BY_TOTAL_QUANTITY,40,5,true);
         serviceFactory.supplierService.addSupplierDiscount(4810203,Discounts.DISCOUNT_BY_TOTAL_PRICE,300,40,false);
 
-        ItemToOrder item1  = new ItemToOrder("Bamba","Osem",550,);
-        ItemToOrder item2  = new ItemToOrder("Ketchup","Heinz",50);
-        ItemToOrder item3  = new ItemToOrder("Click","Elite",175);
+        ItemToOrder item1  = new ItemToOrder("Bamba","Osem",550,LocalDateTime.now().plusMonths(1));
+        ItemToOrder item2  = new ItemToOrder("Ketchup","Heinz",50,LocalDateTime.now().plusMonths(1));
+        ItemToOrder item3  = new ItemToOrder("Click","Elite",175,LocalDateTime.now().plusMonths(1));
         List<ItemToOrder> itemsList = new LinkedList<>();
         itemsList.add(item1);
         itemsList.add(item2);
         itemsList.add(item3);
-        System.out.println(serviceFactory.orderService.createOrder(itemsList));
+        System.out.println(serviceFactory.orderService.createSpecialOrder(itemsList,false));
     }
 
-    public void start() {
+    public void start() throws Exception {
         Scanner scanner = new Scanner(System.in);
         boolean over = false;
         while(!over) {
@@ -279,12 +279,12 @@ public class SupplierManager {
 
             int quantity = getInteger(scannerInt, "Enter the product's quantity needed", 0, Integer.MAX_VALUE);
 
-            itemsList.add(new ItemToOrder(productName, manufacturer, quantity));
+           // itemsList.add(new ItemToOrder(productName, manufacturer, quantity));
             int decision = getInteger(scannerInt, "Do you want to order more products?\n1.Yes\n2.No", 1, 2);
             if(decision==2)
                 continueOrder=false;
         }
-        System.out.println(serviceFactory.orderService.createOrder(itemsList));
+       // System.out.println(serviceFactory.orderService.createOrder(itemsList));
     }
 
     private void addProduct() {
