@@ -13,6 +13,7 @@ import java.util.*;
 public class Inventory {
     protected List<Category> categories;
     protected HashMap<Integer,Item> items;
+    protected HashMap<String,Integer> name_to_id;
     protected List<Item> shortage_list;
     protected Damaged damaged;
 
@@ -21,6 +22,7 @@ public class Inventory {
         items = new HashMap<>();
         shortage_list = new LinkedList<>();
         damaged = new Damaged();
+        name_to_id = new HashMap<>();
     }
 
     /**
@@ -215,6 +217,7 @@ public class Inventory {
         String next_index = Util.extractNextIndex(categories_index);
         categories.get(current_index).add_item(next_index, i);
         shortage_list.add(i);
+        name_to_id.put(name+" "+manufacturer_name,item_id);
     }
 
     public void add_category(String categories_index, String name) throws Exception {
