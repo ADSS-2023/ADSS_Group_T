@@ -12,6 +12,7 @@ public class ItemPerOrder {
     private double cost_price;
     private String location;
     private LocalDate validity;
+    private int orderId;
 
     /**
      * This class represnts an item by order (validity)
@@ -29,6 +30,7 @@ public class ItemPerOrder {
         this.cost_price = cost_price;
         this.location = location;
         this.validity = validity;
+        this.orderId = orderId;
     }
 
     /**

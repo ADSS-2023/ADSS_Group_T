@@ -1,9 +1,6 @@
 package PresentationLayer;
 import BusinessLayer.Stock.Util.Util;
-import ServiceLayer.Stock.CategoryService;
-import ServiceLayer.Stock.DamagedService;
-import ServiceLayer.Stock.InventoryService;
-import ServiceLayer.Stock.ItemService;
+import ServiceLayer.Stock.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -12,12 +9,14 @@ import java.util.List;
 import java.awt.*;
 import java.util.LinkedList;
 import java.util.Scanner;
+import java.util.function.Supplier;
 
 public class Main {
     public static InventoryService inventoryService = new InventoryService();
     public static CategoryService categoryService = new CategoryService(inventoryService.get_inventory());
     public static DamagedService damagedService = new DamagedService(inventoryService.get_inventory());
     public static ItemService itemService = new ItemService(inventoryService.get_inventory());
+    public static OrderService orderService = new OrderService(inventoryService.get_inventory() , new Supplier.OrderService);
 
     public static void printOptions(){
         System.out.println("\u001B[32m1.See categories\u001B[0m");
@@ -196,7 +195,7 @@ public class Main {
     }
 
     private static void moveToNextDay() {
-        inventoryService.makeAutomaticalOrder();
+        orderService.makeAutomaticalOrder();
     }
 
     private static void addCategory() {

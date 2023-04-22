@@ -86,15 +86,6 @@ public class InventoryService {
       inventory.setUp();
     }
 
-    /**
-     * This function makes an automatically order by the shortage items that has in our inventory
-     */
-    public void makeAutomaticalOrder() {
-        DayOfWeek curDay = LocalDate.now().getDayOfWeek();
-        List<Item> curItems = this.inventory.getShortageList();
 
-        // check what is get tomorrow from getRegulatOrder()
-        // add to the order X*1.2 items.
-    }
 }
 
