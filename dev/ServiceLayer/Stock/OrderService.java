@@ -21,7 +21,8 @@ public class OrderService {
     /**
      * This function makes an automatically order by the shortage items that has in our inventory
      */
-    public void makeAutomaticalOrder() {
+    public String  makeAutomaticalOrder() {
+
         this.orderController.makeAutomaticallyOrder(LocalDate.now().getDayOfWeek());
 
         // check what is get tomorrow from getRegulatOrder()
@@ -37,7 +38,14 @@ public class OrderService {
      * @return
      */
     public String editRegularOrder(int id ,DayOfWeek day , int new_amount){
-        orderController.editRegularOrder(id , day , new_amount);
+        try {
+            orderController.editRegularOrder(id , day , new_amount);
+            return "Order edited successfully";
+        }
+        catch (Exception e){
+            return e.getMessage();
+        }
+
     }
     /**
      * Receives a map that holds item id and amount to be ordered
