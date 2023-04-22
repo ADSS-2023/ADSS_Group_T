@@ -27,6 +27,12 @@ public class OrderService {
         // check what is get tomorrow from getRegulatOrder()
         // add to the order X*1.2 items.
     }
+
+    /**
+     * Receives a map that holds item id and amount to be ordered
+     * @param items_quantity
+     * @return
+     */
     public String createRegularOrder(Map<Integer,Integer> items_quantity){
         try {
             orderController.createRegularOrder(items_quantity);
