@@ -1,8 +1,13 @@
 package ServiceLayer.Stock;
 
-import BusinessLayer.Stock.Inventory;
 
+import BusinessLayer.Stock.Inventory;
+import BusinessLayer.Stock.Item;
+
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.LinkedList;
+import java.util.List;
 
 public class InventoryService {
     private Inventory inventory;
@@ -81,7 +86,15 @@ public class InventoryService {
       inventory.setUp();
     }
 
+    /**
+     * This function makes an automatically order by the shortage items that has in our inventory
+     */
+    public void makeAutomaticalOrder() {
+        DayOfWeek curDay = LocalDate.now().getDayOfWeek();
+        List<Item> curItems = this.inventory.getShortageList();
 
-
+        // check what is get tomorrow from getRegulatOrder()
+        // add to the order X*1.2 items.
+    }
 }
 

@@ -269,4 +269,12 @@ public class Inventory {
     public Item get_item_by_id(int id){
         return items.get(id);
     }
+
+    /**
+     * This function returns the list of the items that missing
+     * @return
+     */
+    public List<Item> getShortageList(){
+        return shortage_list;
+    }
 }

@@ -30,6 +30,7 @@ public class Main {
         System.out.println("\u001B[32m8.Receive a new order (receive new supply of exists item)\u001B[0m");
         System.out.println("\u001B[32m9.Produce shortage report\u001B[0m");
         System.out.println("\u001B[32m10.Add new category\u001B[0m");
+        System.out.println("\u001B[32m11.Move to next day\u001B[0m");
     }
 
     public static String presentCategories(){
@@ -186,9 +187,16 @@ public class Main {
             case "10":
                 addCategory();
                 break;
+            case "11":
+                moveToNextDay();
+                break;
             case "logout":
                 break;
         }
+    }
+
+    private static void moveToNextDay() {
+        inventoryService.makeAutomaticalOrder();
     }
 
     private static void addCategory() {
@@ -211,7 +219,6 @@ public class Main {
         scanner.nextLine();
         if(action==1)
             inventoryService.setUp();
-
         while(true) {
             System.out.println("What would you like to do?");
             printOptions();

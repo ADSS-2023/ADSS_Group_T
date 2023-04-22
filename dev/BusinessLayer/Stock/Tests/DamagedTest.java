@@ -42,11 +42,9 @@ public class DamagedTest {
 
         try {
             String result = damagedService.produce_damaged_report();
-
             // Check if the returned report is not empty and contains the correct item details
             assertNotNull(result);
             assertEquals(result, "Item name : 1.5% , Item ID : 1 , Amount : 3 , Description : Damaged during transit");
-
         } catch (Exception e) {
             fail("produce_damaged_report() threw an exception: " + e.getMessage());
         }
