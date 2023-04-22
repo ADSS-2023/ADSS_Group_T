@@ -6,7 +6,9 @@ import BusinessLayer.Stock.OrderController;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
 public class OrderService {
@@ -24,5 +26,14 @@ public class OrderService {
 
         // check what is get tomorrow from getRegulatOrder()
         // add to the order X*1.2 items.
+    }
+    public String createRegularOrder(Map<Integer,Integer> items_quantity){
+        try {
+            orderController.createRegularOrder(items_quantity);
+        }
+        catch (Exception e){
+            return e.getMessage();
+        }
+        return "Order recived succesfully";
     }
 }
