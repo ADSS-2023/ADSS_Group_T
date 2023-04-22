@@ -60,13 +60,13 @@ public abstract class  SupplierBusiness {
     public void addProduct(int productNum, String productName, String manufacturer, int price, int maxAmount, LocalDateTime expiredDate) throws Exception {
         if (getProduct(productName,manufacturer) != null)
             throw new Exception("product already exists.");
-        else if(expiredDate.isBefore(LocalDateTime.now()))
+        else if(expiredDate.isBefore(LocalDate.now()))
             throw new Exception("expiry date has passed.");
         else
             products.put(productNum, new SupplierProductBusiness( supplierNum,productName,productNum, manufacturer, price, maxAmount, expiredDate));
     }
-    public void editProduct(String productName, String manufacturer, int price, int maxAmount, LocalDateTime expiredDate) throws Exception {
-        if(expiredDate.isBefore(LocalDateTime.now()))
+    public void editProduct(String productName, String manufacturer, int price, int maxAmount, LocalDate expiredDate) throws Exception {
+        if(expiredDate.isBefore(LocalDate.now()))
             throw new Exception("expiry date has passed.");
         SupplierProductBusiness sp = getProduct(productName,manufacturer);
         if (sp != null)

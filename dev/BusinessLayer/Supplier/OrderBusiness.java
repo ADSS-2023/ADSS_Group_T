@@ -14,6 +14,8 @@ public class OrderBusiness {
     private int supplierNum;
     private String contactName;
     private String contactNumber;
+    private int daysToSupplied;
+    private List<OrderProduct> products ;
 
     public int getSupplierNum() {
         return supplierNum;
@@ -22,8 +24,6 @@ public class OrderBusiness {
     public List<OrderProduct> getProducts() {
         return products;
     }
-
-    private List<OrderProduct> products ;
 
     @Override
     public String toString() {
@@ -38,10 +38,18 @@ public class OrderBusiness {
 
     }
 
+    public void setDaysToSupplied(int daysToSupplied) {
+        this.daysToSupplied = daysToSupplied;
+    }
+
+    public int getDaysToSupplied() {
+        return daysToSupplied;
+    }
+
     public OrderBusiness(int orderNum, String supplierName, LocalDateTime  orderDate,
                          String supplierAddress, String destinationAddress
             , int supplierNum, String contactName, String contactNumber,
-                         List<OrderProduct> products) {
+                         List<OrderProduct> products, int daysToSupplied) {
         this.orderNum = orderNum;
         this.supplierName = supplierName;
         this.orderDate = orderDate;
@@ -51,6 +59,7 @@ public class OrderBusiness {
         this.contactName = contactName;
         this.contactNumber = contactNumber;
         this.products = products;
+        this.daysToSupplied = daysToSupplied;
     }
 
 

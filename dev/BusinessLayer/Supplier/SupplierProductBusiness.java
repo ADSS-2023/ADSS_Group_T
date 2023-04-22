@@ -4,6 +4,7 @@ import BusinessLayer.Supplier.Discounts.PercentDiscount;
 import BusinessLayer.Supplier.Discounts.PercentDiscount;
 import BusinessLayer.Supplier.Discounts.QuantityDiscount;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
@@ -16,9 +17,9 @@ public class SupplierProductBusiness {
     private float price;
     private int maxAmount;
     private List<Discount> quantitiesAgreement;
-    private LocalDateTime expiryDate;
+    private LocalDate expiryDate;
 
-    public SupplierProductBusiness(int supplierNum, String name, int productNum, String manufacturer, float price, int maxAmount, LocalDateTime expiryDate){
+    public SupplierProductBusiness(int supplierNum, String name, int productNum, String manufacturer, float price, int maxAmount, LocalDate expiryDate){
         this.supplierNum = supplierNum;
         this.name = name;
         this.productNum = productNum;
@@ -115,7 +116,7 @@ public class SupplierProductBusiness {
         return productNum;
     }
 
-    public LocalDateTime getExpiryDate() {
+    public LocalDate getExpiryDate() {
         return expiryDate;
     }
 
@@ -131,7 +132,7 @@ public class SupplierProductBusiness {
         return supplierNum;
     }
 
-    public void editProduct(int supplierNum, String productName, String manufacturer, float price, int maxAmount, LocalDateTime expiryDate) {
+    public void editProduct(int supplierNum, String productName, String manufacturer, float price, int maxAmount, LocalDate expiryDate) {
         this.supplierNum = supplierNum;
         this.name = productName;
         this.manufacturer = manufacturer;

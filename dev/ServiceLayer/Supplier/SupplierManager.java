@@ -2,6 +2,8 @@ package ServiceLayer.Supplier;
 
 import Util.Discounts;
 import Util.PaymentTerms;
+
+import java.time.LocalDate;
 import java.util.regex.Pattern;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -334,9 +336,8 @@ public class SupplierManager {
             int price = getInteger(scannerInt,"Select the new product price:", 0, Integer.MAX_VALUE);
             int maxAmount = getInteger(scannerInt, "Select the new product max quantity in stock:", 0, Integer.MAX_VALUE);
             String date = getString(scannerString, "Select the new product expiry date:\nFirst select the date in this format:'YYYY-MM-DD");
-            String time = getString(scannerString, "Select the new expiry time(example to time format:'19:34:50.63'");
-            LocalDateTime expiredDateTime = LocalDateTime.parse(date + 'T' + time);
-            System.out.println(serviceFactory.supplierService.editProduct(supplierNum, productName, manufacturer, price, maxAmount, expiredDateTime));
+            LocalDate expiredDate = LocalDate.parse(date);//maybe to change
+            System.out.println(serviceFactory.supplierService.editProduct(supplierNum, productName, manufacturer, price, maxAmount, expiredDate));
         }
         else System.out.println(products.get(0));
     }

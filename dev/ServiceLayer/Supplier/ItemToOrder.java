@@ -1,5 +1,6 @@
 package ServiceLayer.Supplier;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class ItemToOrder {
@@ -7,11 +8,11 @@ public class ItemToOrder {
     private String manufacturer;
     private int quantity;
 
-    private LocalDateTime expiryDate;
+    private LocalDate expiryDate;
 
 
 
-    public ItemToOrder(String productName, String manufacturer, int quantity,LocalDateTime expiryDate){
+    public ItemToOrder(String productName, String manufacturer, int quantity,LocalDate expiryDate){
         this.productName = productName;
         this.manufacturer = manufacturer;
         this.quantity = quantity;
