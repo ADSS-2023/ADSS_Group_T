@@ -10,12 +10,14 @@ public class ItemToOrder {
     private String manufacturer;
     private int quantity;
     private LocalDate expiry_date;
+    private double cost_price;
 
-    public ItemToOrder(String product_name, String manufacturer, int quantity, LocalDate expiry_date) {
+    public ItemToOrder(String product_name, String manufacturer, int quantity, LocalDate expiry_date, double cost_price) {
         this.expiry_date = expiry_date;
         this.manufacturer = manufacturer;
         this.product_name = product_name;
         this.quantity = quantity;
+        this.cost_price = cost_price;
     }
 
     public String getProductName() {
@@ -40,5 +42,9 @@ public class ItemToOrder {
 
     public void setQuantity(int new_quantity) {
         this.quantity = new_quantity;
+    }
+
+    public double getCost_price() {
+        return cost_price;
     }
 }

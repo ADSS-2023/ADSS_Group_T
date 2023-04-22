@@ -1,7 +1,6 @@
 package BusinessLayer.Stock;
 
 import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,10 +10,12 @@ import java.util.Map;
 public class OrderController {
     private Inventory inventory;
     private Supplier.OrderService order_service;
+    private Map<Integer,ItemToOrder> items_to_place;
 
     public OrderController(Inventory inventory, Supplier.OrderService orderService) {
         this.inventory = inventory;
         this.order_service = orderService;
+        items_to_place = new HashMap<>();
     }
 
     /**
@@ -27,7 +28,7 @@ public class OrderController {
             Integer item_id = entry.getKey();
             Integer quantity = entry.getValue();
             list_to_order.addLast(new ItemToOrder(inventory.get_item_by_id(item_id).get_name(),
-                    inventory.get_item_by_id(item_id).manufacturer_name, quantity, null));
+                    inventory.get_item_by_id(item_id).manufacturer_name, quantity, null, -1));
         }
         //call to supplier service with list_to_order
     }
@@ -43,7 +44,7 @@ public class OrderController {
             Integer item_id = entry.getKey();
             Integer quantity = entry.getValue();
             list_to_order.addLast(new ItemToOrder(inventory.get_item_by_id(item_id).get_name(),
-                    inventory.get_item_by_id(item_id).manufacturer_name, quantity, null));
+                    inventory.get_item_by_id(item_id).manufacturer_name, quantity, null, -1));
         }
         //call to supplier service with list_to_order
     }
@@ -91,6 +92,52 @@ public class OrderController {
 
     public void editRegularOrder(int id, DayOfWeek day, int new_amount) {
         Item cur_item = inventory.get_item_by_id(id);
-        order_service.editRegularItem(new ItemToOrder(cur_item.get_name(), cur_item.manufacturer_name , new_amount , null), day.toString());
+        order_service.editRegularItem(new ItemToOrder(cur_item.get_name(), cur_item.manufacturer_name , new_amount , null, -1), day.toString());
+    }
+
+    /**
+     * receive new order that arrived to the store
+     * @param newOrder order id,item
+     */
+    public void receiveOrders(Map<Integer,ItemToOrder> newOrder){
+        for (Map.Entry<Integer, ItemToOrder> entry : newOrder.entrySet()) {
+            items_to_place.put(entry.getKey(), entry.getValue());
+        }
+    }
+
+    public void placeNewArrival(int index, String location) throws Exception {
+        int count = 1;
+            for (Map.Entry<Integer, ItemToOrder> entry : items_to_place.entrySet()
+            ) {
+                if (count == index) {
+                    Integer temp_orderId = entry.getKey();
+                    ItemToOrder itemToOrder = entry.getValue();
+                    Item i = inventory.items.get(inventory.name_to_id.get(itemToOrder.getProductName() + " " + itemToOrder.getManufacturer()));
+                    i.recive_order(temp_orderId,
+                            itemToOrder.getQuantity() / 2,
+                            itemToOrder.getQuantity() - itemToOrder.getQuantity() / 2,
+                            itemToOrder.getCost_price(),
+                            location,
+                            itemToOrder.getExpiryDate());
+                    items_to_place.remove(temp_orderId,itemToOrder);
+                    break;
+                }
+                count++;
+            }
+        }
+
+
+
+    public String presentItemsToBePlaced() {
+        String to_return = "";
+        int counter = 1;
+        for (Map.Entry<Integer,ItemToOrder> entry:items_to_place.entrySet()
+        ) {
+            Integer temp_orderId = entry.getKey();
+            ItemToOrder itemToOrder = entry.getValue();
+            to_return+=String.format("%d. Order id:%s, item:%s, manufacturer:%s\n",counter,temp_orderId,itemToOrder.getProductName(),itemToOrder.getManufacturer());
+            counter++;
+        }
+        return to_return;
     }
 }

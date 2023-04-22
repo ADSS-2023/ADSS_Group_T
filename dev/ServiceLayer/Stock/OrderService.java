@@ -2,6 +2,7 @@ package ServiceLayer.Stock;
 
 import BusinessLayer.Stock.Inventory;
 import BusinessLayer.Stock.Item;
+import BusinessLayer.Stock.ItemToOrder;
 import BusinessLayer.Stock.OrderController;
 
 import java.time.DayOfWeek;
@@ -76,5 +77,48 @@ public class OrderService {
             return e.getMessage();
         }
         return "Order received successfully";
+    }
+
+    /**
+     * receive new order that arrived to the store
+     * @param newOrder order id,item
+     */
+    public String receiveOrders(Map<Integer, ItemToOrder> newOrder){
+        try{
+            orderController.receiveOrders(newOrder);
+        }
+        catch (Exception e){
+            return e.getMessage();
+        }
+        return "Order received successfully";
+    }
+
+    /**
+     * Presents all the items that hasn't been placed yet
+     * @return
+     */
+    public String presentItemsToBePlaced(){
+        try {
+            return orderController.presentItemsToBePlaced();
+        }
+        catch (Exception e){
+            return e.getMessage();
+        }
+    }
+
+    /**
+     * place new arrival in store by index in waiting list
+     * @param index
+     * @param location
+     * @return
+     */
+    public String placeNewArrival(int index,String location){
+        try{
+            orderController.placeNewArrival(index,location);
+        }
+        catch (Exception e){
+            return e.getMessage();
+        }
+        return "Item has been placed successfully";
     }
 }
