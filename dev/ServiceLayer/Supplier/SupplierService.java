@@ -7,6 +7,7 @@ import BusinessLayer.Supplier.SupplierProductBusiness;
 import Util.Discounts;
 import Util.PaymentTerms;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -83,7 +84,7 @@ public class SupplierService {
         }
     }
 
-    public String addProduct(int supplierNum, int productNum, String productName, String manufacturer, int price, int maxAmount, LocalDateTime expiredDate){
+    public String addProduct(int supplierNum, int productNum, String productName, String manufacturer, int price, int maxAmount, LocalDate expiredDate){
         try {
             sc.getSupplier(supplierNum).addProduct(productNum, productName, manufacturer, price, maxAmount, expiredDate);
             return "Product added successfully";
@@ -93,7 +94,7 @@ public class SupplierService {
         }
     }
 
-    public String editProduct(int supplierNum, String productName, String manufacturer, int price, int maxAmount, LocalDateTime expiredDate){
+    public String editProduct(int supplierNum, String productName, String manufacturer, int price, int maxAmount, LocalDate expiredDate){
         try {
             sc.getSupplier(supplierNum).editProduct(productName, manufacturer, price, maxAmount, expiredDate);
             return "Product edited successfully";

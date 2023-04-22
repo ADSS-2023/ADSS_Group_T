@@ -2,8 +2,10 @@ package BusinessLayer.Supplier;
 
 import BusinessLayer.Supplier.Suppliers.SupplierBusiness;
 import ServiceLayer.Supplier.ItemToOrder;
+import ServiceLayer.Supplier.OrderService;
 import Util.WeekDays;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.TextStyle;
@@ -13,8 +15,8 @@ public class OrderController {
     private List<OrderBusiness> orders;
     private SupplierController sc;
     private int orderCounter;
+    private List<OrderBusiness> ordersNotSupplied;
     private HashMap<WeekDays,List<OrderBusiness>> dayToConstantOrders;
-
     private HashMap<Integer,List<OrderProduct>> shoppingLists; // supplierNumber to list of products
 
 
@@ -92,10 +94,14 @@ public class OrderController {
                product.setDiscount(discountPerProducts+product.getDiscount());
                product.setFinalPrice(product.getFinalPrice()-discountPerProducts);
            }
+           int daysToSupplied = -1;
+           if(!isRegular){
+               daysToSupplied = supplier.findEarliestSupplyDay();
+           }
 
            //create order from products in the send and send to delivery if needed
-           OrderBusiness order = new OrderBusiness(orderCounter++,supplier.getName(),LocalDateTime.now(),supplier.getAddress(),
-                   "SuperLi",supplier.getSupplierNum(),contactName,contactNum,products);
+           OrderBusiness order = new OrderBusiness(orderCounter++, supplier.getName(), LocalDateTime.now(), supplier.getAddress(),
+                   "SuperLi", supplier.getSupplierNum(), contactName, contactNum, products, daysToSupplied);
            orders.add(order);
            if (isRegular){//save Regular order
                int deliveryDay = supplier.findEarliestSupplyDay();
@@ -106,9 +112,13 @@ public class OrderController {
                    dayToConstantOrders.put(orderDay,new LinkedList<>());
                dayToConstantOrders.get(orderDay).add(order);
            }
+           else{
+               ordersNotSupplied.add(order);
+           }
        }
         shoppingLists = new HashMap<>();
     }
+
 
 
     /**
@@ -138,12 +148,27 @@ public class OrderController {
             float initialPrice = product.getPrice()* quantity;
             float discount = initialPrice - product.getPriceByQuantity(quantity);
             float finalPrice = initialPrice-discount;
-            OrderProduct orderProduct = new OrderProduct(product.getName(),productNumber,quantity,initialPrice,discount,finalPrice);
+            OrderProduct orderProduct = new OrderProduct(product.getName(), product.getManufacturer(), product.getExpiryDate(),productNumber,quantity,initialPrice,discount,finalPrice);
            //update the suppliers shopping list
             if(!shoppingLists.containsKey(supplierNum))
                 shoppingLists.put(supplierNum,new LinkedList());
             shoppingLists.get(supplierNum).add(orderProduct);
         }
+
+    public void executeOrders(){
+        List<ItemToOrder> items = new ArrayList<>();
+        List<OrderBusiness> ordersForToday = dayToConstantOrders.get(LocalDate.now().getDayOfWeek());
+        for(OrderBusiness order:ordersForToday){
+            for(OrderProduct product:order.getProducts())
+                items.add(new ItemToOrder(product.getProductName(), product.getManufacturer(), product.getQuantity(), product.getExpiredDate()));
+        }
+        for(OrderBusiness order:ordersNotSupplied){
+            for(OrderProduct product:order.getProducts())
+                items.add(new ItemToOrder(product.getProductName(), product.getManufacturer(), product.getQuantity(), product.getExpiredDate()));
+        }
+        //stockContreoller.receiveOrders(items);
+    }
+
 
 
         //TODO: add a function that executes each day regular orders - by adding them to orders list
