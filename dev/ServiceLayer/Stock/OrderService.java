@@ -29,6 +29,17 @@ public class OrderService {
     }
 
     /**
+     * This function gets an input from the user that includes id of item , day of week , new amount that
+     * required for the specific item.
+     * @param id
+     * @param day
+     * @param new_amount
+     * @return
+     */
+    public String editRegularOrder(int id ,DayOfWeek day , int new_amount){
+        orderController.editRegularOrder(id , day , new_amount);
+    }
+    /**
      * Receives a map that holds item id and amount to be ordered
      * @param items_quantity
      * @return

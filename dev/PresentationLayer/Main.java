@@ -2,6 +2,7 @@ package PresentationLayer;
 import BusinessLayer.Stock.Util.Util;
 import ServiceLayer.Stock.*;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.List;
@@ -189,9 +190,26 @@ public class Main {
             case "11":
                 moveToNextDay();
                 break;
+            case "12":
+                editRegularItemOrder();
+                break;
             case "logout":
                 break;
         }
+    }
+
+    private static void editRegularItemOrder() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Insert id of product:");
+        int id = scanner.nextInt();
+        //maybe present him the days?
+        System.out.println("Insert the day of the week (big letters only):");
+        String day = scanner.nextLine();
+        DayOfWeek cur_day = DayOfWeek.valueOf(day);
+        //maybe present him the item details from the order?
+        System.out.println("Insert the new amount of product:");
+        int amount = scanner.nextInt();
+        orderService.editRegularOrder(id , cur_day , amount);
     }
 
     private static void moveToNextDay() {

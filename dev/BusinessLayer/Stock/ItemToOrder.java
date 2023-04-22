@@ -38,4 +38,7 @@ public class ItemToOrder {
         return new ItemToOrder(this.product_name , this.manufacturer , this.quantity , this.expiry_date , this.quantity);
     }
 
+    public void setQuantity(int new_quantity) {
+        this.quantity = new_quantity;
+    }
 }
