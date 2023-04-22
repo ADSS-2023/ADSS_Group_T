@@ -104,7 +104,12 @@ public class OrderController {
             items_to_place.put(entry.getKey(), entry.getValue());
         }
     }
-
+    /**
+     * place new arrival in store by index in waiting list
+     * @param index
+     * @param location
+     * @return
+     */
     public void placeNewArrival(int index, String location) throws Exception {
         int count = 1;
             for (Map.Entry<Integer, ItemToOrder> entry : items_to_place.entrySet()
@@ -127,7 +132,10 @@ public class OrderController {
         }
 
 
-
+    /**
+     * Presents all the items that hasn't been placed yet
+     * @return
+     */
     public String presentItemsToBePlaced() {
         String to_return = "";
         int counter = 1;
