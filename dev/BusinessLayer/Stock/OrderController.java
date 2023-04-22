@@ -15,7 +15,27 @@ public class OrderController {
         this.order_service = orderService;
     }
 
+    /**
+     * This method send an order to suppliers which will be supplied each week in a permanent day.
+     * @param items_quantity a map that maps item id to the desired amount
+     */
     public void createRegularOrder(Map<Integer, Integer> items_quantity) {
+        LinkedList<ItemToOrder> list_to_order = new LinkedList<>();
+        for (Map.Entry<Integer, Integer> entry : items_quantity.entrySet()) {
+            Integer item_id = entry.getKey();
+            Integer quantity = entry.getValue();
+            list_to_order.addLast(new ItemToOrder(inventory.get_item_by_id(item_id).get_name(),
+                    inventory.get_item_by_id(item_id).manufacturer_name, quantity, null));
+        }
+        //call to supplier service with list_to_order
+    }
+
+    /**
+     * This method send an order to suppliers which will be supplied one time as a special order.
+     * @param items_quantity a map that maps item id to the desired amount.
+     * @param isUrgent boolean flag to indicate whether the order priority is arrival.
+     */
+    public void createSpecialOrder(Map<Integer, Integer> items_quantity,boolean isUrgent){
         LinkedList<ItemToOrder> list_to_order = new LinkedList<>();
         for (Map.Entry<Integer, Integer> entry : items_quantity.entrySet()) {
             Integer item_id = entry.getKey();

@@ -40,6 +40,22 @@ public class OrderService {
         catch (Exception e){
             return e.getMessage();
         }
-        return "Order recived succesfully";
+        return "Order received successfully";
+    }
+
+    /**
+     * This method send an order to suppliers which will be supplied one time as a special order.
+     * @param items_quantity a map that maps item id to the desired amount.
+     * @param isUrgent boolean flag to indicate whether the order priority is arrival.
+     * @return string that indicates whether the action succeeded
+     */
+    public String createSpecialOrder(Map<Integer,Integer> items_quantity,boolean isUrgent){
+        try{
+            orderController.createSpecialOrder(items_quantity,isUrgent);
+        }
+        catch (Exception e){
+            return e.getMessage();
+        }
+        return "Order received successfully";
     }
 }
