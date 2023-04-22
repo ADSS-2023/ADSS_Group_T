@@ -33,4 +33,9 @@ public class ItemToOrder {
     public LocalDate getExpiryDate() {
         return expiry_date;
     }
+
+    public ItemToOrder clone(){
+        return new ItemToOrder(this.product_name , this.manufacturer , this.quantity , this.expiry_date , this.quantity);
+    }
+
 }
