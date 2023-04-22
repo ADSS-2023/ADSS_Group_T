@@ -47,6 +47,8 @@ public class OrderService {
             List<String> dayNames = Arrays.asList("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday");
             if(!dayNames.contains(supplyday))
                 return false;
+
+
             oc.editRegularItem(item, supplyday);
             return true;
         }
@@ -61,6 +63,18 @@ public class OrderService {
             if (!dayNames.contains(day))
                 return null;
             return oc.getRegularOrder(day);
+        }
+        catch (Exception e){
+            return null;
+        }
+    }
+
+    public List<ItemToOrder> getSpecialOrder(String day) throws Exception {
+        try {
+            List<String> dayNames = Arrays.asList("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday");
+            if (!dayNames.contains(day))
+                return null;
+            return oc.getSpecialOrder(day);
         }
         catch (Exception e){
             return null;

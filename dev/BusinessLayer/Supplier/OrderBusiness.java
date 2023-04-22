@@ -15,6 +15,10 @@ public class OrderBusiness {
     private String contactName;
     private String contactNumber;
 
+    public int getSupplierNum() {
+        return supplierNum;
+    }
+
     public List<OrderProduct> getProducts() {
         return products;
     }

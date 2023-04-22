@@ -51,6 +51,12 @@ public abstract class  SupplierBusiness {
         return null;
     }
 
+    public SupplierProductBusiness getProduct(int productNum){
+        if(products.containsKey(productNum))
+            return products.get(productNum);
+        return null;
+    }
+
     public void addProduct(int productNum, String productName, String manufacturer, int price, int maxAmount, LocalDateTime expiredDate) throws Exception {
         if (getProduct(productName,manufacturer) != null)
             throw new Exception("product already exists.");

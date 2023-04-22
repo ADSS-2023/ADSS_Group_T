@@ -3,6 +3,7 @@ package BusinessLayer.Supplier;
 import BusinessLayer.Supplier.Suppliers.SupplierBusiness;
 import ServiceLayer.Supplier.ItemToOrder;
 import Util.WeekDays;
+import Util.WeekDaysFunc;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -145,8 +146,35 @@ public class OrderController {
             shoppingLists.get(supplierNum).add(orderProduct);
         }
 
+    public List<ItemToOrder> getSpecialOrder(String day) {
 
-        //TODO: add a function that executes each day regular orders - by adding them to orders list
+
+    }
+
+    public List<ItemToOrder> getRegularOrder(String day) throws Exception {
+        List<ItemToOrder> toReturn = new LinkedList<>();
+        if(!dayToConstantOrders.containsKey(day) || dayToConstantOrders.get(day).isEmpty())
+            return toReturn;
+        else{
+            for (OrderBusiness order:dayToConstantOrders.get(day)) {
+                for (OrderProduct product: order.getProducts()) {
+                    SupplierBusiness sp = sc.getSupplier(order.getSupplierNum());
+                    SupplierProductBusiness spProduct = sp.getProduct(product.getProductNumber());
+                    toReturn.add(new ItemToOrder(product.getProductName(), spProduct.getManufacturer(), product.getQuantity(), spProduct.getExpiryDate()));
+                }
+            }
+        }
+        return toReturn;
+    }
+
+    public void editRegularItem(ItemToOrder item, String deliveryDay) throws Exception{
+        WeekDays day = WeekDaysFunc.toDayOfWeek(deliveryDay);
+        if(day==null)
+
+
+    }
+
+    //TODO: add a function that executes each day regular orders - by adding them to orders list
 
         //TODO:: add a function that get all orders of a day of the week
 
