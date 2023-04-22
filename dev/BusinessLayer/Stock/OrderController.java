@@ -1,8 +1,10 @@
 package BusinessLayer.Stock;
 
 import java.time.DayOfWeek;
-<<<<<<< HEAD
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+
 
 public class OrderController {
     private Inventory inventory;
