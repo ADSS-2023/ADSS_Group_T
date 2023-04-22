@@ -1,5 +1,8 @@
 package BusinessLayer.Transport;
 import BusinessLayer.Transport.Driver.CoolingLevel;
+
+import java.util.ArrayList;
+
 public class Supplier extends Site{
 
     CoolingLevel coolingLevel;
@@ -11,4 +14,5 @@ public class Supplier extends Site{
     public CoolingLevel getCoolingLevel() {
         return coolingLevel;
     }
+
 }
