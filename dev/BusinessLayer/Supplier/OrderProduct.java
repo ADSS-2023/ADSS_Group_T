@@ -5,12 +5,7 @@ import java.time.LocalDate;
 public class OrderProduct {
     private String productName;
     private String manufacturer;
-
-    public LocalDate getExpiredDate() {
-        return expiredDate;
-    }
-
-    private LocalDate expiredDate;
+    private LocalDate expiryDate;
     private int productNumber;
     private int quantity;
     private float initialPrice;
@@ -21,7 +16,7 @@ public class OrderProduct {
     public OrderProduct(String productName, String manufacturer, LocalDate expiredDate, int productNumber, int quantity, float initialPrice, float discount, float finalPrice) {
         this.productName = productName;
         this.manufacturer = manufacturer;
-        this.expiredDate = expiredDate;
+        this.expiryDate = expiryDate;
         this.productNumber = productNumber;
         this.quantity = quantity;
         this.initialPrice = initialPrice;
@@ -29,8 +24,19 @@ public class OrderProduct {
         this.finalPrice = finalPrice;
     }
 
+    public LocalDate getExpiryDate() {
+        return expiryDate;
+    }
+
     public int getQuantity() {
         return quantity;
+    }
+    public String getProductName() {
+        return productName;
+    }
+
+    public int getProductNumber() {
+        return productNumber;
     }
 
     public String getManufacturer() {
@@ -41,13 +47,6 @@ public class OrderProduct {
         return finalPrice;
     }
 
-    public String getProductName() {
-        return productName;
-    }
-
-    public int getProductNumber() {
-        return productNumber;
-    }
 
     public float getInitialPrice() {
         return initialPrice;

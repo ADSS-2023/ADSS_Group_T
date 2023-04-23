@@ -160,13 +160,13 @@ public class OrderController {
         List<OrderBusiness> ordersForToday = dayToConstantOrders.get(LocalDate.now().getDayOfWeek());
         for(OrderBusiness order:ordersForToday){
             for(OrderProduct product:order.getProducts())
-                items.add(new ItemToOrder(product.getProductName(), product.getManufacturer(), product.getQuantity(), product.getExpiredDate()));
+                items.add(new ItemToOrder(product.getProductName(), product.getManufacturer(), product.getQuantity(), product.getExpiryDate()));
         }
         List<OrderBusiness> ordersToDelete =  new ArrayList<>();
         for(OrderBusiness order:ordersNotSupplied){
             if(order.getDaysToSupplied() == 0) {
                 for (OrderProduct product : order.getProducts())
-                    items.add(new ItemToOrder(product.getProductName(), product.getManufacturer(), product.getQuantity(), product.getExpiredDate()));
+                    items.add(new ItemToOrder(product.getProductName(), product.getManufacturer(), product.getQuantity(), product.getExpiryDate()));
                 orders.add(order);
                 ordersToDelete.add(order);
             }
