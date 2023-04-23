@@ -1,3 +1,4 @@
+
 package ServiceLayer.Transport;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -8,18 +9,25 @@ import java.util.LinkedHashMap;
 import BusinessLayer.Transport.*;
 import BusinessLayer.Transport.Driver.CoolingLevel;
 import BusinessLayer.Transport.Driver.LicenseType;
+import UtilSuper.EnterWeightInterface;
+
 
 
 public class TransportService {
 
     public TransportController tc;
+    private EnterWeightInterface enterWeightInterface;
     private TransportJsonConvert transportJsonConvert;
     private LinkedHashMap<Supplier, Integer> weightOfOrder;
 
     public TransportService() {
         tc = new TransportController();
+        tc.setEnterWeightInterface((String address, int deliveryID) -> enterWeightInterface.enterWeightFunction(address,deliveryID));
         transportJsonConvert = new TransportJsonConvert();
     }
+
+
+
 
     public String orderDelivery(String branchString, LinkedHashMap<String, LinkedHashMap<String, String>> suppliersString,
                                 String requiredDateString) {
@@ -39,10 +47,9 @@ public class TransportService {
         }
     }
 
-    public String addTruck(int licenseNumber, String model, int weight, int maxWeight,
-                            int licenseType, int coolingLevel) {
+    public String addTruck(int licenseNumber, String model, int weight, int maxWeight, int coolingLevel) {
         try {
-            tc.addTruck(licenseNumber, model, weight, maxWeight, licenseType, coolingLevel);
+            tc.addTruck(licenseNumber, model, weight, maxWeight, coolingLevel);
             return "good";
         } catch (Exception ex) {
             return ex.toString();
@@ -133,7 +140,7 @@ public class TransportService {
 
     public void addSupplier(String supplierAddress,String telNumber,String contactName,int coolingLevel, ArrayList<String> produces) {
 
-        // tc.addSupplier(supplierAddress,String telNumber,int coolingLevel, produces);
+        tc.addSupplier(supplierAddress,telNumber,contactName, coolingLevel, produces);
     }
 
 
@@ -147,6 +154,19 @@ public class TransportService {
 
     }
 
+    public void setEnterWeightInterface(EnterWeightInterface enterWeightInterface) {
+        this.enterWeightInterface = enterWeightInterface;
+    }
+
+    public String getAllBranches() {
+        tc.getAllBranches();
+        return "";
+    }
+
+    public String getNextDayDeatails() {
+         tc.getNextDayDeatails();
+         return "fuck";
+    }
 }
 
 

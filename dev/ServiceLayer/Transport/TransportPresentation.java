@@ -15,11 +15,23 @@ public class TransportPresentation {
 
     public TransportPresentation() {
         ts = new TransportService();
+        ts.setEnterWeightInterface((String address, int deliveryID) -> enterWeightFunction(address,deliveryID));
         ti = new TransportInit(ts);
     }
 
+    private int enterWeightFunction(String address, int deliveryID) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("------- " + deliveryID + " -------");
+        System.out.println("the truck in:" + address + "." +
+                            "\nthe folowing pruducts are loaded: " +
+                            "\n" + ts.getLoadedProducts(deliveryID, address) +
+                            "\npls enter weight:");
+        int productsWeight = scanner.nextInt();
+        return productsWeight;
+    }
+
     public void start(){
-        this.callback();
+        //this.callback();
 
         Scanner scanner = new Scanner(System.in);
         System.out.println("------ START -------");
@@ -87,7 +99,8 @@ public class TransportPresentation {
      * skip day and let user choose way of action in case of problem
      */
     void skipDay() {
-        ts.skipDay();
+        System.out.println(ts.getNextDayDeatails());
+        System.out.println( ts.skipDay() );
     }
 
 
@@ -99,8 +112,22 @@ public class TransportPresentation {
     /**
      * add New Delivery to the system
      */
-    private void addNewDelivery() {
-
+        private void addNewDelivery() {
+//        if(ts.getBranches().isEmpty()){
+//            System.out.println("no branches in the system, pls add at least one branch");
+//            mainWindow();
+//        }
+//        if(ts.getSuppliers().isEmpty()){
+//            System.out.println("no suppliers in the system, pls add at least one supplier");
+//            mainWindow();
+//        }
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Please enter the delivery details:");
+        System.out.println("Please choose branch");
+        String branches = ts.getAllBranches();
+//        LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> selectedProducts = selectProducts(scanner);
+//        LocalDate deliveryDate = chooseDeliveryDate(scanner);
+//        ts.orderDelivery(destinationSite,selectedProducts , deliveryDate,weightOfOrder);
     }
 
 
@@ -181,20 +208,23 @@ public class TransportPresentation {
 
     }
     public void enterWeight(){}
-    public void callback(){
-        ts.tc.setListener(new TransportController.Listener() {
-            public int enterWeightCallBack(String address, int id) {
+//    public void callback(){
+//        ts.tc.setListener(new TransportController.Listener() {
+//            public int enterWeightCallBack(String address, int id) {
+//
+//                Scanner scanner = new Scanner(System.in);
+//                System.out.println("the truck in:" + address + "." +
+//                            "\nthe folowing pruducts are loaded: " +
+//                            "\n" + ts.getLoadedProducts(id, address) +
+//                            "\npls enter weight:");
+//                int productsWeight = scanner.nextInt();
+//                return productsWeight;
+//            }
+//        });
+//    }
 
-                Scanner scanner = new Scanner(System.in);
-                System.out.println("the truck in:" + address + "." +
-                            "\nthe folowing pruducts are loaded: " +
-                            "\n" + ts.getLoadedProducts(id, address) +
-                            "\npls enter weight:");
-                int productsWeight = scanner.nextInt();
-                return productsWeight;
-            }
-        });
-    }
+
+
 
 }
 

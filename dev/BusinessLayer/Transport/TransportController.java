@@ -3,10 +3,12 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import BusinessLayer.Transport.Driver.LicenseType;
-import BusinessLayer.Transport.Driver.CoolingLevel;
 
-public class TransportController {
+import BusinessLayer.Transport.Driver.CoolingLevel;
+import UtilSuper.EnterWeightInterface;
+
+
+public class TransportController  {
 
     private LinkedHashMap<Integer, Truck> trucks;
     private LinkedHashMap<Integer, Delivery> deliveries;
@@ -23,7 +25,8 @@ public class TransportController {
     private int filesCounter = 0;
     private LocalDate currDate;
 
-    private Listener listener;
+   // private Listener listener;
+    private EnterWeightInterface enterWeightInterface;
 
 
     public TransportController(LinkedHashMap<Integer, Truck> trucks, LinkedHashMap<Integer, Delivery> deliveries,
@@ -252,11 +255,10 @@ public class TransportController {
      * @param coolingLevel  - the cooling level of the truck
      * @return true if the truck added successfully , and false otherwise
      */
-    public boolean addTruck(int licenseNumber, String model, int weight, int maxWeight,
-                            int licenseType, int coolingLevel) {
+    public boolean addTruck(int licenseNumber, String model, int weight, int maxWeight, int coolingLevel) {
         if (trucks.containsKey(licenseNumber))
             return false;
-        trucks.put(licenseNumber, new Truck(licenseNumber, model, weight, maxWeight, licenseType, coolingLevel));
+        trucks.put(licenseNumber, new Truck(licenseNumber, model, weight, maxWeight, coolingLevel));
         return true;
     }
 
@@ -335,11 +337,17 @@ public class TransportController {
      * @param supplierProducts - List of the products of the supplier
      * @return true if the supplier added successfully , and false otherwise
      */
-    public boolean addSupplier(Supplier supplier, ArrayList<Product> supplierProducts) {
-        if (suppliers.containsKey(supplier.getAddress()))
+    public boolean addSupplier(String supplierAddress,String telNumber,String contactName,int coolingLevel, ArrayList<String> productsOfSupplier) {
+        if (suppliers.containsKey(supplierAddress))
             return false;
+        Supplier supplier = new Supplier(supplierAddress,telNumber,contactName,coolingLevel);
+        ArrayList<Product> products = new ArrayList<Product>();
+        for (String productString : productsOfSupplier) {
+            products.add(new Product(productString));
+        }
+
         suppliers.put(supplier.getAddress(), supplier);
-        suppliersProducts.put(supplier, supplierProducts);
+        suppliersProducts.put(supplier, products);
         return true;
     }
 
@@ -515,9 +523,7 @@ public class TransportController {
         return "OK";
     }
 
-    public void setListener(Listener listener) {
-        this.listener = listener;
-    }
+
 
     public boolean loadWeight(int id, String address, int productsWeight) {
         Delivery delivery = deliveries.get(id);
@@ -533,21 +539,11 @@ public class TransportController {
 
     }
 
-    public void enterActionWheneOverWeight1(int id, String address, int action) {
-    }
-
-
-    public interface Listener {
-        int enterWeightCallBack(String address,int id);
-    }
-
-
-
 
 
     public void executeDelivery(Delivery delivery) {
         for (Supplier supplier : delivery.getSuppliers().keySet()) {
-            int productsWeight = listener.enterWeightCallBack(supplier.getAddress(),delivery.getId());
+            int productsWeight = enterWeightInterface.enterWeightFunction(supplier.getAddress(),delivery.getId());
             int currentWeight = delivery.getTruckWeight();
             int maxWeight = trucks.get(delivery.getTruckNumber()).getMaxWeight();
             if (maxWeight < currentWeight + productsWeight){
@@ -561,16 +557,21 @@ public class TransportController {
 
 
 
-
-
-
-
-
     public File getLoadedProducts (int deliveryID, String address){
         return deliveries.get(deliveryID).getSuppliers().get(suppliers.get(address));
     }
 
 
+    public void setEnterWeightInterface(EnterWeightInterface enterWeightInterface) {
+        this.enterWeightInterface = enterWeightInterface;
+    }
 
+    public Collection<Branch> getAllBranches() {
+        return branches.values();
+    }
+
+    public LocalDate getNextDayDeatails() {
+        return currDate.plusDays(1);
+    }
 }
 
