@@ -41,6 +41,10 @@ public class SupplierController {
 
     public HashMap<SupplierProductBusiness,Integer> findUrgentSuppliers(ItemToOrder item) throws Exception {
         List<SupplierBusiness> suppliersList = (List<SupplierBusiness>) suppliers.values();
+        //edit here - make the list to contain suppliers that can supply full quantity required only
+        //if those are not exists - split the order of the item between the possible suppliers
+
+
         Collections.sort(suppliersList, (sp1, sp2) -> {
             int sp1daysOfDelivery =sp1.findEarliestSupplyDay();
             float sp2daysOfDelivery =sp2.findEarliestSupplyDay();
