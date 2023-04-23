@@ -280,4 +280,13 @@ public class Inventory {
     public List<Item> getShortageList(){
         return shortage_list;
     }
+
+    /**
+     * Cast Item_to_order object to Item object
+     * @param itemToOrder
+     * @return
+     */
+    public Item itemToOrder_to_item(ItemToOrder itemToOrder){
+        return items.get(name_to_id.get( itemToOrder.getProductName()+" "+itemToOrder.getManufacturer()));
+    }
 }
