@@ -162,13 +162,15 @@ public class OrderController {
         List<OrderBusiness> ordersForToday = dayToConstantOrders.get(LocalDate.now().getDayOfWeek());
         for(OrderBusiness order:ordersForToday){
             for(OrderProduct product:order.getProducts())
-                items.add(new ItemToOrder(product.getProductName(), product.getManufacturer(), product.getQuantity(), product.getExpiryDate()));
+                items.add(new ItemToOrder(product.getProductName(), product.getManufacturer(), product.getQuantity(),
+                        product.getExpiryDate(), order.getOrderNum(), product.getFinalPrice()));
         }
         List<OrderBusiness> ordersToDelete =  new ArrayList<>();
         for(OrderBusiness order:ordersNotSupplied){
             if(order.getDaysToSupplied() == 0) {
                 for (OrderProduct product : order.getProducts())
-                    items.add(new ItemToOrder(product.getProductName(), product.getManufacturer(), product.getQuantity(), product.getExpiryDate()));
+                    items.add(new ItemToOrder(product.getProductName(), product.getManufacturer(), product.getQuantity(),
+                            product.getExpiryDate(), order.getOrderNum(), product.getFinalPrice()));
                 orders.add(order);
                 ordersToDelete.add(order);
             }
@@ -180,36 +182,85 @@ public class OrderController {
         //stockContreoller.receiveOrders(items);
     }
 
+    /**
+     *
+     * @param day requested day to get its items coming as a special order
+     * @return list of the item comes as a special order estimated to be delivered at the day comes as an input
+     * @throws Exception
+     */
+    public List<ItemToOrder> getSpecialOrder(String day) throws Exception {
+        List<ItemToOrder> itemsList = new LinkedList<>();
 
-    public List<ItemToOrder> getSpecialOrder(String day) {
-
-
-    }
-
-    public List<ItemToOrder> getRegularOrder(String day) throws Exception {
-        List<ItemToOrder> toReturn = new LinkedList<>();
-        if(!dayToConstantOrders.containsKey(day) || dayToConstantOrders.get(day).isEmpty())
-            return toReturn;
-        else{
-            for (OrderBusiness order:dayToConstantOrders.get(day)) {
-                for (OrderProduct product: order.getProducts()) {
-                    SupplierBusiness sp = sc.getSupplier(order.getSupplierNum());
-                    SupplierProductBusiness spProduct = sp.getProduct(product.getProductNumber());
-                    toReturn.add(new ItemToOrder(product.getProductName(), spProduct.getManufacturer(), product.getQuantity(), spProduct.getExpiryDate()));
+        //find the exact number of the days following the current day
+        WeekDays weekDay = WeekDaysFunc.toDayOfWeek(day);
+        if(weekDay==null)
+            throw new Exception("Entered an incorrect day");
+        LocalDate today = LocalDate.now();
+        int todayValue = today.getDayOfWeek().getValue();
+        int daysToAdd = 7;
+        String dayOfWeekStr = weekDay.name();
+        DayOfWeek dayOfWeek = DayOfWeek.valueOf(dayOfWeekStr.toUpperCase(Locale.ENGLISH));
+        int dayValue = dayOfWeek.getValue();
+        int daysToNext = (dayValue >= todayValue) ? dayValue - todayValue : 7 - (todayValue - dayValue);
+        if (daysToNext < daysToAdd) {
+            daysToAdd = daysToNext;
+        }
+        //adding to the items list all products of the order scheduled for the input day string
+        for (OrderBusiness order:ordersNotSupplied) {
+            if(order.getDaysToSupplied()==daysToAdd) {
+                for (OrderProduct product:order.getProducts()) {
+                    itemsList.add(new ItemToOrder(product.getProductName(),product.getManufacturer(),
+                            product.getQuantity(),product.getExpiryDate(),order.getOrderNum(),product.getFinalPrice()));
                 }
             }
         }
-        return toReturn;
-    }
-
-    public void editRegularItem(ItemToOrder item, String deliveryDay) throws Exception{
-        WeekDays day = WeekDaysFunc.toDayOfWeek(deliveryDay);
-        if(day==null)
-
+       return itemsList;
 
     }
 
-        //TODO: add a function that executes each day regular orders - by adding them to orders list
+    /**
+     *
+     * @param day requested day to get its items coming as a special order
+     * @return list of items comes as a weekly basis estimated to be delivered at the day comes as an input
+     * @throws Exception
+     */
+    public List<ItemToOrder> getRegularOrder(String day) throws Exception {
+        List<ItemToOrder> itemsList = new LinkedList<>();
+        WeekDays weekDay = WeekDaysFunc.toDayOfWeek(day);
+        if(weekDay==null)
+            throw new Exception("Entered an incorrect day");
+        if(!dayToConstantOrders.containsKey(day) || dayToConstantOrders.get(day).isEmpty())
+            return itemsList;
+        else{
+            for (OrderBusiness order:dayToConstantOrders.get(day)) {
+                for (OrderProduct product: order.getProducts()) {
+                    itemsList.add(new ItemToOrder(product.getProductName(), product.getManufacturer(), product.getQuantity()
+                            , product.getExpiryDate(),order.getOrderNum(),product.getFinalPrice()));
+                }
+            }
+        }
+        return itemsList;
+    }
+
+    public void editRegularItem(ItemToOrder item, String day) throws Exception{
+        WeekDays weekDay = WeekDaysFunc.toDayOfWeek(day);
+        if(weekDay==null)
+            throw new Exception("Entered an incorrect day");
+        //remove the order and make it again from scratch
+
+
+
+    }
+
+    public void removeRegularItem(ItemToOrder item, String day) throws Exception {
+        WeekDays weekDay = WeekDaysFunc.toDayOfWeek(day);
+        if(weekDay==null)
+            throw new Exception("Entered an incorrect day");
+        //remove the order of the item and order it from scratch
+
+    }
+
+    //TODO: add a function that executes each day regular orders - by adding them to orders list
 
         //TODO:: add a function that get all orders of a day of the week
 

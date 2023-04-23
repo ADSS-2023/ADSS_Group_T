@@ -14,6 +14,11 @@ public class OrderBusiness {
     private int supplierNum;
     private String contactName;
     private String contactNumber;
+
+    public int getOrderNum() {
+        return orderNum;
+    }
+
     private int daysToSupplied;
     private List<OrderProduct> products ;
 

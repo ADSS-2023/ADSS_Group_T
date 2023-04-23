@@ -3,6 +3,8 @@ package ServiceLayer.Supplier;
 import BusinessLayer.Supplier.OrderBusiness;
 import BusinessLayer.Supplier.OrderController;
 import BusinessLayer.Supplier.SupplierController;
+import Util.WeekDays;
+import Util.WeekDaysFunc;
 import org.w3c.dom.Node;
 
 import java.util.ArrayList;
@@ -42,14 +44,12 @@ public class OrderService {
         }
     }
 
-    public boolean editRegularItem(ItemToOrder item, String supplyday) throws Exception {
+    public boolean editRegularItem(ItemToOrder item, String day) throws Exception {
         try {
-            List<String> dayNames = Arrays.asList("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday");
-            if(!dayNames.contains(supplyday))
+            WeekDays weekDay = WeekDaysFunc.toDayOfWeek(day);
+            if(weekDay==null)
                 return false;
-
-
-            oc.editRegularItem(item, supplyday);
+            oc.editRegularItem(item, day);
             return true;
         }
         catch (Exception e){
@@ -59,8 +59,8 @@ public class OrderService {
 
     public List<ItemToOrder> getRegularOrder(String day) throws Exception {
         try {
-            List<String> dayNames = Arrays.asList("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday");
-            if (!dayNames.contains(day))
+            WeekDays weekDay = WeekDaysFunc.toDayOfWeek(day);
+            if(weekDay==null)
                 return null;
             return oc.getRegularOrder(day);
         }
@@ -71,8 +71,8 @@ public class OrderService {
 
     public List<ItemToOrder> getSpecialOrder(String day) throws Exception {
         try {
-            List<String> dayNames = Arrays.asList("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday");
-            if (!dayNames.contains(day))
+            WeekDays weekDay = WeekDaysFunc.toDayOfWeek(day);
+            if(weekDay==null)
                 return null;
             return oc.getSpecialOrder(day);
         }
@@ -81,11 +81,17 @@ public class OrderService {
         }
     }
 
-    public boolean removeRegularItem(ItemToOrder item, String day){
-        List<String> dayNames = Arrays.asList("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday");
-        if(!dayNames.contains(day))
+    public boolean removeRegularItem(ItemToOrder item, String day) throws Exception {
+        try {
+            WeekDays weekDay = WeekDaysFunc.toDayOfWeek(day);
+            if(weekDay==null)
+                return false;
+            oc.removeRegularItem(item, day);
+            return true;
+        }
+        catch (Exception e){
             return false;
-        return oc.removeRegularItem(item, day);
+        }
     }
 
     public List<String> getOrders(){

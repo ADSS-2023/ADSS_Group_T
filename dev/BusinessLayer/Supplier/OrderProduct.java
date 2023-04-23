@@ -13,14 +13,6 @@ public class OrderProduct {
     private float finalPrice;
 
 
-    public OrderProduct(String productName, String manufacturer, LocalDate expiredDate, int productNumber, int quantity, float initialPrice, float discount, float finalPrice) {
-    public String getProductName() {
-        return productName;
-    }
-
-    public int getProductNumber() {
-        return productNumber;
-    }
 
     public OrderProduct(String productName, int productNumber, int quantity, float initialPrice, float discount, float finalPrice) {
         this.productName = productName;
