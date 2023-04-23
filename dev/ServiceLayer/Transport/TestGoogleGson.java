@@ -2,7 +2,6 @@ package ServiceLayer.Transport;
 import BusinessLayer.Transport.Delivery;
 import BusinessLayer.Transport.Driver;
 import BusinessLayer.Transport.Truck;
-import com.google.gson.Gson;
 import BusinessLayer.Transport.Driver.CoolingLevel;
 import BusinessLayer.Transport.Driver.LicenseType;
 public class TestGoogleGson {

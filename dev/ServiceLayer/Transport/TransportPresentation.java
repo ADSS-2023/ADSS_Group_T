@@ -5,7 +5,7 @@ import java.util.LinkedHashMap;
 import BusinessLayer.Transport.*;
 import BusinessLayer.Transport.Driver.CoolingLevel;
 import BusinessLayer.Transport.Driver.LicenseType;
-import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.List;
 

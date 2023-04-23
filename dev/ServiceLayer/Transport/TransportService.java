@@ -8,7 +8,7 @@ import java.util.LinkedHashMap;
 import BusinessLayer.Transport.*;
 import BusinessLayer.Transport.Driver.CoolingLevel;
 import BusinessLayer.Transport.Driver.LicenseType;
-import com.google.gson.Gson;
+
 
 public class TransportService {
 
@@ -44,19 +44,17 @@ public class TransportService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate date = LocalDate.parse(requiredDateString, formatter);
 
-        Gson gson = new Gson();
-        LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> orderDelivery =  tc.orderDelivery(branch,suppliers,date);new LinkedHashMap<>();
-        String json = gson.toJson(orderDelivery);
-        return json;
+
+       tc.orderDelivery(branch,suppliers,date);
+        return "";
 
     }
 
 
     public String skipDay() {
         try {
-            Gson gson = new Gson();
-            String json = gson.toJson(tc.skipDay());
-            return json;
+            tc.skipDay();
+            return "";
         } catch (Exception ex) {
             return ex.toString();
         }
@@ -136,10 +134,9 @@ public class TransportService {
     }
 
     public String getAllTrucks() {
-        Gson gson = new Gson();
-        String json = gson.toJson(tc.getAllTrucks());
-        return  json;
 
+       tc.getAllTrucks();
+        return  "";
     }
 
 
