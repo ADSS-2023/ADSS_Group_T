@@ -104,7 +104,6 @@ public class OrderController {
            //create order from products in the send and send to delivery if needed
            OrderBusiness order = new OrderBusiness(orderCounter++, supplier.getName(), LocalDateTime.now(), supplier.getAddress(),
                    "SuperLi", supplier.getSupplierNum(), contactName, contactNum, products, daysToSupplied);
-           orders.add(order);
            if (isRegular){//save Regular order
                int deliveryDay = supplier.findEarliestSupplyDay();
                LocalDate today = LocalDate.now();
@@ -113,6 +112,7 @@ public class OrderController {
                if(!dayToConstantOrders.containsKey(orderDay))
                    dayToConstantOrders.put(orderDay,new LinkedList<>());
                dayToConstantOrders.get(orderDay).add(order);
+               orders.add(order);
            }
            else{
                ordersNotSupplied.add(order);
@@ -162,12 +162,21 @@ public class OrderController {
         List<OrderBusiness> ordersForToday = dayToConstantOrders.get(LocalDate.now().getDayOfWeek());
         for(OrderBusiness order:ordersForToday){
             for(OrderProduct product:order.getProducts())
-                items.add(new ItemToOrder(product.getProductName(), product.getManufacturer(), product.getQuantity(), product.getExpiredDate()));
+                items.add(new ItemToOrder(product.getProductName(), product.getManufacturer(), product.getQuantity(), product.getExpiryDate()));
         }
+        List<OrderBusiness> ordersToDelete =  new ArrayList<>();
         for(OrderBusiness order:ordersNotSupplied){
-            for(OrderProduct product:order.getProducts())
-                items.add(new ItemToOrder(product.getProductName(), product.getManufacturer(), product.getQuantity(), product.getExpiredDate()));
-        }
+            if(order.getDaysToSupplied() == 0) {
+                for (OrderProduct product : order.getProducts())
+                    items.add(new ItemToOrder(product.getProductName(), product.getManufacturer(), product.getQuantity(), product.getExpiryDate()));
+                orders.add(order);
+                ordersToDelete.add(order);
+            }
+            else
+                order.setDaysToSupplied(order.getDaysToSupplied() - 1);
+            }
+        for(OrderBusiness order:ordersToDelete)
+            ordersNotSupplied.remove(order);
         //stockContreoller.receiveOrders(items);
     }
 
