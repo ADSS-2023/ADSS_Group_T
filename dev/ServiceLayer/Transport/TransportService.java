@@ -23,29 +23,8 @@ public class TransportService {
 
     public String orderDelivery(String branchString, LinkedHashMap<String, LinkedHashMap<String, String>> suppliersString,
                                 String requiredDateString) {
-        Branch branch = tc.getBranch(branchString);
 
-        LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> suppliers = new LinkedHashMap<>();
-        for (String supplierName : suppliersString.keySet()) {
-            Supplier supplier = tc.getSupplier(supplierName);
-            if (supplier != null) {
-                LinkedHashMap<String, String> productsString = suppliersString.get(supplierName);
-                LinkedHashMap<Product, Integer> products = new LinkedHashMap<>();
-                for (String productID : productsString.keySet()) {
-                    String quantityString = productsString.get(productID);
-                    if (quantityString != null) {
-                        int quantity = Integer.parseInt(quantityString);
-                        products.put(tc.getProduct(productID,supplierName), quantity);
-                    }
-                }
-                suppliers.put(supplier, products);
-            }
-        }
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate date = LocalDate.parse(requiredDateString, formatter);
-
-
-       tc.orderDelivery(branch,suppliers,date);
+        tc.orderDelivery(branchString,suppliersString,requiredDateString);
         return "";
 
     }
@@ -61,7 +40,7 @@ public class TransportService {
     }
 
     public String addTruck(int licenseNumber, String model, int weight, int maxWeight,
-                           LicenseType licenseType, CoolingLevel coolingLevel) {
+                            int licenseType, int coolingLevel) {
         try {
             tc.addTruck(licenseNumber, model, weight, maxWeight, licenseType, coolingLevel);
             return "good";
@@ -79,7 +58,7 @@ public class TransportService {
         }
     }
 
-    public String addDriver(int id, String name, LicenseType licenseType, CoolingLevel coolingLevel) {
+    public String addDriver(int id, String name, int licenseType, int coolingLevel) {
         try {
             tc.addDriver(id, name, licenseType, coolingLevel);
             return "good";
@@ -152,8 +131,9 @@ public class TransportService {
         return "D";
     }
 
-    public void addSupplier(Supplier supplier, ArrayList<Product> produces) {
-        tc.addSupplier(supplier, produces);
+    public void addSupplier(String supplierAddress,String telNumber,String contactName,int coolingLevel, ArrayList<String> produces) {
+
+        // tc.addSupplier(supplierAddress,String telNumber,int coolingLevel, produces);
     }
 
 

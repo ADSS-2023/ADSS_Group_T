@@ -1,6 +1,7 @@
 package BusinessLayer.Transport;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import BusinessLayer.Transport.Driver.LicenseType;
 import BusinessLayer.Transport.Driver.CoolingLevel;
@@ -59,12 +60,38 @@ public class TransportController {
     /**
      * handle the request for a new delivery
      *
-     * @param branch       - the branch to deliver the products to
-     * @param suppliers    - the products ordered from each supplier
-     * @param requiredDate - required date for delivery
+     //* @param branch       - the branch to deliver the products to
+     //* @param suppliers    - the products ordered from each supplier
+     //* @param requiredDate - required date for delivery
      * @return map of the suppliers products that have not been schedule for delivery due to lack of drivers/trucks in that date
      */
-    public LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> orderDelivery(Branch branch, LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> suppliers, LocalDate requiredDate) {
+    public LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> orderDelivery(String branchString, LinkedHashMap<String, LinkedHashMap<String, String>> suppliersString,
+                                                                                  String requiredDateString) {
+
+        Branch branch = this.branches.get(branchString);
+        LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> suppliers = new LinkedHashMap<>();
+        for (String supplierAddress : suppliersString.keySet()) {
+            Supplier supplier = this.suppliers.get(supplierAddress);
+            if (supplier != null) {
+                LinkedHashMap<String, String> productsString = suppliersString.get(supplierAddress);
+                LinkedHashMap<Product, Integer> products = new LinkedHashMap<>();
+                for (String productID : productsString.keySet()) {
+                    String quantityString = productsString.get(productID);
+                    if (quantityString != null) {
+                        int quantity = Integer.parseInt(quantityString);
+                        products.put(getProduct(productID,supplierAddress),quantity);
+                    }
+                }
+                suppliers.put(supplier, products);
+            }
+        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate requiredDate = LocalDate.parse(requiredDateString, formatter);
+
+
+
+
+
         if (date2deliveries.containsKey(requiredDate)) {          //there is delivery in this date
             for (Delivery d : date2deliveries.get(requiredDate)) {     //the delivery is to the required date
                 if (branch.getShippingArea().equals(d.getShippingArea())) {        //the delivery is to the required branch
@@ -226,7 +253,7 @@ public class TransportController {
      * @return true if the truck added successfully , and false otherwise
      */
     public boolean addTruck(int licenseNumber, String model, int weight, int maxWeight,
-                            LicenseType licenseType, CoolingLevel coolingLevel) {
+                            int licenseType, int coolingLevel) {
         if (trucks.containsKey(licenseNumber))
             return false;
         trucks.put(licenseNumber, new Truck(licenseNumber, model, weight, maxWeight, licenseType, coolingLevel));
@@ -255,7 +282,7 @@ public class TransportController {
      * @param coolingLevel - the cooling level to which the driver is qualified
      * @return true if the driver added successfully , and false otherwise
      */
-    public boolean addDriver(int id, String name, LicenseType licenseType, CoolingLevel coolingLevel) {
+    public boolean addDriver(int id, String name, int licenseType, int coolingLevel) {
         if (drivers.containsKey(id))
             return false;
         drivers.put(id, new Driver(id, name, licenseType, coolingLevel));
@@ -511,14 +538,33 @@ public class TransportController {
 
 
     public interface Listener {
-        void enterWeight(String address,int id);
+        int enterWeightCallBack(String address,int id);
     }
+
+
+
+
 
     public void executeDelivery(Delivery delivery) {
         for (Supplier supplier : delivery.getSuppliers().keySet()) {
-            listener.enterWeight(supplier.getAddress(),delivery.getId());
+            int productsWeight = listener.enterWeightCallBack(supplier.getAddress(),delivery.getId());
+            int currentWeight = delivery.getTruckWeight();
+            int maxWeight = trucks.get(delivery.getTruckNumber()).getMaxWeight();
+            if (maxWeight < currentWeight + productsWeight){
+                //over weight
+            }
+            else {
+                //ok
+            }
         }
     }
+
+
+
+
+
+
+
 
     public File getLoadedProducts (int deliveryID, String address){
         return deliveries.get(deliveryID).getSuppliers().get(suppliers.get(address));

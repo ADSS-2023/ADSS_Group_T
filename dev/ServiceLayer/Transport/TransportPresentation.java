@@ -180,44 +180,43 @@ public class TransportPresentation {
     public void addNewBranch() {
 
     }
+    public void enterWeight(){}
     public void callback(){
         ts.tc.setListener(new TransportController.Listener() {
-            public void enterWeight(String address,int id) {
+            public int enterWeightCallBack(String address, int id) {
 
                 Scanner scanner = new Scanner(System.in);
-                System.out.println("\n------------------------------------------------------");
-                System.out.println("\n"  + ts.getDeliveryDetail(id));
-                System.out.println("the truck in:" + address +"." +
-                                    "\nthe folowing pruducts are loaded: " +
-                                    "\n" + ts.getLoadedProducts(id,address)+
-                                    "\npls enter weight:");
-
-                int weight = scanner.nextInt();
-                String result =  ts.loadWeight(id,address,weight);
-                if (result.equals("false")) {
-                    System.out.println("Delivery " + id + " has problems. Please choose a solution:");
-                    System.out.println("1. Switch/replace destination");
-                    System.out.println("2. Change truck");
-                    System.out.println("3. Remove products");
-                    int choice = scanner.nextInt();
-                    switch (choice) {
-                        case 1:
-                            ts.overWeightAction(id, 1,address,weight);
-                            break;
-                        case 2:
-                            ts.overWeightAction(id, 2,address,weight);
-                            break;
-                        case 3:
-                            ts.overWeightAction(id, 3,address,weight);
-                            break;
-                        default:
-                            System.out.println("Invalid choice.");
-                            break;
-                    }
-                }
+                System.out.println("the truck in:" + address + "." +
+                            "\nthe folowing pruducts are loaded: " +
+                            "\n" + ts.getLoadedProducts(id, address) +
+                            "\npls enter weight:");
+                int productsWeight = scanner.nextInt();
+                return productsWeight;
             }
-
         });
     }
 
 }
+
+//                String result =  ts.loadWeight(id,address,weight);
+//                if (result.equals("false")) {
+//                    System.out.println("Delivery " + id + " has problems. Please choose a solution:");
+//                    System.out.println("1. Switch/replace destination");
+//                    System.out.println("2. Change truck");
+//                    System.out.println("3. Remove products");
+//                    int choice = scanner.nextInt();
+//                    switch (choice) {
+//                        case 1:
+//                            ts.overWeightAction(id, 1,address,weight);
+//                            break;
+//                        case 2:
+//                            ts.overWeightAction(id, 2,address,weight);
+//                            break;
+//                        case 3:
+//                            ts.overWeightAction(id, 3,address,weight);
+//                            break;
+//                        default:
+//                            System.out.println("Invalid choice.");
+//                            break;
+//                    }
+//                }
