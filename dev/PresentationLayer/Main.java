@@ -3,11 +3,7 @@ import BusinessLayer.Stock.Util.Util;
 import ServiceLayer.Stock.*;
 
 import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
-import java.util.List;
 
-import java.awt.*;
 import java.util.LinkedList;
 import java.util.Scanner;
 import java.util.function.Supplier;
@@ -191,11 +187,48 @@ public class Main {
                 moveToNextDay();
                 break;
             case "12":
+                edit_create_orders();
+                break;
+            case "21":
                 editRegularItemOrder();
+                break;
+            case "22":
+                create_regular_order();
+                break;
+            case "23":
+                create_special_order();
                 break;
             case "logout":
                 break;
         }
+    }
+
+    private static void create_special_order() {
+        boolean isActive = true;
+        Map<Integer,Integer>
+        while (isActive){
+
+        }
+        orderService.createSpecialOrder()
+    }
+
+    private static void create_regular_order() {
+    }
+
+    private static void edit_create_orders() {
+        Scanner scanner = new Scanner(System.in);
+        printOrderOptions();
+        System.out.println("What would you like to do?");
+        String choice = scanner.nextLine();
+        act("2"+choice);
+        System.out.println("\n");
+
+    }
+
+    private static void printOrderOptions() {
+        System.out.println("\u001B[32m1.Edit regular order\u001B[0m");
+        System.out.println("\u001B[32m2.Create regular order\u001B[0m");
+        System.out.println("\u001B[32m3.Create special order\u001B[0m");
     }
 
     private static void editRegularItemOrder() {
