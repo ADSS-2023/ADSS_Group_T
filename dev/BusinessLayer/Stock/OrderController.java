@@ -28,7 +28,7 @@ public class OrderController {
             Integer item_id = entry.getKey();
             Integer quantity = entry.getValue();
             list_to_order.addLast(new ItemToOrder(inventory.get_item_by_id(item_id).get_name(),
-                    inventory.get_item_by_id(item_id).manufacturer_name, quantity, null, -1));
+                    inventory.get_item_by_id(item_id).manufacturer_name, quantity, null, -1,-1));
         }
         //call to supplier service with list_to_order
     }
@@ -44,7 +44,7 @@ public class OrderController {
             Integer item_id = entry.getKey();
             Integer quantity = entry.getValue();
             list_to_order.addLast(new ItemToOrder(inventory.get_item_by_id(item_id).get_name(),
-                    inventory.get_item_by_id(item_id).manufacturer_name, quantity, null, -1));
+                    inventory.get_item_by_id(item_id).manufacturer_name, quantity, null, -1,-1));
         }
         //call to supplier service with list_to_order
     }
@@ -92,7 +92,7 @@ public class OrderController {
 
     public void editRegularOrder(int id, DayOfWeek day, int new_amount) {
         Item cur_item = inventory.get_item_by_id(id);
-        order_service.editRegularItem(new ItemToOrder(cur_item.get_name(), cur_item.manufacturer_name , new_amount , null, -1), day.toString());
+        order_service.editRegularItem(new ItemToOrder(cur_item.get_name(), cur_item.manufacturer_name , new_amount , null, -1,-1), day.toString());
     }
 
     /**
@@ -134,7 +134,8 @@ public class OrderController {
 
     /**
      * Presents all the items that hasn't been placed yet
-     * @return
+     *
+     *  @return
      */
     public String presentItemsToBePlaced() {
         String to_return = "";
