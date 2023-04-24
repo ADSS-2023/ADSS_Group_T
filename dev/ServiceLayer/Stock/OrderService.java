@@ -73,10 +73,10 @@ public class OrderService {
     }
 
     /**
-     * receive new order that arrived to the store
-     * @param newOrder order id,item
+     * Receive new order that arrived to the store
+     * @param newOrder all the new arrivals
      */
-    public String receiveOrders(Map<Integer, ItemToOrder> newOrder){
+    public String receiveOrders(List<ItemToOrder> newOrder){
         try{
             orderController.receiveOrders(newOrder);
         }

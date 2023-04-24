@@ -3,11 +3,8 @@ import BusinessLayer.Stock.Util.Util;
 import ServiceLayer.Stock.*;
 
 import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
-import java.util.List;
 
-import java.awt.*;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Scanner;
 import java.util.function.Supplier;
@@ -30,7 +27,8 @@ public class Main {
         System.out.println("\u001B[32m8.Receive a new order (receive new supply of exists item)\u001B[0m");
         System.out.println("\u001B[32m9.Produce shortage report\u001B[0m");
         System.out.println("\u001B[32m10.Add new category\u001B[0m");
-        System.out.println("\u001B[32m11.Move to next day\u001B[0m");
+        System.out.println("\u001B[32m11.Skip day\u001B[0m");
+        System.out.println("\u001B[32m12.Orders menu\u001B[0m");
     }
 
     public static String presentCategories(){
@@ -191,11 +189,94 @@ public class Main {
                 moveToNextDay();
                 break;
             case "12":
+                edit_create_orders();
+                break;
+            case "21":
                 editRegularItemOrder();
+                break;
+            case "22":
+                create_regular_order();
+                break;
+            case "23":
+                create_special_order();
+                break;
+            case "24":
+                place_waiting_items();
                 break;
             case "logout":
                 break;
         }
+    }
+
+    private static void place_waiting_items() {
+        boolean isActive = true;
+        while (isActive) {
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Choose item to be placed:");
+            System.out.println(orderService.presentItemsToBePlaced());
+            int choise = scanner.nextInt();
+            System.out.println("Where to place the item? ile:'ile number' shelf:'shelf number'");
+            String location = scanner.nextLine();
+            orderService.placeNewArrival(choise,location);
+            System.out.println("Would you like to place another item?\n1.yes 2.no");
+            choise = scanner.nextInt();
+            isActive = choise==1;
+        }
+
+    }
+
+    private static void create_special_order() {
+        Scanner scanner = new Scanner(System.in);
+        boolean isActive = true;
+        HashMap<Integer,Integer> products = new HashMap<>();
+        while (isActive){
+            System.out.println("Insert item id");
+            int id = scanner.nextInt();
+            System.out.println("Insert amount desired");
+            int amount = scanner.nextInt();
+            System.out.println("1.Add more products , 2.Finish order");
+            int choice = scanner.nextInt();
+            products.put(id,amount);
+            isActive = choice==1;
+        }
+        System.out.println("Do you want to mark this order as urgent?\n1.yes 2.no");
+        int choice = scanner.nextInt();
+        boolean isUrgent = choice == 1;
+        orderService.createSpecialOrder(products,isUrgent);
+    }
+
+    private static void create_regular_order() {
+        Scanner scanner = new Scanner(System.in);
+        boolean isActive = true;
+        HashMap<Integer,Integer> products = new HashMap<>();
+        while (isActive){
+            System.out.println("Insert item id");
+            int id = scanner.nextInt();
+            System.out.println("Insert amount desired");
+            int amount = scanner.nextInt();
+            System.out.println("1.Add more products , 2.Finish order");
+            int choice = scanner.nextInt();
+            products.put(id,amount);
+            isActive = choice==1;
+        }
+        orderService.createRegularOrder(products);
+    }
+
+    private static void edit_create_orders() {
+        Scanner scanner = new Scanner(System.in);
+        printOrderOptions();
+        System.out.println("What would you like to do?");
+        String choice = scanner.nextLine();
+        act("2"+choice);
+        System.out.println("\n");
+
+    }
+
+    private static void printOrderOptions() {
+        System.out.println("\u001B[32m1.Edit regular order\u001B[0m");
+        System.out.println("\u001B[32m2.Create regular order\u001B[0m");
+        System.out.println("\u001B[32m3.Create special order\u001B[0m");
+        System.out.println("\u001B[32m4.Place waiting items\u001B[0m");
     }
 
     private static void editRegularItemOrder() {

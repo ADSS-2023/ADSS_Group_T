@@ -49,4 +49,8 @@ public class ItemToOrder {
     public double getCost_price() {
         return costPrice;
     }
+
+    public int getOrderId() {
+        return orderId;
+    }
 }

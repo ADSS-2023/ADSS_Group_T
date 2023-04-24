@@ -10,12 +10,12 @@ import java.util.Map;
 public class OrderController {
     private Inventory inventory;
     private Supplier.OrderService order_service;
-    private Map<Integer,ItemToOrder> items_to_place;
+    private List<ItemToOrder> items_to_place;
 
     public OrderController(Inventory inventory, Supplier.OrderService orderService) {
         this.inventory = inventory;
         this.order_service = orderService;
-        items_to_place = new HashMap<>();
+        items_to_place = new LinkedList<>();
     }
 
     /**
@@ -101,10 +101,8 @@ public class OrderController {
      * receive new order that arrived to the store
      * @param newOrder order id,item
      */
-    public void receiveOrders(Map<Integer,ItemToOrder> newOrder){
-        for (Map.Entry<Integer, ItemToOrder> entry : newOrder.entrySet()) {
-            items_to_place.put(entry.getKey(), entry.getValue());
-        }
+    public void receiveOrders(List<ItemToOrder> newOrder){
+        newOrder.stream().map((x)->items_to_place.add(x));
     }
     /**
      * place new arrival in store by index in waiting list
@@ -113,25 +111,18 @@ public class OrderController {
      * @return
      */
     public void placeNewArrival(int index, String location) throws Exception {
-        int count = 1;
-            for (Map.Entry<Integer, ItemToOrder> entry : items_to_place.entrySet()
-            ) {
-                if (count == index) {
-                    Integer temp_orderId = entry.getKey();
-                    ItemToOrder itemToOrder = entry.getValue();
-                    Item i = inventory.items.get(inventory.name_to_id.get(itemToOrder.getProductName() + " " + itemToOrder.getManufacturer()));
-                    i.recive_order(temp_orderId,
-                            itemToOrder.getQuantity() / 2,
-                            itemToOrder.getQuantity() - itemToOrder.getQuantity() / 2,
-                            itemToOrder.getCost_price(),
-                            location,
-                            itemToOrder.getExpiryDate());
-                    items_to_place.remove(temp_orderId,itemToOrder);
-                    break;
-                }
-                count++;
-            }
-        }
+        if(index > items_to_place.size())
+            throw new Exception("Illegal index");
+        ItemToOrder tempItem = items_to_place.get(index-1);
+        inventory.itemToOrder_to_item(tempItem).recive_order(
+                tempItem.getOrderId(),
+                (int)Math.floor(tempItem.getQuantity()/2),
+                (int)Math.ceil(tempItem.getQuantity()/2),
+                tempItem.getCost_price(),
+                location,
+                tempItem.getExpiryDate());
+        items_to_place.remove(index-1);
+    }
 
 
     /**
@@ -139,17 +130,15 @@ public class OrderController {
      *
      *  @return
      */
-    public String presentItemsToBePlaced() {
-        String to_return = "";
-        int counter = 1;
-        for (Map.Entry<Integer,ItemToOrder> entry:items_to_place.entrySet()
-        ) {
-            Integer temp_orderId = entry.getKey();
-            ItemToOrder itemToOrder = entry.getValue();
-            to_return+=String.format("%d. Order id:%s, item:%s, manufacturer:%s\n",counter,temp_orderId,itemToOrder.getProductName(),itemToOrder.getManufacturer());
-            counter++;
+    public String presentItemsToBePlaced() throws Exception {
+        String toReturn = "";
+        if (items_to_place.isEmpty())
+            throw new Exception("No items to be placed");
+        for(int i = 1; i<= items_to_place.size();i++){
+            ItemToOrder item = items_to_place.get(i-1);
+            toReturn+=String.format("%d. Order id:%s, item:%s, manufacturer:%s\n",4,item.getOrderId(),item.getProductName(),item.getManufacturer());
         }
-        return to_return;
+        return toReturn;
     }
 
     public void nextDay(DayOfWeek tomorrow_day) {

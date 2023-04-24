@@ -283,6 +283,15 @@ public class Inventory {
     }
 
     /**
+     * Cast Item_to_order object to Item object
+     * @param itemToOrder
+     * @return
+     */
+    public Item itemToOrder_to_item(ItemToOrder itemToOrder){
+        return items.get(name_to_id.get( itemToOrder.getProductName()+" "+itemToOrder.getManufacturer()));
+    }
+
+    /**
      * This function makes the things that need to be done automatically at the next day.
      * @param tomorrow_day
      */
