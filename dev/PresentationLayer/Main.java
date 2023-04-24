@@ -14,7 +14,7 @@ public class Main {
     public static CategoryService categoryService = new CategoryService(inventoryService.get_inventory());
     public static DamagedService damagedService = new DamagedService(inventoryService.get_inventory());
     public static ItemService itemService = new ItemService(inventoryService.get_inventory());
-    public static OrderService orderService = new OrderService(inventoryService.get_inventory() , new Supplier.OrderService);
+    public static OrderService orderService = new OrderService(inventoryService.get_inventory(), new Supplier.OrderService);
 
     public static void printOptions(){
         System.out.println("\u001B[32m1.See categories\u001B[0m");
@@ -214,9 +214,10 @@ public class Main {
             System.out.println("Choose item to be placed:");
             System.out.println(orderService.presentItemsToBePlaced());
             int choise = scanner.nextInt();
+            scanner.nextLine();
             System.out.println("Where to place the item? ile:'ile number' shelf:'shelf number'");
             String location = scanner.nextLine();
-            orderService.placeNewArrival(choise,location);
+            System.out.println(orderService.placeNewArrival(choise,location));
             System.out.println("Would you like to place another item?\n1.yes 2.no");
             choise = scanner.nextInt();
             isActive = choise==1;
@@ -316,8 +317,10 @@ public class Main {
 
         int action = scanner.nextInt();
         scanner.nextLine();
-        if(action==1)
+        if(action==1) {
             inventoryService.setUp();
+            orderService.set_up();
+        }
         while(true) {
             System.out.println("What would you like to do?");
             printOptions();

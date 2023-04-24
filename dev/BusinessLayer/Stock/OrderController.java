@@ -1,10 +1,9 @@
 package BusinessLayer.Stock;
 
+import BusinessLayer.Stock.Util.Util;
+
 import java.time.DayOfWeek;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 public class OrderController {
@@ -106,7 +105,7 @@ public class OrderController {
      * @param newOrder order id,item
      */
     public void receiveOrders(List<ItemToOrder> newOrder){
-        newOrder.stream().map((x)->items_to_place.add(x));
+        items_to_place.addAll(newOrder);
     }
     /**
      * place new arrival in store by index in waiting list
@@ -140,7 +139,7 @@ public class OrderController {
             throw new Exception("No items to be placed");
         for(int i = 1; i<= items_to_place.size();i++){
             ItemToOrder item = items_to_place.get(i-1);
-            toReturn+=String.format("%d. Order id:%s, item:%s, manufacturer:%s\n",4,item.getOrderId(),item.getProductName(),item.getManufacturer());
+            toReturn+=String.format("%d. Order id:%s, item:%s, manufacturer:%s, amount:%d\n",i,item.getOrderId(),item.getProductName(),item.getManufacturer(),item.getQuantity());
         }
         return toReturn;
     }
@@ -160,5 +159,14 @@ public class OrderController {
                     inventory.name_to_id.get(item.getProductName()+" "+item.getManufacturer()),item.getProductName());
         }
         return toReturn;
+    }
+
+    /**
+     * Set up function to test place items functionality
+     */
+    public void set_up_waiting_items(){
+        ItemToOrder milk_3 = new ItemToOrder("3% milk","IDO LTD",40, Util.stringToDate("2023-05-10"),1.2,111);
+        ItemToOrder beef_sausage = new ItemToOrder("Beef Sausage","Zogloveck",15,Util.stringToDate("2023-10-01"),10.05,333);
+        receiveOrders(Arrays.asList(milk_3,beef_sausage));
     }
 }
