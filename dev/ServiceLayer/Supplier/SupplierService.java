@@ -1,6 +1,8 @@
 package ServiceLayer.Supplier;
 
 import BusinessLayer.Supplier.Discounts.Discount;
+import BusinessLayer.Supplier.OrderController;
+import BusinessLayer.Supplier.Suppliers.ConstantSupplier;
 import BusinessLayer.Supplier.Suppliers.SupplierBusiness;
 import BusinessLayer.Supplier.SupplierController;
 import BusinessLayer.Supplier.SupplierProductBusiness;
@@ -13,6 +15,7 @@ import java.util.*;
 
 public class SupplierService {
     private SupplierController sc;
+    private OrderController oc;
 
     public SupplierService(SupplierController sc){
         this.sc = sc;
@@ -97,6 +100,10 @@ public class SupplierService {
     public String editProduct(int supplierNum, String productName, String manufacturer, int price, int maxAmount, LocalDate expiredDate){
         try {
             sc.getSupplier(supplierNum).editProduct(productName, manufacturer, price, maxAmount, expiredDate);
+            if(sc.getSupplier(supplierNum) instanceof ConstantSupplier){
+                SupplierProductBusiness sProduct = sc.getSupplier(supplierNum).getProduct(productNum);
+                oc.editRegularItem(sProduct.getName(), sProduct.getManufacturer(), supplierNum, ((ConstantSupplier) sc.getSupplier(supplierNum)).getConstDeliveryDays());
+            }
             return "Product edited successfully";
         }
         catch (Exception e){
@@ -107,6 +114,11 @@ public class SupplierService {
     public String deleteProduct(int supplierNum, int productNum){
         try {
             sc.getSupplier(supplierNum).deleteProduct(productNum);
+            if(sc.getSupplier(supplierNum) instanceof ConstantSupplier){
+                SupplierProductBusiness sProduct = sc.getSupplier(supplierNum).getProduct(productNum);
+                oc.removeRegularItem(sProduct.getName(), sProduct.getManufacturer(), supplierNum, ((ConstantSupplier) sc.getSupplier(supplierNum)).getConstDeliveryDays());
+            }
+            LocalDate.now().getDayOfWeek()
             return "Product deleted successfully";
         }
         catch (Exception e){
