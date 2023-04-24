@@ -17,10 +17,10 @@ public class Main {
             conn = DriverManager.getConnection(url);
             System.out.println("--------");
             // Use the connection here
-            PersonDto person = new PersonDto("person", "shlomi", 26);
-            DogDto dogDto = new DogDto("dogs","lassi","coli",5);
-            DAO.insert(conn, person);
-            DAO.insert(conn,dogDto);
+            PersonDto person = new PersonDto("person", "ido", 26);
+            DogDto dogDto = new DogDto("dogs","shesek","amstaf",5);
+
+            DAO.delete(conn,dogDto);
         }
         catch (SQLException e){
             System.out.println("ERROR: "+e.getMessage());
