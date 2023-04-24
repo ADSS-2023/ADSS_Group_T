@@ -32,13 +32,12 @@ public class TransportInit {
         ts.addTruck(2005, "Truck5", 20000, 30000, 1);
 
         //---------- init branches ----------//
-        ts.addBranch(gson.toJson( new BranchModel("branch1", "000000001", "Contact B1", "Area 1")));
-//        ts.addBranch( new BranchModel("branch2", "000000002", "Contact B2", "Area 1"));
-//        ts.addBranch( new BranchModel("branch3", "000000003", "Contact B3", "Area 2"));
-//        ts.addBranch( new BranchModel("branch4", "000000004", "Contact B4", "Area 2"));
-//        ts.addBranch( new BranchModel("branch5", "000000005", "Contact B5", "Area 3"));
-//        ts.addBranch( new BranchModel("branch6", "000000006", "Contact B6", "Area 3"));
-
+        ts.addBranch("branch1", "000000001", "Contact B1", 1,2);
+        ts.addBranch("branch2", "000000002", "Contact B2", -3,5);
+        ts.addBranch("branch3", "000000003", "Contact B3", 1,-5);
+        ts.addBranch("branch4", "000000004", "Contact B4", -3,8);
+        ts.addBranch("branch5", "000000005", "Contact B5", 0,3);
+        ts.addBranch("branch6", "000000006", "Contact B6", 0,-10);
 
         //---------- Add product lists to suppliers map ----------//
 
@@ -48,14 +47,14 @@ public class TransportInit {
         productList1.add("bananas");
         productList1.add("grapes");
         productList1.add("pears");
-        ts.addSupplier("fruit paradise", "0501", "some name", 1, productList1);
+        ts.addSupplier("fruit paradise", "0501", "some name", 1, productList1,3,5);
 
 // Supplier 2
         ArrayList<String> productList2 = new ArrayList<>();
         productList2.add("carrots");
         productList2.add("broccoli");
         productList2.add("celery");
-        ts.addSupplier("veggie kingdom", "0502", "some name", 1, productList2);
+        ts.addSupplier("veggie kingdom", "0502", "some name", 1, productList2,-7,5);
 
 // Supplier 3
         ArrayList<String> productList3 = new ArrayList<>();
@@ -63,14 +62,14 @@ public class TransportInit {
         productList3.add("salmon");
         productList3.add("tilapia");
         productList3.add("shrimp");
-        ts.addSupplier("seafood palace", "0503", "some name", 2, productList3);
+        ts.addSupplier("seafood palace", "0503", "some name", 2, productList3,8,4);
 
 // Supplier 4
         ArrayList<String> productList4 = new ArrayList<>();
         productList4.add("milk");
         productList4.add("yogurt");
         productList4.add("cheese");
-        ts.addSupplier("dairy delight", "0504", "some name", 2, productList4);
+        ts.addSupplier("dairy delight", "0504", "some name", 2, productList4,8,-1);
 
 // Supplier 5
         ArrayList<String> productList5 = new ArrayList<>();
@@ -78,14 +77,14 @@ public class TransportInit {
         productList5.add("bagels");
         productList5.add("croissants");
         productList5.add("muffins");
-        ts.addSupplier("bakery bliss", "0505", "some name", 1, productList5);
+        ts.addSupplier("bakery bliss", "0505", "some name", 1, productList5,3,0);
 
 // Supplier 6
         ArrayList<String> productList6 = new ArrayList<>();
         productList6.add("chocolate");
         productList6.add("candy");
         productList6.add("gum");
-        ts.addSupplier("sweet treats", "0506", "some name", 1, productList6);
+        ts.addSupplier("sweet treats", "0506", "some name", 1, productList6,-9,-9);
 
 // Supplier 7
         ArrayList<String> productList7 = new ArrayList<>();
@@ -93,19 +92,19 @@ public class TransportInit {
         productList7.add("rice");
         productList7.add("quinoa");
         productList7.add("couscous");
-        ts.addSupplier("carb heaven", "0507", "some name", 1, productList7);
+        ts.addSupplier("carb heaven", "0507", "some name", 1, productList7,-6,4);
 
 // Supplier 8
         ArrayList<String> productList8 = new ArrayList<>();
         productList8.add("coffee beans");
         productList8.add("tea leaves");
-        ts.addSupplier("caffeine fix", "0508", "some name", 1, productList8);
+        ts.addSupplier("caffeine fix", "0508", "some name", 1, productList8,5,8);
 
 // Supplier 9
         ArrayList<String> productList9 = new ArrayList<>();
         productList9.add("frozen pizza");
         productList9.add("frozen vegetables");
-        ts.addSupplier("frozen foods galore", "0509", "some name", 3, productList9);
+        ts.addSupplier("frozen foods galore", "0509", "some name", 3, productList9,2,8);
 
 // Delivery 1
         String branch1 = "branch1";

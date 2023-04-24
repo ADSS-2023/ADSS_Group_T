@@ -151,14 +151,14 @@ public class TransportService {
         return transportJsonConvert.fileToString(tc.getLoadedProducts(deliveryID,address));
     }
 
-    public String addBranch(String branch) {
-        tc.addBranch(gson.fromJson(branch,Branch.class));
+    public String addBranch(String address,String telNumber,String contactName,int x,int y) {
+        tc.addBranch(address,telNumber,contactName,x,y);
         return "D";
     }
 
-    public void addSupplier(String supplierAddress,String telNumber,String contactName,int coolingLevel, ArrayList<String> produces) {
+    public void addSupplier(String supplierAddress,String telNumber,String contactName,int coolingLevel, ArrayList<String> produces,int x,int y) {
 
-        tc.addSupplier(supplierAddress,telNumber,contactName, coolingLevel, produces);
+        tc.addSupplier(supplierAddress,telNumber,contactName, coolingLevel, produces,x,y);
     }
 
 

@@ -97,7 +97,7 @@ public class TransportController  {
 
         if (date2deliveries.containsKey(requiredDate)) {          //there is delivery in this date
             for (Delivery d : date2deliveries.get(requiredDate)) {     //the delivery is to the required date
-                if (branch.getShippingArea().equals(d.getShippingArea())) {        //the delivery is to the required branch
+                if (branch.getShippingArea() == d.getShippingArea()) {        //the delivery is to the required branch
                     if (!d.getBranches().containsKey(branch)) {
                         d.addBranch(branch, filesCounter);
                         filesCounter++;
@@ -323,10 +323,11 @@ public class TransportController  {
      * @param branch - the branch to add
      * @return true if the branch added successfully , and false otherwise
      */
-    public boolean addBranch(Branch branch) {
+    public boolean addBranch(String address,String telNumber,String contactName,int x,int y) {
 
-        if (branches.containsKey(branch.getAddress()))
+        if (branches.containsKey(address))
             return false;
+        Branch branch = new Branch(address,telNumber,contactName,x,y);
         branches.put(branch.getAddress(), branch);
         return true;
     }
@@ -338,10 +339,10 @@ public class TransportController  {
      * @param supplierProducts - List of the products of the supplier
      * @return true if the supplier added successfully , and false otherwise
      */
-    public boolean addSupplier(String supplierAddress,String telNumber,String contactName,int coolingLevel, ArrayList<String> productsOfSupplier) {
+    public boolean addSupplier(String supplierAddress,String telNumber,String contactName,int coolingLevel, ArrayList<String> productsOfSupplier,int x,int y) {
         if (suppliers.containsKey(supplierAddress))
             return false;
-        Supplier supplier = new Supplier(supplierAddress,telNumber,contactName,coolingLevel);
+        Supplier supplier = new Supplier(supplierAddress,telNumber,contactName,coolingLevel,x,y);
         ArrayList<Product> products = new ArrayList<Product>();
         for (String productString : productsOfSupplier) {
             products.add(new Product(productString));
