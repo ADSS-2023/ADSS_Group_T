@@ -4,6 +4,7 @@ import BusinessLayer.Transport.Branch;
 import BusinessLayer.Transport.Driver;
 import BusinessLayer.Transport.Product;
 import BusinessLayer.Transport.Supplier;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -13,7 +14,9 @@ public class TransportInit {
     public TransportInit(TransportService ts){
         this.ts = ts;
     }
+    private static final Gson gson = new Gson();
     public void init(){
+
 
         //---------- init drivers ----------//
         ts.addDriver(1001, "Driver1", 2, 1);
@@ -29,12 +32,12 @@ public class TransportInit {
         ts.addTruck(2005, "Truck5", 20000, 30000, 1);
 
         //---------- init branches ----------//
-        ts.addBranch( new Branch("branch1", "000000001", "Contact B1", "Area 1"));
-        ts.addBranch( new Branch("branch2", "000000002", "Contact B2", "Area 1"));
-        ts.addBranch( new Branch("branch3", "000000003", "Contact B3", "Area 2"));
-        ts.addBranch( new Branch("branch4", "000000004", "Contact B4", "Area 2"));
-        ts.addBranch( new Branch("branch5", "000000005", "Contact B5", "Area 3"));
-        ts.addBranch( new Branch("branch6", "000000006", "Contact B6", "Area 3"));
+        ts.addBranch(gson.toJson( new BranchModel("branch1", "000000001", "Contact B1", "Area 1")));
+//        ts.addBranch( new BranchModel("branch2", "000000002", "Contact B2", "Area 1"));
+//        ts.addBranch( new BranchModel("branch3", "000000003", "Contact B3", "Area 2"));
+//        ts.addBranch( new BranchModel("branch4", "000000004", "Contact B4", "Area 2"));
+//        ts.addBranch( new BranchModel("branch5", "000000005", "Contact B5", "Area 3"));
+//        ts.addBranch( new BranchModel("branch6", "000000006", "Contact B6", "Area 3"));
 
 
         //---------- Add product lists to suppliers map ----------//

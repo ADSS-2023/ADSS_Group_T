@@ -5,6 +5,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
+import ServiceLayer.HR.Response;
+import com.google.gson.*;
+
+
 
 import BusinessLayer.Transport.*;
 import BusinessLayer.Transport.Driver.CoolingLevel;
@@ -14,11 +18,10 @@ import UtilSuper.EnterWeightInterface;
 
 
 public class TransportService {
-
+    private static final Gson gson = new Gson();
     public TransportController tc;
     private EnterWeightInterface enterWeightInterface;
     private TransportJsonConvert transportJsonConvert;
-    private LinkedHashMap<Supplier, Integer> weightOfOrder;
 
     public TransportService() {
         tc = new TransportController();
@@ -26,19 +29,22 @@ public class TransportService {
         transportJsonConvert = new TransportJsonConvert();
     }
 
-
-
-
     public String orderDelivery(String branchString, LinkedHashMap<String, LinkedHashMap<String, String>> suppliersString,
                                 String requiredDateString) {
-
-        tc.orderDelivery(branchString,suppliersString,requiredDateString);
-        return "";
+        Response res = new Response();
+        try {
+            tc.orderDelivery(branchString,suppliersString,requiredDateString);
+            return "";
+        }
+        catch (Exception ex) {
+            return ex.toString();
+        }
 
     }
 
 
     public String skipDay() {
+        Response res = new Response();
         try {
             tc.skipDay();
             return "";
@@ -48,6 +54,7 @@ public class TransportService {
     }
 
     public String addTruck(int licenseNumber, String model, int weight, int maxWeight, int coolingLevel) {
+        Response res = new Response();
         try {
             tc.addTruck(licenseNumber, model, weight, maxWeight, coolingLevel);
             return "good";
@@ -57,6 +64,7 @@ public class TransportService {
     }
 
     public String removeTruck(int licenseNumber) {
+        Response res = new Response();
         try {
             tc.removeTruck(licenseNumber);
             return "good";
@@ -66,6 +74,7 @@ public class TransportService {
     }
 
     public String addDriver(int id, String name, int licenseType, int coolingLevel) {
+        Response res = new Response();
         try {
             tc.addDriver(id, name, licenseType, coolingLevel);
             return "good";
@@ -75,6 +84,7 @@ public class TransportService {
     }
 
     public String removeDriver(int id) {
+        Response res = new Response();
         try {
             tc.removeDriver(id);
             return "good";
@@ -84,6 +94,7 @@ public class TransportService {
     }
 
     public String replaceTruck(int deliveryID) {
+        Response res = new Response();
         try {
             tc.replaceTruck(deliveryID);
             return "good";
@@ -102,6 +113,7 @@ public class TransportService {
 //    }
 
     public String overWeightAction(int id, int action,String address, int weight) {
+        Response res = new Response();
         try {
             tc.overWeightAction(id, action,address,weight);
             return "good";
@@ -111,6 +123,7 @@ public class TransportService {
     }
 
     public String getAllDeliverys() {
+        Response res = new Response();
         try {
             //tc.getAllDeliverys();
             return "good";
@@ -121,8 +134,13 @@ public class TransportService {
 
     public String getAllTrucks() {
 
-       tc.getAllTrucks();
-        return  "";
+        Response res = new Response();
+        try {
+            tc.getAllTrucks();
+            return "good";
+        } catch (Exception ex) {
+            return ex.toString();
+        }
     }
 
 
@@ -133,8 +151,8 @@ public class TransportService {
         return transportJsonConvert.fileToString(tc.getLoadedProducts(deliveryID,address));
     }
 
-    public String addBranch(Branch branch) {
-        tc.addBranch(branch);
+    public String addBranch(String branch) {
+        tc.addBranch(gson.fromJson(branch,Branch.class));
         return "D";
     }
 
@@ -165,7 +183,7 @@ public class TransportService {
 
     public String getNextDayDeatails() {
          tc.getNextDayDeatails();
-         return "fuck";
+         return "good";
     }
 }
 
