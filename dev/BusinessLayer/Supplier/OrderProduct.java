@@ -49,6 +49,10 @@ public class OrderProduct {
     }
 
 
+    public void setInitialPrice(float initialPrice) {
+        this.initialPrice = initialPrice;
+    }
+
     public float getInitialPrice() {
         return initialPrice;
     }
@@ -74,5 +78,9 @@ public class OrderProduct {
                 ", initialPrice: " + initialPrice +
                 ", discount: " + discount +
                 ", finalPrice: " + finalPrice + "\n";
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 }
