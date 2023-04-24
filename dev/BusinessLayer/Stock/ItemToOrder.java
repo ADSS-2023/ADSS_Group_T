@@ -6,20 +6,24 @@ import java.time.LocalDate;
  * The mutual class between inventory and suppliers that represents a product
  */
 public class ItemToOrder {
-    private String product_name;
+    private String productName;
     private String manufacturer;
     private int quantity;
-    private LocalDate expiry_date;
+    private LocalDate expiryDate;
+    private double costPrice;
+    private int orderId;
 
-    public ItemToOrder(String product_name, String manufacturer, int quantity, LocalDate expiry_date) {
-        this.expiry_date = expiry_date;
+    public ItemToOrder(String productName, String manufacturer, int quantity, LocalDate expiryDate, double costPrice,int orderId) {
+        this.expiryDate = expiryDate;
         this.manufacturer = manufacturer;
-        this.product_name = product_name;
+        this.productName = productName;
         this.quantity = quantity;
+        this.costPrice = costPrice;
+        this.orderId = orderId;
     }
 
     public String getProductName() {
-        return product_name;
+        return productName;
     }
 
     public String getManufacturer() {
@@ -31,14 +35,18 @@ public class ItemToOrder {
     }
 
     public LocalDate getExpiryDate() {
-        return expiry_date;
+        return expiryDate;
     }
 
     public ItemToOrder clone(){
-        return new ItemToOrder(this.product_name , this.manufacturer , this.quantity , this.expiry_date , this.quantity);
+        return new ItemToOrder(this.productName , this.manufacturer , this.quantity , this.expiryDate , this.costPrice,this.orderId);
     }
 
     public void setQuantity(int new_quantity) {
         this.quantity = new_quantity;
+    }
+
+    public double getCost_price() {
+        return costPrice;
     }
 }

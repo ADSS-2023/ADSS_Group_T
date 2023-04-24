@@ -2,6 +2,7 @@ package ServiceLayer.Stock;
 
 import BusinessLayer.Stock.Inventory;
 import BusinessLayer.Stock.Item;
+import BusinessLayer.Stock.ItemToOrder;
 import BusinessLayer.Stock.OrderController;
 
 import java.time.DayOfWeek;
@@ -27,7 +28,14 @@ public class OrderService {
      * @return
      */
     public String editRegularOrder(int id ,DayOfWeek day , int new_amount){
-        orderController.editRegularOrder(id , day , new_amount);
+        try {
+            orderController.editRegularOrder(id , day , new_amount);
+            return "Order edited successfully";
+        }
+        catch (Exception e){
+            return e.getMessage();
+        }
+
     }
     /**
      * Receives a map that holds item id and amount to be ordered
@@ -62,5 +70,48 @@ public class OrderService {
 
     public void nextDay() {
         this.orderController.nextDay(LocalDate.now().getDayOfWeek().plus(1));
+    }
+
+    /**
+     * receive new order that arrived to the store
+     * @param newOrder order id,item
+     */
+    public String receiveOrders(Map<Integer, ItemToOrder> newOrder){
+        try{
+            orderController.receiveOrders(newOrder);
+        }
+        catch (Exception e){
+            return e.getMessage();
+        }
+        return "Order received successfully";
+    }
+
+    /**
+     * Presents all the items that hasn't been placed yet
+     * @return
+     */
+    public String presentItemsToBePlaced(){
+        try {
+            return orderController.presentItemsToBePlaced();
+        }
+        catch (Exception e){
+            return e.getMessage();
+        }
+    }
+
+    /**
+     * place new arrival in store by index in waiting list
+     * @param index
+     * @param location
+     * @return
+     */
+    public String placeNewArrival(int index,String location){
+        try{
+            orderController.placeNewArrival(index,location);
+        }
+        catch (Exception e){
+            return e.getMessage();
+        }
+        return "Item has been placed successfully";
     }
 }
