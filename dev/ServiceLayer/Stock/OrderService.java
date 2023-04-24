@@ -114,4 +114,13 @@ public class OrderService {
         }
         return "Item has been placed successfully";
     }
+
+    public String presentItemsById(DayOfWeek cur_day) {
+        try{
+            orderController.presentItemsByDay(cur_day);
+        }
+        catch (Exception e){
+            return e.getMessage();
+        }
+    }
 }

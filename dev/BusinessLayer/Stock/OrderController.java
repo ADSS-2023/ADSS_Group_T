@@ -60,37 +60,41 @@ public class OrderController {
         List<Item> cur_shortage_list = inventory.getShortageList();
         //List<ItemToOrder> curDay_list = order_service.getRegularOrder(curDay.toString());
         //List<ItemToOrder> curDay_list = order_service.getSpecialOrder(curDay.toString());
-
         List<ItemToOrder> curDay_list = new LinkedList<>(); // NOT CORRECT
-        List<ItemToOrder> curDay_list_to_edit = new LinkedList<>(); // only if needed
         Map<Integer , Integer> item_to_order_map = new HashMap<>();
         boolean found = false;
         for (Item item : cur_shortage_list) {
-            int item_id = item.getItem_id();
-            for (ItemToOrder item_to_order : curDay_list) {
-                String manufacturer_name = item_to_order.getManufacturer();
-                String product_name =  item_to_order.getProductName();
-                int item_to_order_id = inventory.name_to_id.get(manufacturer_name + " " + product_name);
-                if (item_id == item_to_order_id) { // if found an item that comes at curDay - add it to edited items
-                    found = true;
-                    ItemToOrder item_to_edit = item_to_order.clone(); // make a copy
-                    item_to_edit.setQuantity(item.min_amount - item.current_amount() + item_to_order.getQuantity()); //check if the sum is correct
-                    //if(!order_service.editRegularItem(item_to_edit , curDay))
-                    //      add it to the order map
-                    // check if its ok ****UNCOMMIT IT !!!****
-                    //curDay_list_to_edit.add(item_to_edit); // add the item to the edited items
+            //calculate how many need to order
+            int amount_to_order = (item.min_amount - item.current_amount())- amountOfReceivedItem(curDay_list , item.manufacturer_name , item.name);
+            if(amount_to_order > 0) {
+                for (ItemToOrder item_to_order : curDay_list) {
+                    if(!found) {
+                        int item_to_order_id = inventory.name_to_id.get(item_to_order.getProductName() + " " + item_to_order.getManufacturer());
+                        if (item.getItem_id() == item_to_order_id) { // if found an item that comes at curDay
+                            item_to_order.setQuantity(amount_to_order + item_to_order.getQuantity()); //set the new quantity that required
+                            found = order_service.editRegularItem(item_to_order, curDay);
+                        }
+                    }
                 }
             }
             if(!found){ // if there is no item that comes at curDay make add it to the map
-                item_to_order_map.put(item_id , (int) (item.current_amount()*1.3)); // need to check how much should double it.
+                item_to_order_map.put(item.getItem_id() , (int)(amount_to_order*1.3)); // need to check how much should double it.
             }
             found = false;
         }
         this.createSpecialOrder(item_to_order_map , true);
-        //
         return "";
     }
 
+    private int amountOfReceivedItem(List<ItemToOrder> items_list , String manufacturer_name , String product_name){
+        int amount = 0;
+        for(ItemToOrder item_to_order : items_list){
+            if(item_to_order.getManufacturer().equals(manufacturer_name) && item_to_order.getProductName().equals(product_name)){
+                amount += item_to_order.getQuantity();
+            }
+        }
+        return amount;
+    }
 
     public void editRegularOrder(int id, DayOfWeek day, int new_amount) {
         Item cur_item = inventory.get_item_by_id(id);
@@ -144,5 +148,17 @@ public class OrderController {
     public void nextDay(DayOfWeek tomorrow_day) {
         this.makeAutomaticallyOrder(tomorrow_day);
         this.inventory.nextDay(tomorrow_day);
+    }
+
+    public String presentItemsByDay(DayOfWeek cur_day) throws Exception {
+        String toReturn = "";
+        List<ItemToOrder> items_to_show = order_service.getRegularOrder(cur_day.toString());
+        if (items_to_show.isEmpty())
+            throw new Exception("No items to present");
+        for(ItemToOrder item : items_to_show){
+            toReturn+=String.format("%d. Item id:%s, item name:%s, manufacturer:%s\n",4,
+                    inventory.name_to_id.get(item.getProductName()+" "+item.getManufacturer()),item.getProductName());
+        }
+        return toReturn;
     }
 }

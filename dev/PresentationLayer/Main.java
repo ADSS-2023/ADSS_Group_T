@@ -67,10 +67,9 @@ public class Main {
                 is_active = false;
         }
         if (categories.isEmpty())
-            System.out.println("you didnt choose any category");
+            System.out.println("you didn't choose any category");
         else
             System.out.println(inventoryService.produce_inventory_report(categories));
-
     }
 
     public static void setDiscount(){
@@ -279,14 +278,16 @@ public class Main {
         System.out.println("\u001B[32m4.Place waiting items\u001B[0m");
     }
 
+
+
     private static void editRegularItemOrder() {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Insert id of product:");
-        int id = scanner.nextInt();
-        //maybe present him the days?
         System.out.println("Insert the day of the week (big letters only):");
         String day = scanner.nextLine();
         DayOfWeek cur_day = DayOfWeek.valueOf(day);
+        System.out.println(orderService.presentItemsById(cur_day));
+        System.out.println("Insert id of product:");
+        int id = scanner.nextInt();
         //maybe present him the item details from the order?
         System.out.println("Insert the new amount of product:");
         int amount = scanner.nextInt();
