@@ -14,13 +14,13 @@ public class OrderBusiness {
     private int supplierNum;
     private String contactName;
     private String contactNumber;
+    private int daysToSupplied;
+    private List<OrderProduct> products ;
+
 
     public int getOrderNum() {
         return orderNum;
     }
-
-    private int daysToSupplied;
-    private List<OrderProduct> products ;
 
     public int getSupplierNum() {
         return supplierNum;
@@ -66,7 +66,4 @@ public class OrderBusiness {
         this.products = products;
         this.daysToSupplied = daysToSupplied;
     }
-
-
-
 }
