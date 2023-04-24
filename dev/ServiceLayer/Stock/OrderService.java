@@ -19,16 +19,6 @@ public class OrderService {
     }
 
     /**
-     * This function makes an automatically order by the shortage items that has in our inventory
-     */
-    public void makeAutomaticalOrder() {
-        this.orderController.makeAutomaticallyOrder(LocalDate.now().getDayOfWeek());
-
-        // check what is get tomorrow from getRegulatOrder()
-        // add to the order X*1.2 items.
-    }
-
-    /**
      * This function gets an input from the user that includes id of item , day of week , new amount that
      * required for the specific item.
      * @param id
@@ -68,5 +58,9 @@ public class OrderService {
             return e.getMessage();
         }
         return "Order received successfully";
+    }
+
+    public void nextDay() {
+        this.orderController.nextDay(LocalDate.now().getDayOfWeek().plus(1));
     }
 }

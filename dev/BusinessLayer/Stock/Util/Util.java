@@ -1,5 +1,6 @@
 package BusinessLayer.Stock.Util;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -44,4 +45,5 @@ public class Util {
     public static boolean no_categories(LinkedList<String> categories_indexes) {
         return categories_indexes.stream().anyMatch(String::isEmpty);
     }
+
 }

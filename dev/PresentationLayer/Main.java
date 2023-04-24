@@ -213,7 +213,7 @@ public class Main {
     }
 
     private static void moveToNextDay() {
-        orderService.makeAutomaticalOrder();
+        orderService.nextDay();
     }
 
     private static void addCategory() {

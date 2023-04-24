@@ -2,6 +2,7 @@ package BusinessLayer.Stock;
 
 import BusinessLayer.Stock.Util.Util;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -279,5 +280,12 @@ public class Inventory {
      */
     public List<Item> getShortageList(){
         return shortage_list;
+    }
+
+    /**
+     * This function makes the things that need to be done automatically at the next day.
+     * @param tomorrow_day
+     */
+    public void nextDay(DayOfWeek tomorrow_day) {
     }
 }

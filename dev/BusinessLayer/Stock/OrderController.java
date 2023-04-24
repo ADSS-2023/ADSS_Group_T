@@ -74,7 +74,9 @@ public class OrderController {
                     found = true;
                     ItemToOrder item_to_edit = item_to_order.clone(); // make a copy
                     item_to_edit.setQuantity(item.min_amount - item.current_amount() + item_to_order.getQuantity()); //check if the sum is correct
-                    //order_service.editRegularItem(item_to_edit , curDay); // check if its ok ****UNCOMMIT IT !!!****
+                    //if(!order_service.editRegularItem(item_to_edit , curDay))
+                    //      add it to the order map
+                    // check if its ok ****UNCOMMIT IT !!!****
                     //curDay_list_to_edit.add(item_to_edit); // add the item to the edited items
                 }
             }
@@ -92,5 +94,10 @@ public class OrderController {
     public void editRegularOrder(int id, DayOfWeek day, int new_amount) {
         Item cur_item = inventory.get_item_by_id(id);
         order_service.editRegularItem(new ItemToOrder(cur_item.get_name(), cur_item.manufacturer_name , new_amount , null), day.toString());
+    }
+
+    public void nextDay(DayOfWeek tomorrow_day) {
+        this.makeAutomaticallyOrder(tomorrow_day);
+        this.inventory.nextDay(tomorrow_day);
     }
 }
