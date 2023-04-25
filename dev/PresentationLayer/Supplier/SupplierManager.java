@@ -1,6 +1,7 @@
 package PresentationLayer.Supplier;
 
 import BusinessLayer.Supplier_Stock.ItemToOrder;
+import PresentationLayer.Supplier_Stock.PreviousCallBack;
 import ServiceLayer.Supplier_Stock.ServiceFactory;
 import BusinessLayer.Supplier.Util.Discounts;
 import BusinessLayer.Supplier.Util.PaymentTerms;
@@ -12,6 +13,7 @@ import java.util.*;
 
 public class SupplierManager {
     private ServiceFactory serviceFactory;
+    private PreviousCallBack previousCallBack;
 
     public SupplierManager() {
         this.serviceFactory = new ServiceFactory();
@@ -558,5 +560,12 @@ public class SupplierManager {
             }
         }
         return input;
+    }
+
+    public void setPreviousCallBack(PreviousCallBack previousCallBack) {
+        this.previousCallBack = previousCallBack;
+    }
+    public void goBack(){
+        previousCallBack.goBack();
     }
 }

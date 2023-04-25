@@ -1,5 +1,6 @@
 package PresentationLayer.Stock;
 import BusinessLayer.Stock.Util.Util;
+import PresentationLayer.Supplier_Stock.PreviousCallBack;
 import ServiceLayer.Stock.*;
 import ServiceLayer.Supplier.OrderService;
 import ServiceLayer.Supplier_Stock.ServiceFactory;
@@ -11,10 +12,10 @@ import java.util.LinkedList;
 import java.util.Scanner;
 import java.util.function.Supplier;
 
-public class Main {
+public class StockUI {
     public static ServiceFactory sf = new ServiceFactory();
-
-    public static void printOptions(){
+    private PreviousCallBack previousCallBack;
+    public void printOptions(){
         System.out.println("\u001B[32m1.See categories\u001B[0m");
         System.out.println("\u001B[32m2.Produce inventory report\u001B[0m");
         System.out.println("\u001B[32m3.Set discount\u001B[0m");
@@ -29,7 +30,7 @@ public class Main {
         System.out.println("\u001B[32m12.Orders menu\u001B[0m");
     }
 
-    public static String presentCategories(){
+    public  String presentCategories(){
         System.out.println("press index of category/item in order to dive in,\npress 0 in order to choose the current category\npress -1 to exit");
         Scanner scanner = new Scanner(System.in);
         System.out.println(sf.inventoryService.show_data());
@@ -52,7 +53,7 @@ public class Main {
         return next_index;
     }
 
-    private static void inventoryReport() {
+    private  void inventoryReport() {
         Scanner scanner = new Scanner(System.in);
         LinkedList<String> categories = new LinkedList<>();
         boolean is_active = true;
@@ -70,7 +71,7 @@ public class Main {
             System.out.println(sf.inventoryService.produce_inventory_report(categories));
     }
 
-    public static void setDiscount(){
+    public  void setDiscount(){
         Scanner scanner = new Scanner(System.in);
         String product = presentCategories();
 
@@ -84,7 +85,7 @@ public class Main {
         sf.inventoryService.set_discount(product , percentageAmount , end_date_string , start_date_string);
     }
 
-    private static void setMinimalAmount() {
+    private void setMinimalAmount() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("insert item id:");
         int item_id = scanner.nextInt();
@@ -93,7 +94,7 @@ public class Main {
         System.out.println(sf.itemService.setMinimalAmount(item_id,amount));
     }
 
-    private static void damagedItem() {
+    private void damagedItem() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("insert item id:");
         int item_id = scanner.nextInt();
@@ -106,11 +107,11 @@ public class Main {
         System.out.println(sf.damagedService.report_damaged_item(item_id,order_id,amount,description));
     }
 
-    private static void damageItemReport() {
+    private void damageItemReport() {
         System.out.println(sf.damagedService.produce_damaged_report());
     }
 
-    private static void addItem() {
+    private void addItem() {
         Scanner scanner = new Scanner(System.in);
         String choise = presentCategories();
         System.out.println("insert item id:");
@@ -127,7 +128,7 @@ public class Main {
         sf.itemService.addItem(choise,item_id,name,amount,manufacturer,price);
     }
 
-    public static void receive_order(){
+    public void receive_order(){
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter order id:");
         int order_id = scanner.nextInt();
@@ -146,11 +147,11 @@ public class Main {
         System.out.println(sf.itemService.receive_order(order_id,item_id,amount,location, Util.stringToDate(validity),cost_price));
     }
 
-    private static void produceShortageReport() {
+    private void produceShortageReport() {
         System.out.println(sf.inventoryService.produce_shortage_report());
     }
 
-    public static void act(String choise){
+    public void act(String choise){
         switch (choise) {
             case "1":
                 presentCategories();
@@ -205,7 +206,7 @@ public class Main {
         }
     }
 
-    private static void place_waiting_items() {
+    private void place_waiting_items() {
         boolean isActive = true;
         while (isActive) {
             Scanner scanner = new Scanner(System.in);
@@ -223,7 +224,7 @@ public class Main {
 
     }
 
-    private static void create_special_order() {
+    private  void create_special_order() {
         Scanner scanner = new Scanner(System.in);
         boolean isActive = true;
         HashMap<Integer,Integer> products = new HashMap<>();
@@ -243,7 +244,7 @@ public class Main {
         sf.manageOrderService.createSpecialOrder(products,isUrgent);
     }
 
-    private static void create_regular_order() {
+    private  void create_regular_order() {
         Scanner scanner = new Scanner(System.in);
         boolean isActive = true;
         HashMap<Integer,Integer> products = new HashMap<>();
@@ -260,7 +261,7 @@ public class Main {
         sf.manageOrderService.createRegularOrder(products);
     }
 
-    private static void edit_create_orders() {
+    private  void edit_create_orders() {
         Scanner scanner = new Scanner(System.in);
         printOrderOptions();
         System.out.println("What would you like to do?");
@@ -270,7 +271,7 @@ public class Main {
 
     }
 
-    private static void printOrderOptions() {
+    private  void printOrderOptions() {
         System.out.println("\u001B[32m1.Edit regular order\u001B[0m");
         System.out.println("\u001B[32m2.Create regular order\u001B[0m");
         System.out.println("\u001B[32m3.Create special order\u001B[0m");
@@ -279,7 +280,7 @@ public class Main {
 
 
 
-    private static void editRegularItemOrder() {
+    private void editRegularItemOrder() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Insert the day of the week (big letters only):");
         String day = scanner.nextLine();
@@ -293,11 +294,11 @@ public class Main {
         sf.manageOrderService.editRegularOrder(id , cur_day , amount);
     }
 
-    private static void moveToNextDay() {
+    private void moveToNextDay() {
         sf.manageOrderService.nextDay();
     }
 
-    private static void addCategory() {
+    private  void addCategory() {
         Scanner scanner = new Scanner(System.in);
         String index = presentCategories();
         System.out.println("Insert name of category:");
@@ -305,8 +306,7 @@ public class Main {
         sf.categoryService.add_category(index,name);
     }
 
-
-    public static void main(String[] args) {
+    public void run(){
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("\033[1mWelcome to Superly inventory\033[0m\n\u001B[32m" +
@@ -316,8 +316,9 @@ public class Main {
         int action = scanner.nextInt();
         scanner.nextLine();
         if(action==1) {
-            sf.inventoryService.setUp();
-            sf.manageOrderService.set_up();
+            loadData();
+
+
         }
         while(true) {
             System.out.println("What would you like to do?");
@@ -326,5 +327,17 @@ public class Main {
             act(choise);
             System.out.println("\n");
         }
+    }
+
+    public void loadData() {
+        sf.inventoryService.setUp();
+        sf.manageOrderService.set_up();
+    }
+
+    public void setPreviousCallBack(PreviousCallBack previousCallBack) {
+        this.previousCallBack = previousCallBack;
+    }
+    private void goBack(){
+        previousCallBack.goBack();
     }
 }
