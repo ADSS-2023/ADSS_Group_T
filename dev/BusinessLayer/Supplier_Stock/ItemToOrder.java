@@ -1,4 +1,4 @@
-package BusinessLayer.Stock;
+package BusinessLayer.Supplier_Stock;
 
 import java.time.LocalDate;
 
@@ -44,6 +44,10 @@ public class ItemToOrder {
 
     public void setQuantity(int new_quantity) {
         this.quantity = new_quantity;
+    }
+
+    public void setManufacturer(String manufacturer) {
+        this.manufacturer = manufacturer;
     }
 
     public double getCost_price() {
