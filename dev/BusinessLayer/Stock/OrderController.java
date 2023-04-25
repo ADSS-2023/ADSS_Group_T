@@ -1,8 +1,10 @@
 package BusinessLayer.Stock;
 
 import BusinessLayer.Stock.Util.Util;
+import BusinessLayer.Supplier_Stock.ItemToOrder;
 import ServiceLayer.Supplier.OrderService;
 import java.time.DayOfWeek;
+
 import java.util.*;
 
 
@@ -121,7 +123,7 @@ public class OrderController {
                 tempItem.getOrderId(),
                 (int)Math.floor(tempItem.getQuantity()/2),
                 (int)Math.ceil(tempItem.getQuantity()/2),
-                tempItem.getCost_price(),
+                tempItem.getCostPrice(),
                 location,
                 tempItem.getExpiryDate());
         items_to_place.remove(index-1);
@@ -165,8 +167,8 @@ public class OrderController {
      * Set up function to test place items functionality
      */
     public void set_up_waiting_items(){
-        ItemToOrder milk_3 = new ItemToOrder("3% milk","IDO LTD",40, Util.stringToDate("2023-05-10"),1.2,111);
-        ItemToOrder beef_sausage = new ItemToOrder("Beef Sausage","Zogloveck",15,Util.stringToDate("2023-10-01"),10.05,333);
+        ItemToOrder milk_3 = new ItemToOrder("3% milk","IDO LTD",40, Util.stringToDate("2023-05-10"),12,1.2);
+        ItemToOrder beef_sausage = new ItemToOrder("Beef Sausage","Zogloveck",15,Util.stringToDate("2023-10-01"),1005,10.05);
         receiveOrders(Arrays.asList(milk_3,beef_sausage));
     }
 }

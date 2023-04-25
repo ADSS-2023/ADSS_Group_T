@@ -2,18 +2,19 @@ package ServiceLayer.Stock;
 
 import BusinessLayer.Stock.Inventory;
 import BusinessLayer.Stock.OrderController;
+import BusinessLayer.Supplier_Stock.ItemToOrder;
+import ServiceLayer.Supplier.OrderService;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
 
-public class OrderService {
+public class ManageOrderService {
     private OrderController orderController;
 
-    public OrderService(Inventory inventory , Supplier.OrderService orderService) {
-        this.orderController = new OrderController(inventory , orderService);
+    public ManageOrderService(Inventory inventory , OrderService orderService) {
+        this.orderController = new OrderController(inventory ,orderService);
     }
 
     /**
@@ -114,7 +115,7 @@ public class OrderService {
 
     public String presentItemsById(DayOfWeek cur_day) {
         try{
-            orderController.presentItemsByDay(cur_day);
+            return orderController.presentItemsByDay(cur_day);
         }
         catch (Exception e){
             return e.getMessage();

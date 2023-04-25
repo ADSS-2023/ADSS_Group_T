@@ -1,6 +1,7 @@
 package PresentationLayer.Stock;
 import BusinessLayer.Stock.Util.Util;
 import ServiceLayer.Stock.*;
+import ServiceLayer.Supplier.OrderService;
 
 import java.time.DayOfWeek;
 
@@ -14,7 +15,7 @@ public class Main {
     public static CategoryService categoryService = new CategoryService(inventoryService.get_inventory());
     public static DamagedService damagedService = new DamagedService(inventoryService.get_inventory());
     public static ItemService itemService = new ItemService(inventoryService.get_inventory());
-    public static OrderService orderService = new OrderService(inventoryService.get_inventory(), new Supplier.OrderService);
+    public static ManageOrderService orderService = new ManageOrderService(inventoryService.get_inventory(), new OrderService());
 
     public static void printOptions(){
         System.out.println("\u001B[32m1.See categories\u001B[0m");
