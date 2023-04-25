@@ -2,8 +2,8 @@ package PresentationLayer.Supplier;
 
 import ServiceLayer.Supplier.ItemToOrder;
 import ServiceLayer.Supplier.ServiceFactory;
-import Util.Discounts;
-import Util.PaymentTerms;
+import BusinessLayer.Supplier.Util.Discounts;
+import BusinessLayer.Supplier.Util.PaymentTerms;
 
 import java.time.LocalDate;
 import java.util.regex.Pattern;

@@ -1,4 +1,4 @@
-package Util;
+package BusinessLayer.Supplier.Util;
 
 public enum PaymentTerms {
     SHOTEF_PLUS_30,

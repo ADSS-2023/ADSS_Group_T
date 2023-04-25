@@ -2,15 +2,12 @@ package BusinessLayer.Supplier.Suppliers;
 
 import BusinessLayer.Supplier.Discounts.Discount;
 import BusinessLayer.Supplier.Discounts.PercentDiscount;
-import BusinessLayer.Supplier.Discounts.PercentDiscount;
 import BusinessLayer.Supplier.Discounts.QuantityDiscount;
 import BusinessLayer.Supplier.SupplierProductBusiness;
-import Util.Discounts;
-import Util.PaymentTerms;
+import BusinessLayer.Supplier.Util.Discounts;
+import BusinessLayer.Supplier.Util.PaymentTerms;
 
 import java.util.*;
-import java.time.LocalDateTime;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 
 public abstract class  SupplierBusiness {

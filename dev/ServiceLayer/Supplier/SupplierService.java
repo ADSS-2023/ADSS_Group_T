@@ -6,12 +6,11 @@ import BusinessLayer.Supplier.Suppliers.ConstantSupplier;
 import BusinessLayer.Supplier.Suppliers.SupplierBusiness;
 import BusinessLayer.Supplier.SupplierController;
 import BusinessLayer.Supplier.SupplierProductBusiness;
-import Util.Discounts;
-import Util.PaymentTerms;
+import BusinessLayer.Supplier.Util.Discounts;
+import BusinessLayer.Supplier.Util.PaymentTerms;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 
 public class SupplierService {

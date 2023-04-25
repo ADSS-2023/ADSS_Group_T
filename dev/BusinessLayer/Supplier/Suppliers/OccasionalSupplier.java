@@ -1,6 +1,6 @@
 package BusinessLayer.Supplier.Suppliers;
 
-import Util.PaymentTerms;
+import BusinessLayer.Supplier.Util.PaymentTerms;
 
 import java.util.HashMap;
 

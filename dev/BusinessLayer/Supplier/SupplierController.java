@@ -4,7 +4,7 @@ import BusinessLayer.Supplier.Suppliers.ConstantSupplier;
 import BusinessLayer.Supplier.Suppliers.OccasionalSupplier;
 import BusinessLayer.Supplier.Suppliers.SupplierBusiness;
 import ServiceLayer.Supplier.ItemToOrder;
-import Util.PaymentTerms;
+import BusinessLayer.Supplier.Util.PaymentTerms;
 
 import java.time.DayOfWeek;
 import java.util.*;

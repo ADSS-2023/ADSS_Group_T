@@ -3,6 +3,7 @@ package BusinessLayer.Supplier;
 import BusinessLayer.Supplier.Suppliers.SupplierBusiness;
 import ServiceLayer.Supplier.ItemToOrder;
 
+
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -15,7 +16,6 @@ public class OrderController {
     private int orderCounter;
     private List<OrderBusiness> ordersNotSupplied;
     private HashMap<DayOfWeek,List<OrderBusiness>> dayToConstantOrders;
-
     private HashMap<Integer,List<OrderProduct>> shoppingLists; // supplierNumber to list of products
 
 
@@ -176,7 +176,7 @@ public class OrderController {
             }
         for(OrderBusiness order:ordersToDelete)
             ordersNotSupplied.remove(order);
-        //stockContreoller.receiveOrders(items);
+        stockContreoller.receiveOrders(items);
     }
 
     /**
