@@ -1,3 +1,4 @@
 Manifest-Version: 1.0
+Main-Class: PresentationLayer.Stock.Main
 Main-Class: ServiceLayer.Supplier.Main
 

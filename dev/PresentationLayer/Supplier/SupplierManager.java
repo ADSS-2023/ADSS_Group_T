@@ -1,5 +1,7 @@
-package ServiceLayer.Supplier;
+package PresentationLayer.Supplier;
 
+import ServiceLayer.Supplier.ItemToOrder;
+import ServiceLayer.Supplier.ServiceFactory;
 import Util.Discounts;
 import Util.PaymentTerms;
 

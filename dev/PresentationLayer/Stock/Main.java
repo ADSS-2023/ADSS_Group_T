@@ -1,4 +1,4 @@
-package PresentationLayer;
+package PresentationLayer.Stock;
 import BusinessLayer.Stock.Util.Util;
 import ServiceLayer.Stock.*;
 

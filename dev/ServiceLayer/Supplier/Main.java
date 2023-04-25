@@ -1,6 +1,6 @@
 package ServiceLayer.Supplier;
 
-import BusinessLayer.Supplier.SupplierController;
+import PresentationLayer.Supplier.SupplierManager;
 
 public class Main {
     public static void main(String[] args) {

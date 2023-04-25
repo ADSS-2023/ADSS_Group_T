@@ -2,7 +2,6 @@ package BusinessLayer.Stock.Tests;
 
 import BusinessLayer.Stock.Inventory;
 import BusinessLayer.Stock.Util.Util;
-import PresentationLayer.Main;
 import ServiceLayer.Stock.CategoryService;
 import ServiceLayer.Stock.DamagedService;
 import ServiceLayer.Stock.InventoryService;
