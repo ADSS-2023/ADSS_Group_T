@@ -18,14 +18,17 @@ public class ServiceFactory {
     public ManageOrderService manageOrderService;
 
     public ServiceFactory(){
-        this.sc = new SupplierController();
-        this.oc = new OrderController(sc);
-        this.supplierService = new SupplierService(sc);
-        this.orderService = new OrderService(oc,sc);
+
         this.inventoryService = new InventoryService();
         this.categoryService = new CategoryService(inventoryService.get_inventory());
         this.damagedService = new DamagedService(inventoryService.get_inventory());
         this.itemService = new ItemService(inventoryService.get_inventory());
-        this.manageOrderService = new ManageOrderService(inventoryService.get_inventory(),orderService);
+        this.manageOrderService = new ManageOrderService();
+        this.sc = new SupplierController();
+        this.oc = new OrderController(sc,manageOrderService);
+        this.supplierService = new SupplierService(sc);
+        this.orderService = new OrderService(oc,sc);
+
+        manageOrderService.setOrderController(inventoryService.get_inventory(),orderService);
     }
 }

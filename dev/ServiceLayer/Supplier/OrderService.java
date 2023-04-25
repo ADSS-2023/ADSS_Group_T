@@ -42,11 +42,14 @@ public class OrderService {
         }
     }
 
-    public boolean editRegularItem(ItemToOrder item, DayOfWeek day,int newQuantity) {
+    public boolean editRegularItem(ItemToOrder item, DayOfWeek day) {
         try {
             if(day==null)
                 return false;
-            oc.editRegularItem(item, day,newQuantity);
+            if(item.getQuantity()==0)
+                oc.removeRegularItem(item,day);
+            else
+                oc.editRegularItem(item, day);
             return true;
         }
         catch (Exception e){
@@ -56,7 +59,6 @@ public class OrderService {
 
     public List<ItemToOrder> getRegularOrder(DayOfWeek day) throws Exception {
         try {
-
             return oc.getRegularOrder(day);
         }
         catch (Exception e){
@@ -75,17 +77,6 @@ public class OrderService {
         }
     }
 
-    public boolean removeRegularItem(ItemToOrder item, DayOfWeek day) throws Exception {
-        try {
-            if(day==null)
-                return false;
-            oc.removeRegularItem(item, day);
-            return true;
-        }
-        catch (Exception e){
-            return false;
-        }
-    }
 
     public List<String> getOrders(){
         List<String>  orders = new LinkedList<>();

@@ -13,8 +13,8 @@ import java.util.Map;
 public class ManageOrderService {
     private OrderController orderController;
 
-    public ManageOrderService(Inventory inventory , OrderService orderService) {
-        this.orderController = new OrderController(inventory ,orderService);
+
+    public ManageOrderService() {
     }
 
     /**
@@ -123,5 +123,9 @@ public class ManageOrderService {
     }
     public void set_up(){
         orderController.set_up_waiting_items();
+    }
+
+    public void setOrderController(Inventory inv,OrderService orderService) {
+        this.orderController = new OrderController(inv,orderService);
     }
 }
