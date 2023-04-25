@@ -58,6 +58,8 @@ public class LogisticCenterController {
          * @param licenseNumber of the truck
          * @return true if the truck removed successfully , false otherwise
          */
+
+
         public boolean removeTruck(int licenseNumber) {
             if (!trucks.containsKey(licenseNumber))
                 return false;
