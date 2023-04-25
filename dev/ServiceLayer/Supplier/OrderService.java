@@ -13,9 +13,10 @@ public class OrderService {
     private OrderController oc;
     private SupplierController sc;
 
-    public OrderService(OrderController oc) {
-        this.oc = oc;
-    }
+    public OrderService(OrderController oc , SupplierController sc) {
+         this.oc = oc;
+         this.sc=sc;
+        }
 
     public boolean createRegularOrder(List<ItemToOrder> items) throws Exception {
         try {

@@ -101,7 +101,7 @@ public class SupplierService {
         try {
             sc.getSupplier(supplierNum).editProduct(productName, manufacturer, price, maxAmount, expiredDate);
             if(sc.getSupplier(supplierNum) instanceof ConstantSupplier){
-                SupplierProductBusiness sProduct = sc.getSupplier(supplierNum).getProduct(productNum);
+                SupplierProductBusiness sProduct = sc.getSupplier(supplierNum).getProduct(productName, manufacturer);
                 oc.editRegularItem(sProduct.getName(), sProduct.getManufacturer(), supplierNum, ((ConstantSupplier) sc.getSupplier(supplierNum)).getConstDeliveryDays());
             }
             return "Product edited successfully";
@@ -118,7 +118,7 @@ public class SupplierService {
                 SupplierProductBusiness sProduct = sc.getSupplier(supplierNum).getProduct(productNum);
                 oc.removeRegularItem(sProduct.getName(), sProduct.getManufacturer(), supplierNum, ((ConstantSupplier) sc.getSupplier(supplierNum)).getConstDeliveryDays());
             }
-            LocalDate.now().getDayOfWeek()
+            LocalDate.now().getDayOfWeek();
             return "Product deleted successfully";
         }
         catch (Exception e){

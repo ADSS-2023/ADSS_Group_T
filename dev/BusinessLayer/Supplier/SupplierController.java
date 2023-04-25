@@ -65,7 +65,7 @@ public class SupplierController {
                     fastestSuppliers.add(sb);
             }
         }
-        if(finalsSuppliers.isEmpty())
+        if(!finalsSuppliers.isEmpty())
             suppliersList = finalsSuppliers;
         else
             suppliersList = fastestSuppliers;
