@@ -13,11 +13,11 @@ public class Delivery {
     private Site source;
     private String driverName;
     private int truckNumber;
-    private int shippingArea;
+    private String shippingArea;
     private String note;
        
     public Delivery(int id, LocalDate date, LocalTime departureTime, int truckWeight, LinkedHashMap<Supplier, File> suppliers,
-            Site source, String driverName, int truckNumber, int shippingArea) {
+            Site source, String driverName, int truckNumber, String shippingArea) {
         this.id = id;
         this.date = date;
         this.departureTime = departureTime;
@@ -57,7 +57,7 @@ public class Delivery {
     public void addProductsToSupplier(Supplier supplier, Product p, int amount){
          suppliers.get(supplier).addProduct(p,amount);
     }
-    public int getShippingArea() {
+    public String getShippingArea() {
         return shippingArea;
     }
 /*

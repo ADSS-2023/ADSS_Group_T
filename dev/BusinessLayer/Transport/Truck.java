@@ -12,13 +12,13 @@ public class Truck {
     private CoolingLevel coolingLevel;
 
 
-    public Truck(int licenseNumber, String model, int weight, int maxWeight ,int coolingLevel){
+    public Truck(int licenseNumber, String model, int weight, int maxWeight, LicenseType licenseType ,CoolingLevel coolingLevel){
         this.licenseNumber = licenseNumber;
         this.model = model;
         this.weight = weight;
         this.maxWeight = maxWeight;
-        this.licenseType = LicenseType.getByWeight(weight);
-        this.coolingLevel = CoolingLevel.get(coolingLevel);
+        this.licenseType = licenseType;
+        this.coolingLevel = coolingLevel;
     }
 
 

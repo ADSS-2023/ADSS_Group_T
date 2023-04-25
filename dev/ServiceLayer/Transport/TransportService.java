@@ -1,51 +1,57 @@
-
 package ServiceLayer.Transport;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
-import ServiceLayer.HR.Response;
-
-
-
 
 import BusinessLayer.Transport.*;
 import BusinessLayer.Transport.Driver.CoolingLevel;
 import BusinessLayer.Transport.Driver.LicenseType;
-import UtilSuper.EnterWeightInterface;
-
 
 
 public class TransportService {
 
     public TransportController tc;
-    private EnterWeightInterface enterWeightInterface;
     private TransportJsonConvert transportJsonConvert;
+    private LinkedHashMap<Supplier, Integer> weightOfOrder;
 
     public TransportService() {
         tc = new TransportController();
-        tc.setEnterWeightInterface((String address, int deliveryID) -> enterWeightInterface.enterWeightFunction(address,deliveryID));
         transportJsonConvert = new TransportJsonConvert();
     }
 
-    public String orderDelivery(String branchString, LinkedHashMap<String, LinkedHashMap<String, Integer>> suppliersString,
+    public String orderDelivery(String branchString, LinkedHashMap<String, LinkedHashMap<String, String>> suppliersString,
                                 String requiredDateString) {
-        Response res = new Response();
-        try {
-            return (transportJsonConvert.suppliersAndProductsToString(transportJsonConvert.mapToFile(tc.orderDelivery(branchString,suppliersString,requiredDateString))));
+        Branch branch = tc.getBranch(branchString);
 
+        LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> suppliers = new LinkedHashMap<>();
+        for (String supplierName : suppliersString.keySet()) {
+            Supplier supplier = tc.getSupplier(supplierName);
+            if (supplier != null) {
+                LinkedHashMap<String, String> productsString = suppliersString.get(supplierName);
+                LinkedHashMap<Product, Integer> products = new LinkedHashMap<>();
+                for (String productID : productsString.keySet()) {
+                    String quantityString = productsString.get(productID);
+                    if (quantityString != null) {
+                        int quantity = Integer.parseInt(quantityString);
+                        products.put(tc.getProduct(productID,supplierName), quantity);
+                    }
+                }
+                suppliers.put(supplier, products);
+            }
         }
-        catch (Exception ex) {
-            return ex.getMessage();
-        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate date = LocalDate.parse(requiredDateString, formatter);
 
+
+       tc.orderDelivery(branch,suppliers,date);
+        return "";
 
     }
 
 
     public String skipDay() {
-        Response res = new Response();
         try {
             tc.skipDay();
             return "";
@@ -54,10 +60,10 @@ public class TransportService {
         }
     }
 
-    public String addTruck(int licenseNumber, String model, int weight, int maxWeight, int coolingLevel) {
-        Response res = new Response();
+    public String addTruck(int licenseNumber, String model, int weight, int maxWeight,
+                           LicenseType licenseType, CoolingLevel coolingLevel) {
         try {
-            tc.addTruck(licenseNumber, model, weight, maxWeight, coolingLevel);
+            tc.addTruck(licenseNumber, model, weight, maxWeight, licenseType, coolingLevel);
             return "good";
         } catch (Exception ex) {
             return ex.toString();
@@ -65,7 +71,6 @@ public class TransportService {
     }
 
     public String removeTruck(int licenseNumber) {
-        Response res = new Response();
         try {
             tc.removeTruck(licenseNumber);
             return "good";
@@ -74,8 +79,7 @@ public class TransportService {
         }
     }
 
-    public String addDriver(int id, String name, int licenseType, int coolingLevel) {
-        Response res = new Response();
+    public String addDriver(int id, String name, LicenseType licenseType, CoolingLevel coolingLevel) {
         try {
             tc.addDriver(id, name, licenseType, coolingLevel);
             return "good";
@@ -85,7 +89,6 @@ public class TransportService {
     }
 
     public String removeDriver(int id) {
-        Response res = new Response();
         try {
             tc.removeDriver(id);
             return "good";
@@ -95,7 +98,6 @@ public class TransportService {
     }
 
     public String replaceTruck(int deliveryID) {
-        Response res = new Response();
         try {
             tc.replaceTruck(deliveryID);
             return "good";
@@ -114,7 +116,6 @@ public class TransportService {
 //    }
 
     public String overWeightAction(int id, int action,String address, int weight) {
-        Response res = new Response();
         try {
             tc.overWeightAction(id, action,address,weight);
             return "good";
@@ -124,7 +125,6 @@ public class TransportService {
     }
 
     public String getAllDeliverys() {
-        Response res = new Response();
         try {
             //tc.getAllDeliverys();
             return "good";
@@ -135,13 +135,8 @@ public class TransportService {
 
     public String getAllTrucks() {
 
-        Response res = new Response();
-        try {
-            tc.getAllTrucks();
-            return "good";
-        } catch (Exception ex) {
-            return ex.toString();
-        }
+       tc.getAllTrucks();
+        return  "";
     }
 
 
@@ -152,43 +147,26 @@ public class TransportService {
         return transportJsonConvert.fileToString(tc.getLoadedProducts(deliveryID,address));
     }
 
-    public String addBranch(String address,String telNumber,String contactName,int x,int y) {
-        tc.addBranch(address,telNumber,contactName,x,y);
+    public String addBranch(Branch branch) {
+        tc.addBranch(branch);
         return "D";
     }
 
-    public void addSupplier(String supplierAddress,String telNumber,String contactName,int coolingLevel, ArrayList<String> produces,int x,int y) {
-
-        tc.addSupplier(supplierAddress,telNumber,contactName, coolingLevel, produces,x,y);
+    public void addSupplier(Supplier supplier, ArrayList<Product> produces) {
+        tc.addSupplier(supplier, produces);
     }
+
+
+
 
     public String loadWeight(int id, String address, int weight) {
         if (tc.loadWeight(id, address, weight))
             return "true";
         else
             return "false";
+
     }
 
-    public void setEnterWeightInterface(EnterWeightInterface enterWeightInterface) {
-        this.enterWeightInterface = enterWeightInterface;
-    }
-
-    public String getAllBranches() {
-        return transportJsonConvert.branchesToString(tc.getAllBranches());
-    }
-
-    public String getNextDayDeatails() {
-         tc.getNextDayDeatails();
-         return "good";
-    }
-
-    public String getSupplierProducts(String supplier) {
-        return transportJsonConvert.productsToString(tc.getSupplierProducts(supplier));
-    }
-
-    public String getAllSuppliersAddress() {
-        return transportJsonConvert.getAllSuppliersAddress(tc.getAllSuppliers());
-    }
 }
 
 

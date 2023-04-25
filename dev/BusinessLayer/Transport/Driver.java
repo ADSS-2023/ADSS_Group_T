@@ -8,13 +8,12 @@ public class Driver {
     
 
 
-    public Driver(int id, String name, int licenseType, int coolingLevel) {
+    public Driver(int id, String name, LicenseType licenseType, CoolingLevel coolingLevel) {
         this.id = id;
         this.name = name;
-        this.licenseType = LicenseType.getByNumber(licenseType);
-        this.coolingLevel = CoolingLevel.get(coolingLevel);
+        this.licenseType = licenseType;
+        this.coolingLevel = coolingLevel;
     }
-
 
     public String getName() {
         return this.name;
@@ -36,39 +35,9 @@ public class Driver {
         this.licenseType = licenseType;
     }
     public enum LicenseType {
-        C1, C, E;
-        public static LicenseType getByNumber(int licenseType) {
-            if (licenseType == 1)
-                return LicenseType.C1;
-            if (licenseType == 2)
-                return LicenseType.C;
-            if (licenseType == 3)
-                return LicenseType.E;
-            else
-                return LicenseType.C1;
-        }
-
-        public static LicenseType getByWeight(int weight) {
-            if(weight < 12000)
-                return LicenseType.C1;
-            else if (weight < 20000 )
-                return LicenseType.C;
-            else
-                return LicenseType.E;
-        }
+        C, C1, E
     }
     public enum CoolingLevel {
-       non ,fridge , freezer;
-
-        public static CoolingLevel get(int coolingLevel) {
-            if (coolingLevel == 1)
-                return CoolingLevel.non;
-            if (coolingLevel == 2)
-                return CoolingLevel.fridge;
-            if (coolingLevel == 3)
-                return CoolingLevel.freezer;
-            else
-                return CoolingLevel.non;
-        }
+       non ,fridge , freezer
     }
 }

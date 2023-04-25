@@ -16,7 +16,6 @@ public class File {
         this.products = new LinkedHashMap<Product, Integer>();
     }
 
-
     public LinkedHashMap<Product, Integer> getProducts() {
         return products;
     }
