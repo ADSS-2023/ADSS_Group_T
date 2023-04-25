@@ -42,7 +42,7 @@ public class OrderService {
         }
     }
 
-    public boolean editRegularItem(ItemToOrder item, DayOfWeek day,int newQuantity) throws Exception {
+    public boolean editRegularItem(ItemToOrder item, DayOfWeek day,int newQuantity) {
         try {
             if(day==null)
                 return false;

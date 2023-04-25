@@ -2,6 +2,7 @@ package PresentationLayer.Stock;
 import BusinessLayer.Stock.Util.Util;
 import ServiceLayer.Stock.*;
 import ServiceLayer.Supplier.OrderService;
+import ServiceLayer.Supplier_Stock.ServiceFactory;
 
 import java.time.DayOfWeek;
 
@@ -11,11 +12,7 @@ import java.util.Scanner;
 import java.util.function.Supplier;
 
 public class Main {
-    public static InventoryService inventoryService = new InventoryService();
-    public static CategoryService categoryService = new CategoryService(inventoryService.get_inventory());
-    public static DamagedService damagedService = new DamagedService(inventoryService.get_inventory());
-    public static ItemService itemService = new ItemService(inventoryService.get_inventory());
-    public static ManageOrderService orderService = new ManageOrderService(inventoryService.get_inventory(), new OrderService());
+    public static ServiceFactory sf = new ServiceFactory();
 
     public static void printOptions(){
         System.out.println("\u001B[32m1.See categories\u001B[0m");
@@ -35,7 +32,7 @@ public class Main {
     public static String presentCategories(){
         System.out.println("press index of category/item in order to dive in,\npress 0 in order to choose the current category\npress -1 to exit");
         Scanner scanner = new Scanner(System.in);
-        System.out.println(inventoryService.show_data());
+        System.out.println(sf.inventoryService.show_data());
         boolean is_active = true;
         String next_index="";
         while (is_active){
@@ -48,7 +45,7 @@ public class Main {
                 is_active = false;
             else {
                 next_index += "." + (choise-1);
-                String toShow = categoryService.show_data(next_index);
+                String toShow = sf.categoryService.show_data(next_index);
                 System.out.println(toShow);
             }
         }
@@ -70,7 +67,7 @@ public class Main {
         if (categories.isEmpty())
             System.out.println("you didn't choose any category");
         else
-            System.out.println(inventoryService.produce_inventory_report(categories));
+            System.out.println(sf.inventoryService.produce_inventory_report(categories));
     }
 
     public static void setDiscount(){
@@ -84,7 +81,7 @@ public class Main {
         String end_date_string = scanner.nextLine();
         System.out.println("Choose percentage amount :");
         double percentageAmount = scanner.nextDouble();
-        inventoryService.set_discount(product , percentageAmount , end_date_string , start_date_string);
+        sf.inventoryService.set_discount(product , percentageAmount , end_date_string , start_date_string);
     }
 
     private static void setMinimalAmount() {
@@ -93,7 +90,7 @@ public class Main {
         int item_id = scanner.nextInt();
         System.out.println("insert minimal amount:");
         int amount = scanner.nextInt();
-        System.out.println(itemService.setMinimalAmount(item_id,amount));
+        System.out.println(sf.itemService.setMinimalAmount(item_id,amount));
     }
 
     private static void damagedItem() {
@@ -106,11 +103,11 @@ public class Main {
         int amount = scanner.nextInt();
         System.out.println("insert reason of damaged");
         String description = scanner.next();
-        System.out.println(damagedService.report_damaged_item(item_id,order_id,amount,description));
+        System.out.println(sf.damagedService.report_damaged_item(item_id,order_id,amount,description));
     }
 
     private static void damageItemReport() {
-        System.out.println(damagedService.produce_damaged_report());
+        System.out.println(sf.damagedService.produce_damaged_report());
     }
 
     private static void addItem() {
@@ -127,7 +124,7 @@ public class Main {
         String manufacturer = scanner.next();
         System.out.println("insert price for costumer:");
         double price = scanner.nextDouble();
-        itemService.addItem(choise,item_id,name,amount,manufacturer,price);
+        sf.itemService.addItem(choise,item_id,name,amount,manufacturer,price);
     }
 
     public static void receive_order(){
@@ -146,11 +143,11 @@ public class Main {
         String validity = scanner.nextLine();
         System.out.println("what is the cost price?");
         double cost_price = scanner.nextDouble();
-        System.out.println(itemService.receive_order(order_id,item_id,amount,location, Util.stringToDate(validity),cost_price));
+        System.out.println(sf.itemService.receive_order(order_id,item_id,amount,location, Util.stringToDate(validity),cost_price));
     }
 
     private static void produceShortageReport() {
-        System.out.println(inventoryService.produce_shortage_report());
+        System.out.println(sf.inventoryService.produce_shortage_report());
     }
 
     public static void act(String choise){
@@ -213,12 +210,12 @@ public class Main {
         while (isActive) {
             Scanner scanner = new Scanner(System.in);
             System.out.println("Choose item to be placed:");
-            System.out.println(orderService.presentItemsToBePlaced());
+            System.out.println(sf.manageOrderService.presentItemsToBePlaced());
             int choise = scanner.nextInt();
             scanner.nextLine();
             System.out.println("Where to place the item? ile:'ile number' shelf:'shelf number'");
             String location = scanner.nextLine();
-            System.out.println(orderService.placeNewArrival(choise,location));
+            System.out.println(sf.manageOrderService.placeNewArrival(choise,location));
             System.out.println("Would you like to place another item?\n1.yes 2.no");
             choise = scanner.nextInt();
             isActive = choise==1;
@@ -243,7 +240,7 @@ public class Main {
         System.out.println("Do you want to mark this order as urgent?\n1.yes 2.no");
         int choice = scanner.nextInt();
         boolean isUrgent = choice == 1;
-        orderService.createSpecialOrder(products,isUrgent);
+        sf.manageOrderService.createSpecialOrder(products,isUrgent);
     }
 
     private static void create_regular_order() {
@@ -260,7 +257,7 @@ public class Main {
             products.put(id,amount);
             isActive = choice==1;
         }
-        orderService.createRegularOrder(products);
+        sf.manageOrderService.createRegularOrder(products);
     }
 
     private static void edit_create_orders() {
@@ -287,17 +284,17 @@ public class Main {
         System.out.println("Insert the day of the week (big letters only):");
         String day = scanner.nextLine();
         DayOfWeek cur_day = DayOfWeek.valueOf(day);
-        System.out.println(orderService.presentItemsById(cur_day));
+        System.out.println(sf.manageOrderService.presentItemsById(cur_day));
         System.out.println("Insert id of product:");
         int id = scanner.nextInt();
         //maybe present him the item details from the order?
         System.out.println("Insert the new amount of product:");
         int amount = scanner.nextInt();
-        orderService.editRegularOrder(id , cur_day , amount);
+        sf.manageOrderService.editRegularOrder(id , cur_day , amount);
     }
 
     private static void moveToNextDay() {
-        orderService.nextDay();
+        sf.manageOrderService.nextDay();
     }
 
     private static void addCategory() {
@@ -305,7 +302,7 @@ public class Main {
         String index = presentCategories();
         System.out.println("Insert name of category:");
         String name = scanner.nextLine();
-        categoryService.add_category(index,name);
+        sf.categoryService.add_category(index,name);
     }
 
 
@@ -319,8 +316,8 @@ public class Main {
         int action = scanner.nextInt();
         scanner.nextLine();
         if(action==1) {
-            inventoryService.setUp();
-            orderService.set_up();
+            sf.inventoryService.setUp();
+            sf.manageOrderService.set_up();
         }
         while(true) {
             System.out.println("What would you like to do?");
