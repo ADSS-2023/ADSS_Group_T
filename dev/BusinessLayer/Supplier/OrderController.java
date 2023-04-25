@@ -2,6 +2,7 @@ package BusinessLayer.Supplier;
 
 import BusinessLayer.Supplier.Suppliers.SupplierBusiness;
 import BusinessLayer.Supplier_Stock.ItemToOrder;
+import ServiceLayer.Stock.ManageOrderService;
 
 
 import java.time.DayOfWeek;
@@ -17,16 +18,16 @@ public class OrderController {
     private List<OrderBusiness> ordersNotSupplied;
     private HashMap<DayOfWeek,List<OrderBusiness>> dayToConstantOrders;
     private HashMap<Integer,List<OrderProduct>> shoppingLists; // supplierNumber to list of products
+    private ManageOrderService mos;
 
-
-    public OrderController(SupplierController sc) {
+    public OrderController(SupplierController sc ,ManageOrderService mos) {
         orders = new LinkedList<>();
         this.sc = sc;
+        this.mos=mos;
         shoppingLists = new HashMap<>();
         dayToConstantOrders = new HashMap<>();
         orderCounter=0;
         ordersNotSupplied = new LinkedList<>();
-
     }
 
     /**
@@ -62,7 +63,6 @@ public class OrderController {
         }
             createOrders(isRegular);//execute orders and add order to regular orders map if needed
     }
-
 
     /**
      *  goes over every shopping list per supplier consisted of OrderProducts and
@@ -168,7 +168,7 @@ public class OrderController {
             if(order.getDaysToSupplied() == 0) {
                 for (OrderProduct product : order.getProducts())
                     items.add(new ItemToOrder(product.getProductName(), product.getManufacturer(), product.getQuantity(),
-                            product.getExpiryDate(), order.getOrderNum(), product.getFinalPrice()));
+                            product.getExpiryDate(), order.getOrderNum(), product.getFinalPrice()/ product.getQuantity()));
                 orders.add(order);
                 ordersToDelete.add(order);
             }
@@ -302,17 +302,22 @@ public class OrderController {
      * a user from inventory tries to modify an item in a regular order which needs to be updated
      * @param item
      * @param day
-     * @param newQuantity
      * @throws Exception
      */
-    public void editRegularItem(ItemToOrder item, DayOfWeek day, int newQuantity) throws Exception{
+    // go over all orders of the day and find out how much to add to one of the suppliers
+    public void editRegularItem(ItemToOrder item, DayOfWeek day) throws Exception{
+        int newQuantity = item.getQuantity();
+        if(newQuantity==0){
+            removeRegularItem(item,day);
+            return;
+        }
         if(!dayToConstantOrders.containsKey(day))
             throw new Exception("item has not found");
+        List<SupplierProductBusiness> productsList = new LinkedList<>();
         for (OrderBusiness order: dayToConstantOrders.get(day)) {
             for (OrderProduct product : order.getProducts()) {
                 if (product.getProductName().equals(item.getProductName()) &&
-                        product.getManufacturer().equals(item.getManufacturer()) &&
-                        product.getQuantity() == item.getQuantity()) {
+                        product.getManufacturer().equals(item.getManufacturer())){
 
                     SupplierProductBusiness spProduct = sc.getSupplier(order.getSupplierNum()).getProduct(product.getProductNumber());
                     if (!spProduct.hasEnoughQuantity(newQuantity))
@@ -349,8 +354,7 @@ public class OrderController {
         for (OrderBusiness order : dayToConstantOrders.get(day)) {
             for (OrderProduct product : order.getProducts()) {
                 if (product.getProductName().equals(item.getProductName()) &&
-                        product.getManufacturer().equals(item.getManufacturer()) &&
-                        product.getQuantity() == item.getQuantity()) {
+                        product.getManufacturer().equals(item.getManufacturer())){
                     toRemove.add(product);
                 }
             }
