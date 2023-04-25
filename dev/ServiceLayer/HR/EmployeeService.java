@@ -30,6 +30,7 @@ public class EmployeeService {
                 bool = false;
             employee.addRestriction(date, bool);
         } catch (Exception ex) {
+
         }
         return null;
     }
