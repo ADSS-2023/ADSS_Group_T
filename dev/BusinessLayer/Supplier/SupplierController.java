@@ -54,6 +54,33 @@ public class SupplierController {
                 return 1;
             return 0;
         });
+        int earliestSupply = suppliersList.get(0).findEarliestSupplyDay();
+        List<SupplierBusiness> fastestSuppliers = new ArrayList<>();
+        List<SupplierBusiness> finalsSuppliers = new ArrayList<>();
+        for(SupplierBusiness sb : suppliersList){
+            if(sb.isSupplierProuctExist(item.getProductName(), item.getManufacturer()) && sb.findEarliestSupplyDay() == earliestSupply) {
+                if(sb.getProduct(item.getProductName(),item.getManufacturer()).hasEnoughQuantity(item.getQuantity()))
+                    finalsSuppliers.add(sb);
+                else
+                    fastestSuppliers.add(sb);
+            }
+        }
+        if(finalsSuppliers.isEmpty())
+            suppliersList = finalsSuppliers;
+        else
+            suppliersList = fastestSuppliers;
+
+        Collections.sort(suppliersList, (sp1, sp2) -> {
+            SupplierProductBusiness p1 = sp1.getProduct(item.getProductName(), item.getManufacturer());
+            SupplierProductBusiness p2 = sp2.getProduct(item.getProductName(), item.getManufacturer());
+            float p1Price =p1.getPriceByQuantity(item.getQuantity())/Math.min(p1.getMaxAmount(), item.getQuantity());
+            float p2Price =p2.getPriceByQuantity(item.getQuantity())/Math.min(p2.getMaxAmount(), item.getQuantity());
+            if(p1Price<p2Price)
+                return -1;
+            if(p1Price>p2Price)
+                return 1;
+            return 0;
+        });
         List<SupplierProductBusiness> productList = new LinkedList<>();
         for (SupplierBusiness sp: suppliersList ) {
             if(sp.isSupplierProuctExist(item.getProductName(), item.getManufacturer()))
