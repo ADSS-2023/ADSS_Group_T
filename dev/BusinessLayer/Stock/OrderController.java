@@ -1,17 +1,18 @@
 package BusinessLayer.Stock;
 
 import BusinessLayer.Stock.Util.Util;
-
+import BusinessLayer.Supplier_Stock.ItemToOrder;
+import ServiceLayer.Supplier.OrderService;
 import java.time.DayOfWeek;
 import java.util.*;
 
 
 public class OrderController {
     private Inventory inventory;
-    private Supplier.OrderService order_service;
+    private OrderService order_service;
     private List<ItemToOrder> items_to_place;
 
-    public OrderController(Inventory inventory, Supplier.OrderService orderService) {
+    public OrderController(Inventory inventory, OrderService orderService) {
         this.inventory = inventory;
         this.order_service = orderService;
         items_to_place = new LinkedList<>();

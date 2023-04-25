@@ -1,13 +1,11 @@
 package ServiceLayer.Stock;
 
 import BusinessLayer.Stock.Inventory;
-import BusinessLayer.Stock.Item;
-import BusinessLayer.Stock.ItemToOrder;
+import BusinessLayer.Supplier_Stock.ItemToOrder;
 import BusinessLayer.Stock.OrderController;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
