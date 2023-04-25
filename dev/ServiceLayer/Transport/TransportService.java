@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 import ServiceLayer.HR.Response;
-import com.google.gson.*;
+
 
 
 
@@ -18,7 +18,7 @@ import UtilSuper.EnterWeightInterface;
 
 
 public class TransportService {
-    private static final Gson gson = new Gson();
+
     public TransportController tc;
     private EnterWeightInterface enterWeightInterface;
     private TransportJsonConvert transportJsonConvert;
@@ -29,16 +29,17 @@ public class TransportService {
         transportJsonConvert = new TransportJsonConvert();
     }
 
-    public String orderDelivery(String branchString, LinkedHashMap<String, LinkedHashMap<String, String>> suppliersString,
+    public String orderDelivery(String branchString, LinkedHashMap<String, LinkedHashMap<String, Integer>> suppliersString,
                                 String requiredDateString) {
         Response res = new Response();
         try {
-            tc.orderDelivery(branchString,suppliersString,requiredDateString);
-            return "";
+            return (transportJsonConvert.suppliersAndProductsToString(transportJsonConvert.mapToFile(tc.orderDelivery(branchString,suppliersString,requiredDateString))));
+
         }
         catch (Exception ex) {
-            return ex.toString();
+            return ex.getMessage();
         }
+
 
     }
 
@@ -161,15 +162,11 @@ public class TransportService {
         tc.addSupplier(supplierAddress,telNumber,contactName, coolingLevel, produces,x,y);
     }
 
-
-
-
     public String loadWeight(int id, String address, int weight) {
         if (tc.loadWeight(id, address, weight))
             return "true";
         else
             return "false";
-
     }
 
     public void setEnterWeightInterface(EnterWeightInterface enterWeightInterface) {
@@ -177,13 +174,20 @@ public class TransportService {
     }
 
     public String getAllBranches() {
-        tc.getAllBranches();
-        return "";
+        return transportJsonConvert.branchesToString(tc.getAllBranches());
     }
 
     public String getNextDayDeatails() {
          tc.getNextDayDeatails();
          return "good";
+    }
+
+    public String getSupplierProducts(String supplier) {
+        return transportJsonConvert.productsToString(tc.getSupplierProducts(supplier));
+    }
+
+    public String getAllSuppliersAddress() {
+        return transportJsonConvert.getAllSuppliersAddress(tc.getAllSuppliers());
     }
 }
 

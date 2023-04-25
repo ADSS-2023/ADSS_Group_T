@@ -1,13 +1,13 @@
 package ServiceLayer.Transport;
 
+import java.util.ArrayList;
+import java.util.Scanner;
+
 public class Main {
         public static void main(String[] args) throws Exception {
-//            TestGoogleGson testGoogleGson = new TestGoogleGson();
-//            testGoogleGson.start();
             while(true)
             {
                 try{
-
                    TransportPresentation tp = new TransportPresentation();
                    tp.start();
                 }

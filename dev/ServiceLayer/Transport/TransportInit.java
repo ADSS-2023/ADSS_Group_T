@@ -4,7 +4,7 @@ import BusinessLayer.Transport.Branch;
 import BusinessLayer.Transport.Driver;
 import BusinessLayer.Transport.Product;
 import BusinessLayer.Transport.Supplier;
-import com.google.gson.Gson;
+
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -14,7 +14,7 @@ public class TransportInit {
     public TransportInit(TransportService ts){
         this.ts = ts;
     }
-    private static final Gson gson = new Gson();
+
     public void init(){
 
 
@@ -108,120 +108,103 @@ public class TransportInit {
 
 // Delivery 1
         String branch1 = "branch1";
-        LinkedHashMap<String, LinkedHashMap<String, String>> products1 = new LinkedHashMap<>();
-        LinkedHashMap<String, String> supplierProducts1 = new LinkedHashMap<>();
-        supplierProducts1.put("apples", "5");
-        supplierProducts1.put("bananas", "10");
-        supplierProducts1.put("grapes", "20");
-        supplierProducts1.put("pears", "15");
+        LinkedHashMap<String, LinkedHashMap<String, Integer>> products1 = new LinkedHashMap<>();
+        LinkedHashMap<String, Integer> supplierProducts1 = new LinkedHashMap<>();
+        supplierProducts1.put("apples", 5);
+        supplierProducts1.put("bananas", 10);
+        supplierProducts1.put("grapes", 20);
+        supplierProducts1.put("pears", 15);
         products1.put("fruit paradise", supplierProducts1);
-        LinkedHashMap<String, String> supplierProducts2 = new LinkedHashMap<>();
-        supplierProducts2.put("carrots", "8");
-        supplierProducts2.put("broccoli", "5");
-        supplierProducts2.put("celery", "10");
+        LinkedHashMap<String, Integer> supplierProducts2 = new LinkedHashMap<>();
+        supplierProducts2.put("carrots", 8);
+        supplierProducts2.put("broccoli", 5);
+        supplierProducts2.put("celery", 10);
         products1.put("veggie kingdom", supplierProducts2);
-        String date1 = "2023-04-24";
+        String date1 = "2023-01-02";
         ts.orderDelivery(branch1, products1, date1);
 
 // Delivery 2
         String branch2 = "branch2";
-        LinkedHashMap<String, LinkedHashMap<String, String>> products2 = new LinkedHashMap<>();
-        LinkedHashMap<String, String> supplierProducts3 = new LinkedHashMap<>();
-        supplierProducts3.put("chicken", "10");
-        supplierProducts3.put("salmon", "5");
-        supplierProducts3.put("tilapia", "3");
-        supplierProducts3.put("shrimp", "8");
+        LinkedHashMap<String, LinkedHashMap<String, Integer>> products2 = new LinkedHashMap<>();
+        LinkedHashMap<String, Integer> supplierProducts3 = new LinkedHashMap<>();
+        supplierProducts3.put("chicken", 10);
+        supplierProducts3.put("salmon", 5);
+        supplierProducts3.put("tilapia", 3);
+        supplierProducts3.put("shrimp", 8);
         products2.put("seafood palace", supplierProducts3);
-        LinkedHashMap<String, String> supplierProducts4 = new LinkedHashMap<>();
-        supplierProducts4.put("milk", "20");
-        supplierProducts4.put("yogurt", "15");
-        supplierProducts4.put("cheese", "10");
+        LinkedHashMap<String, Integer> supplierProducts4 = new LinkedHashMap<>();
+        supplierProducts4.put("milk", 20);
+        supplierProducts4.put("yogurt", 15);
+        supplierProducts4.put("cheese", 10);
         products2.put("dairy delight", supplierProducts4);
-        String date2 = "2023-04-24";
+        String date2 = "2023-01-02";
         ts.orderDelivery(branch2, products2, date2);
 
-// Delivery 3
-        String branch3 = "branch3";
-        LinkedHashMap<String, LinkedHashMap<String, String>> products3 = new LinkedHashMap<>();
-        LinkedHashMap<String, String> supplierProducts5 = new LinkedHashMap<>();
-        supplierProducts5.put("bagels", "10");
-        supplierProducts5.put("croissants", "15");
-        supplierProducts5.put("muffins", "20");
-        products3.put("bakery bliss", supplierProducts5);
-        LinkedHashMap<String, String> supplierProducts6 = new LinkedHashMap<>();
-        supplierProducts6.put("chocolate", "5");
-        supplierProducts6.put("candy", "10");
-        supplierProducts6.put("gum", "3");
-        products3.put("sweet treats", supplierProducts6);
-        String date3 = "2023-04-24";
-        ts.orderDelivery(branch3, products3, date3);
-
-// Delivery 4
-        String branch4 = "branch4";
-        LinkedHashMap<String, LinkedHashMap<String, String>> products4 = new LinkedHashMap<>();
-        LinkedHashMap<String, String> supplierProducts7 = new LinkedHashMap<>();
-        supplierProducts7.put("pasta", "8");
-        supplierProducts7.put("rice", "10");
-        supplierProducts7.put("quinoa", "5");
-        supplierProducts7.put("couscous", "3");
-        products4.put("carb heaven", supplierProducts7);
-        LinkedHashMap<String, String> supplierProducts8 = new LinkedHashMap<>();
-        supplierProducts8.put("coffee beans", "5");
-        supplierProducts8.put("tea leaves", "10");
-        products4.put("caffeine fix", supplierProducts8);
-        String date4 = "2023-04-24";
-        ts.orderDelivery(branch4, products4, date4);
-
-// Delivery 5
-        String branch8 = "branch4";
-        LinkedHashMap<String, LinkedHashMap<String, String>> products8 = new LinkedHashMap<>();
-        LinkedHashMap<String, String> supplierProducts15 = new LinkedHashMap<>();
-        supplierProducts15.put("pasta", "10");
-        supplierProducts15.put("tomato sauce", "12");
-        supplierProducts15.put("olive oil", "5");
-        supplierProducts15.put("garlic", "3");
-        products8.put("italian essentials", supplierProducts15);
-        LinkedHashMap<String, String> supplierProducts16 = new LinkedHashMap<>();
-        supplierProducts16.put("chocolate", "8");
-        supplierProducts16.put("candy", "15");
-        supplierProducts16.put("gum", "5");
-        products8.put("sweet spot", supplierProducts16);
-        String date8 = "2023-05-01";
-        ts.orderDelivery(branch8, products8, date8);
-
-// Delivery 6
-        String branch6 = "branch3";
-        LinkedHashMap<String, LinkedHashMap<String, String>> products6 = new LinkedHashMap<>();
-        LinkedHashMap<String, String> supplierProducts11 = new LinkedHashMap<>();
-        supplierProducts11.put("beef", "15");
-        supplierProducts11.put("pork", "10");
-        supplierProducts11.put("chicken", "20");
-        products6.put("meat market", supplierProducts11);
-        LinkedHashMap<String, String> supplierProducts12 = new LinkedHashMap<>();
-        supplierProducts12.put("potatoes", "20");
-        supplierProducts12.put("onions", "15");
-        supplierProducts12.put("carrots", "10");
-        supplierProducts12.put("garlic", "5");
-        products6.put("veggie haven", supplierProducts12);
-        String date6 = "2023-04-29";
-        ts.orderDelivery(branch6, products6, date6);
-
-// Delivery 7
-        String branch7 = "branch2";
-        LinkedHashMap<String, LinkedHashMap<String, String>> products7 = new LinkedHashMap<>();
-        LinkedHashMap<String, String> supplierProducts13 = new LinkedHashMap<>();
-        supplierProducts13.put("apples", "10");
-        supplierProducts13.put("pears", "8");
-        supplierProducts13.put("oranges", "12");
-        products7.put("fruit frenzy", supplierProducts13);
-        LinkedHashMap<String, String> supplierProducts14 = new LinkedHashMap<>();
-        supplierProducts14.put("milk", "15");
-        supplierProducts14.put("cheese", "10");
-        supplierProducts14.put("butter", "5");
-        supplierProducts14.put("yogurt", "8");
-        products7.put("dairy delight", supplierProducts14);
-        String date7 = "2023-04-30";
-        ts.orderDelivery(branch7, products7, date7);
+//// Delivery 3
+//        String branch3 = "branch3";
+//        LinkedHashMap<String, LinkedHashMap<String, Integer>> products3 = new LinkedHashMap<>();
+//        LinkedHashMap<String, Integer> supplierProducts5 = new LinkedHashMap<>();
+//        supplierProducts5.put("bagels", 10);
+//        supplierProducts5.put("croissants", 15);
+//        supplierProducts5.put("muffins", 20);
+//        products3.put("bakery bliss", supplierProducts5);
+//        LinkedHashMap<String, Integer> supplierProducts6 = new LinkedHashMap<>();
+//        supplierProducts6.put("chocolate", 5);
+//        supplierProducts6.put("candy", 10);
+//        supplierProducts6.put("gum", 3);
+//        products3.put("sweet treats", supplierProducts6);
+//        String date3 = "2023-01-02";
+//        ts.orderDelivery(branch3, products3, date3);
+//
+//// Delivery 4
+//        String branch4 = "branch4";
+//        LinkedHashMap<String, LinkedHashMap<String, Integer>> products4 = new LinkedHashMap<>();
+//        LinkedHashMap<String, Integer> supplierProducts7 = new LinkedHashMap<>();
+//        supplierProducts7.put("pasta", 8);
+//        supplierProducts7.put("rice", 10);
+//        supplierProducts7.put("quinoa", 5);
+//        supplierProducts7.put("couscous", 3);
+//        products4.put("carb heaven", supplierProducts7);
+//        LinkedHashMap<String, Integer> supplierProducts8 = new LinkedHashMap<>();
+//        supplierProducts8.put("coffee beans", 5);
+//        supplierProducts8.put("tea leaves", 10);
+//        products4.put("caffeine fix", supplierProducts8);
+//        String date4 = "2023-01-02";
+//        ts.orderDelivery(branch4, products4, date4);
+//
+//// Delivery 5
+//        String branch6 = "branch3";
+//        LinkedHashMap<String, LinkedHashMap<String, Integer>> products6 = new LinkedHashMap<>();
+//        LinkedHashMap<String, Integer> supplierProducts11 = new LinkedHashMap<>();
+//        supplierProducts11.put("beef", 15);
+//        supplierProducts11.put("pork", 10);
+//        supplierProducts11.put("chicken", 20);
+//        products6.put("meat market", supplierProducts11);
+//        LinkedHashMap<String, Integer> supplierProducts12 = new LinkedHashMap<>();
+//        supplierProducts12.put("potatoes", 20);
+//        supplierProducts12.put("onions", 15);
+//        supplierProducts12.put("carrots", 10);
+//        supplierProducts12.put("garlic", 5);
+//        products6.put("veggie haven", supplierProducts12);
+//        String date6 = "2023-01-02";
+//        ts.orderDelivery(branch6, products6, date6);
+//
+//// Delivery 7
+//        String branch7 = "branch2";
+//        LinkedHashMap<String, LinkedHashMap<String, Integer>> products7 = new LinkedHashMap<>();
+//        LinkedHashMap<String, Integer> supplierProducts13 = new LinkedHashMap<>();
+//        supplierProducts13.put("apples", 10);
+//        supplierProducts13.put("pears", 8);
+//        supplierProducts13.put("oranges", 12);
+//        products7.put("fruit frenzy", supplierProducts13);
+//        LinkedHashMap<String, Integer> supplierProducts14 = new LinkedHashMap<>();
+//        supplierProducts14.put("milk", 15);
+//        supplierProducts14.put("cheese", 10);
+//        supplierProducts14.put("butter", 5);
+//        supplierProducts14.put("yogurt", 8);
+//        products7.put("dairy delight", supplierProducts14);
+//        String date7 = "2023-01-02";
+//        ts.orderDelivery(branch7, products7, date7);
 
     }
 }
