@@ -3,7 +3,7 @@ package BusinessLayer.Supplier;
 import BusinessLayer.Supplier.Suppliers.ConstantSupplier;
 import BusinessLayer.Supplier.Suppliers.OccasionalSupplier;
 import BusinessLayer.Supplier.Suppliers.SupplierBusiness;
-import ServiceLayer.Supplier.ItemToOrder;
+import BusinessLayer.Supplier_Stock.ItemToOrder;
 import BusinessLayer.Supplier.Util.PaymentTerms;
 
 import java.time.DayOfWeek;

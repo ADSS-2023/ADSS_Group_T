@@ -1,6 +1,6 @@
 package PresentationLayer.Supplier;
 
-import ServiceLayer.Supplier.ItemToOrder;
+import BusinessLayer.Supplier_Stock.ItemToOrder;
 import ServiceLayer.Supplier.ServiceFactory;
 import BusinessLayer.Supplier.Util.Discounts;
 import BusinessLayer.Supplier.Util.PaymentTerms;

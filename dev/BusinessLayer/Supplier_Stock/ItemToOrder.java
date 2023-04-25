@@ -1,29 +1,41 @@
 package BusinessLayer.Supplier_Stock;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
-/**
- * The mutual class between inventory and suppliers that represents a product
- */
 public class ItemToOrder {
     private String productName;
     private String manufacturer;
     private int quantity;
-    private LocalDate expiryDate;
-    private double costPrice;
     private int orderId;
+    private double costPrice;
+    private LocalDate expiryDate;
 
-    public ItemToOrder(String productName, String manufacturer, int quantity, LocalDate expiryDate, double costPrice,int orderId) {
-        this.expiryDate = expiryDate;
-        this.manufacturer = manufacturer;
+
+
+    public ItemToOrder(String productName, String manufacturer, int quantity, LocalDate expiryDate , int orderId, double costPrice){
         this.productName = productName;
+        this.manufacturer = manufacturer;
         this.quantity = quantity;
-        this.costPrice = costPrice;
+        this.expiryDate=expiryDate;
         this.orderId = orderId;
+        this.costPrice=costPrice;
     }
 
     public String getProductName() {
         return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public void setManufacturer(String manufacturer) {
+        this.manufacturer = manufacturer;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 
     public String getManufacturer() {
@@ -34,27 +46,16 @@ public class ItemToOrder {
         return quantity;
     }
 
+    public int getOrderId() {
+        return orderId;
+    }
+
+    public double getCostPrice() {
+        return costPrice;
+    }
+
     public LocalDate getExpiryDate() {
         return expiryDate;
     }
 
-    public ItemToOrder clone(){
-        return new ItemToOrder(this.productName , this.manufacturer , this.quantity , this.expiryDate , this.costPrice,this.orderId);
-    }
-
-    public void setQuantity(int new_quantity) {
-        this.quantity = new_quantity;
-    }
-
-    public void setManufacturer(String manufacturer) {
-        this.manufacturer = manufacturer;
-    }
-
-    public double getCost_price() {
-        return costPrice;
-    }
-
-    public int getOrderId() {
-        return orderId;
-    }
 }

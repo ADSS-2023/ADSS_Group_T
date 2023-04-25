@@ -1,7 +1,7 @@
 package BusinessLayer.Supplier;
 
 import BusinessLayer.Supplier.Suppliers.SupplierBusiness;
-import ServiceLayer.Supplier.ItemToOrder;
+import BusinessLayer.Supplier_Stock.ItemToOrder;
 
 
 import java.time.DayOfWeek;
@@ -25,6 +25,7 @@ public class OrderController {
         shoppingLists = new HashMap<>();
         dayToConstantOrders = new HashMap<>();
         orderCounter=0;
+        ordersNotSupplied = new LinkedList<>();
 
     }
 
@@ -176,7 +177,7 @@ public class OrderController {
             }
         for(OrderBusiness order:ordersToDelete)
             ordersNotSupplied.remove(order);
-        stockContreoller.receiveOrders(items);
+        //stockController.receiveOrders(items);
     }
 
     /**
