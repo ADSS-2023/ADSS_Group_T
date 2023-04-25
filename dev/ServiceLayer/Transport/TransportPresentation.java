@@ -1,18 +1,20 @@
 package ServiceLayer.Transport;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.Random;
 import java.util.Scanner;
 
 public class TransportPresentation {
-    final TransportService ts;
-    final TransportInit ti;
+    final DeliveryService deliveryService;
+    final LogisticCenterService logisticCenterService;
+    final TransportInit transportInit;
 
     public TransportPresentation() {
-        ts = new TransportService();
-        ts.setEnterWeightInterface(this::enterWeightFunction);
-        ti = new TransportInit(ts);
+        logisticCenterService = new LogisticCenterService();
+        deliveryService = new DeliveryService();
+        deliveryService.setEnterWeightInterface(this::enterWeightFunction);
+
+        transportInit = new TransportInit(deliveryService, logisticCenterService);
+
     }
 
 
@@ -27,7 +29,7 @@ public class TransportPresentation {
         if (choice == 1)
             mainWindow();
         if (choice == 2) {
-            ti.init();
+            transportInit.init();
             mainWindow();
         }
     }
@@ -67,8 +69,8 @@ public class TransportPresentation {
      * skip day and let user choose way of action in case of problem
      */
     void skipDay() {
-        System.out.println(ts.getNextDayDeatails());
-        System.out.println(ts.skipDay());
+        System.out.println(deliveryService.getNextDayDeatails());
+        System.out.println(deliveryService.skipDay());
     }
 
     // option 2
@@ -81,7 +83,7 @@ public class TransportPresentation {
         String branch = getBranch();
         LinkedHashMap<String,LinkedHashMap<String,Integer>> suppliersAndProducts = getSuppliersAndProducts();
         String date = chooseDeliveryDate(scanner);
-        System.out.println(ts.orderDelivery(branch,suppliersAndProducts,date));
+        System.out.println(deliveryService.orderDelivery(branch,suppliersAndProducts,date));
     }
 
 
@@ -100,7 +102,7 @@ public class TransportPresentation {
         String driverName = scanner.nextLine();
         int licenseIndex = getLicendeType();
         int coolingIndex = getCoolingLevel();
-        System.out.println(ts.addDriver(driverId,driverName,licenseIndex,coolingIndex));
+        System.out.println(logisticCenterService.addDriver(driverId,driverName,licenseIndex,coolingIndex));
     }
 
 
@@ -122,7 +124,7 @@ public class TransportPresentation {
         System.out.println("Please enter the truck's maximum weight:");
         int maxWeight = scanner.nextInt();
         int coolingIndex = getCoolingLevel();
-        ts.addTruck(licenseNumber,model,weight,maxWeight,coolingIndex);
+        logisticCenterService.addTruck(licenseNumber,model,weight,maxWeight,coolingIndex);
 
     }
 
@@ -163,7 +165,7 @@ public class TransportPresentation {
             }
             productsList.add(product);
         }
-        ts.addSupplier(address, telNumber, contactName,coolingLevel, productsList,x,y);
+        deliveryService.addSupplier(address, telNumber, contactName,coolingLevel, productsList,x,y);
     }
 
 
@@ -185,7 +187,7 @@ public class TransportPresentation {
         int x = scanner.nextInt();
         System.out.print("Enter site Y coordinate: ");
         int y = scanner.nextInt();
-        System.out.println(ts.addBranch(address,telNumber,contactName,x,y));
+        System.out.println(deliveryService.addBranch(address,telNumber,contactName,x,y));
     }
 
 
@@ -194,7 +196,7 @@ public class TransportPresentation {
         System.out.println("------- " + deliveryID + " -------");
         System.out.println("the truck in:" + address + "." +
                 "\nthe folowing pruducts are loaded: " +
-                "\n" + ts.getLoadedProducts(deliveryID, address) +
+                "\n" + deliveryService.getLoadedProducts(deliveryID, address) +
                 "\npls enter weight:");
         return scanner.nextInt();//product weight
     }
@@ -211,7 +213,7 @@ public class TransportPresentation {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter delivery details:");
         System.out.println("choose branch:");
-        System.out.println(ts.getAllBranches() + "\n");
+        System.out.println(deliveryService.getAllBranches() + "\n");
         return scanner.next();
     }
 
@@ -224,7 +226,7 @@ public class TransportPresentation {
     private  LinkedHashMap<String,LinkedHashMap<String,Integer>> getSuppliersAndProducts(){
         Scanner scanner = new Scanner(System.in);
         LinkedHashMap<String,LinkedHashMap<String,Integer>> suppliersAndProducts = new LinkedHashMap<>();
-        System.out.println(ts.getAllSuppliersAddress());
+        System.out.println(deliveryService.getAllSuppliersAddress());
         while (true) {
             System.out.print("Enter supplier name name (or 0 to finish): ");
             String  supplier = scanner.nextLine();
@@ -249,7 +251,7 @@ public class TransportPresentation {
     private LinkedHashMap<String,Integer> getSupplierProducts(String supplier){
         Scanner scanner = new Scanner(System.in);
         LinkedHashMap<String, Integer> products = new LinkedHashMap<String, Integer>();
-        System.out.println(ts.getSupplierProducts(supplier));
+        System.out.println(deliveryService.getSupplierProducts(supplier));
 
         while (true) {
             System.out.print("Enter product name (or 0 to finish): ");
