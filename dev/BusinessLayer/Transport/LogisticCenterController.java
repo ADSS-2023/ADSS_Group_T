@@ -48,8 +48,17 @@ public class LogisticCenterController {
         public boolean addTruck(int licenseNumber, String model, int weight, int maxWeight, int coolingLevel) {
             if (trucks.containsKey(licenseNumber))
                 return false;
-            trucks.put(licenseNumber, new Truck(licenseNumber, model, weight, maxWeight, coolingLevel));
-            return true;
+            else{
+                try {
+                    Truck t =  new Truck(licenseNumber, model, weight, maxWeight, coolingLevel);
+
+                    trucks.put(licenseNumber,t);
+                    return true;
+            }
+            catch (Exception ex){
+            }
+        }
+            return false;////////////////////////////////////////
         }
 
         /**
