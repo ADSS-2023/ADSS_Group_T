@@ -153,7 +153,7 @@ public class OrderController {
 
     public String presentItemsByDay(DayOfWeek cur_day) throws Exception {
         String toReturn = "";
-        List<ItemToOrder> items_to_show = order_service.getRegularOrder(cur_day.toString());
+        List<ItemToOrder> items_to_show = order_service.getRegularOrder(cur_day);
         if (items_to_show.isEmpty())
             throw new Exception("No items to present");
         for(ItemToOrder item : items_to_show){
