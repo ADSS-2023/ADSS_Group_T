@@ -2,9 +2,6 @@ package BusinessLayer.Supplier;
 
 import BusinessLayer.Supplier.Suppliers.SupplierBusiness;
 import ServiceLayer.Supplier.ItemToOrder;
-import ServiceLayer.Supplier.OrderService;
-import Util.WeekDays;
-import Util.WeekDaysFunc;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -17,7 +14,7 @@ public class OrderController {
     private SupplierController sc;
     private int orderCounter;
     private List<OrderBusiness> ordersNotSupplied;
-    private HashMap<WeekDays,List<OrderBusiness>> dayToConstantOrders;
+    private HashMap<DayOfWeek,List<OrderBusiness>> dayToConstantOrders;
 
     private HashMap<Integer,List<OrderProduct>> shoppingLists; // supplierNumber to list of products
 
@@ -108,7 +105,7 @@ public class OrderController {
                int deliveryDay = supplier.findEarliestSupplyDay();
                LocalDate today = LocalDate.now();
                LocalDate futureDay = today.plusDays(deliveryDay);
-               WeekDays orderDay = WeekDays.valueOf(futureDay.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ENGLISH));
+               DayOfWeek orderDay = DayOfWeek.valueOf(futureDay.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ENGLISH));
                if(!dayToConstantOrders.containsKey(orderDay))
                    dayToConstantOrders.put(orderDay,new LinkedList<>());
                dayToConstantOrders.get(orderDay).add(order);
@@ -184,23 +181,18 @@ public class OrderController {
 
     /**
      *
-     * @param day requested day to get its items coming as a special order
+     * @param weekDay requested day to get its items coming as a special order
      * @return list of the item comes as a special order estimated to be delivered at the day comes as an input
      * @throws Exception
      */
-    public List<ItemToOrder> getSpecialOrder(String day) throws Exception {
+    public List<ItemToOrder> getSpecialOrder(DayOfWeek weekDay) throws Exception {
         List<ItemToOrder> itemsList = new LinkedList<>();
 
         //find the exact number of the days following the current day
-        WeekDays weekDay = WeekDaysFunc.toDayOfWeek(day);
-        if(weekDay==null)
-            throw new Exception("Entered an incorrect day");
         LocalDate today = LocalDate.now();
         int todayValue = today.getDayOfWeek().getValue();
         int daysToAdd = 7;
-        String dayOfWeekStr = weekDay.name();
-        DayOfWeek dayOfWeek = DayOfWeek.valueOf(dayOfWeekStr.toUpperCase(Locale.ENGLISH));
-        int dayValue = dayOfWeek.getValue();
+        int dayValue = weekDay.getValue();
         int daysToNext = (dayValue >= todayValue) ? dayValue - todayValue : 7 - (todayValue - dayValue);
         if (daysToNext < daysToAdd) {
             daysToAdd = daysToNext;
@@ -215,7 +207,6 @@ public class OrderController {
             }
         }
        return itemsList;
-
     }
 
     /**
@@ -224,11 +215,8 @@ public class OrderController {
      * @return list of items comes as a weekly basis estimated to be delivered at the day comes as an input
      * @throws Exception
      */
-    public List<ItemToOrder> getRegularOrder(String day) throws Exception {
+    public List<ItemToOrder> getRegularOrder(DayOfWeek day) throws Exception {
         List<ItemToOrder> itemsList = new LinkedList<>();
-        WeekDays weekDay = WeekDaysFunc.toDayOfWeek(day);
-        if(weekDay==null)
-            throw new Exception("Entered an incorrect day");
         if(!dayToConstantOrders.containsKey(day) || dayToConstantOrders.get(day).isEmpty())
             return itemsList;
         else{
@@ -242,23 +230,179 @@ public class OrderController {
         return itemsList;
     }
 
-    public void editRegularItem(ItemToOrder item, String day) throws Exception{
-        WeekDays weekDay = WeekDaysFunc.toDayOfWeek(day);
-        if(weekDay==null)
-            throw new Exception("Entered an incorrect day");
+
+    /**
+     * once a supplier edits an item, each regular order contains this item needs to be updated
+     * @param productName
+     * @param manufacturer
+     * @param supplierNum
+     * @param days
+     * @throws Exception
+     */
+    public void editRegularItem(String productName, String manufacturer, int supplierNum, List<DayOfWeek> days) throws Exception{
+        //the supplier made changes to a product, therefore we need to go over all of its regular orders and change accordingly
+        for (DayOfWeek day:days) { //over all delivery days of the supplier
+            if(dayToConstantOrders.containsKey(day)) {
+                for (OrderBusiness order : dayToConstantOrders.get(day)) {
+                    if (order.getSupplierNum() == supplierNum) {
+                        for (OrderProduct product : order.getProducts()) {
+                            if (product.getProductName().equals(productName) && product.getManufacturer().equals(manufacturer)) {
+                                SupplierProductBusiness spProduct = sc.getSupplier(supplierNum).getSupplierProduct(productName, manufacturer);
+                                if (product.getQuantity() > spProduct.getMaxAmount())
+                                    removeRegularItem(productName, manufacturer, supplierNum, days);
+                                else
+                                    updateRegularItem(product, productName, manufacturer, supplierNum);
+                            }
+                        }
+                    }
+                    updateRegularOrder(order);
+                }
+            }
+        }
+
+    }
+
+
         //remove the order and make it again from scratch
 
 
+    /**
+     * once a supplier deletes an item, each regular order contains this item needs to be updated accordingly
+     * @param productName
+     * @param manufacturer
+     * @param supplierNum
+     * @param days
+     * @throws Exception
+     */
+    public void removeRegularItem(String productName, String manufacturer, int supplierNum, List<DayOfWeek> days) throws Exception {
+        List <OrderProduct> toRemove = new LinkedList<>();
+        for (DayOfWeek day : days) { //over all delivery days of the supplier
+            if (dayToConstantOrders.containsKey(day)) {
+                for (OrderBusiness order : dayToConstantOrders.get(day)) {
+                    if (order.getSupplierNum() == supplierNum) {
+                        for (OrderProduct product : order.getProducts()) {
+                            if (product.getProductName().equals(productName) && product.getManufacturer().equals(manufacturer))
+                                toRemove.add(product);
+                                //remove the order of the item and order it from scratch
+                            }
+                        for (OrderProduct deletedProduct : toRemove)
+                            order.getProducts().remove(deletedProduct);
+                        if (toRemove.size()>0) {
+                            toRemove = new LinkedList<>();
+                            updateRegularOrder(order);
+                        }
+                    }
+                    }
+                }
+            }
+        }
+
+    /**
+     * a user from inventory tries to modify an item in a regular order which needs to be updated
+     * @param item
+     * @param day
+     * @param newQuantity
+     * @throws Exception
+     */
+    public void editRegularItem(ItemToOrder item, DayOfWeek day, int newQuantity) throws Exception{
+        if(!dayToConstantOrders.containsKey(day))
+            throw new Exception("item has not found");
+        for (OrderBusiness order: dayToConstantOrders.get(day)) {
+            for (OrderProduct product : order.getProducts()) {
+                if (product.getProductName().equals(item.getProductName()) &&
+                        product.getManufacturer().equals(item.getManufacturer()) &&
+                        product.getQuantity() == item.getQuantity()) {
+
+                    SupplierProductBusiness spProduct = sc.getSupplier(order.getSupplierNum()).getProduct(product.getProductNumber());
+                    if (!spProduct.hasEnoughQuantity(newQuantity))
+                        throw new Exception("supplier has not enough quantity");
+                    else {
+                        product.setQuantity(newQuantity);
+                        updateRegularItem(product, product.getProductName(), product.getManufacturer(), spProduct.getSupplierNum());
+                        updateRegularOrder(order);
+                        return;
+                    }
+
+                }
+
+            }
+        }
+
+        throw new Exception("no such item has been found");
+
+        //remove the order and make it again from scratch
 
     }
 
-    public void removeRegularItem(ItemToOrder item, String day) throws Exception {
-        WeekDays weekDay = WeekDaysFunc.toDayOfWeek(day);
-        if(weekDay==null)
-            throw new Exception("Entered an incorrect day");
-        //remove the order of the item and order it from scratch
+    /**
+     * a user from inventory tries to delete an item in a regular order which needs to be updated
+     * @param item
+     * @param day
+     * @throws Exception
+     */
+    public void removeRegularItem(ItemToOrder item, DayOfWeek day) throws Exception {
+        boolean found=false;
+        List<OrderProduct> toRemove = new LinkedList<>();
+        if (!dayToConstantOrders.containsKey(day))
+            throw new Exception("item has not found");
+        for (OrderBusiness order : dayToConstantOrders.get(day)) {
+            for (OrderProduct product : order.getProducts()) {
+                if (product.getProductName().equals(item.getProductName()) &&
+                        product.getManufacturer().equals(item.getManufacturer()) &&
+                        product.getQuantity() == item.getQuantity()) {
+                    toRemove.add(product);
+                }
+            }
+              for (OrderProduct deletedProduct : toRemove)
+                  order.getProducts().remove(deletedProduct);
+            if (toRemove.size()>0) {
+                toRemove = new LinkedList<>();
+                updateRegularOrder(order);
+            }
+          }
 
+        throw new Exception("no such item has been found");
     }
+
+    /**
+     * gets a modified product quantity and updates its cost prices and discounts
+     * @param product
+     * @param productName
+     * @param manufacturer
+     * @param supplierNum
+     * @throws Exception
+     */
+    public void updateRegularItem(OrderProduct product, String productName, String manufacturer, int supplierNum) throws Exception {
+        SupplierProductBusiness spProduct = sc.getSupplier(supplierNum).getSupplierProduct(productName,manufacturer);
+        product.setInitialPrice(spProduct.getPrice()* product.getQuantity());
+        product.setDiscount(product.getInitialPrice() - spProduct.getPriceByQuantity(product.getQuantity()));
+        product.setFinalPrice(product.getInitialPrice()- product.getDiscount());
+    }
+
+    /**
+     * this function gets a modified orders and calculates the final supplier discounts and prices
+     * @param order
+     * @throws Exception
+     */
+    public void updateRegularOrder(OrderBusiness order) throws Exception {
+        int totalProductsNum = 0;
+        int totalorderPrice = 0;
+        for (OrderProduct product : order.getProducts()){
+            totalorderPrice+=product.getFinalPrice();
+            totalProductsNum+=product.getQuantity();
+        }
+
+        //calculate supplier general discounts and final prices
+        SupplierBusiness supplier = sc.getSupplier(order.getSupplierNum());
+        float finalTotalPrice = supplier.getPriceAfterTotalDiscount(totalProductsNum,totalorderPrice);
+
+        for (OrderProduct product : order.getProducts()){
+            float discountPerProducts = (product.getFinalPrice()/totalorderPrice)*(totalorderPrice-finalTotalPrice);
+            product.setDiscount(discountPerProducts+product.getDiscount());
+            product.setFinalPrice(product.getFinalPrice()-discountPerProducts);
+        }
+    }
+
 
     //TODO: add a function that executes each day regular orders - by adding them to orders list
 

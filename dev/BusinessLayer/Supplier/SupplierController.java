@@ -5,8 +5,8 @@ import BusinessLayer.Supplier.Suppliers.OccasionalSupplier;
 import BusinessLayer.Supplier.Suppliers.SupplierBusiness;
 import ServiceLayer.Supplier.ItemToOrder;
 import Util.PaymentTerms;
-import Util.WeekDays;
 
+import java.time.DayOfWeek;
 import java.util.*;
 
 public class SupplierController {
@@ -16,7 +16,7 @@ public class SupplierController {
         suppliers = new HashMap<>();
     }
 
-    public void addSupplier(String name, String address, int supplierNum, int bankAccountNum, HashMap<String, String> contacts, List<WeekDays> constDeliveryDays, boolean selfDelivery, PaymentTerms paymentTerms, int daysToDeliver) throws Exception {
+    public void addSupplier(String name, String address, int supplierNum, int bankAccountNum, HashMap<String, String> contacts, List<DayOfWeek> constDeliveryDays, boolean selfDelivery, PaymentTerms paymentTerms, int daysToDeliver) throws Exception {
         if(isSupplierExists(supplierNum))
             throw new Exception("supplier number is already exists.");
         if(constDeliveryDays.isEmpty())
