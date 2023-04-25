@@ -86,6 +86,7 @@ public class TransportJsonConvert {
         return sb.toString();
     }
 
+
     public String getAllSuppliersAddress(Collection<Supplier> allSuppliers) {
         StringBuilder sb = new StringBuilder();
         for (Supplier supplier: allSuppliers) {
