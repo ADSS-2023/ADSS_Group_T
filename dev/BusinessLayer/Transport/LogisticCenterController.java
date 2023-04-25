@@ -19,18 +19,18 @@ import UtilSuper.EnterWeightInterface;
 public class LogisticCenterController {
 
         private LinkedHashMap<Integer, Truck> trucks;
-        private LinkedHashMap<Product, Integer> productsInStock;
+      private  LogisticCenter logisticCenter;
         private LinkedHashMap<Integer, Driver> drivers;
 
         public LogisticCenterController(LinkedHashMap<Integer, Truck> trucks,  LinkedHashMap<Product, Integer> productsInStock, LinkedHashMap<Integer, Driver> drivers) {
             this.trucks = trucks;
-            this.productsInStock = productsInStock;
+            logisticCenter = new LogisticCenter("logistic center","0000000000","LC MANAGER");
             this.drivers = drivers;
         }
 
         public LogisticCenterController() {
             this.trucks = new LinkedHashMap<>();
-            this.productsInStock = new LinkedHashMap<>();
+            logisticCenter = new LogisticCenter("logistic center","0000000000","LC MANAGER");
             this.drivers = new LinkedHashMap<>();
         }
 
@@ -102,12 +102,7 @@ public class LogisticCenterController {
          * @param newSupply - map with the amount for each product required to store
          */
         public void storeProducts(LinkedHashMap<Product, Integer> newSupply) {
-            newSupply.forEach((key, value) -> {
-                if (productsInStock.containsKey(key))                           //product exist in stock - update amount
-                    productsInStock.replace(key, productsInStock.get(key) + value);
-                else
-                    productsInStock.put(key, value);
-            });
+            logisticCenter.add_N_ProducttoStock(newSupply);
         }
 
         /**
@@ -117,23 +112,11 @@ public class LogisticCenterController {
          * @return map of products and amounts that are not available in the logistics center stock
          */
         public LinkedHashMap<Product, Integer> loadProductsFromStock(LinkedHashMap<Product, Integer> requestedSupply) {
-            HashSet<Product> keys = new HashSet<>(requestedSupply.keySet());
-            for (Product p : keys) {
-                if (productsInStock.containsKey(p) && productsInStock.get(p) >= requestedSupply.get(p)) {    //product exist in stock in the requested amount
-                    productsInStock.replace(p, productsInStock.get(p) - requestedSupply.get(p));
-                    requestedSupply.remove(p);
-                    if (productsInStock.get(p) == 0)
-                        productsInStock.remove(p);
-                } else if (productsInStock.containsKey(p)) {  //product exist in stock but not in the requested amount
-                    requestedSupply.replace(p, requestedSupply.get(p) - productsInStock.get(p));
-                    productsInStock.remove(p);
-                }
-            }
-            return requestedSupply;
+           return logisticCenter.remove_N_ProductsFromStock(requestedSupply);
         }
 
-        public HashMap<Product, Integer> getProductsInStock() {
-            return productsInStock;
+        public LinkedHashMap<Product, Integer> getProductsInStock() {
+            return logisticCenter.getAllProductInStock();
         }
 
         public LinkedHashMap<Integer, Truck> getAllTrucks() {

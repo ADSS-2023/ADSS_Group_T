@@ -12,12 +12,8 @@ public class TransportPresentation {
         logisticCenterService = new LogisticCenterService();
         deliveryService = new DeliveryService();
         deliveryService.setEnterWeightInterface(this::enterWeightFunction);
-
         transportInit = new TransportInit(deliveryService, logisticCenterService);
-
     }
-
-
     public void start() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("------ START -------");
