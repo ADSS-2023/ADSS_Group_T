@@ -46,10 +46,7 @@ public class OrderService {
         try {
             if(day==null)
                 return false;
-            if(item.getQuantity()==0)
-                oc.removeRegularItem(item,day);
-            else
-                oc.editRegularItem(item, day);
+            oc.editRegularItem(item, day);
             return true;
         }
         catch (Exception e){
