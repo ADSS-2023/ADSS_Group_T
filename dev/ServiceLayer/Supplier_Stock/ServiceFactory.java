@@ -26,7 +26,7 @@ public class ServiceFactory {
         this.manageOrderService = new ManageOrderService();
         this.sc = new SupplierController();
         this.oc = new OrderController(sc,manageOrderService);
-        this.supplierService = new SupplierService(sc);
+        this.supplierService = new SupplierService(sc,oc);
         this.orderService = new OrderService(oc,sc);
 
         manageOrderService.setOrderController(inventoryService.get_inventory(),orderService);

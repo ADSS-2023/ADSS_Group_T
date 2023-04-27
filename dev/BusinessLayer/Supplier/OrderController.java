@@ -177,7 +177,7 @@ public class OrderController {
             }
         for(OrderBusiness order:ordersToDelete)
             ordersNotSupplied.remove(order);
-        //stockController.receiveOrders(items);
+        mos.receiveOrders(items);
     }
 
     /**
@@ -305,7 +305,73 @@ public class OrderController {
      * @throws Exception
      */
     // go over all orders of the day and find out how much to add to one of the suppliers
-    public void editRegularItem(ItemToOrder item, DayOfWeek day) throws Exception{
+    //loop to find out what is the number of the requested product
+    //go over all the order products and  modify to the max quantity can be supplied
+    //update order product and all order
+    public void editRegularItem(ItemToOrder item, DayOfWeek day) throws Exception {
+        int newQuantity = item.getQuantity();
+        if (newQuantity == 0) {
+            removeRegularItem(item, day);
+            return;
+        }
+        int oldQuantity = 0;
+        boolean found = false;
+        if (!dayToConstantOrders.containsKey(day))
+            throw new Exception("item has not found");
+        //find out quantity to add or reduce
+        for (OrderBusiness order : dayToConstantOrders.get(day)) {
+            for (OrderProduct product : order.getProducts()) {
+                if (product.getProductName().equals(item.getProductName()) &&
+                        product.getManufacturer().equals(item.getManufacturer())) {
+                    oldQuantity += product.getQuantity();
+                    found=true;
+                }
+            }
+        }
+        if(!found)
+            throw new Exception("item has not found");
+
+        int quantityToChange = newQuantity - oldQuantity;
+        if(quantityToChange==0)//if no need to change a thing
+            return;
+
+        //add or reduce a specific amount from an item
+        for (OrderBusiness order : dayToConstantOrders.get(day)) {
+            for (OrderProduct product : order.getProducts()) {
+                if (product.getProductName().equals(item.getProductName()) &&
+                        product.getManufacturer().equals(item.getManufacturer())) {
+                    SupplierProductBusiness spProduct = sc.getSupplier(order.getSupplierNum()).getProduct(product.getProductNumber());
+                    if (quantityToChange > 0) { // if there is a need to add - if an existing supplier has enough to add
+                        if (spProduct.hasEnoughQuantity(product.getQuantity() + quantityToChange)) {
+                            product.setQuantity(product.getQuantity() + quantityToChange);
+                            updateRegularItem(product, product.getProductName(), product.getManufacturer(), spProduct.getSupplierNum());
+                            updateRegularOrder(order);
+                            quantityToChange=0;
+                            return;
+                        }
+                    }
+                    else if(quantityToChange<0){//if there is a need to reduce
+                        // if the current product has the whole amount to be reduced
+                        if(product.getQuantity()>=Math.abs(quantityToChange)) {
+                            product.setQuantity(product.getQuantity() - Math.abs(quantityToChange));
+                            updateRegularItem(product, product.getProductName(), product.getManufacturer(), spProduct.getSupplierNum());
+                            updateRegularOrder(order);
+                            quantityToChange=0;
+                            return;
+                        }
+                        else{//else - remove the whole amount of the OrderProduct and continue reducing
+                            quantityToChange -= Math.abs(product.getQuantity());
+                            order.getProducts().remove(product);
+                            updateRegularOrder(order);
+                        }
+                    }
+                }
+                if(quantityToChange!=0)
+                    throw new Exception("no such item has been found");
+            }
+        }
+    }
+    /*public void editRegularItem(ItemToOrder item, DayOfWeek day) throws Exception{
         int newQuantity = item.getQuantity();
         if(newQuantity==0){
             removeRegularItem(item,day);
@@ -336,9 +402,8 @@ public class OrderController {
 
         throw new Exception("no such item has been found");
 
-        //remove the order and make it again from scratch
+    }*/
 
-    }
 
     /**
      * a user from inventory tries to delete an item in a regular order which needs to be updated

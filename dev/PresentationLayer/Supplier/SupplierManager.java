@@ -6,6 +6,7 @@ import ServiceLayer.Supplier_Stock.ServiceFactory;
 import BusinessLayer.Supplier.Util.Discounts;
 import BusinessLayer.Supplier.Util.PaymentTerms;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.regex.Pattern;
 import java.time.LocalDateTime;
@@ -19,34 +20,40 @@ public class SupplierManager {
         this.serviceFactory = new ServiceFactory();
     }
 
-    public void setUpData() throws Exception {
+    public void setUpData() {
         HashMap<String, String> contactsSupplier1 = new HashMap<>();
         contactsSupplier1.put("yossi", "052284621");
         serviceFactory.supplierService.addSupplier("Sapak1", "Shoham 43, Tel Aviv",
-                5018475, 1199922, contactsSupplier1,
-                List.of(new String[]{"sunday", "monday"}), true, PaymentTerms.SHOTEF_PLUS_30);
+                5018475, 1199922,-1, contactsSupplier1,
+                List.of(new DayOfWeek[]{DayOfWeek.SUNDAY,DayOfWeek.MONDAY}), true, PaymentTerms.SHOTEF_PLUS_30);
 
         HashMap<String, String> contactsSupplier2 = new HashMap<>();
         contactsSupplier2.put("menash", "18726312");
         serviceFactory.supplierService.addSupplier("Sapak2", "Golani 2, Ashkelon",
-                4810203, 947182, contactsSupplier2, List.of(new String[]{"wednesday"}),
+                4810203, 947182,-1, contactsSupplier2, List.of(new DayOfWeek[]{DayOfWeek.WEDNESDAY}),
+                true, PaymentTerms.SHOTEF_PLUS_30);
+
+        HashMap<String, String> contactsSupplier3 = new HashMap<>();
+        contactsSupplier3.put("Yagil", "052275937");
+        serviceFactory.supplierService.addSupplier("Sapak3", "Rabin 95, Tel Aviv",
+                4810203, 947182,10, contactsSupplier3, null,
                 true, PaymentTerms.SHOTEF_PLUS_30);
 
 
         serviceFactory.supplierService.addProduct(5018475, 982673, "Bamba",
-                "Osem", 6, 500, LocalDateTime.now().plusMonths(1));
+                "Osem", 6, 500, LocalDate.now().plusMonths(1));
 
         serviceFactory.supplierService.addProduct(5018475, 1728439, "Click",
-                "Elite", 8, 300, LocalDateTime.now().plusWeeks(2));
+                "Elite", 8, 300, LocalDate.now().plusWeeks(2));
 
         serviceFactory.supplierService.addProduct(4810203, 9812763, "Ketchup",
-                "Heinz", 10, 600, LocalDateTime.now().plusMonths(1));
+                "Heinz", 10, 600, LocalDate.now().plusMonths(1));
 
         serviceFactory.supplierService.addProduct(4810203, 4918672, "Jasmin Rice",
-                "Sogat", 9, 400, LocalDateTime.now().plusYears(1));
+                "Sogat", 9, 400, LocalDate.now().plusYears(1));
 
         serviceFactory.supplierService.addProduct(4810203, 675980, "Bamba",
-                "Osem", 5, 200, LocalDateTime.now().plusMonths(1));
+                "Osem", 5, 200, LocalDate.now().plusMonths(1));
 
         serviceFactory.supplierService.addProductDiscount(5018475, 982673, 100, 5, true);
         serviceFactory.supplierService.addProductDiscount(5018475, 982673, 200, 100, false);
@@ -66,9 +73,9 @@ public class SupplierManager {
         serviceFactory.supplierService.addSupplierDiscount(4810203,Discounts.DISCOUNT_BY_TOTAL_QUANTITY,40,5,true);
         serviceFactory.supplierService.addSupplierDiscount(4810203,Discounts.DISCOUNT_BY_TOTAL_PRICE,300,40,false);
 
-        ItemToOrder item1  = new ItemToOrder("Bamba","Osem",550,LocalDateTime.now().plusMonths(1));
-        ItemToOrder item2  = new ItemToOrder("Ketchup","Heinz",50,LocalDateTime.now().plusMonths(1));
-        ItemToOrder item3  = new ItemToOrder("Click","Elite",175,LocalDateTime.now().plusMonths(1));
+        ItemToOrder item1  = new ItemToOrder("Bamba","Osem",550,LocalDate.now().plusMonths(1),-1,-1);
+        ItemToOrder item2  = new ItemToOrder("Ketchup","Heinz",50,LocalDate.now().plusMonths(1),-1,-1);
+        ItemToOrder item3  = new ItemToOrder("Click","Elite",175,LocalDate.now().plusMonths(1),-1,-1);
         List<ItemToOrder> itemsList = new LinkedList<>();
         itemsList.add(item1);
         itemsList.add(item2);
@@ -100,8 +107,10 @@ public class SupplierManager {
             System.out.println("16.Show all products supplied by a certain Supplier.");
             System.out.println("17.Show all discounts of a certain product's supplier.");
             System.out.println("18.Show all general discounts of a certain supplier.");
-            System.out.println("19.Set up System.");
-            System.out.println("20.Exit System.");
+            System.out.println("19.Go to next day.");
+            System.out.println("20.Go back to main menu.");
+            System.out.println("21.Set up System.");
+            System.out.println("22.Exit System.");
             int choice = getInteger(scanner, "Please select an integer between 1 to 20.", 1, 20);
             switch (choice) {
                 case 1:
@@ -159,13 +168,25 @@ public class SupplierManager {
                     getSupplierDiscount();
                     break;
                 case 19:
-                    setUpData();
+                    nextDay();
                     break;
                 case 20:
+                    goBack();
+                    break;
+                case 21:
+                    setUpData();
+                    break;
+                case 22:
                     over = true;
                     break;
             }
         }
+    }
+
+    private void nextDay() {
+        //TODO::
+        //the system time has proceeded.
+        //execute function execute orders
     }
 
     private void addSupplier() {
@@ -192,7 +213,7 @@ public class SupplierManager {
         }
         int constDeliveryDaysChoice =  getInteger(scannerInt, "Do the supplier have constant delivery days?\n1.Yes.\n2.No.", 1, 2);;
         List<String> constDeliveryDays = new ArrayList<>();
-        if (constDeliveryDaysChoice == 1) {
+        if (constDeliveryDaysChoice == 1) { //TODO::change to list of Dayofweek
             Map<Integer, String> days = new HashMap<Integer, String>() {{
                 put(1, "Sunday");
                 put(2, "Monday");
@@ -464,7 +485,7 @@ public class SupplierManager {
             int productAmount = getInteger(scanner, "Enter the amount of products/price discount to be deleted", 0, Integer.MAX_VALUE);
             int discount = getInteger(scanner, "Enter the discount for that amount", 0, Integer.MAX_VALUE);
             boolean isPercentage = getInteger(scanner, "Is the discount is by percentage or by shekels?\n1.Percetage\n2.Shekels", 1, 2) == 1;
-            System.out.println(serviceFactory.supplierService.deleteSupplierDiscount(supplierNum, discountEnum, productAmount, discount, isPercentage));
+            System.out.println(serviceFactory.supplierService.deleteSupplierDiscount(supplierNum, discountEnum, productAmount, isPercentage));
         }
         else System.out.println(discounts.get(0));
     }
