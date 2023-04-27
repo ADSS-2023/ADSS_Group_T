@@ -12,10 +12,11 @@ public class TransportPresentation {
         logisticCenterService = new LogisticCenterService();
         deliveryService = new DeliveryService();
         deliveryService.setEnterWeightInterface(this::enterWeightFunction);
-
+        deliveryService.setOverweightAction(this::enterWeightFunction);
         transportInit = new TransportInit(deliveryService, logisticCenterService);
 
     }
+
 
 
     public void start() {
@@ -207,6 +208,17 @@ public class TransportPresentation {
                 "\npls enter weight:");
         return scanner.nextInt();//product weight
     }
+
+    private int enterWeightFunction(int deliveryID) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("There is overweight in delivery " + deliveryID + ".");
+        System.out.println("Please choose an action to handle the overweight:");
+        System.out.println("1.drop site");
+        System.out.println("2.replace truck");
+        System.out.println("3.unload products");
+        return scanner.nextInt();//overweight action
+    }
+
     private int getCoolingLevel(){
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please choose the supplier cooling level:");

@@ -6,6 +6,7 @@ import java.util.*;
 
 import BusinessLayer.Transport.Driver.CoolingLevel;
 import UtilSuper.EnterWeightInterface;
+import UtilSuper.OverweightActionInterface;
 
 
 public class DeliveryController {
@@ -27,6 +28,7 @@ public class DeliveryController {
 
     // private Listener listener;
     private EnterWeightInterface enterWeightInterface;
+    private OverweightActionInterface overweightAction;
 
 
     public DeliveryController( LinkedHashMap<Integer, Delivery> deliveries) {
@@ -457,6 +459,10 @@ public class DeliveryController {
 
     public void setEnterWeightInterface(EnterWeightInterface enterWeightInterface) {
         this.enterWeightInterface = enterWeightInterface;
+    }
+
+    public void setOverweightAction(OverweightActionInterface overweightAction) {
+        this.overweightAction = overweightAction;
     }
 
     public Collection<Branch> getAllBranches() {
