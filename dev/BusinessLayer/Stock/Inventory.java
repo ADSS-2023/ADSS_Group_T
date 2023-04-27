@@ -159,8 +159,11 @@ public class Inventory {
         categories.get(0).getCategories_list().get(1).add_product(milk_3);
         categories.get(0).getCategories_list().get(1).add_product(milk_1_5);
         items.put(2,yellow_cheese);
+        name_to_id.put("yellow cheese Emeck",2);
         items.put(0,milk_3);
+        name_to_id.put("3% milk IDO LTD",0);
         items.put(1,milk_1_5);
+        name_to_id.put("1.5% milk IDO LTD",1);
         yellow_cheese.recive_order(20,3,3,5.3,"ile 2 shelf 3",Util.stringToDate("2023-04-25"));
         milk_3.recive_order(155,20,20,2.15,"ile 5 shelf 10",Util.stringToDate("2023-05-20"));
         milk_1_5.recive_order(120,10,10,2.55,"ile 5 shelf 11",Util.stringToDate("2023-05-23"));
@@ -170,6 +173,8 @@ public class Inventory {
         categories.get(1).add_product(new Category("beef" , "1"));
         categories.get(1).getCategories_list().get(1).add_product(beef_sausage);
         items.put(3,beef_sausage);
+        name_to_id.put("Beef Sausage Zogloveck",3);
+
     }
 
     /**
@@ -288,6 +293,8 @@ public class Inventory {
      * @return
      */
     public Item itemToOrder_to_item(ItemToOrder itemToOrder){
+        if (!name_to_id.containsKey(itemToOrder.getProductName()+" "+itemToOrder.getManufacturer()))
+            throw new IllegalArgumentException("this item not exist in the system");
         return items.get(name_to_id.get( itemToOrder.getProductName()+" "+itemToOrder.getManufacturer()));
     }
 

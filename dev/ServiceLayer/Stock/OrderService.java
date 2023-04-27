@@ -123,4 +123,7 @@ public class OrderService {
             return e.getMessage();
         }
     }
+    public void set_up(){
+        orderController.set_up_waiting_items();
+    }
 }
