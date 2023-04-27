@@ -38,6 +38,7 @@ public class ItemToOrder {
         return expiryDate;
     }
 
+    //think if can be removed
     public ItemToOrder clone(){
         return new ItemToOrder(this.productName , this.manufacturer , this.quantity , this.expiryDate , this.costPrice,this.orderId);
     }

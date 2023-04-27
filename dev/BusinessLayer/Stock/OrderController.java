@@ -153,11 +153,19 @@ public class OrderController {
     public String presentItemsByDay(DayOfWeek cur_day) throws Exception {
         String toReturn = "";
         List<ItemToOrder> items_to_show = order_service.getRegularOrder(cur_day.toString());
+        Map<String , Integer> map_of_amount = new HashMap(); // list that sums all the items from a specific one
         if (items_to_show.isEmpty())
             throw new Exception("No items to present");
-        for(ItemToOrder item : items_to_show){
-            toReturn+=String.format("%d. Item id:%s, item name:%s, manufacturer:%s\n",4,
-                    inventory.name_to_id.get(item.getProductName()+" "+item.getManufacturer()),item.getProductName());
+        for(ItemToOrder item : items_to_show) {
+            String item_key = item.getProductName() +" "+ item.getManufacturer();
+            if(map_of_amount.containsKey(item_key))
+                map_of_amount.put(item_key , map_of_amount.get(item_key) + item.getQuantity());
+            else
+                map_of_amount.put(item_key, item.getQuantity());
+        }
+        for (Map.Entry<String, Integer> entry : map_of_amount.entrySet()) {
+            toReturn+=String.format("%d. Item id: %s, item name and manufacturer name: %s, amount: %s\n"
+                    ,4, inventory.name_to_id.get(entry.getKey()),entry.getKey(),entry.getValue());
         }
         return toReturn;
     }
