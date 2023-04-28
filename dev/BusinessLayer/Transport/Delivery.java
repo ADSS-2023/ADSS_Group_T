@@ -13,10 +13,11 @@ public class Delivery {
     private Site source;
     private String driverName;
     private int truckNumber;
-    private String shippingArea;
-       
+    private int shippingArea;
+    private String note;
+
     public Delivery(int id, LocalDate date, LocalTime departureTime, int truckWeight, LinkedHashMap<Supplier, File> suppliers,
-            Site source, String driverName, int truckNumber, String shippingArea) {
+                    Site source, String driverName, int truckNumber, int shippingArea) {
         this.id = id;
         this.date = date;
         this.departureTime = departureTime;
@@ -27,6 +28,7 @@ public class Delivery {
         this.truckNumber = truckNumber;
         this.branches = new LinkedHashMap<>();
         this.shippingArea = shippingArea;
+        this.note = "";
     }
 
     /**
@@ -55,15 +57,15 @@ public class Delivery {
     public void addProductsToSupplier(Supplier supplier, Product p, int amount){
         suppliers.get(supplier).addProduct(p,amount);
     }
-    public String getShippingArea() {
+    public int getShippingArea() {
         return shippingArea;
     }
-/*
-    //for future use
-    public LinkedHashMap<Product,Integer> getProductsOfSupplier(Supplier supplier){
-        return suppliers.get(supplier).getProducts();
-    }
- */
+    /*
+        //for future use
+        public LinkedHashMap<Product,Integer> getProductsOfSupplier(Supplier supplier){
+            return suppliers.get(supplier).getProducts();
+        }
+     */
     public int getId() {
         return this.id;
     }
@@ -121,5 +123,13 @@ public class Delivery {
     public void addSupplier(Supplier supplier , int fileID){
         this.suppliers.put(supplier, new File(fileID));
 
+    }
+
+    public String getDriverName() {
+        return this.driverName;
+    }
+
+    public void addNote(String s) {
+        note = note + "\n" + s;
     }
 }

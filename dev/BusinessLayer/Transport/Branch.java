@@ -1,15 +1,16 @@
 package BusinessLayer.Transport;
 
+import UtilSuper.Location;
+
+
+
 public class Branch extends Site{
 
-    String shippingArea;
 
-    public Branch(String address,String telNumber,String contactName, String shippingArea){
-        super(address,telNumber,contactName);
-        this.shippingArea = shippingArea;
+
+    public Branch(String address,String telNumber,String contactName, int x,int y){
+        super(address,telNumber,contactName,x,y);
     }
 
-    public String getShippingArea() {
-        return shippingArea;
-    }
+
 }
