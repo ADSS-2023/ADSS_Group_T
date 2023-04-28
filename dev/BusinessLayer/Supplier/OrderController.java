@@ -7,7 +7,6 @@ import ServiceLayer.Stock.ManageOrderService;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.TextStyle;
 import java.util.*;
 
@@ -100,7 +99,7 @@ public class OrderController {
            }
 
            //create order from products in the send and send to delivery if needed
-           OrderBusiness order = new OrderBusiness(orderCounter++, supplier.getName(), LocalDateTime.now(), supplier.getAddress(),
+           OrderBusiness order = new OrderBusiness(orderCounter++, supplier.getName(), LocalDate.now(), supplier.getAddress(),
                    "SuperLi", supplier.getSupplierNum(), contactName, contactNum, products, daysToSupplied);
            if (isRegular){//save Regular order
                int deliveryDay = supplier.findEarliestSupplyDay();
@@ -148,14 +147,14 @@ public class OrderController {
             float initialPrice = product.getPrice()* quantity;
             float discount = initialPrice - product.getPriceByQuantity(quantity);
             float finalPrice = initialPrice-discount;
-            OrderProduct orderProduct = new OrderProduct(product.getName(),productNumber,quantity,initialPrice,discount,finalPrice);
+            OrderProduct orderProduct = new OrderProduct(product.getName(),productNumber,quantity,initialPrice,discount,finalPrice, product.getManufacturer(),product.getExpiryDate());
            //update the suppliers shopping list
             if(!shoppingLists.containsKey(supplierNum))
                 shoppingLists.put(supplierNum,new LinkedList());
             shoppingLists.get(supplierNum).add(orderProduct);
         }
 
-    public void executeOrders(){
+    public void executeTodayOrders(){
         List<ItemToOrder> items = new ArrayList<>();
         List<OrderBusiness> ordersForToday = dayToConstantOrders.get(LocalDate.now().getDayOfWeek());
         for(OrderBusiness order:ordersForToday){
@@ -182,18 +181,18 @@ public class OrderController {
 
     /**
      *
-     * @param weekDay requested day to get its items coming as a special order
+     * @param day requested day to get its items coming as a special order
      * @return list of the item comes as a special order estimated to be delivered at the day comes as an input
      * @throws Exception
      */
-    public List<ItemToOrder> getSpecialOrder(DayOfWeek weekDay) throws Exception {
+    public List<ItemToOrder> getSpecialOrder(DayOfWeek day) throws Exception {
         List<ItemToOrder> itemsList = new LinkedList<>();
 
         //find the exact number of the days following the current day
         LocalDate today = LocalDate.now();
         int todayValue = today.getDayOfWeek().getValue();
         int daysToAdd = 7;
-        int dayValue = weekDay.getValue();
+        int dayValue = day.getValue();
         int daysToNext = (dayValue >= todayValue) ? dayValue - todayValue : 7 - (todayValue - dayValue);
         if (daysToNext < daysToAdd) {
             daysToAdd = daysToNext;

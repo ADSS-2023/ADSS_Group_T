@@ -49,14 +49,14 @@ public class SupplierProductBusiness {
         return valid;
     }
 
-    public void editProductDiscount(int productAmount, int discount, boolean isPercentage) throws Exception {
+    public void editProductDiscount(int productAmount, int newDiscount, boolean isPercentage) throws Exception {
         if(!isDiscountExists(productAmount, isPercentage))
             throw new Exception("Discount doesn't exists");
-        if(!isDiscountValid(productAmount, discount, isPercentage))
+        if(!isDiscountValid(productAmount, newDiscount, isPercentage))
             throw new Exception("Discount details are not valid");
         for (Discount dis : quantitiesAgreement) {
                 if (dis.isPercentage() == isPercentage && dis.getAmount() == productAmount)
-                    dis.editDiscount(productAmount, discount);
+                    dis.editDiscount(productAmount, newDiscount);
             }
     }
 

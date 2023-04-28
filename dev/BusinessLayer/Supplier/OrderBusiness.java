@@ -1,5 +1,6 @@
 package BusinessLayer.Supplier;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -8,7 +9,7 @@ public class OrderBusiness {
 
     private final int orderNum;
     private String supplierName;
-    private LocalDateTime orderDate;
+    private LocalDate orderDate;
     private String supplierAddress;
     private String destinationAddress;
     private int supplierNum;
@@ -51,7 +52,7 @@ public class OrderBusiness {
         return daysToSupplied;
     }
 
-    public OrderBusiness(int orderNum, String supplierName, LocalDateTime  orderDate,
+    public OrderBusiness(int orderNum, String supplierName, LocalDate  orderDate,
                          String supplierAddress, String destinationAddress
             , int supplierNum, String contactName, String contactNumber,
                          List<OrderProduct> products, int daysToSupplied) {
