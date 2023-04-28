@@ -10,18 +10,20 @@ import ServiceLayer.HR.Response;
 
 import BusinessLayer.Transport.*;
 import UtilSuper.EnterWeightInterface;
-
+import UtilSuper.OverweightActionInterface;
 
 
 public class DeliveryService {
 
     public DeliveryController deliveryController;
     private EnterWeightInterface enterWeightInterface;
+    private OverweightActionInterface overweightAction;
     private TransportJsonConvert transportJsonConvert;
 
     public DeliveryService() {
         this.deliveryController = new DeliveryController();
-       deliveryController.setEnterWeightInterface((String address, int deliveryID) -> enterWeightInterface.enterWeightFunction(address,deliveryID));
+        deliveryController.setEnterWeightInterface((String address, int deliveryID) -> enterWeightInterface.enterWeightFunction(address,deliveryID));
+        deliveryController.setOverweightAction((int deliveryID) -> overweightAction.EnterOverweightAction(deliveryID));
         transportJsonConvert = new TransportJsonConvert();
     }
 
@@ -120,6 +122,10 @@ public class DeliveryService {
 
     public void setEnterWeightInterface(EnterWeightInterface enterWeightInterface) {
         this.enterWeightInterface = enterWeightInterface;
+    }
+
+    public void setOverweightAction(OverweightActionInterface overweightAction) {
+        this.overweightAction = overweightAction;
     }
 
     public String getAllBranches() {
