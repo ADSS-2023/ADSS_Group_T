@@ -1,13 +1,15 @@
 package ServiceLayer.Transport;
 
 
+
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 public class TransportInit {
     private DeliveryService deliveryService;
     private LogisticCenterService logisticCenterService;
-    public TransportInit(DeliveryService deliveryService,LogisticCenterService logisticCenterService){
+    public TransportInit(DeliveryService deliveryService, LogisticCenterService logisticCenterService){
         this.deliveryService = deliveryService;
         this.logisticCenterService = logisticCenterService;
     }
