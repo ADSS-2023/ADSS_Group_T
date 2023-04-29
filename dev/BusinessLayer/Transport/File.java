@@ -25,8 +25,8 @@ public class File {
 
     /**
      * add product in the required amount to the products map
-     * @param product
-     * @param amount
+     * @param product - the required product
+     * @param amount - the required amount
      */
     public void addProduct(Product product, int amount) {
         if(products.containsKey(product))
@@ -34,5 +34,18 @@ public class File {
         else
             products.put(product,amount);
     }
-    
+
+    /**
+     * remove product in the required amount from the products map
+     * @param product - the required product
+     * @param amount - the required amount
+     */
+    public void removeProduct(Product product, int amount) {
+        if(!products.containsKey(product))
+            throw new RuntimeException("attempt to remove a product that does not exist in thr file");
+        else if(products.get(product) < amount)
+            throw new RuntimeException("attempt to remove an amount larger than the current amount in thr file");
+        else
+            products.replace(product,products.get(product) - amount);
+    }
 }

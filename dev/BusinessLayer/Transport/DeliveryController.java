@@ -439,14 +439,17 @@ public class DeliveryController {
 
 
     public void executeDelivery(Delivery delivery) {
-        for (Supplier supplier : delivery.getSuppliers().keySet()) {
+        ArrayList<Supplier> suppliersTmp = new ArrayList<>(delivery.getSuppliers().keySet());
+        for (Supplier supplier : suppliersTmp) {
             int productsWeight = enterWeightInterface.enterWeightFunction(supplier.getAddress(), delivery.getId());
             int currentWeight = delivery.getTruckWeight();
             int maxWeight = lcC.getAllTrucks().get(delivery.getTruckNumber()).getMaxWeight();
             if (maxWeight < currentWeight + productsWeight) {
-                //over weight
-            } else {
-                //ok
+                overWeightAction(delivery.getId(),overweightAction.EnterOverweightAction(delivery.getId()),supplier.getAddress(),productsWeight);
+            }
+            else {
+                delivery.setTruckWeight(currentWeight + productsWeight);
+                filesCounter = delivery.supplierHandled(supplier,filesCounter);
             }
         }
     }

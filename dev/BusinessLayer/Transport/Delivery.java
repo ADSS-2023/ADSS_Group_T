@@ -9,7 +9,9 @@ public class Delivery {
     private LocalTime departureTime;
     private int truckWeight;
     private LinkedHashMap<Supplier, File> suppliers;
+    private LinkedHashMap<Supplier, File> handledSuppliers;
     private LinkedHashMap<Branch, File> branches;
+    private LinkedHashMap<Branch, File> handledBranches;
     private Site source;
     private String driverName;
     private int truckNumber;
@@ -26,9 +28,50 @@ public class Delivery {
         this.source = source;
         this.driverName = driverName;
         this.truckNumber = truckNumber;
+        this.suppliers = new LinkedHashMap<>();
+        this.handledSuppliers = new LinkedHashMap<>();
         this.branches = new LinkedHashMap<>();
+        this.handledBranches = new LinkedHashMap<>();
         this.shippingArea = shippingArea;
         this.note = "";
+    }
+
+    public int supplierHandled(Supplier supplier,int fileCounter){
+        File f = suppliers.get(supplier);
+        handledSuppliers.put(supplier,f);
+        suppliers.remove(supplier);
+        HashMap<Product,Integer> copyOfSupplierFileProducts = new HashMap<>(f.getProducts());
+        ArrayList<Branch> branchesTmp = new ArrayList<>(branches.keySet());
+        for(Branch b : branchesTmp){
+            if(!copyOfSupplierFileProducts.isEmpty())
+                fileCounter = checkBranch(b,fileCounter,copyOfSupplierFileProducts);
+        }
+        return  fileCounter;
+    }
+
+    private int checkBranch(Branch b,int fileCounter, HashMap<Product,Integer> copyOfSupplierFileProducts){
+        File branchFile = branches.get(b);
+        ArrayList<Product> productsTmp = new ArrayList<>(branchFile.getProducts().keySet());
+        for(Product branchProduct : productsTmp) {
+            if(copyOfSupplierFileProducts.containsKey(branchProduct)){
+                if(!handledBranches.containsKey(b)){
+                    File newBranchFile = new File(fileCounter);
+                    fileCounter++;
+                    handledBranches.put(b,newBranchFile);
+                }
+                int amount = Math.min(copyOfSupplierFileProducts.get(branchProduct), branches.get(b).getProducts().get(branchProduct));
+                handleBranch(b,branchProduct,amount,copyOfSupplierFileProducts);
+            }
+        }
+        return fileCounter;
+    }
+
+    private void handleBranch(Branch b,Product branchProduct, int amount, HashMap<Product,Integer> copyOfSupplierFileProducts){
+        handledBranches.get(b).addProduct(branchProduct, amount);
+        branches.get(b).removeProduct(branchProduct, amount);
+        copyOfSupplierFileProducts.replace(branchProduct,copyOfSupplierFileProducts.get(branchProduct) - amount);
+        if(copyOfSupplierFileProducts.get(branchProduct) == 0)
+            copyOfSupplierFileProducts.remove(branchProduct);
     }
 
     /**
