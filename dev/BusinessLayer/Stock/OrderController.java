@@ -2,7 +2,6 @@ package BusinessLayer.Stock;
 
 import BusinessLayer.Stock.Util.Util;
 import BusinessLayer.Supplier_Stock.ItemToOrder;
-import ServiceLayer.Stock.OrderService;
 import ServiceLayer.Supplier.OrderService;
 import java.time.DayOfWeek;
 
@@ -154,7 +153,7 @@ public class OrderController {
 
     public String presentItemsByDay(DayOfWeek cur_day) throws Exception {
         String toReturn = "";
-        List<ItemToOrder> items_to_show = order_service.getRegularOrder(cur_day.toString());
+        List<ItemToOrder> items_to_show = order_service.getRegularOrder(cur_day);
         Map<String , Integer> map_of_amount = new HashMap(); // list that sums all the items from a specific one
         if (items_to_show.isEmpty())
             throw new Exception("No items to present");

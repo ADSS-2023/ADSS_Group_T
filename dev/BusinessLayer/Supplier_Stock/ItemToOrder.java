@@ -1,4 +1,4 @@
-package BusinessLayer.Stock;
+package BusinessLayer.Supplier_Stock;
 
 import java.time.LocalDate;
 
@@ -13,7 +13,7 @@ public class ItemToOrder {
     private double costPrice;
     private int orderId;
 
-    public ItemToOrder(String productName, String manufacturer, int quantity, LocalDate expiryDate, double costPrice,int orderId) {
+    public ItemToOrder(String productName, String manufacturer, int quantity, LocalDate expiryDate, int orderId , double costPrice) {
         this.expiryDate = expiryDate;
         this.manufacturer = manufacturer;
         this.productName = productName;
@@ -25,6 +25,8 @@ public class ItemToOrder {
     public String getProductName() {
         return productName;
     }
+
+
 
     public String getManufacturer() {
         return manufacturer;
@@ -39,16 +41,17 @@ public class ItemToOrder {
     }
 
     public ItemToOrder clone(){
-        return new ItemToOrder(this.productName , this.manufacturer , this.quantity , this.expiryDate , this.costPrice,this.orderId);
+        return new ItemToOrder(this.productName , this.manufacturer , this.quantity , this.expiryDate , this.orderId,this.costPrice);
     }
 
     public void setQuantity(int new_quantity) {
         this.quantity = new_quantity;
     }
 
-    public double getCost_price() {
+    public double getCostPrice() {
         return costPrice;
     }
+
 
     public int getOrderId() {
         return orderId;
