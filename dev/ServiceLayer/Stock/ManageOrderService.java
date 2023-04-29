@@ -40,9 +40,9 @@ public class ManageOrderService {
      * @param items_quantity
      * @return
      */
-    public String createRegularOrder(Map<Integer,Integer> items_quantity){
+    public String createRegularOrder(Map<Integer,Integer> items_quantity,boolean isUrgent){
         try {
-            orderController.createRegularOrder(items_quantity);
+            orderController.createRegularOrder(items_quantity,isUrgent);
         }
         catch (Exception e){
             return e.getMessage();

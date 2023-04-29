@@ -23,7 +23,7 @@ public class OrderController {
      * This method send an order to suppliers which will be supplied each week in a permanent day.
      * @param items_quantity a map that maps item id to the desired amount
      */
-    public void createRegularOrder(Map<Integer, Integer> items_quantity) {
+    public void createRegularOrder(Map<Integer, Integer> items_quantity,boolean isUrgent) throws Exception {
         LinkedList<ItemToOrder> list_to_order = new LinkedList<>();
         for (Map.Entry<Integer, Integer> entry : items_quantity.entrySet()) {
             Integer item_id = entry.getKey();
@@ -31,7 +31,7 @@ public class OrderController {
             list_to_order.addLast(new ItemToOrder(inventory.get_item_by_id(item_id).get_name(),
                     inventory.get_item_by_id(item_id).manufacturer_name, quantity, null, -1,-1));
         }
-        //call to supplier service with list_to_order
+        order_service.createSpecialOrder(list_to_order,isUrgent);
     }
 
     /**
