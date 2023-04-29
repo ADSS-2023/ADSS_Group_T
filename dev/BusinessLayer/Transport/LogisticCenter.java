@@ -1,4 +1,4 @@
 package BusinessLayer.Transport;
 
-public class Main {
+public class LogisticCenter {
 }
