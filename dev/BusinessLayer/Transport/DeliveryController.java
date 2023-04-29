@@ -91,7 +91,7 @@ public class DeliveryController {
         if (date2deliveries.containsKey(requiredDate)) {          //there is delivery in this date
             for (Delivery d : date2deliveries.get(requiredDate)) {     //the delivery is to the required date
                 if (branch.getShippingArea() == d.getShippingArea()) {        //the delivery is to the required branch
-                    if (!d.getBranches().containsKey(branch)) {
+                    if (!d.getUnHandledBranches().containsKey(branch)) {
                         d.addBranch(branch, filesCounter);
                         filesCounter++;
                     }
@@ -137,7 +137,7 @@ public class DeliveryController {
                         for (Product p : productsTmp) {//change
                             if (d.getSource() == null)
                                 d.setSource(supplier);
-                            if (!d.getSuppliers().containsKey(supplier))
+                            if (!d.getUnHandledSuppliers().containsKey(supplier))
                                 d.addSupplier(supplier, filesCounter++);
                             d.addProductsToSupplier(supplier, p, suppliers.get(supplier).get(p));
                             suppliers.get(supplier).remove(p);
@@ -419,7 +419,7 @@ public class DeliveryController {
 
 
     public String processSupplierWeight(String supplier, int weight) {
-        // Process the supplier weight
+        // TODO: Process the supplier weight
         return "OK";
     }
 
@@ -439,24 +439,30 @@ public class DeliveryController {
 
 
     public void executeDelivery(Delivery delivery) {
-        ArrayList<Supplier> suppliersTmp = new ArrayList<>(delivery.getSuppliers().keySet());
+        ArrayList<Supplier> suppliersTmp = new ArrayList<>(delivery.getUnHandledSuppliers().keySet());
         for (Supplier supplier : suppliersTmp) {
             int productsWeight = enterWeightInterface.enterWeightFunction(supplier.getAddress(), delivery.getId());
             int currentWeight = delivery.getTruckWeight();
             int maxWeight = lcC.getAllTrucks().get(delivery.getTruckNumber()).getMaxWeight();
             if (maxWeight < currentWeight + productsWeight) {
                 overWeightAction(delivery.getId(),overweightAction.EnterOverweightAction(delivery.getId()),supplier.getAddress(),productsWeight);
+                break;
             }
             else {
                 delivery.setTruckWeight(currentWeight + productsWeight);
                 filesCounter = delivery.supplierHandled(supplier,filesCounter);
+                reScheduleDelivery(delivery.getUnHandledSuppliers(),delivery.getUnHandledBranches());
             }
         }
     }
 
+    private void reScheduleDelivery(LinkedHashMap<Supplier,File> suppliers,LinkedHashMap<Branch,File> branches){
+        //TODO: implement method
+    }
+
 
     public File getLoadedProducts(int deliveryID, String address) {
-        return deliveries.get(deliveryID).getSuppliers().get(suppliers.get(address));
+        return deliveries.get(deliveryID).getUnHandledSuppliers().get(suppliers.get(address));
     }
 
 
