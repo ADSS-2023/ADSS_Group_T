@@ -35,11 +35,10 @@ public class Delivery {
         this.note = "";
     }
 
-    public int supplierHandled(Supplier supplier,int fileCounter){
-        File f = unHandledSuppliers.get(supplier);
+    public void addHandledSupplier(Supplier supplier,File f){
         handledSuppliers.put(supplier,f);
-        unHandledSuppliers.remove(supplier);
-        HashMap<Product,Integer> copyOfSupplierFileProducts = new HashMap<>(f.getProducts());
+    }
+    public int supplierHandled(Supplier supplier,int fileCounter, HashMap<Product,Integer> copyOfSupplierFileProducts){
         ArrayList<Branch> branchesTmp = new ArrayList<>(unHandledBranches.keySet());
         for(Branch b : branchesTmp){
             if(!copyOfSupplierFileProducts.isEmpty())
@@ -76,8 +75,8 @@ public class Delivery {
     /**
      * remove the first supplier from the suppliers map
      */
-    public void removeSupplier(){
-        unHandledSuppliers.remove(unHandledSuppliers.entrySet().iterator().next().getKey());
+    public void removeSupplier(String address){
+        unHandledSuppliers.remove(unHandledSuppliers.get(address));
     }
 
     /**

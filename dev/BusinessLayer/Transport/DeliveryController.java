@@ -254,8 +254,11 @@ public class DeliveryController {
 
     /**
      * add a new branch to the branches map
-     *
-     * @param branch - the branch to add
+     * @param address - the branch to add
+     * @param telNumber - the branch tel number
+     * @param contactName - the branch contact name
+     * @param x - the x coordinate of the branch
+     * @param y - the y coordinate of the branch
      * @return true if the branch added successfully , and false otherwise
      */
     public boolean addBranch(String address, String telNumber, String contactName, int x, int y) {
@@ -270,8 +273,13 @@ public class DeliveryController {
     /**
      * add a new supplier to the suppliers map
      *
-     * @param supplier         - the supplier to add
-     * @param supplierProducts - List of the products of the supplier
+     * @param supplierAddress - the supplier to add
+     * @param telNumber - the tel number if the supplier
+     * @param contactName - the contact name of the supplier
+     * @param coolingLevel - the cooling level of the supplier
+     * @param productsOfSupplier - the products of the supplier
+     * @param x - the x coordinate of the supplier
+     * @param y - the y coordinate of the supplier
      * @return true if the supplier added successfully , and false otherwise
      */
     public boolean addSupplier(String supplierAddress, String telNumber, String contactName, int coolingLevel, ArrayList<String> productsOfSupplier, int x, int y) {
@@ -321,17 +329,20 @@ public class DeliveryController {
      *
      * @param deliveryID the delivery id to unload products from
      */
-    public void unloadProducts(int deliveryID) {
+    public void unloadProducts(int deliveryID,int weight, String supplierAddress) {
         double currWeight = deliveries.get(deliveryID).getTruckWeight();
         int maxWeight = lcC.getAllTrucks().get(deliveries.get(deliveryID).getTruckNumber()).getMaxWeight();
-        double unloadFactor = (currWeight - maxWeight) / currWeight;
-        for (Supplier supplier : deliveries.get(deliveryID).getSuppliers().keySet()) {
-            for (Product p : deliveries.get(deliveryID).getSuppliers().get(supplier).getProducts().keySet()) {
-                int amount = deliveries.get(deliveryID).getSuppliers().get(supplier).getProducts().get(p);
-                int unloadAmount = (int) Math.ceil(amount * unloadFactor);
-                deliveries.get(deliveryID).getSuppliers().get(supplier).getProducts().replace(p, amount - unloadAmount);
-            }
+        double unloadFactor = (currWeight + weight - maxWeight) / weight;
+        File loadedProducts = new File(filesCounter++);
+        for (Product p : deliveries.get(deliveryID).getUnHandledSuppliers().get(suppliers.get(supplierAddress)).getProducts().keySet()) {
+            int amount = deliveries.get(deliveryID).getUnHandledSuppliers().get(suppliers.get(supplierAddress)).getProducts().get(p);
+            int unloadAmount = (int) Math.ceil(amount * unloadFactor);
+            loadedProducts.addProduct(p,amount - unloadAmount);
+            deliveries.get(deliveryID).getUnHandledSuppliers().get(suppliers.get(supplierAddress)).getProducts().replace(p,unloadAmount);
         }
+        deliveries.get(deliveryID).addHandledSupplier(suppliers.get(supplierAddress),loadedProducts);
+        HashMap<Product,Integer> copyOfSupplierFileProducts = new HashMap<>(loadedProducts.getProducts());
+        filesCounter = deliveries.get(deliveryID).supplierHandled(suppliers.get(supplierAddress),filesCounter, copyOfSupplierFileProducts);
         deliveries.get(deliveryID).setTruckWeight(maxWeight);
     }
 
@@ -340,9 +351,9 @@ public class DeliveryController {
      *
      * @param deliveryID - the id of the delivery that the action required for
      */
-    public void replaceOrDropSite(int deliveryID, String address) {
+    public void DropSite(int deliveryID, String address) {
         Delivery delivery = deliveries.get(deliveryID);
-        delivery.removeSupplier();
+        delivery.removeSupplier(address);
         delivery.addNote("over load in " + address);
     }
 
@@ -353,12 +364,18 @@ public class DeliveryController {
      * @param action     - the action required
      */
     public void overWeightAction(int deliveryID, int action, String address, int weight) {
-        if (action == 1)
-            replaceOrDropSite(deliveryID, address);
-        else if (action == 2)
-            replaceTruck(deliveryID);
+        //if (action == 1)
+            //do nothing?
+            //DropSite(deliveryID, address);
+        if (action == 2) {
+            if(!replaceTruck(deliveryID)){
+                int newAction = overweightAction.EnterOverweightAction(deliveryID);
+                if(newAction == 3)
+                    unloadProducts(deliveryID,weight,address);
+            }
+        }
         else if (action == 3)
-            unloadProducts(deliveryID);
+            unloadProducts(deliveryID,weight,address);
     }
 
     public Branch getBranch(String address) {
@@ -446,14 +463,19 @@ public class DeliveryController {
             int maxWeight = lcC.getAllTrucks().get(delivery.getTruckNumber()).getMaxWeight();
             if (maxWeight < currentWeight + productsWeight) {
                 overWeightAction(delivery.getId(),overweightAction.EnterOverweightAction(delivery.getId()),supplier.getAddress(),productsWeight);
-                break;
+                if(delivery.getTruckWeight() == lcC.getAllTrucks().get(delivery.getTruckNumber()).getMaxWeight())
+                    break;
             }
             else {
                 delivery.setTruckWeight(currentWeight + productsWeight);
-                filesCounter = delivery.supplierHandled(supplier,filesCounter);
-                reScheduleDelivery(delivery.getUnHandledSuppliers(),delivery.getUnHandledBranches());
+                File f = delivery.getUnHandledSuppliers().get(supplier);
+                delivery.getHandledSuppliers().put(supplier,f);
+                delivery.getUnHandledSuppliers().remove(supplier);
+                HashMap<Product,Integer> copyOfSupplierFileProducts = new HashMap<>(f.getProducts());
+                filesCounter = delivery.supplierHandled(supplier,filesCounter,copyOfSupplierFileProducts);
             }
         }
+        reScheduleDelivery(delivery.getUnHandledSuppliers(),delivery.getUnHandledBranches());
     }
 
     private void reScheduleDelivery(LinkedHashMap<Supplier,File> suppliers,LinkedHashMap<Branch,File> branches){
