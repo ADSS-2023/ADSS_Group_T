@@ -69,7 +69,6 @@ public class DeliveryController {
      */
     public LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> orderDelivery(String branchString, LinkedHashMap<String, LinkedHashMap<String, Integer>> suppliersString,
                                                                                   String requiredDateString) {
-
         Branch branch = this.branches.get(branchString);
         LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> suppliers = new LinkedHashMap<>();
         for (String supplierAddress : suppliersString.keySet()) {
@@ -125,7 +124,7 @@ public class DeliveryController {
                     continue;
                 }
                 Delivery d = new Delivery(deliveryCounter, requiredDate, LocalTime.NOON, t.getWeight(), new LinkedHashMap<>(),
-                        null, driver.getName(), t.getLicenseNumber(), branch.getShippingArea());
+                        new LinkedHashMap<>(), null, driver.getName(), t.getLicenseNumber(), branch.getShippingArea());
                 deliveryCounter++;
                 deliveries.put(d.getId(), d);
                 date2deliveries.get(requiredDate).add(d);
@@ -480,6 +479,34 @@ public class DeliveryController {
 
     private void reScheduleDelivery(LinkedHashMap<Supplier,File> suppliers,LinkedHashMap<Branch,File> branches){
         //TODO: implement method
+        boolean found = false;
+        LocalDate date = LocalDate.now();
+        CoolingLevel coolingLevel = CoolingLevel.non;
+        for(Supplier s : suppliers.keySet()){
+            if(s.getCoolingLevel().ordinal() > coolingLevel.ordinal())
+                coolingLevel = s.getCoolingLevel();
+        }
+        Truck t;
+        Driver d;
+        while(!found){
+            t = scheduleTruck(date,coolingLevel);
+            if(t == null){
+                date = date.plusDays(1);
+                continue;
+            }
+            d = scheduleDriver(date,coolingLevel);
+            if(d == null){
+                date2trucks.get(date).remove(t);
+                date = date.plusDays(1);
+                continue;
+            }
+            Delivery newDelivery = new Delivery(deliveryCounter,date,LocalTime.NOON,t.getWeight(),suppliers,branches,
+                    suppliers.entrySet().iterator().next().getKey(),d.getName(),t.getLicenseNumber(),branches.entrySet().iterator().next().getKey().getShippingArea());
+            if(!date2deliveries.containsKey(date))
+                date2deliveries.put(date,new ArrayList<>());
+            date2deliveries.get(date).add(newDelivery);
+            found = true;
+        }
     }
 
 
