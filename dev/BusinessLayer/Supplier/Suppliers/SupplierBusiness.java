@@ -2,7 +2,7 @@ package BusinessLayer.Supplier.Suppliers;
 
 import BusinessLayer.Supplier.Discounts.Discount;
 import BusinessLayer.Supplier.Discounts.PercentDiscount;
-import BusinessLayer.Supplier.Discounts.QuantityDiscount;
+import BusinessLayer.Supplier.Discounts.NumberDiscount;
 import BusinessLayer.Supplier.SupplierProductBusiness;
 import BusinessLayer.Supplier.Util.Discounts;
 import BusinessLayer.Supplier.Util.PaymentTerms;
@@ -62,6 +62,7 @@ public abstract class  SupplierBusiness {
         else
             products.put(productNum, new SupplierProductBusiness( supplierNum,productName,productNum, manufacturer, price, maxAmount, expiryDate));
     }
+
     public void editProduct(String productName, String manufacturer, int price, int maxAmount, LocalDate expiredDate) throws Exception {
         if(expiredDate.isBefore(LocalDate.now()))
             throw new Exception("expiry date has passed.");
@@ -101,8 +102,6 @@ public abstract class  SupplierBusiness {
         getSupplierProduct(productNum).deleteProductDiscount(productAmount, discount, isPercentage);
     }
 
-
-
     public void editSupplierDiscount(Discounts discountEnum, int amount, int discountToChange, boolean isPercentage) throws Exception {
         if(!isDiscountExist(discountEnum,amount,isPercentage))
             throw new Exception("No such discount");
@@ -117,13 +116,13 @@ public abstract class  SupplierBusiness {
                 if(isPercentage)
                      discountPerTotalPrice.add(new PercentDiscount(amount,discount,true));
                 else
-                    discountPerTotalPrice.add(new QuantityDiscount(amount,discount,false));
+                    discountPerTotalPrice.add(new NumberDiscount(amount,discount,false));
                 break;
             case DISCOUNT_BY_TOTAL_QUANTITY:
                 if(isPercentage)
                     discountPerTotalQuantity.add(new PercentDiscount(amount,discount,true));
                 else
-                    discountPerTotalQuantity.add(new QuantityDiscount(amount,discount, false));
+                    discountPerTotalQuantity.add(new NumberDiscount(amount,discount, false));
                 break;
         }
     }
@@ -236,9 +235,7 @@ public abstract class  SupplierBusiness {
         return totalOrderPrice - discount2;
     }
 
-
     public abstract int findEarliestSupplyDay();
-
 
     public int getBankAccountNum() {
         return bankAccountNum;
@@ -247,8 +244,6 @@ public abstract class  SupplierBusiness {
     public int getSupplierNum() {
         return supplierNum;
     }
-
-
 
     public Map<String, String> getContacts() {
         return contacts;

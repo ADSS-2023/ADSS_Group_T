@@ -1,12 +1,9 @@
 package BusinessLayer.Supplier;
 import BusinessLayer.Supplier.Discounts.Discount;
 import BusinessLayer.Supplier.Discounts.PercentDiscount;
-import BusinessLayer.Supplier.Discounts.PercentDiscount;
-import BusinessLayer.Supplier.Discounts.QuantityDiscount;
+import BusinessLayer.Supplier.Discounts.NumberDiscount;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.*;
 
 public class SupplierProductBusiness {
@@ -68,7 +65,7 @@ public class SupplierProductBusiness {
             if (isPercentage)
                 quantitiesAgreement.add(new PercentDiscount(productAmount, discount, true));
             else
-                quantitiesAgreement.add(new QuantityDiscount(productAmount, discount, false));
+                quantitiesAgreement.add(new NumberDiscount(productAmount, discount, false));
 
     }
 

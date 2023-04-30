@@ -1,8 +1,8 @@
 package BusinessLayer.Supplier.Discounts;
 
-public class QuantityDiscount extends Discount{
+public class NumberDiscount extends Discount{
     //in this class discount per product presented in shekels
-    public QuantityDiscount(int amount, float discount, boolean isPercentage) {
+    public NumberDiscount(int amount, float discount, boolean isPercentage) {
         super(amount, discount,isPercentage);
     }
 
