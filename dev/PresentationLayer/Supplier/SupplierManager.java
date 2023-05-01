@@ -107,11 +107,10 @@ public class SupplierManager {
             System.out.println("16.Show all products supplied by a certain Supplier.");
             System.out.println("17.Show all discounts of a certain product's supplier.");
             System.out.println("18.Show all general discounts of a certain supplier.");
-            System.out.println("19.Go to next day.");
-            System.out.println("20.Go back to main menu.");
-            System.out.println("21.Set up System.");
-            System.out.println("22.Exit System.");
-            int choice = getInteger(scanner, "Please select an integer between 1 to 20.", 1, 20);
+            System.out.println("19.Go back to main menu.");
+            System.out.println("20.Set up System.");
+            System.out.println("21.Exit System.");
+            int choice = getInteger(scanner, "Please select an integer between 1 to 21.", 1, 20);
             switch (choice) {
                 case 1:
                     addSupplier();
@@ -168,15 +167,12 @@ public class SupplierManager {
                     getSupplierDiscount();
                     break;
                 case 19:
-                    nextDay();
-                    break;
-                case 20:
                     goBack();
                     break;
-                case 21:
+                case 20:
                     setUpData();
                     break;
-                case 22:
+                case 21:
                     over = true;
                     break;
             }
@@ -184,9 +180,7 @@ public class SupplierManager {
     }
 
     private void nextDay() {
-        //TODO::
-        //the system time has proceeded.
-        //execute function execute orders
+        serviceFactory.orderService.nextDay();
     }
 
     private void addSupplier() {

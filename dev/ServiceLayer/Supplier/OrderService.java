@@ -17,7 +17,15 @@ public class OrderService {
          this.oc = oc;
          this.sc=sc;
         }
-
+    public boolean nextDay(){
+        try {
+            oc.executeTodayOrders();
+            return true;
+        }
+        catch (Exception e){
+            return false;
+        }
+    }
     public boolean createRegularOrder(List<ItemToOrder> items) {
         try {
             if (items.size() == 0)
