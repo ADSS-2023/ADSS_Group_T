@@ -69,7 +69,6 @@ public class DeliveryController {
      */
     public LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> orderDelivery(String branchString, LinkedHashMap<String, LinkedHashMap<String, Integer>> suppliersString,
                                                                                   String requiredDateString) {
-
         Branch branch = this.branches.get(branchString);
         LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> suppliers = new LinkedHashMap<>();
         for (String supplierAddress : suppliersString.keySet()) {
@@ -91,7 +90,7 @@ public class DeliveryController {
         if (date2deliveries.containsKey(requiredDate)) {          //there is delivery in this date
             for (Delivery d : date2deliveries.get(requiredDate)) {     //the delivery is to the required date
                 if (branch.getShippingArea() == d.getShippingArea()) {        //the delivery is to the required branch
-                    if (!d.getBranches().containsKey(branch)) {
+                    if (!d.getUnHandledBranches().containsKey(branch)) {
                         d.addBranch(branch, filesCounter);
                         filesCounter++;
                     }
@@ -125,7 +124,7 @@ public class DeliveryController {
                     continue;
                 }
                 Delivery d = new Delivery(deliveryCounter, requiredDate, LocalTime.NOON, t.getWeight(), new LinkedHashMap<>(),
-                        null, driver.getName(), t.getLicenseNumber(), branch.getShippingArea());
+                        new LinkedHashMap<>(), null, driver.getName(), t.getLicenseNumber(), branch.getShippingArea());
                 deliveryCounter++;
                 deliveries.put(d.getId(), d);
                 date2deliveries.get(requiredDate).add(d);
@@ -137,7 +136,7 @@ public class DeliveryController {
                         for (Product p : productsTmp) {//change
                             if (d.getSource() == null)
                                 d.setSource(supplier);
-                            if (!d.getSuppliers().containsKey(supplier))
+                            if (!d.getUnHandledSuppliers().containsKey(supplier))
                                 d.addSupplier(supplier, filesCounter++);
                             d.addProductsToSupplier(supplier, p, suppliers.get(supplier).get(p));
                             suppliers.get(supplier).remove(p);
@@ -254,8 +253,11 @@ public class DeliveryController {
 
     /**
      * add a new branch to the branches map
-     *
-     * @param branch - the branch to add
+     * @param address - the branch to add
+     * @param telNumber - the branch tel number
+     * @param contactName - the branch contact name
+     * @param x - the x coordinate of the branch
+     * @param y - the y coordinate of the branch
      * @return true if the branch added successfully , and false otherwise
      */
     public boolean addBranch(String address, String telNumber, String contactName, int x, int y) {
@@ -270,8 +272,13 @@ public class DeliveryController {
     /**
      * add a new supplier to the suppliers map
      *
-     * @param supplier         - the supplier to add
-     * @param supplierProducts - List of the products of the supplier
+     * @param supplierAddress - the supplier to add
+     * @param telNumber - the tel number if the supplier
+     * @param contactName - the contact name of the supplier
+     * @param coolingLevel - the cooling level of the supplier
+     * @param productsOfSupplier - the products of the supplier
+     * @param x - the x coordinate of the supplier
+     * @param y - the y coordinate of the supplier
      * @return true if the supplier added successfully , and false otherwise
      */
     public boolean addSupplier(String supplierAddress, String telNumber, String contactName, int coolingLevel, ArrayList<String> productsOfSupplier, int x, int y) {
@@ -321,17 +328,20 @@ public class DeliveryController {
      *
      * @param deliveryID the delivery id to unload products from
      */
-    public void unloadProducts(int deliveryID) {
+    public void unloadProducts(int deliveryID,int weight, String supplierAddress) {
         double currWeight = deliveries.get(deliveryID).getTruckWeight();
         int maxWeight = lcC.getAllTrucks().get(deliveries.get(deliveryID).getTruckNumber()).getMaxWeight();
-        double unloadFactor = (currWeight - maxWeight) / currWeight;
-        for (Supplier supplier : deliveries.get(deliveryID).getSuppliers().keySet()) {
-            for (Product p : deliveries.get(deliveryID).getSuppliers().get(supplier).getProducts().keySet()) {
-                int amount = deliveries.get(deliveryID).getSuppliers().get(supplier).getProducts().get(p);
-                int unloadAmount = (int) Math.ceil(amount * unloadFactor);
-                deliveries.get(deliveryID).getSuppliers().get(supplier).getProducts().replace(p, amount - unloadAmount);
-            }
+        double unloadFactor = (currWeight + weight - maxWeight) / weight;
+        File loadedProducts = new File(filesCounter++);
+        for (Product p : deliveries.get(deliveryID).getUnHandledSuppliers().get(suppliers.get(supplierAddress)).getProducts().keySet()) {
+            int amount = deliveries.get(deliveryID).getUnHandledSuppliers().get(suppliers.get(supplierAddress)).getProducts().get(p);
+            int unloadAmount = (int) Math.ceil(amount * unloadFactor);
+            loadedProducts.addProduct(p,amount - unloadAmount);
+            deliveries.get(deliveryID).getUnHandledSuppliers().get(suppliers.get(supplierAddress)).getProducts().replace(p,unloadAmount);
         }
+        deliveries.get(deliveryID).addHandledSupplier(suppliers.get(supplierAddress),loadedProducts);
+        HashMap<Product,Integer> copyOfSupplierFileProducts = new HashMap<>(loadedProducts.getProducts());
+        filesCounter = deliveries.get(deliveryID).supplierHandled(suppliers.get(supplierAddress),filesCounter, copyOfSupplierFileProducts);
         deliveries.get(deliveryID).setTruckWeight(maxWeight);
     }
 
@@ -340,9 +350,9 @@ public class DeliveryController {
      *
      * @param deliveryID - the id of the delivery that the action required for
      */
-    public void replaceOrDropSite(int deliveryID, String address) {
+    public void DropSite(int deliveryID, String address) {
         Delivery delivery = deliveries.get(deliveryID);
-        delivery.removeSupplier();
+        delivery.removeSupplier(address);
         delivery.addNote("over load in " + address);
     }
 
@@ -353,12 +363,18 @@ public class DeliveryController {
      * @param action     - the action required
      */
     public void overWeightAction(int deliveryID, int action, String address, int weight) {
-        if (action == 1)
-            replaceOrDropSite(deliveryID, address);
-        else if (action == 2)
-            replaceTruck(deliveryID);
+        //if (action == 1)
+            //do nothing?
+            //DropSite(deliveryID, address);
+        if (action == 2) {
+            if(!replaceTruck(deliveryID)){
+                int newAction = overweightAction.EnterOverweightAction(deliveryID);
+                if(newAction == 3)
+                    unloadProducts(deliveryID,weight,address);
+            }
+        }
         else if (action == 3)
-            unloadProducts(deliveryID);
+            unloadProducts(deliveryID,weight,address);
     }
 
     public Branch getBranch(String address) {
@@ -419,7 +435,7 @@ public class DeliveryController {
 
 
     public String processSupplierWeight(String supplier, int weight) {
-        // Process the supplier weight
+        // TODO: Process the supplier weight
         return "OK";
     }
 
@@ -439,21 +455,63 @@ public class DeliveryController {
 
 
     public void executeDelivery(Delivery delivery) {
-        for (Supplier supplier : delivery.getSuppliers().keySet()) {
+        ArrayList<Supplier> suppliersTmp = new ArrayList<>(delivery.getUnHandledSuppliers().keySet());
+        for (Supplier supplier : suppliersTmp) {
             int productsWeight = enterWeightInterface.enterWeightFunction(supplier.getAddress(), delivery.getId());
             int currentWeight = delivery.getTruckWeight();
             int maxWeight = lcC.getAllTrucks().get(delivery.getTruckNumber()).getMaxWeight();
             if (maxWeight < currentWeight + productsWeight) {
-                //over weight
-            } else {
-                //ok
+                overWeightAction(delivery.getId(),overweightAction.EnterOverweightAction(delivery.getId()),supplier.getAddress(),productsWeight);
+                if(delivery.getTruckWeight() == lcC.getAllTrucks().get(delivery.getTruckNumber()).getMaxWeight())
+                    break;
             }
+            else {
+                delivery.setTruckWeight(currentWeight + productsWeight);
+                File f = delivery.getUnHandledSuppliers().get(supplier);
+                delivery.getHandledSuppliers().put(supplier,f);
+                delivery.getUnHandledSuppliers().remove(supplier);
+                HashMap<Product,Integer> copyOfSupplierFileProducts = new HashMap<>(f.getProducts());
+                filesCounter = delivery.supplierHandled(supplier,filesCounter,copyOfSupplierFileProducts);
+            }
+        }
+        reScheduleDelivery(delivery.getUnHandledSuppliers(),delivery.getUnHandledBranches());
+    }
+
+    private void reScheduleDelivery(LinkedHashMap<Supplier,File> suppliers,LinkedHashMap<Branch,File> branches){
+        //TODO: implement method
+        boolean found = false;
+        LocalDate date = LocalDate.now();
+        CoolingLevel coolingLevel = CoolingLevel.non;
+        for(Supplier s : suppliers.keySet()){
+            if(s.getCoolingLevel().ordinal() > coolingLevel.ordinal())
+                coolingLevel = s.getCoolingLevel();
+        }
+        Truck t;
+        Driver d;
+        while(!found){
+            t = scheduleTruck(date,coolingLevel);
+            if(t == null){
+                date = date.plusDays(1);
+                continue;
+            }
+            d = scheduleDriver(date,coolingLevel);
+            if(d == null){
+                date2trucks.get(date).remove(t);
+                date = date.plusDays(1);
+                continue;
+            }
+            Delivery newDelivery = new Delivery(deliveryCounter,date,LocalTime.NOON,t.getWeight(),suppliers,branches,
+                    suppliers.entrySet().iterator().next().getKey(),d.getName(),t.getLicenseNumber(),branches.entrySet().iterator().next().getKey().getShippingArea());
+            if(!date2deliveries.containsKey(date))
+                date2deliveries.put(date,new ArrayList<>());
+            date2deliveries.get(date).add(newDelivery);
+            found = true;
         }
     }
 
 
     public File getLoadedProducts(int deliveryID, String address) {
-        return deliveries.get(deliveryID).getSuppliers().get(suppliers.get(address));
+        return deliveries.get(deliveryID).getUnHandledSuppliers().get(suppliers.get(address));
     }
 
 

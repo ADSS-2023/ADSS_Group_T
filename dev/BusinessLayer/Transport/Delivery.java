@@ -8,8 +8,10 @@ public class Delivery {
     private LocalDate date;
     private LocalTime departureTime;
     private int truckWeight;
-    private LinkedHashMap<Supplier, File> suppliers;
-    private LinkedHashMap<Branch, File> branches;
+    private LinkedHashMap<Supplier, File> unHandledSuppliers;
+    private LinkedHashMap<Supplier, File> handledSuppliers;
+    private LinkedHashMap<Branch, File> unHandledBranches;
+    private LinkedHashMap<Branch, File> handledBranches;
     private Site source;
     private String driverName;
     private int truckNumber;
@@ -17,25 +19,64 @@ public class Delivery {
     private String note;
 
     public Delivery(int id, LocalDate date, LocalTime departureTime, int truckWeight, LinkedHashMap<Supplier, File> suppliers,
-                    Site source, String driverName, int truckNumber, int shippingArea) {
+                    , LinkedHashMap<Branch, File> branches, Site source, String driverName, int truckNumber, int shippingArea) {
         this.id = id;
         this.date = date;
         this.departureTime = departureTime;
         this.truckWeight = truckWeight;
-        this.suppliers = suppliers;
+        this.unHandledSuppliers = suppliers;
         this.source = source;
         this.driverName = driverName;
         this.truckNumber = truckNumber;
-        this.branches = new LinkedHashMap<>();
+        this.handledSuppliers = new LinkedHashMap<>();
+        this.unHandledBranches = branches;
+        this.handledBranches = new LinkedHashMap<>();
         this.shippingArea = shippingArea;
         this.note = "";
+    }
+
+    public void addHandledSupplier(Supplier supplier,File f){
+        handledSuppliers.put(supplier,f);
+    }
+    public int supplierHandled(Supplier supplier,int fileCounter, HashMap<Product,Integer> copyOfSupplierFileProducts){
+        ArrayList<Branch> branchesTmp = new ArrayList<>(unHandledBranches.keySet());
+        for(Branch b : branchesTmp){
+            if(!copyOfSupplierFileProducts.isEmpty())
+                fileCounter = checkBranch(b,fileCounter,copyOfSupplierFileProducts);
+        }
+        return  fileCounter;
+    }
+
+    private int checkBranch(Branch b,int fileCounter, HashMap<Product,Integer> copyOfSupplierFileProducts){
+        File branchFile = unHandledBranches.get(b);
+        ArrayList<Product> productsTmp = new ArrayList<>(branchFile.getProducts().keySet());
+        for(Product branchProduct : productsTmp) {
+            if(copyOfSupplierFileProducts.containsKey(branchProduct)){
+                if(!handledBranches.containsKey(b)){
+                    File newBranchFile = new File(fileCounter);
+                    fileCounter++;
+                    handledBranches.put(b,newBranchFile);
+                }
+                int amount = Math.min(copyOfSupplierFileProducts.get(branchProduct), unHandledBranches.get(b).getProducts().get(branchProduct));
+                handleBranch(b,branchProduct,amount,copyOfSupplierFileProducts);
+            }
+        }
+        return fileCounter;
+    }
+
+    private void handleBranch(Branch b,Product branchProduct, int amount, HashMap<Product,Integer> copyOfSupplierFileProducts){
+        handledBranches.get(b).addProduct(branchProduct, amount);
+        unHandledBranches.get(b).removeProduct(branchProduct, amount);
+        copyOfSupplierFileProducts.replace(branchProduct,copyOfSupplierFileProducts.get(branchProduct) - amount);
+        if(copyOfSupplierFileProducts.get(branchProduct) == 0)
+            copyOfSupplierFileProducts.remove(branchProduct);
     }
 
     /**
      * remove the first supplier from the suppliers map
      */
-    public void removeSupplier(){
-        suppliers.remove(suppliers.entrySet().iterator().next().getKey());
+    public void removeSupplier(String address){
+        unHandledSuppliers.remove(unHandledSuppliers.get(address));
     }
 
     /**
@@ -45,7 +86,7 @@ public class Delivery {
      */
     public void addBranch(Branch branch, int fileID){
         File f = new File(fileID);
-        branches.put(branch,f);
+        unHandledBranches.put(branch,f);
     }
 
     /**
@@ -55,7 +96,7 @@ public class Delivery {
      * @param amount
      */
     public void addProductsToSupplier(Supplier supplier, Product p, int amount){
-        suppliers.get(supplier).addProduct(p,amount);
+        unHandledSuppliers.get(supplier).addProduct(p,amount);
     }
     public int getShippingArea() {
         return shippingArea;
@@ -70,8 +111,21 @@ public class Delivery {
         return this.id;
     }
 
-    public LinkedHashMap<Branch, File> getBranches() {
-        return branches;
+
+    public LinkedHashMap<Branch, File> getHandledBranches() {
+        return handledBranches;
+    }
+
+    public LinkedHashMap<Branch, File> getUnHandledBranches() {
+        return unHandledBranches;
+    }
+
+    public LinkedHashMap<Supplier, File> getHandledSuppliers() {
+        return handledSuppliers;
+    }
+
+    public LinkedHashMap<Supplier, File> getUnHandledSuppliers() {
+        return unHandledSuppliers;
     }
 
     public LocalDate getDate() {
@@ -86,9 +140,6 @@ public class Delivery {
         this.truckWeight = truckWeight;
     }
 
-    public LinkedHashMap<Supplier, File> getSuppliers() {
-        return suppliers;
-    }
     public Site getSource() {
         return this.source;
     }
@@ -121,8 +172,7 @@ public class Delivery {
      * @param fileID
      */
     public void addSupplier(Supplier supplier , int fileID){
-        this.suppliers.put(supplier, new File(fileID));
-
+        this.unHandledSuppliers.put(supplier, new File(fileID));
     }
 
     public String getDriverName() {
