@@ -16,8 +16,9 @@ public class EmployeeController {
     public EmployeeController(){
         employeesMapper = new HashMap<Integer,Employee>();
     }
-    public void addNewEmployee(String employeeName, String bankAccount, List<PositionType> qualifedPositions, String joiningDay, int employeeId, String password,boolean isManger){
-        Employee newEmployee = new Employee(employeeName, bankAccount, qualifedPositions, joiningDay, employeeId, password,isManger);
+    public void addNewEmployee(String employeeName, String bankAccount, List<PositionType> qualifiedPositions, String joiningDay, int employeeId, String password){
+        Employee newEmployee = new Employee(employeeName, bankAccount, qualifiedPositions, joiningDay, employeeId, password);
+        //TODO: check if the ID is already exist, if so throw exception
         employeesMapper.putIfAbsent(employeeId, newEmployee);
     }
 

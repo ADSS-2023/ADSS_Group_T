@@ -1,22 +1,59 @@
 package BusinessLayer;
 
+import BusinessLayer.HR.Employee;
+import BusinessLayer.HR.HRManager;
+import BusinessLayer.Transport.Driver;
+import BusinessLayer.Transport.TransportManager;
 import UtilSuper.PositionType;
+import UtilSuper.UserType;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 public class UserController {
-    private LinkedHashMap<Integer,User> users;
+    private HashMap<Integer,Employee> employeesMapper;
+    //driverController
+    private HRManager hrManager;
 
-    public UserController() {
-        this.users = new LinkedHashMap<Integer, User>();
+    private TransportManager transportManager;
+
+
+    public UserController(HashMap<Integer, Employee> employeesMapper, HRManager hrManager, TransportManager transportManager) {
+        this.employeesMapper = employeesMapper;
+        this.hrManager = hrManager;
+        this.transportManager = transportManager;
     }
 
-    public boolean login (int id, String password){
+    public User login (int id, String password) throws Exception{
+        if (hrManager.getId() == id) {
+            if (hrManager.getPassword().equals(password))
+                return hrManager;
+            else
+                throw new IllegalArgumentException("wrong password");
+        }
 
+        else if (transportManager.getId() == id){
+            if (transportManager.getPassword().equals(password))
+                return transportManager;
+            else
+                throw new IllegalArgumentException("wrong password");
+            }
+
+        else {
+            for (Employee employee : employeesMapper.values()) {
+                if (employee.getId() == id) {
+                    if (employee.getPassword().equals(password)) {
+                        return employee;
+                    } else {
+                        throw new IllegalArgumentException("Wrong password");
+                    }
+                }
+            }
+            // TODO - search in driver Controller
+
+
+        }
     }
-    public String addNewUser(int id, String employeeName, String bankAccount, List<PositionType> qualifiedPositions, String description, int salary, String joiningDay, String password){
-        users.put(id, new User(id,employeeName,bankAccount,qualifiedPositions,description,salary,joiningDay,password));
-        return null;
-    }
+
 }
