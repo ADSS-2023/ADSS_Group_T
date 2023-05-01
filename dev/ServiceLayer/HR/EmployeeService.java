@@ -10,16 +10,6 @@ public class EmployeeService {
         this.employeeController = ec;
     }
 
-    public String login(int id, String password) {
-        Response res = new Response();
-        try {
-            if (employeeController.login(id, password))
-                return "m";
-            else return "e";
-        } catch (Exception ex) {
-        }
-        return null;
-    }
 
     public String addRestrictionToEmployee(int id, String date, String type) {
         Response res = new Response();

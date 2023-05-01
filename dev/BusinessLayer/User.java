@@ -2,11 +2,12 @@ package BusinessLayer;
 
 import BusinessLayer.HR.Constraint;
 import UtilSuper.PositionType;
+import UtilSuper.UserType;
 
 import java.util.List;
 import java.util.Map;
 
-public class User {
+public abstract class  User {
     private int id;
     private String employeeName;
     private String bankAccount;
@@ -15,16 +16,17 @@ public class User {
     private int salary;
     private String joiningDay;
     private String password;
+    private UserType userType;
 
-    public User(int id, String employeeName, String bankAccount, List<PositionType> qualifiedPositions, String description, int salary, String joiningDay, String password) {
+    public User(int id, String employeeName, String bankAccount, List<PositionType> qualifiedPositions, String description, int salary, String joiningDay, String password, UserType userType) {
         this.id = id;
         this.employeeName = employeeName;
         this.bankAccount = bankAccount;
-        this.qualifiedPositions = qualifiedPositions;
         this.description = description;
         this.salary = salary;
         this.joiningDay = joiningDay;
         this.password = password;
+        this.userType =  userType;
     }
 
     public int getId() {
@@ -62,6 +64,10 @@ public class User {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public UserType getUserType() {
+        return userType;
     }
 
     public int getSalary() {
