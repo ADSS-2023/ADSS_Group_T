@@ -1,73 +1,23 @@
 package PresentationLayer;
 
-import ServiceLayer.HR.EmployeeService;
-import ServiceLayer.HR.HR_Initialization;
-import ServiceLayer.HR.ShiftService;
 import ServiceLayer.Transport.DeliveryService;
 import ServiceLayer.Transport.LogisticCenterService;
-import ServiceLayer.Transport.Transport_Initialization;
-import ServiceLayer.UserService;
-import UtilSuper.ServiceFactory;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Scanner;
 
-public class HR_TransportPresentation {
+public class TransportManagerPresentation {
 
+    public static void start(LogisticCenterService logisticCenterService,DeliveryService deliveryService) {
 
-
-    ServiceFactory serviceFactory;
-
-    private ShiftService shiftService;
-    private EmployeeService employeeService;
-    private LogisticCenterService logisticCenterService;
-    private DeliveryService deliveryService;
-    private UserService userService;
-
-    public HR_TransportPresentation() {
-        ServiceFactory serviceFactory = new ServiceFactory();
-        this.shiftService = serviceFactory.getShiftService();
-        this.employeeService = serviceFactory.getEmployeeService();
-        this.logisticCenterService = serviceFactory.getLogisticCenterService();
-        this.deliveryService = serviceFactory.getDeliveryService();
-        this.userService = serviceFactory.getUserService();
     }
-
-
-    public void start() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("------ START -------");
-        System.out.println("Please choose an option:");
-        System.out.println("1. start new program");
-        System.out.println("2. load old data");
-        int choice = scanner.nextInt();
-        scanner.nextLine();
-        if (choice == 1)
-            loginWindow();
-        if (choice == 2) {
-            HR_Initialization.init_data(shiftService,employeeService);
-            Transport_Initialization.init_data(logisticCenterService,deliveryService);
-            loginWindow();
-        }
-    }
-
-    /**
-     * the main window of the system
-     */
-    public void loginWindow() {
+    private void mainWindow(LogisticCenterService logisticCenterService,DeliveryService deliveryService) {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             System.out.println(" ");
-            System.out.println("------ login window -------");
-            System.out.println("Current date: " + deliveryService.getCurrDate());
-            Scanner input = new Scanner(System.in);
-            System.out.println("please enter your ID number: ");
-            int ans_id = input.nextInt();
-            System.out.println("please enter your password: ");
-            String ans_password = input.next();
-            String type = employeeService.login(ans_id,ans_password);
-
+            System.out.println("------ main window -------");
+            //System.out.println("Current date: " + ts.getCurrDate());
             System.out.println("Please choose an option:");
             System.out.println("1. Skip day");
             System.out.println("2. Enter new delivery");
@@ -75,25 +25,26 @@ public class HR_TransportPresentation {
             System.out.println("4. Enter new truck");
             System.out.println("5. Enter new supplier");
             System.out.println("6. Enter new branch");
+            System.out.println("7. Logout");
             int choice = scanner.nextInt();
             scanner.nextLine(); // Consume the newline character
             switch (choice) {
-                case 1 -> skipDay();
-                case 2 -> addNewDelivery();
-                case 3 -> addNewDriver();
-                case 4 -> addNewTruck();
-                case 5 -> addNewSupplier();
-                case 6 -> addNewBranch();
+                case 1 -> skipDay(deliveryService);
+                case 2 -> addNewDelivery(deliveryService);
+                case 3 -> addNewDriver(logisticCenterService);
+                case 4 -> addNewTruck(logisticCenterService);
+                case 5 -> addNewSupplier(deliveryService);
+                case 6 -> addNewBranch(deliveryService);
+                case 7 -> {return;}
                 default -> System.out.println("Invalid choice. Please try again.");
             }
         }
     }
-
     // option 1
     /**
      * skip day and let user choose way of action in case of problem
      */
-    void skipDay() {
+    void skipDay(DeliveryService deliveryService) {
         System.out.println(deliveryService.getNextDayDeatails());
         System.out.println(deliveryService.skipDay());
     }
@@ -102,11 +53,11 @@ public class HR_TransportPresentation {
     /**
      * add New Delivery to the system
      */
-    private void addNewDelivery() {
+    private void addNewDelivery(DeliveryService deliveryService) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter delivery details:");
-        String branch = getBranch();
-        LinkedHashMap<String, LinkedHashMap<String,Integer>> suppliersAndProducts = getSuppliersAndProducts();
+        String branch = getBranch(deliveryService);
+        LinkedHashMap<String, LinkedHashMap<String,Integer>> suppliersAndProducts = getSuppliersAndProducts(deliveryService);
         String date = chooseDeliveryDate(scanner);
         System.out.println(deliveryService.orderDelivery(branch,suppliersAndProducts,date));
     }
@@ -124,7 +75,7 @@ public class HR_TransportPresentation {
     /**
      * add new driver to the system
      */
-    public void addNewDriver() {
+    public void addNewDriver(LogisticCenterService logisticCenterService) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter the driver details:");
         System.out.println("Please enter the driver ID:");
@@ -144,7 +95,7 @@ public class HR_TransportPresentation {
     /**
      * add new truck to the system
      */
-    void addNewTruck() {
+    void addNewTruck(LogisticCenterService logisticCenterService) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter the truck details:");
         System.out.println("Please enter the truck's license number:");
@@ -165,7 +116,7 @@ public class HR_TransportPresentation {
     /**
      * add new supplier to the system
      */
-    public void addNewSupplier() {
+    public void addNewSupplier(DeliveryService deliveryService) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter the supplier details:");
         System.out.print("Enter supplier address: ");
@@ -206,7 +157,7 @@ public class HR_TransportPresentation {
     /**
      * add new branch to the system
      */
-    public void addNewBranch() {
+    public void addNewBranch(DeliveryService deliveryService) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter the delivery details:");
         System.out.print("Enter site address: ");
@@ -223,7 +174,7 @@ public class HR_TransportPresentation {
     }
 
 
-    private int enterWeightFunction(String address, int deliveryID) {
+    private int enterWeightFunction(String address, int deliveryID,DeliveryService deliveryService) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("------- " + deliveryID + " -------");
         System.out.println("the truck in:" + address + "." +
@@ -252,7 +203,7 @@ public class HR_TransportPresentation {
         int coolingLevel = scanner.nextInt();
         return coolingLevel;
     }
-    private String getBranch(){
+    private String getBranch(DeliveryService deliveryService){
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter delivery details:");
         System.out.println("choose branch:");
@@ -266,7 +217,7 @@ public class HR_TransportPresentation {
      * @param selectedSuppliers - A list of suppliers from which the user has to choose one
      * @return Supplier that the user choose
      */
-    private  LinkedHashMap<String,LinkedHashMap<String,Integer>> getSuppliersAndProducts(){
+    private  LinkedHashMap<String,LinkedHashMap<String,Integer>> getSuppliersAndProducts(DeliveryService deliveryService){
         Scanner scanner = new Scanner(System.in);
         LinkedHashMap<String,LinkedHashMap<String,Integer>> suppliersAndProducts = new LinkedHashMap<>();
         System.out.println(deliveryService.getAllSuppliersAddress());
@@ -280,7 +231,7 @@ public class HR_TransportPresentation {
                 System.out.println(" supplier already selected. Please choose a different  supplier.");
                 continue;
             }
-            suppliersAndProducts.put(supplier,getSupplierProducts(supplier));
+            suppliersAndProducts.put(supplier,getSupplierProducts(supplier,deliveryService));
         }
         return suppliersAndProducts;
     }
@@ -291,7 +242,7 @@ public class HR_TransportPresentation {
      * @param selectedSupplier - The supplier from which the user will choose products
      * @return map of product as key and amount of the product as value
      */
-    private LinkedHashMap<String,Integer> getSupplierProducts(String supplier){
+    private LinkedHashMap<String,Integer> getSupplierProducts(String supplier,DeliveryService deliveryService){
         Scanner scanner = new Scanner(System.in);
         LinkedHashMap<String, Integer> products = new LinkedHashMap<String, Integer>();
         System.out.println(deliveryService.getSupplierProducts(supplier));

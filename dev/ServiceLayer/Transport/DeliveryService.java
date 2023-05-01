@@ -37,10 +37,7 @@ public class DeliveryService {
         catch (Exception ex) {
             return ex.getMessage();
         }
-
-
     }
-
 
     public String skipDay() {
         Response res = new Response();
@@ -51,8 +48,6 @@ public class DeliveryService {
             return ex.toString();
         }
     }
-
-
 
     public String replaceTruck(int deliveryID) {
         Response res = new Response();
@@ -93,24 +88,11 @@ public class DeliveryService {
         }
     }
 
-
-
-
     public String getDeliveryDetail(int deliveryID) {
         return transportJsonConvert.deliveryToString(deliveryController.getDelivery(deliveryID));
     }
     public String getLoadedProducts(int deliveryID,String address) {
         return transportJsonConvert.fileToString(deliveryController.getLoadedProducts(deliveryID,address));
-    }
-
-    public String addBranch(String address,String telNumber,String contactName,int x,int y) {
-       deliveryController.addBranch(address,telNumber,contactName,x,y);
-        return "D";
-    }
-
-    public void addSupplier(String supplierAddress,String telNumber,String contactName,int coolingLevel, ArrayList<String> produces,int x,int y) {
-
-       deliveryController.addSupplier(supplierAddress,telNumber,contactName, coolingLevel, produces,x,y);
     }
 
     public String loadWeight(int id, String address, int weight) {
@@ -128,26 +110,11 @@ public class DeliveryService {
         this.overweightAction = overweightAction;
     }
 
-    public String getAllBranches() {
-        return transportJsonConvert.branchesToString(deliveryController.getAllBranches());
-    }
-
     public String getNextDayDeatails() {
        deliveryController.getNextDayDeatails();
         return "good";
     }
 
-    public String getSupplierProducts(String supplier) {
-        return transportJsonConvert.productsToString(deliveryController.getSupplierProducts(supplier));
-    }
-
-    public String getAllSuppliersAddress() {
-        return transportJsonConvert.getAllSuppliersAddress(deliveryController.getAllSuppliers());
-    }
-
-    public void initLogisticCenterController(LogisticCenterService logisticCenterService) {
-        this.deliveryController.initLogisticCenterController(logisticCenterService.logisticCenterController);
-    }
 
     public String getCurrDate() {
          return this.deliveryController.getCurrDate().toString();
