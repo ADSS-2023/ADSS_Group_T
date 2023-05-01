@@ -19,7 +19,7 @@ public class Delivery {
     private String note;
 
     public Delivery(int id, LocalDate date, LocalTime departureTime, int truckWeight, LinkedHashMap<Supplier, File> suppliers,
-                    , LinkedHashMap<Branch, File> branches, Site source, String driverName, int truckNumber, int shippingArea) {
+                    LinkedHashMap<Branch, File> branches, Site source, String driverName, int truckNumber, int shippingArea) {
         this.id = id;
         this.date = date;
         this.departureTime = departureTime;
@@ -181,5 +181,9 @@ public class Delivery {
 
     public void addNote(String s) {
         note = note + "\n" + s;
+    }
+
+    public LinkedHashMap<Supplier, File> getSuppliers() {
+        return null;
     }
 }
