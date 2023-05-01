@@ -6,16 +6,16 @@ package ServiceLayer.Transport;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
-public class TransportInit {
+public class Transport_Initialization {
     private DeliveryService deliveryService;
     private LogisticCenterService logisticCenterService;
-    public TransportInit(DeliveryService deliveryService, LogisticCenterService logisticCenterService){
+    public Transport_Initialization(DeliveryService deliveryService, LogisticCenterService logisticCenterService){
         this.deliveryService = deliveryService;
         this.logisticCenterService = logisticCenterService;
     }
 
-    public void init() {
-        this.deliveryService.initLogisticCenterController(logisticCenterService);
+    public static void init_data(LogisticCenterService logisticCenterService, DeliveryService deliveryService) {
+       deliveryService.initLogisticCenterController(logisticCenterService);
 
 
 

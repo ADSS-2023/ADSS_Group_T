@@ -4,6 +4,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+import BusinessLayer.HR.ShiftController;
 import BusinessLayer.Transport.Driver.CoolingLevel;
 import UtilSuper.EnterWeightInterface;
 import UtilSuper.OverweightActionInterface;
@@ -11,7 +12,8 @@ import UtilSuper.OverweightActionInterface;
 
 public class DeliveryController {
 
-    private  LogisticCenterController lcC;
+    private  LogisticCenterController logisticCenterController;
+    private ShiftController shiftController;
     private LinkedHashMap<Integer, Delivery> deliveries;
 
     private LinkedHashMap<LocalDate, ArrayList<Truck>> date2trucks;
@@ -55,7 +57,7 @@ public class DeliveryController {
         this.currDate = LocalDate.of(2023,1,1);
     }
     public void initLogisticCenterController (LogisticCenterController lcC){
-        this.lcC = lcC;
+        this.logisticCenterController = lcC;
     }
 
     /**
@@ -96,7 +98,7 @@ public class DeliveryController {
                     }
                     ArrayList<Supplier> suppliersTmp = new ArrayList<>(suppliers.keySet());
                     for (Supplier supplier : suppliersTmp) {
-                        if (supplier.getCoolingLevel() == lcC.getTruck(d.getTruckNumber()).getCoolingLevel()) {
+                        if (supplier.getCoolingLevel() == logisticCenterController.getTruck(d.getTruckNumber()).getCoolingLevel()) {
                             Set<Product> productsTmp = new LinkedHashSet<>(suppliers.get(supplier).keySet());
                             d.addSupplier(supplier, filesCounter);
                             for (Product p : productsTmp) {
@@ -161,8 +163,8 @@ public class DeliveryController {
      * @return the Truck that scheduled for the delivery if exist , null otherwise
      */
     public Truck scheduleTruck(LocalDate date, CoolingLevel coolingLevel) {
-        if (lcC.getAllTrucks() != null) {
-            for (Truck truck : lcC.getAllTrucks().values()) {
+        if (logisticCenterController.getAllTrucks() != null) {
+            for (Truck truck : logisticCenterController.getAllTrucks().values()) {
                 if (date2trucks.containsKey(date) &&
                         !date2trucks.get(date).contains(truck) && truck.getCoolingLevel() == coolingLevel) {
                     date2trucks.get(date).add(truck);
@@ -185,8 +187,8 @@ public class DeliveryController {
      * @return the Driver that scheduled for the delivery if exist , null otherwise
      */
     public Driver scheduleDriver(LocalDate date, CoolingLevel coolingLevel) {
-        if (lcC.getAllDrivers() != null) {
-            for (Driver driver : lcC.getAllDrivers().values()) {
+        if (logisticCenterController.getAllDrivers() != null) {
+            for (Driver driver : logisticCenterController.getAllDrivers().values()) {
                 if (date2drivers.containsKey(date) &&
                         !date2drivers.get(date).contains(driver) && driver.getCoolingLevel().ordinal() >= coolingLevel.ordinal()) {
                     date2drivers.get(date).add(driver);
@@ -306,17 +308,17 @@ public class DeliveryController {
      */
 
     public boolean replaceTruck(int deliveryID) {
-        Truck t = lcC.getAllTrucks().get(deliveries.get(deliveryID).getTruckNumber());
+        Truck t = logisticCenterController.getAllTrucks().get(deliveries.get(deliveryID).getTruckNumber());
         LocalDate date = deliveries.get(deliveryID).getDate();
-        for (int licenseNumber : lcC.getAllTrucks().keySet()) {
-            Truck optionalTruck = lcC.getAllTrucks().get(licenseNumber);
+        for (int licenseNumber : logisticCenterController.getAllTrucks().keySet()) {
+            Truck optionalTruck = logisticCenterController.getAllTrucks().get(licenseNumber);
             if ((optionalTruck.getMaxWeight() >= deliveries.get(deliveryID).getTruckWeight()) &&
                     !date2trucks.get(date).contains(optionalTruck) &&
                     optionalTruck.getCoolingLevel() == t.getCoolingLevel() &&
                     optionalTruck.getLicenseType().ordinal() >= t.getLicenseType().ordinal()) {
                 deliveries.get(deliveryID).setTruckNumber(optionalTruck.getLicenseNumber());
                 date2trucks.get(date).remove(t);
-                date2trucks.get(date).add(lcC.getAllTrucks().get(licenseNumber));
+                date2trucks.get(date).add(logisticCenterController.getAllTrucks().get(licenseNumber));
                 return true;
             }
         }
@@ -330,7 +332,7 @@ public class DeliveryController {
      */
     public void unloadProducts(int deliveryID,int weight, String supplierAddress) {
         double currWeight = deliveries.get(deliveryID).getTruckWeight();
-        int maxWeight = lcC.getAllTrucks().get(deliveries.get(deliveryID).getTruckNumber()).getMaxWeight();
+        int maxWeight = logisticCenterController.getAllTrucks().get(deliveries.get(deliveryID).getTruckNumber()).getMaxWeight();
         double unloadFactor = (currWeight + weight - maxWeight) / weight;
         File loadedProducts = new File(filesCounter++);
         for (Product p : deliveries.get(deliveryID).getUnHandledSuppliers().get(suppliers.get(supplierAddress)).getProducts().keySet()) {
@@ -443,7 +445,7 @@ public class DeliveryController {
     public boolean loadWeight(int id, String address, int productsWeight) {
         Delivery delivery = deliveries.get(id);
         int currentWeight = delivery.getTruckWeight();
-        int maxWeight = lcC.getAllTrucks().get(delivery.getTruckNumber()).getMaxWeight();
+        int maxWeight = logisticCenterController.getAllTrucks().get(delivery.getTruckNumber()).getMaxWeight();
         if (maxWeight < currentWeight + productsWeight)
             return false;
         else {
@@ -459,10 +461,10 @@ public class DeliveryController {
         for (Supplier supplier : suppliersTmp) {
             int productsWeight = enterWeightInterface.enterWeightFunction(supplier.getAddress(), delivery.getId());
             int currentWeight = delivery.getTruckWeight();
-            int maxWeight = lcC.getAllTrucks().get(delivery.getTruckNumber()).getMaxWeight();
+            int maxWeight = logisticCenterController.getAllTrucks().get(delivery.getTruckNumber()).getMaxWeight();
             if (maxWeight < currentWeight + productsWeight) {
                 overWeightAction(delivery.getId(),overweightAction.EnterOverweightAction(delivery.getId()),supplier.getAddress(),productsWeight);
-                if(delivery.getTruckWeight() == lcC.getAllTrucks().get(delivery.getTruckNumber()).getMaxWeight())
+                if(delivery.getTruckWeight() == logisticCenterController.getAllTrucks().get(delivery.getTruckNumber()).getMaxWeight())
                     break;
             }
             else {

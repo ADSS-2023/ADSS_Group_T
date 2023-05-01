@@ -29,17 +29,6 @@ public class Location {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 //                      |
 //                      |
 //            2         |        1
