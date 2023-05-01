@@ -1,12 +1,14 @@
 package BusinessLayer.HR;
 
 
+import BusinessLayer.User;
 import UtilSuper.PositionType;
+import UtilSuper.UserType;
 
 import java.util.*;
 
-public class Employee {
-    private int id;
+public class Employee extends User {
+
     private String employeeName;
     private String bankAccount;
     private List<PositionType> qualifiedPositions;
@@ -20,29 +22,12 @@ public class Employee {
     private boolean isShiftManager;
     private String password;
 
-    public Employee(String employeeName, String bankAccount, List<PositionType> qualifiedPositions, String joiningDay, int employeeId, String password) {
-        this.employeeName = employeeName;
-        this.bankAccount = bankAccount;
-        this.qualifiedPositions = qualifiedPositions;
-        this.joiningDay = joiningDay;
-        this.id = employeeId;
-        this.password = password;
-        this.submittedShifts = new HashMap<>();
-        this.assignedShifts = new HashMap<>();
-        this.shiftsRestriction = new HashMap<String, List<Boolean>>();
-    }
-    public Employee(String employeeName, String bankAccount, List<PositionType> qualifiedPositions, String joiningDay, int employeeId, String password, boolean isManager) {
-        this.employeeName = employeeName;
-        this.bankAccount = bankAccount;
-        this.qualifiedPositions = qualifiedPositions;
-        this.joiningDay = joiningDay;
-        this.id = employeeId;
-        this.password = password;
-        this.submittedShifts = new HashMap<>();
-        this.assignedShifts = new HashMap<>();
-        this.shiftsRestriction = new HashMap<String, List<Boolean>>();
-        this.isHRManager = isManager;
-        boolean isShiftManager = false;
+    public Employee(int id, String employeeName, String bankAccount, List<PositionType> qualifiedPositions, String description, int salary, String joiningDay, String password, UserType userType, List<PositionType> qualifiedPositions1, Map<String, List<Constraint>> submittedShifts, Map<String, List<Constraint>> assignedShifts, Map<String, List<Boolean>> shiftsRestriction) {
+        super(id, employeeName, bankAccount, qualifiedPositions, description, salary, joiningDay, password, userType);
+        this.qualifiedPositions = qualifiedPositions1;
+        this.submittedShifts = submittedShifts;
+        this.assignedShifts = assignedShifts;
+        this.shiftsRestriction = shiftsRestriction;
     }
 
     public void addSubmittedShift(String date, boolean shiftType, boolean isTemp) {
@@ -159,13 +144,7 @@ public class Employee {
         return shiftsRestriction;
     }
 
-    public String getDescription() {
-        return description;
-    }
 
-    public String getPassword() {
-        return password;
-    }
 
     public void  setDescription(String description){
         this.description = description;
@@ -205,18 +184,6 @@ public class Employee {
     }
 
 
-
-    public boolean isManager() {
-        return isHRManager;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getEmployeeName() {
-        return employeeName;
-    }
 
 
     public List<String> getListOfQualifiedPositions() {
