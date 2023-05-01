@@ -20,8 +20,8 @@ public class DeliveryService {
     private OverweightActionInterface overweightAction;
     private TransportJsonConvert transportJsonConvert;
 
-    public DeliveryService() {
-        this.deliveryController = new DeliveryController();
+    public DeliveryService(DeliveryController deliveryController) {
+        this.deliveryController = deliveryController;
         deliveryController.setEnterWeightInterface((String address, int deliveryID) -> enterWeightInterface.enterWeightFunction(address,deliveryID));
         deliveryController.setOverweightAction((int deliveryID) -> overweightAction.EnterOverweightAction(deliveryID));
         transportJsonConvert = new TransportJsonConvert();
@@ -146,7 +146,11 @@ public class DeliveryService {
     }
 
     public void initLogisticCenterController(LogisticCenterService logisticCenterService) {
-        this.deliveryController.initLogisticCenterController(logisticCenterService.lcC);
+        this.deliveryController.initLogisticCenterController(logisticCenterService.logisticCenterController);
+    }
+
+    public String getCurrDate() {
+         return this.deliveryController.getCurrDate().toString();
     }
 }
 

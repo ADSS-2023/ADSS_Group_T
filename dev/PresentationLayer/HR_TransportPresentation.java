@@ -1,47 +1,73 @@
-package ServiceLayer.Transport;
+package PresentationLayer;
+
+import ServiceLayer.HR.EmployeeService;
+import ServiceLayer.HR.HR_Initialization;
+import ServiceLayer.HR.ShiftService;
+import ServiceLayer.Transport.DeliveryService;
+import ServiceLayer.Transport.LogisticCenterService;
+import ServiceLayer.Transport.Transport_Initialization;
+import ServiceLayer.UserService;
+import UtilSuper.ServiceFactory;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Scanner;
 
-public class TransportPresentation {
-    final DeliveryService deliveryService;
-    final LogisticCenterService logisticCenterService;
-    final Transport_Initialization transportInit;
-
-    public TransportPresentation() {
+public class HR_TransportPresentation {
 
 
 
+    ServiceFactory serviceFactory;
+
+    private ShiftService shiftService;
+    private EmployeeService employeeService;
+    private LogisticCenterService logisticCenterService;
+    private DeliveryService deliveryService;
+    private UserService userService;
+
+    public HR_TransportPresentation() {
+        ServiceFactory serviceFactory = new ServiceFactory();
+        this.shiftService = serviceFactory.getShiftService();
+        this.employeeService = serviceFactory.getEmployeeService();
+        this.logisticCenterService = serviceFactory.getLogisticCenterService();
+        this.deliveryService = serviceFactory.getDeliveryService();
+        this.userService = serviceFactory.getUserService();
     }
-
 
 
     public void start() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("------ START -------");
         System.out.println("Please choose an option:");
-        System.out.println("1. start new pogram");
+        System.out.println("1. start new program");
         System.out.println("2. load old data");
         int choice = scanner.nextInt();
         scanner.nextLine();
         if (choice == 1)
-            mainWindow();
+            loginWindow();
         if (choice == 2) {
-            transportInit.init();
-            mainWindow();
+            HR_Initialization.init_data(shiftService,employeeService);
+            Transport_Initialization.init_data(logisticCenterService,deliveryService);
+            loginWindow();
         }
     }
 
     /**
      * the main window of the system
      */
-    public void mainWindow() {
+    public void loginWindow() {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             System.out.println(" ");
-            System.out.println("------ main window -------");
-            //System.out.println("Current date: " + ts.getCurrDate());
+            System.out.println("------ login window -------");
+            System.out.println("Current date: " + deliveryService.getCurrDate());
+            Scanner input = new Scanner(System.in);
+            System.out.println("please enter your ID number: ");
+            int ans_id = input.nextInt();
+            System.out.println("please enter your password: ");
+            String ans_password = input.next();
+            String type = employeeService.login(ans_id,ans_password);
+
             System.out.println("Please choose an option:");
             System.out.println("1. Skip day");
             System.out.println("2. Enter new delivery");
@@ -80,7 +106,7 @@ public class TransportPresentation {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter delivery details:");
         String branch = getBranch();
-        LinkedHashMap<String,LinkedHashMap<String,Integer>> suppliersAndProducts = getSuppliersAndProducts();
+        LinkedHashMap<String, LinkedHashMap<String,Integer>> suppliersAndProducts = getSuppliersAndProducts();
         String date = chooseDeliveryDate(scanner);
         System.out.println(deliveryService.orderDelivery(branch,suppliersAndProducts,date));
     }

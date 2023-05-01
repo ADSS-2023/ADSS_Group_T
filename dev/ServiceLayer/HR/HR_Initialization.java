@@ -12,17 +12,16 @@ import java.util.List;
 import java.util.Scanner;
 
 
-public class Initialization {
-    public static void main(String[] args) {
-        init_data();
-    }
-    public static void init_data(){
-        Branch branch = new Branch();
-        ShiftController shiftController = branch.getShiftControlle(1);
-        EmployeeController employeeController = branch.getEmployeesController(1);
-        employeeController.initEmployeeConroller(shiftController);
-        EmployeeService Emp = new EmployeeService(employeeController);
-        ShiftService shiftService = new ShiftService(shiftController);
+public class HR_Initialization {
+
+
+    public static void init_data(ShiftService shiftService,EmployeeService employeeService){
+//        Branch branch = new Branch();
+//
+//        EmployeeController employeeController = branch.getEmployeesController(1);
+//        employeeController.initEmployeeConroller(shiftController);
+//        EmployeeService Emp = new EmployeeService(employeeController);
+//        ShiftService shiftService = sh
 
         HashMap<String, ArrayList<Shift>> shifts = new HashMap<String, ArrayList<Shift>>();
         int shiftId = 0;
@@ -54,7 +53,7 @@ public class Initialization {
         System.out.println("1. Do you want to load a random data? - enter 1 for yes, enter 2 for no");
         String ans_data = input.next();
         if (ans_data.equals("1")) {
-            shiftController.init(shifts, employeeController.getEmployeesMapper());
+
             initWorkers(employeeController);
             initShiftsRequeirments(shiftService);
             initSubmisiion(shiftService);
