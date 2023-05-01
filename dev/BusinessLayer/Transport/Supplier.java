@@ -5,14 +5,21 @@ import java.util.ArrayList;
 
 public class Supplier extends Site{
 
-    CoolingLevel coolingLevel;
-    public Supplier(String address,String telNumber,String contactName, int coolingLevel,int x,int y){
+    ArrayList<Product> products;
+
+    public Supplier(String address,String telNumber,String contactName,int x,int y,ArrayList<Product> product){
         super(address,telNumber,contactName,x,y);
-        this.coolingLevel = CoolingLevel.get(coolingLevel);
+        this.products = product;
     }
 
-    public CoolingLevel getCoolingLevel() {
-        return coolingLevel;
+    public void addProductToSupplier(Product p){
+        products.add(p);
     }
 
+    public boolean removeProductFromSupplier(Product p){
+        if(products.contains(p))
+            return false;
+        products.remove(p);
+        return true;
+    }
 }

@@ -284,7 +284,7 @@ public class DeliveryController {
     public boolean addSupplier(String supplierAddress, String telNumber, String contactName, int coolingLevel, ArrayList<String> productsOfSupplier, int x, int y) {
         if (suppliers.containsKey(supplierAddress))
             return false;
-        Supplier supplier = new Supplier(supplierAddress, telNumber, contactName, coolingLevel, x, y);
+        Supplier supplier = new Supplier(supplierAddress, telNumber, contactName, x, y, new ArrayList<Product>());
         ArrayList<Product> products = new ArrayList<Product>();
         for (String productString : productsOfSupplier) {
             products.add(new Product(productString));
