@@ -26,10 +26,10 @@ public class EmployeeService {
 
     public String addNewEmployee(String employeeName, String bankAccount, String joiningDay, int employeeId, String password, boolean isManger) {
         Response res = new Response();
-        try {
-            employeeController.addNewEmployee(employeeName, bankAccount, null, joiningDay, employeeId, password, isManger);
-        } catch (Exception ex) {
-        }
+//        try {
+//            employeeController.addNewEmployee(employeeName, bankAccount, null, joiningDay, employeeId, password, isManger);
+//        } catch (Exception ex) {
+//        }
         return null;
 
     }

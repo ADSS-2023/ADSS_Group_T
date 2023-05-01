@@ -36,37 +36,23 @@ public class DeliveryController {
     private OverweightActionInterface overweightAction;
 
 
-    public DeliveryController( LinkedHashMap<Integer, Delivery> deliveries) {
-        this.deliveries = deliveries;
-        this.date2trucks = new LinkedHashMap<>();
-        this.date2drivers = new LinkedHashMap<>();
-        this.date2deliveries = new LinkedHashMap<>();
-        this.currDate = LocalDate.of(1,1,2023);
-    }
 
-    public DeliveryController() {
+    public DeliveryController(LogisticCenterController logisticCenterController, SupplierController supplierController, BranchController branchController,DriverController driverController) {
         this.deliveries = new LinkedHashMap<>();
         this.date2trucks = new LinkedHashMap<>();
         this.date2drivers = new LinkedHashMap<>();
         this.date2deliveries = new LinkedHashMap<>();
         this.currDate = LocalDate.of(2023,1,1);
+        this.branchController = branchController;
+        this.driverController = driverController;
+        this.supplierController = supplierController;;
+        this.logisticCenterController = logisticCenterController;
     }
     public void initLogisticCenterController (LogisticCenterController lcC){
         this.logisticCenterController = lcC;
     }
 
-    /**
-     * handle the request for a new delivery
-     * <p>
-     * //* @param branch       - the branch to deliver the products to
-     * //* @param suppliers    - the products ordered from each supplier
-     * //* @param requiredDate - required date for delivery
-     *
-     * @return map of the suppliers products that have not been schedule for delivery due to lack of drivers/trucks in that date
-     */
-    public LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> orderDelivery(String branchString, LinkedHashMap<String, LinkedHashMap<String, Integer>> suppliersString,
-                                                                                  String requiredDateString) {
-        Branch branch = this.branchController.getBranch(branchString);
+    private  LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> getSuppliersAnsProducts(LinkedHashMap<String, LinkedHashMap<String, Integer>> suppliersString){
         LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> suppliers = new LinkedHashMap<>();
         for (String supplierAddress : suppliersString.keySet()) {
             Supplier supplier = this.supplierController.getSupplier(supplierAddress);
@@ -80,6 +66,22 @@ public class DeliveryController {
                 suppliers.put(supplier, products);
             }
         }
+        return suppliers;
+    }
+    /**
+     * handle the request for a new delivery
+     * <p>
+     * //* @param branch       - the branch to deliver the products to
+     * //* @param suppliers    - the products ordered from each supplier
+     * //* @param requiredDate - required date for delivery
+     *
+     * @return map of the suppliers products that have not been schedule for delivery due to lack of drivers/trucks in that date
+     */
+    public LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> orderDelivery(String branchString, LinkedHashMap<String, LinkedHashMap<String, Integer>> suppliersString,
+                                                                                  String requiredDateString) {
+        Branch branch = this.branchController.getBranch(branchString);
+        LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> suppliers = getSuppliersAnsProducts(suppliersString);//convert the string
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate requiredDate = LocalDate.parse(requiredDateString, formatter);
 
@@ -93,13 +95,13 @@ public class DeliveryController {
                     }
                     ArrayList<Supplier> suppliersTmp = new ArrayList<>(suppliers.keySet());
                     for (Supplier supplier : suppliersTmp) {
-                        if (supplier.getCoolingLevel() == logisticCenterController.getTruck(d.getTruckNumber()).getCoolingLevel()) {
-                            Set<Product> productsTmp = new LinkedHashSet<>(suppliers.get(supplier).keySet());
-                            d.addSupplier(supplier, filesCounter);
-                            for (Product p : productsTmp) {
-                                d.addProductsToSupplier(supplier, p, suppliers.get(supplier).get(p));
+                        Set<Product> productsTmp = new LinkedHashSet<>(suppliers.get(supplier).keySet());
+                        for (Product p : productsTmp) {
+                            if(p.getCoolingLevel() == logisticCenterController.getTruck(d.getTruckNumber()).getCoolingLevel()) {
+                                d.addProductToSupplier(supplier, p, suppliers.get(supplier).get(p));
                                 suppliers.get(supplier).remove(p);
                             }
+                            d.addSupplier(supplier, filesCounter);
                         }
                         if (suppliers.get(supplier).isEmpty())   //all the suppliers products scheduled
                             suppliers.remove(supplier);
@@ -107,6 +109,7 @@ public class DeliveryController {
                 }
             }
         }
+        //TODO: create new driver request from HR manager
         if (!suppliers.isEmpty()) {   //open new delivery
             Set<CoolingLevel> newDeliveriesCoolingLevels = countCoolingOptions(suppliers);
             for (CoolingLevel coolingLevel : newDeliveriesCoolingLevels) {
@@ -115,11 +118,7 @@ public class DeliveryController {
                 Truck t = scheduleTruck(requiredDate, coolingLevel);
                 if (t == null)       //in case there is no truck available for this delivery
                     continue;
-//                Driver driver = scheduleDriver(requiredDate, coolingLevel);
-//                if (driver == null) {     //in case there is no driver available for this delivery
-//                    date2trucks.get(requiredDate).remove(t); //remove truck from this day deliveries list
-//                    continue;
-//                }
+//
                 Delivery d = new Delivery(deliveryCounter, requiredDate, LocalTime.NOON, t.getWeight(), new LinkedHashMap<>(),
                         new LinkedHashMap<>(), null, t.getLicenseNumber(), branch.getShippingArea());
                 deliveryCounter++;
@@ -128,20 +127,21 @@ public class DeliveryController {
                 //add supply to the new delivery
                 ArrayList<Supplier> suppliersTmp = new ArrayList<>(suppliers.keySet());
                 for (Supplier supplier : suppliersTmp) {
-                    if (supplier.getCoolingLevel() == coolingLevel) {
-                        Set<Product> productsTmp = new LinkedHashSet<>(suppliers.get(supplier).keySet());
-                        for (Product p : productsTmp) {//change
+
+                    Set<Product> productsTmp = new LinkedHashSet<>(suppliers.get(supplier).keySet());
+                    for (Product p : productsTmp) {
+                        if (p.getCoolingLevel() == coolingLevel) {
                             if (d.getSource() == null)
                                 d.setSource(supplier);
                             if (!d.getUnHandledSuppliers().containsKey(supplier))
                                 d.addSupplier(supplier, filesCounter++);
-                            d.addProductsToSupplier(supplier, p, suppliers.get(supplier).get(p));
+                            d.addProductToSupplier(supplier, p, suppliers.get(supplier).get(p));
                             suppliers.get(supplier).remove(p);
                         }
+                        d.setTruckWeight(d.getTruckWeight());
+                        if (suppliers.get(supplier).isEmpty())   //all the suppliers products scheduled
+                            suppliers.remove(supplier);
                     }
-                    d.setTruckWeight(d.getTruckWeight());
-                    if (suppliers.get(supplier).isEmpty())   //all the suppliers products scheduled
-                        suppliers.remove(supplier);
                 }
             }
             if (!suppliers.isEmpty())
@@ -207,7 +207,8 @@ public class DeliveryController {
     public Set<CoolingLevel> countCoolingOptions(LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> suppliers) {
         Set<CoolingLevel> s = new HashSet<>();
         for (Supplier supplier : suppliers.keySet())
-            s.add(supplier.getCoolingLevel());
+            for (Product product : supplier.getAllProducts().values())
+                s.add(product.getCoolingLevel());
         return s;
     }
 
@@ -377,8 +378,8 @@ public class DeliveryController {
         LocalDate date = LocalDate.now();
         CoolingLevel coolingLevel = CoolingLevel.non;
         for(Supplier s : suppliers.keySet()){
-            if(s.getCoolingLevel().ordinal() > coolingLevel.ordinal())
-                coolingLevel = s.getCoolingLevel();
+//            if(s.getCoolingLevel().ordinal() > coolingLevel.ordinal())
+//                coolingLevel = s.getCoolingLevel();
         }
         Truck t;
         Driver d;
