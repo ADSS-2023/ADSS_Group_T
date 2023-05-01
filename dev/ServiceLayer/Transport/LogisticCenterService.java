@@ -6,65 +6,42 @@ import ServiceLayer.HR.Response;
 
 import BusinessLayer.Transport.*;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+
 public class LogisticCenterService {
     private LogisticCenterController logisticCenterController;
-    private DriverController driverController;
-    public LogisticCenterService(LogisticCenterController logisticCenterController,DriverController driverController){
+
+    public LogisticCenterService(LogisticCenterController logisticCenterController){
         this.logisticCenterController = logisticCenterController;
-        this.driverController = driverController;
+
     }
 
-    public String addTruck(int licenseNumber, String model, int weight, int maxWeight, int coolingLevel) {
-        Response res = new Response();
-        try {
-            logisticCenterController.addTruck(licenseNumber, model, weight, maxWeight, coolingLevel);
-            return "good";
-        } catch (Exception ex) {
-            return ex.toString();
-        }
+    /**
+     * store products in the logistics center stocks
+     *
+     * @param newSupply - map with the amount for each product required to store
+     */
+    public String storeProducts(LinkedHashMap<Product, Integer> newSupply) {
+        logisticCenterController.storeProducts(newSupply);
+        return "";
     }
 
-    public String removeTruck(int licenseNumber) {
-        Response res = new Response();
-        try {
-            logisticCenterController.removeTruck(licenseNumber);
-            return "good";
-        } catch (Exception ex) {
-            return ex.toString();
-        }
+    /**
+     * load products from the stock of the logistics center
+     *
+     * @param requestedSupply - map of the products and amounts required to load
+     * @return map of products and amounts that are not available in the logistics center stock
+     */
+    public String removeProductsFromStock(LinkedHashMap<Product, Integer> requestedSupply) {
+        return logisticCenterController.removeProductsFromStock(requestedSupply).toString();
     }
 
-    public String addDriver(int id, String name, int licenseType, int coolingLevel) {
-        Response res = new Response();
-        try {
-            DriverController.addDriver(id, name, licenseType, coolingLevel);
-            return "good";
-        } catch (Exception ex) {
-            return ex.toString();
-        }
+    public String getProductsInStock() {
+        return logisticCenterController.getProductsInStock().toString();
     }
 
-    public String removeDriver(int id) {
-        Response res = new Response();
-        try {
-            DriverController.removeDriver(id);
-            return "good";
-        } catch (Exception ex) {
-            return ex.toString();
-        }
-    }
-    public String getAllTrucks() {
 
-        Response res = new Response();
-        try {
-            logisticCenterController.getAllTrucks();
-            return "good";
-        } catch (Exception ex) {
-            return ex.toString();
-        }
-    }
-    
-    
-    
-    
+
+
 }

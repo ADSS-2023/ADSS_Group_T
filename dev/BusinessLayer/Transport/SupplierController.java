@@ -36,11 +36,11 @@ public class SupplierController {
 //    }
 
     // without products
-    public boolean addSupplier(String supplierAddress, String telNumber, String contactName, int coolingLevel, int x, int y) {
+    public boolean addSupplier(String supplierAddress, String telNumber, String contactName, int x, int y) {
         if (suppliers.containsKey(supplierAddress)) {
             throw new IllegalArgumentException("supplayer address is taken");
         }
-        Supplier supplier = new Supplier(supplierAddress, telNumber, contactName, coolingLevel, x, y);
+        Supplier supplier = new Supplier(supplierAddress, telNumber, contactName, x, y);
         suppliers.put(supplier.getAddress(), supplier);
         return true;
     }
@@ -70,5 +70,12 @@ public class SupplierController {
             throw new IllegalArgumentException("no such supp");
         else
             return suppliers.get(supplierAddress);
+    }
+
+    public String getSupplierProducts(String supplier) {
+        if(!suppliers.containsKey(supplier))
+            throw new IllegalArgumentException("no such supp");
+        else
+            return suppliers.get(supplier).getAllProducts().toString();
     }
 }
