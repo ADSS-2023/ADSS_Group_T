@@ -301,7 +301,7 @@ public class StockUI {
         sf.manageOrderService.editRegularOrder(id , cur_day , amount);
     }
 
-    private void moveToNextDay() {
+    public void moveToNextDay() {
         sf.manageOrderService.nextDay();
     }
 

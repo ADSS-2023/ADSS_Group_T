@@ -8,8 +8,8 @@ import java.util.Scanner;
 public class UI_General {
     public static void run(StockUI stockUI,SupplierManager supplierManager){
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Which system would you like to proceed to?\n" +
-                "1.Suppliers system 2.Inventory system");
+        System.out.println("What would like to do?\n" +
+                "1.Enter suppliers system 2.Enter Inventory system 3.Skip day");
         int action = scanner.nextInt();
         scanner.nextLine();
         switch (action){
@@ -17,6 +17,9 @@ public class UI_General {
                 supplierManager.start();
             case 2:
                 stockUI.run();
+            case 3:
+                stockUI.moveToNextDay();
+                supplierManager.nextDay();
         }
     }
 
