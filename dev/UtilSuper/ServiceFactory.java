@@ -1,5 +1,6 @@
 package UtilSuper;
 
+import BusinessLayer.HR.DriverController;
 import BusinessLayer.HR.EmployeeController;
 import BusinessLayer.HR.ShiftController;
 import BusinessLayer.Transport.DeliveryController;
@@ -25,6 +26,8 @@ public class ServiceFactory {
 
     private UserController userController;
 
+    private DriverController driverController;
+
     public ServiceFactory() {
         shiftController = new ShiftController();
         shiftService = new ShiftService(shiftController);
@@ -36,6 +39,7 @@ public class ServiceFactory {
         deliveryService = new DeliveryService(deliveryController);
         this.userService = new UserService();
         this.userController = new UserController();
+        this.deliveryController = new DeliveryController();
 
     }
 

@@ -1,15 +1,14 @@
 package ServiceLayer.Transport;
 
-import java.util.ArrayList;
-import java.util.Scanner;
+import PresentationLayer.MainPresentation;
 
 public class Main {
     public static void main(String[] args) throws Exception {
         while(true)
         {
             try{
-                TransportPresentation tp = new TransportPresentation();
-                tp.start();
+                MainPresentation mainPresentation = new MainPresentation();
+                mainPresentation.start();
             }
             catch(Exception e)
             {

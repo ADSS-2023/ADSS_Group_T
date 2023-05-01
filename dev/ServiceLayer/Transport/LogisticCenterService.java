@@ -1,14 +1,17 @@
 package ServiceLayer.Transport;
 
+import BusinessLayer.HR.DriverController;
 import ServiceLayer.HR.Response;
 
 
 import BusinessLayer.Transport.*;
 
 public class LogisticCenterService {
-    public LogisticCenterController logisticCenterController;
-    public LogisticCenterService(LogisticCenterController logisticCenterController){
+    private LogisticCenterController logisticCenterController;
+    private DriverController driverController;
+    public LogisticCenterService(LogisticCenterController logisticCenterController,DriverController driverController){
         this.logisticCenterController = logisticCenterController;
+        this.driverController = driverController;
     }
 
     public String addTruck(int licenseNumber, String model, int weight, int maxWeight, int coolingLevel) {
@@ -34,7 +37,7 @@ public class LogisticCenterService {
     public String addDriver(int id, String name, int licenseType, int coolingLevel) {
         Response res = new Response();
         try {
-            logisticCenterController.addDriver(id, name, licenseType, coolingLevel);
+            DriverController.addDriver(id, name, licenseType, coolingLevel);
             return "good";
         } catch (Exception ex) {
             return ex.toString();
@@ -44,7 +47,7 @@ public class LogisticCenterService {
     public String removeDriver(int id) {
         Response res = new Response();
         try {
-            logisticCenterController.removeDriver(id);
+            DriverController.removeDriver(id);
             return "good";
         } catch (Exception ex) {
             return ex.toString();
