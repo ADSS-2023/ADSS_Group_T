@@ -36,7 +36,7 @@ public class ServiceFactory {
         employeeController = new EmployeeController();
         employeeService = new EmployeeService(employeeController);
         logisticCenterController = new LogisticCenterController();
-        logisticCenterService = new LogisticCenterService(logisticCenterController,driverController);
+        logisticCenterService = new LogisticCenterService(logisticCenterController);
         deliveryController = new DeliveryController();
         deliveryService = new DeliveryService(deliveryController);
         //TODO //userController = new UserController();

@@ -32,22 +32,28 @@ public class TransportManagerPresentation {
             System.out.println("Please choose an option:");
             System.out.println("1. Skip day");
             System.out.println("2. Enter new delivery");
-            System.out.println("4. Enter new truck");
-            System.out.println("5. Enter new supplier");
-            System.out.println("6. Enter new branch");
+            System.out.println("3. Enter new truck");
+            System.out.println("4. Enter new supplier");
+            System.out.println("5. Enter new branch");
+            System.out.println("6. Show logistic center products");
             System.out.println("7. Logout");
             int choice = scanner.nextInt();
             scanner.nextLine(); // Consume the newline character
             switch (choice) {
                 case 1 -> skipDay();
                 case 2 -> addNewDelivery();
-                case 4 -> addNewTruck();
-                case 5 -> addNewSupplier();
-                case 6 -> addNewBranch();
+                case 3 -> addNewTruck();
+                case 4 -> addNewSupplier();
+                case 5 -> addNewBranch();
+                case 6 -> showProductsInStock();
                 case 7 -> {return;}
                 default -> System.out.println("Invalid choice. Please try again.");
             }
         }
+    }
+
+    private void showProductsInStock() {
+        System.out.println(logisticCenterService.getProductsInStock());
     }
     // option 1
     /**
@@ -70,15 +76,6 @@ public class TransportManagerPresentation {
         String date = chooseDeliveryDate(scanner);
         System.out.println(deliveryService.orderDelivery(branch,suppliersAndProducts,date));
     }
-
-
-
-
-
-
-
-
-
 
 
 

@@ -12,7 +12,7 @@ public class SupplierService {
         this.supplierController = supplierController;
     }
     public String getSupplierProducts(String supplier) {
-        return supplierController.getSupplierProducts(supplier));
+        return (supplierController.getSupplierProducts(supplier));
     }
 
     public String getAllSuppliers() {
