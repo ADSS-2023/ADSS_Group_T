@@ -1,18 +1,29 @@
 package PresentationLayer;
 
-import ServiceLayer.Transport.DeliveryService;
-import ServiceLayer.Transport.LogisticCenterService;
+import ServiceLayer.Transport.*;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Scanner;
 
 public class TransportManagerPresentation {
-
-    public static void start(LogisticCenterService logisticCenterService,DeliveryService deliveryService) {
-
+    private LogisticCenterService logisticCenterService;
+    private  DeliveryService deliveryService;
+    private SupplierService supplierService;
+    private BranchService branchService;
+    private TruckService truckService;
+    public TransportManagerPresentation(LogisticCenterService logisticCenterService, DeliveryService deliveryService, SupplierService supplierService, BranchService branchService,TruckService TruckService) {
+        this.logisticCenterService = logisticCenterService;
+        this.deliveryService = deliveryService;
+        this.supplierService = supplierService;
+        this.branchService = branchService;
+        this.truckService = TruckService;
     }
-    private void mainWindow(LogisticCenterService logisticCenterService,DeliveryService deliveryService) {
+
+    public void start() {
+        mainWindow();
+    }
+    private void mainWindow() {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             System.out.println(" ");
@@ -21,7 +32,6 @@ public class TransportManagerPresentation {
             System.out.println("Please choose an option:");
             System.out.println("1. Skip day");
             System.out.println("2. Enter new delivery");
-            System.out.println("3. Enter new driver");
             System.out.println("4. Enter new truck");
             System.out.println("5. Enter new supplier");
             System.out.println("6. Enter new branch");
@@ -29,12 +39,11 @@ public class TransportManagerPresentation {
             int choice = scanner.nextInt();
             scanner.nextLine(); // Consume the newline character
             switch (choice) {
-                case 1 -> skipDay(deliveryService);
-                case 2 -> addNewDelivery(deliveryService);
-                case 3 -> addNewDriver(logisticCenterService);
-                case 4 -> addNewTruck(logisticCenterService);
-                case 5 -> addNewSupplier(deliveryService);
-                case 6 -> addNewBranch(deliveryService);
+                case 1 -> skipDay();
+                case 2 -> addNewDelivery();
+                case 4 -> addNewTruck();
+                case 5 -> addNewSupplier();
+                case 6 -> addNewBranch();
                 case 7 -> {return;}
                 default -> System.out.println("Invalid choice. Please try again.");
             }
@@ -44,7 +53,7 @@ public class TransportManagerPresentation {
     /**
      * skip day and let user choose way of action in case of problem
      */
-    void skipDay(DeliveryService deliveryService) {
+    void skipDay() {
         System.out.println(deliveryService.getNextDayDeatails());
         System.out.println(deliveryService.skipDay());
     }
@@ -53,7 +62,7 @@ public class TransportManagerPresentation {
     /**
      * add New Delivery to the system
      */
-    private void addNewDelivery(DeliveryService deliveryService) {
+    private void addNewDelivery() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter delivery details:");
         String branch = getBranch(deliveryService);
@@ -70,23 +79,6 @@ public class TransportManagerPresentation {
 
 
 
-    // option 3
-
-    /**
-     * add new driver to the system
-     */
-    public void addNewDriver(LogisticCenterService logisticCenterService) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Please enter the driver details:");
-        System.out.println("Please enter the driver ID:");
-        int driverId = scanner.nextInt();
-        scanner.nextLine();
-        System.out.println("Please enter the driver name:");
-        String driverName = scanner.nextLine();
-        int licenseIndex = getLicendeType();
-        int coolingIndex = getCoolingLevel();
-        System.out.println(logisticCenterService.addDriver(driverId,driverName,licenseIndex,coolingIndex));
-    }
 
 
 
@@ -95,7 +87,7 @@ public class TransportManagerPresentation {
     /**
      * add new truck to the system
      */
-    void addNewTruck(LogisticCenterService logisticCenterService) {
+    void addNewTruck() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter the truck details:");
         System.out.println("Please enter the truck's license number:");
@@ -107,7 +99,7 @@ public class TransportManagerPresentation {
         System.out.println("Please enter the truck's maximum weight:");
         int maxWeight = scanner.nextInt();
         int coolingIndex = getCoolingLevel();
-        logisticCenterService.addTruck(licenseNumber,model,weight,maxWeight,coolingIndex);
+        truckService.addTruck(licenseNumber,model,weight,maxWeight,coolingIndex);
 
     }
 
@@ -116,7 +108,7 @@ public class TransportManagerPresentation {
     /**
      * add new supplier to the system
      */
-    public void addNewSupplier(DeliveryService deliveryService) {
+    public void addNewSupplier() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter the supplier details:");
         System.out.print("Enter supplier address: ");
@@ -129,26 +121,7 @@ public class TransportManagerPresentation {
         int x = scanner.nextInt();
         System.out.print("Enter supplier Y coordinate: ");
         int y = scanner.nextInt();
-        int coolingLevel = getCoolingLevel();
-        ArrayList<String> productsList = new ArrayList<String>();
-        while (true) {
-            System.out.print("Please enter product name (0 to finish) ");
-            String product = scanner.nextLine();
-            if (product.equals("0")) {
-                if (productsList.isEmpty()) {
-                    System.out.println("You must enter at least one legal product name.");
-                    continue;
-                } else {
-                    break;
-                }
-            }
-            if (product.isEmpty()) {
-                System.out.println("Product name cannot be empty. Please try again.");
-                continue;
-            }
-            productsList.add(product);
-        }
-        deliveryService.addSupplier(address, telNumber, contactName,coolingLevel, productsList,x,y);
+        supplierService.addSupplier(address, telNumber, contactName,x,y);
     }
 
 
@@ -157,7 +130,7 @@ public class TransportManagerPresentation {
     /**
      * add new branch to the system
      */
-    public void addNewBranch(DeliveryService deliveryService) {
+    public void addNewBranch() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter the delivery details:");
         System.out.print("Enter site address: ");
@@ -170,7 +143,7 @@ public class TransportManagerPresentation {
         int x = scanner.nextInt();
         System.out.print("Enter site Y coordinate: ");
         int y = scanner.nextInt();
-        System.out.println(deliveryService.addBranch(address,telNumber,contactName,x,y));
+        System.out.println(branchService.addBranch(address,telNumber,contactName,x,y));
     }
 
 
@@ -200,14 +173,13 @@ public class TransportManagerPresentation {
         System.out.println("1. Non");
         System.out.println("2. Fridge");
         System.out.println("3. Freezer");
-        int coolingLevel = scanner.nextInt();
-        return coolingLevel;
+        return scanner.nextInt();
     }
     private String getBranch(DeliveryService deliveryService){
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter delivery details:");
         System.out.println("choose branch:");
-        System.out.println(deliveryService.getAllBranches() + "\n");
+        System.out.println(branchService.getAllBranches() + "\n");
         return scanner.next();
     }
 
@@ -220,7 +192,7 @@ public class TransportManagerPresentation {
     private  LinkedHashMap<String,LinkedHashMap<String,Integer>> getSuppliersAndProducts(DeliveryService deliveryService){
         Scanner scanner = new Scanner(System.in);
         LinkedHashMap<String,LinkedHashMap<String,Integer>> suppliersAndProducts = new LinkedHashMap<>();
-        System.out.println(deliveryService.getAllSuppliersAddress());
+        System.out.println(supplierService.getAllSuppliers());
         while (true) {
             System.out.print("Enter supplier name name (or 0 to finish): ");
             String  supplier = scanner.nextLine();
@@ -245,7 +217,7 @@ public class TransportManagerPresentation {
     private LinkedHashMap<String,Integer> getSupplierProducts(String supplier,DeliveryService deliveryService){
         Scanner scanner = new Scanner(System.in);
         LinkedHashMap<String, Integer> products = new LinkedHashMap<String, Integer>();
-        System.out.println(deliveryService.getSupplierProducts(supplier));
+        System.out.println(supplierService.getSupplierProducts(supplier));
 
         while (true) {
             System.out.print("Enter product name (or 0 to finish): ");
@@ -287,14 +259,6 @@ public class TransportManagerPresentation {
         day = scanner.next();
         return (year + "-" + month + "-" + day);
     }
-    private int getLicendeType() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Please choose the driver license type:");
-        System.out.println("1. C1");
-        System.out.println("2. C");
-        System.out.println("3. E");
-        int licenseIndex = scanner.nextInt();
-        return licenseIndex;
-    }
+
 
 }

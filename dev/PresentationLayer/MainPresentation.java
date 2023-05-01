@@ -1,11 +1,10 @@
 package PresentationLayer;
 
+import Initialization.Truck_init;
 import ServiceLayer.HR.EmployeeService;
-import ServiceLayer.HR.HR_Initialization;
+import Initialization.HR_Initialization;
 import ServiceLayer.HR.ShiftService;
-import ServiceLayer.Transport.DeliveryService;
-import ServiceLayer.Transport.LogisticCenterService;
-import ServiceLayer.Transport.Transport_Initialization;
+import ServiceLayer.Transport.*;
 import ServiceLayer.UserService;
 import UtilSuper.ServiceFactory;
 
@@ -22,6 +21,12 @@ public class MainPresentation {
     private LogisticCenterService logisticCenterService;
     private DeliveryService deliveryService;
     private UserService userService;
+    private BranchService branchService;
+    private SupplierService supplierService;
+    private TransportManagerPresentation transportManagerPresentation;
+    private HRManagerPresentation hrManagerPresentation;
+    private EmployeePresentation employeePresentation;
+    private TruckService truckService;
 
     public MainPresentation() {
         ServiceFactory serviceFactory = new ServiceFactory();
@@ -30,6 +35,13 @@ public class MainPresentation {
         this.logisticCenterService = serviceFactory.getLogisticCenterService();
         this.deliveryService = serviceFactory.getDeliveryService();
         this.userService = serviceFactory.getUserService();
+        this.branchService = serviceFactory.getBranchService();
+        this.supplierService = serviceFactory.getSupplierService();
+        this.truckService = serviceFactory.getTruckService();
+
+        transportManagerPresentation = new TransportManagerPresentation(logisticCenterService,deliveryService,supplierService,branchService,truckService);
+
+
     }
 
 
@@ -45,7 +57,7 @@ public class MainPresentation {
             loginWindow();
         if (choice == 2) {
             HR_Initialization.init_data(shiftService,employeeService);
-            Transport_Initialization.init_data(logisticCenterService,deliveryService);
+            Truck_init.init(truckService);
             loginWindow();
         }
     }
@@ -75,9 +87,8 @@ public class MainPresentation {
             }
 
             switch (result) {
-                case "driver":
-                case "delivery manager":
-                    TransportManagerPresentation.start(logisticCenterService,deliveryService);
+                case "employee": employeePresentation.start();
+                case "delivery manager": transportManagerPresentation.start();
                 default:
             }
         }

@@ -3,13 +3,11 @@ package UtilSuper;
 import BusinessLayer.HR.DriverController;
 import BusinessLayer.HR.EmployeeController;
 import BusinessLayer.HR.ShiftController;
-import BusinessLayer.Transport.DeliveryController;
-import BusinessLayer.Transport.LogisticCenterController;
+import BusinessLayer.Transport.*;
 import BusinessLayer.UserController;
 import ServiceLayer.HR.EmployeeService;
 import ServiceLayer.HR.ShiftService;
-import ServiceLayer.Transport.DeliveryService;
-import ServiceLayer.Transport.LogisticCenterService;
+import ServiceLayer.Transport.*;
 import ServiceLayer.UserService;
 
 public class ServiceFactory {
@@ -21,10 +19,14 @@ public class ServiceFactory {
     private LogisticCenterService logisticCenterService;
     private DeliveryController deliveryController;
     private DeliveryService deliveryService;
-
     private UserService userService;
-
     private UserController userController;
+    private BranchService branchService;
+    private BranchController branchController;
+    private SupplierService supplierService;
+    private SupplierController supplierController;
+    private TruckService truckService;
+    private TruckController truckController;
 
     private DriverController driverController;
 
@@ -34,12 +36,17 @@ public class ServiceFactory {
         employeeController = new EmployeeController();
         employeeService = new EmployeeService(employeeController);
         logisticCenterController = new LogisticCenterController();
-        logisticCenterService = new LogisticCenterService(logisticCenterController);
+        logisticCenterService = new LogisticCenterService(logisticCenterController,driverController);
         deliveryController = new DeliveryController();
         deliveryService = new DeliveryService(deliveryController);
-        this.userService = new UserService();
-        this.userController = new UserController();
-        this.deliveryController = new DeliveryController();
+        //TODO //userController = new UserController();
+        userService = new UserService(userController);
+        branchController = new BranchController();
+        branchService = new BranchService(branchController);
+        supplierController = new SupplierController();
+        supplierService = new SupplierService(supplierController);
+        truckController = new TruckController();
+        truckService = new TruckService(truckController);
 
     }
 
@@ -82,4 +89,10 @@ public class ServiceFactory {
     public UserController getUserController() {
         return userController;
     }
+
+    public BranchService getBranchService() {return branchService;}
+
+    public SupplierService getSupplierService() {return supplierService;}
+
+    public TruckService getTruckService() {return truckService;}
 }

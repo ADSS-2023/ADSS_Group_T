@@ -12,14 +12,18 @@ public class SupplierService {
         this.supplierController = supplierController;
     }
     public String getSupplierProducts(String supplier) {
-        return transportJsonConvert.productsToString(deliveryController.getSupplierProducts(supplier));
+        return supplierController.getSupplierProducts(supplier));
     }
 
     public String getAllSuppliers() {
-        return supplierController.getAllSuppliers();
+        return supplierController.getAllSuppliers().toString();
     }
-    public void addSupplier(String supplierAddress, String telNumber, String contactName, int coolingLeve, int x, int y) {
+    public void addSupplier(String supplierAddress, String telNumber, String contactName, int x, int y) {
 
-        supplierController.addSupplier(supplierAddress,telNumber,contactName, coolingLevel,x,y);
+        supplierController.addSupplier(supplierAddress,telNumber,contactName,x,y);
+    }
+
+    public void addProducts(String supplierAddress, LinkedHashMap<String, Integer> productMap1) {
+
     }
 }
