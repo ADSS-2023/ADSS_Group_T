@@ -41,7 +41,25 @@ public class LogisticCenterService {
         return logisticCenterController.getProductsInStock().toString();
     }
 
+    public String addTruck(int licenseNumber, String model, int weight, int maxWeight, int coolingLevel) {
+        Response res = new Response();
+        try {
+            logisticCenterController.addTruck(licenseNumber, model, weight, maxWeight, coolingLevel);
+            return "good";
+        } catch (Exception ex) {
+            return ex.toString();
+        }
+    }
 
+    public String removeTruck(int licenseNumber) {
+        Response res = new Response();
+        try {
+            logisticCenterController.removeTruck(licenseNumber);
+            return "good";
+        } catch (Exception ex) {
+            return ex.toString();
+        }
+    }
 
 
 }

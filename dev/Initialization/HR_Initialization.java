@@ -52,22 +52,23 @@ public class HR_Initialization {
             }
         }
 
-        Scanner input = new Scanner(System.in);
-        System.out.println("1. Do you want to load a random data? - enter 1 for yes, enter 2 for no");
-        String ans_data = input.next();
-        if (ans_data.equals("1")) {
-
-            initWorkers(employeeController);
-            initShiftsRequeirments(shiftService);
-            initSubmisiion(shiftService);
-            Presentaition presentaition = new Presentaition(Emp,shiftService);
-            presentaition.begin();
-        }
-        else if (ans_data.equals("2")){
-            shiftController.init(shifts, employeeController.getEmployeesMapper());
-            Presentaition presentaition = new Presentaition(Emp,shiftService);
-            presentaition.begin();
-        }
+//TODO
+//        Scanner input = new Scanner(System.in);
+//        System.out.println("1. Do you want to load a random data? - enter 1 for yes, enter 2 for no");
+//        String ans_data = input.next();
+//        if (ans_data.equals("1")) {
+//
+//            initWorkers(employeeController);
+//            initShiftsRequeirments(shiftService);
+//            initSubmisiion(shiftService);
+//            Presentaition presentaition = new Presentaition(Emp,shiftService);
+//            presentaition.begin();
+//        }
+//        else if (ans_data.equals("2")){
+//            shiftController.init(shifts, employeeController.getEmployeesMapper());
+//            Presentaition presentaition = new Presentaition(Emp,shiftService);
+//            presentaition.begin();
+//        }
 
     }
 

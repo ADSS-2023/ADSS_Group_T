@@ -11,13 +11,13 @@ public class TransportManagerPresentation {
     private  DeliveryService deliveryService;
     private SupplierService supplierService;
     private BranchService branchService;
-    private TruckService truckService;
-    public TransportManagerPresentation(LogisticCenterService logisticCenterService, DeliveryService deliveryService, SupplierService supplierService, BranchService branchService,TruckService TruckService) {
+
+    public TransportManagerPresentation(LogisticCenterService logisticCenterService, DeliveryService deliveryService, SupplierService supplierService, BranchService branchService) {
         this.logisticCenterService = logisticCenterService;
         this.deliveryService = deliveryService;
         this.supplierService = supplierService;
         this.branchService = branchService;
-        this.truckService = TruckService;
+
     }
 
     public void start() {
@@ -96,7 +96,7 @@ public class TransportManagerPresentation {
         System.out.println("Please enter the truck's maximum weight:");
         int maxWeight = scanner.nextInt();
         int coolingIndex = getCoolingLevel();
-        truckService.addTruck(licenseNumber,model,weight,maxWeight,coolingIndex);
+        logisticCenterService.addTruck(licenseNumber,model,weight,maxWeight,coolingIndex);
 
     }
 

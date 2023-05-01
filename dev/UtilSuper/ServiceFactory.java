@@ -25,8 +25,7 @@ public class ServiceFactory {
     private BranchController branchController;
     private SupplierService supplierService;
     private SupplierController supplierController;
-    private TruckService truckService;
-    private TruckController truckController;
+
 
     private DriverController driverController;
 
@@ -45,8 +44,7 @@ public class ServiceFactory {
         branchService = new BranchService(branchController);
         supplierController = new SupplierController();
         supplierService = new SupplierService(supplierController);
-        truckController = new TruckController();
-        truckService = new TruckService(truckController);
+
 
     }
 
@@ -94,5 +92,4 @@ public class ServiceFactory {
 
     public SupplierService getSupplierService() {return supplierService;}
 
-    public TruckService getTruckService() {return truckService;}
 }
