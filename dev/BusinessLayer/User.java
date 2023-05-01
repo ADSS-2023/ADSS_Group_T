@@ -4,6 +4,7 @@ import BusinessLayer.HR.Constraint;
 import UtilSuper.PositionType;
 import UtilSuper.UserType;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -11,14 +12,14 @@ public abstract class  User {
     private int id;
     private String employeeName;
     private String bankAccount;
-    private List<PositionType> qualifiedPositions;
+
     private String description;
     private int salary;
-    private String joiningDay;
+    private LocalDate joiningDay;
     private String password;
     private UserType userType;
 
-    public User(int id, String employeeName, String bankAccount, List<PositionType> qualifiedPositions, String description, int salary, String joiningDay, String password, UserType userType) {
+    public User(int id, String employeeName, String bankAccount,  String description, int salary, LocalDate joiningDay, String password, UserType userType) {
         this.id = id;
         this.employeeName = employeeName;
         this.bankAccount = bankAccount;
@@ -50,13 +51,8 @@ public abstract class  User {
         this.bankAccount = bankAccount;
     }
 
-    public List<PositionType> getQualifiedPositions() {
-        return qualifiedPositions;
-    }
 
-    public void setQualifiedPositions(List<PositionType> qualifiedPositions) {
-        this.qualifiedPositions = qualifiedPositions;
-    }
+
 
     public String getDescription() {
         return description;
@@ -78,7 +74,7 @@ public abstract class  User {
         this.salary = salary;
     }
 
-    public String getJoiningDay() {
+    public LocalDate getJoiningDay() {
         return joiningDay;
     }
 
