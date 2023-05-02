@@ -5,10 +5,7 @@ import UtilSuper.PositionType;
 import UtilSuper.UserType;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 public class DriverController {
     private LinkedHashMap<Integer, Driver> drivers;
@@ -122,4 +119,20 @@ public class DriverController {
         drivers.remove(id);
         return true;
     }
+
+    public ArrayList<Driver> getDriversByDate(LocalDate tomorrow) {
+        ArrayList<Driver> drivers = new ArrayList<>();
+        if (date2driversSubmission.containsKey(tomorrow)) {
+            HashMap<Driver, Boolean> driverStatusMap = date2driversSubmission.get(tomorrow);
+            for (Map.Entry<Driver, Boolean> entry : driverStatusMap.entrySet()) {
+                Driver driver = entry.getKey();
+                Boolean isAssigned = entry.getValue();
+                if (!isAssigned) {
+                    drivers.add(driver);
+                }
+            }
+        }
+        return drivers;
+    }
+
 }
