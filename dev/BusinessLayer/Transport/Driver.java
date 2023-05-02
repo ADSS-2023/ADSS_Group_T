@@ -83,4 +83,20 @@ public class Driver extends User {
                 return CoolingLevel.non;
         }
     }
+
+    public int compareTo(Driver d2) {
+        Driver.LicenseType licenseLevel2 = d2.getLicenseLevel();
+        if (this.licenseType == licenseLevel2)
+            return 0;
+        else if (this.licenseType == LicenseType.E)
+            return 1;
+        else if (this.licenseType == LicenseType.C){
+            if (licenseLevel2 == LicenseType.E)
+                return -1;
+            else
+                return 1;
+        }
+        else
+            return -1;
+    }
 }

@@ -22,7 +22,7 @@ public class TransportJsonConvert {
 
 
         //sb.append("Source: ").append(delivery.getSource().getAddress()).append("\n");
-        sb.append("Driver Name: ").append(delivery.getDriverName()).append("\n");
+        sb.append("Driver Name: ").append(delivery.getDriverID()).append("\n");
         sb.append("Truck Number: ").append(delivery.getTruckNumber()).append("\n");
         sb.append("Shipping Area: ").append(delivery.getShippingArea()).append("\n");
         // Return the generated string

@@ -211,8 +211,7 @@ public class DeliveryController {
      *
      * @return List of the delivery ids that scheduled for the new day and have overweight problem
      */
-    public ArrayList<Integer> skipDay() {
-        scheduleDriversForTomorow();
+    public ArrayList<Delivery> skipDay() {
         this.currDate = this.currDate.plusDays(1);
         if (date2deliveries.get(currDate) == null || date2deliveries.get(currDate).isEmpty())
             return null;
@@ -223,10 +222,48 @@ public class DeliveryController {
         return null;
     }
 
-    private void scheduleDriversForTomorow() {
-        ArrayList<Driver> drivers = driverController.getDrivers();
-        ArrayList<Delivery> deliverysF = date2deliveries.get(this.currDate.plusDays(1));
+    private ArrayList<Delivery> scheduleDriversForTomorrow() {
+        LocalDate tomorrow = this.currDate.plusDays(1);
+        ArrayList<Driver> driversTomorrow = sortDriversByLicenseLevel(driverController.getDriversByDate(tomorrow));
+
+        ArrayList<Delivery> deliveriesTomorrow =sortDeliveriesByTruckWeight(date2deliveries.get(tomorrow));
+        ArrayList<Delivery> deliveriesWithoutDriveries = new ArrayList<>();
+        for (Delivery delivery : deliveriesTomorrow) {
+            Truck truck = logisticCenterController.getTruck(delivery.getTruckNumber());
+            for (Driver driver : driversTomorrow) {
+                if (driver.getLicenseLevel().compareTo(truck.getLicenseType()) >= 0) {
+                    if (driver.getCoolingLevel().equals(truck.getCoolingLevel())) {
+                        delivery.setDriver(driver);
+                        break;
+                    }
+                }
+            }
+            deliveriesWithoutDriveries.add(delivery);
+        }
+        return deliveriesWithoutDriveries;
     }
+
+    public ArrayList<Delivery> sortDeliveriesByTruckWeight(ArrayList<Delivery> deliveries) {
+        deliveries.sort(new Comparator<Delivery>() {
+            public int compare(Delivery d1, Delivery d2) {
+                Truck t1 = logisticCenterController.getTruck(d1.getTruckNumber());
+                Truck t2 = logisticCenterController.getTruck(d2.getTruckNumber());
+                return t1.compareTo(t2);
+            }
+        });
+        return deliveries;
+    }
+
+
+    public ArrayList<Driver> sortDriversByLicenseLevel(ArrayList<Driver> drivers) {
+        drivers.sort(new Comparator<Driver>() {
+            public int compare(Driver d1, Driver d2) {
+                return d1.compareTo(d2);
+            }
+        });
+        return drivers;
+    }
+
 
 
     /**
@@ -412,8 +449,9 @@ public class DeliveryController {
         this.overweightAction = overweightAction;
     }
 
-    public LocalDate getNextDayDeatails() {
-        return currDate.plusDays(1);
+    public ArrayList<Delivery> getNextDayDeatails() {
+        return scheduleDriversForTomorrow();
+
     }
 
 

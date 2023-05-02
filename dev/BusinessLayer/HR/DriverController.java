@@ -142,4 +142,20 @@ public class DriverController {
         drivers.remove(id);
         return true;
     }
+
+    public ArrayList<Driver> getDriversByDate(LocalDate tomorrow) {
+        ArrayList<Driver> drivers = new ArrayList<>();
+        if (date2driversSubmission.containsKey(tomorrow)) {
+            HashMap<Driver, Boolean> driverStatusMap = date2driversSubmission.get(tomorrow);
+            for (Map.Entry<Driver, Boolean> entry : driverStatusMap.entrySet()) {
+                Driver driver = entry.getKey();
+                Boolean isAssigned = entry.getValue();
+                if (!isAssigned) {
+                    drivers.add(driver);
+                }
+            }
+        }
+        return drivers;
+    }
+
 }

@@ -14,7 +14,7 @@ public class Delivery {
     private LinkedHashMap<Branch, File> unHandledBranches;
     private LinkedHashMap<Branch, File> handledBranches;
     private Site source;
-    private String driverName;
+    private int driverID;
     private int truckNumber;
     private int shippingArea;
     private String note;
@@ -28,7 +28,6 @@ public class Delivery {
         this.truckWeight = truckWeight;
         this.unHandledSuppliers = suppliers;
         this.source = source;
-        this.driverName = driverName;
         this.truckNumber = truckNumber;
         this.handledSuppliers = new LinkedHashMap<>();
         this.unHandledBranches = branches;
@@ -180,8 +179,8 @@ public class Delivery {
         this.unHandledSuppliers.put(supplier, new File(fileID));
     }
 
-    public String getDriverName() {
-        return this.driverName;
+    public int getDriverID() {
+        return this.driverID;
     }
 
     public void addNote(String s) {
@@ -193,5 +192,7 @@ public class Delivery {
     }
 
 
-
+    public void setDriver(Driver driver) {
+        this.driverID = driver.getId();
+    }
 }

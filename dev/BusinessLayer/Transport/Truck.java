@@ -42,6 +42,10 @@ public class Truck {
         return coolingLevel;
     }
 
+    public int compareTo( Truck t2) {
+        return Integer.compare(this.getWeight(), t2.getWeight());
+    }
+
     public LicenseType getLicenseType() {
         return licenseType;
     }
