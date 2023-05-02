@@ -2,45 +2,43 @@ package BusinessLayer.HR;
 
 import UtilSuper.PositionType;
 
+import java.time.LocalDate;
+
 public class Constraint {
-    private String date;
-    private boolean morningOrEveningl; //true-morning, false- evening
-    private boolean isTemp ;
-    private PositionType position;
-    private boolean isAssigned;
+    private int branch;
 
-    public  Constraint(String date, boolean shiftType, boolean isTemp){
-        this.date= date;
-        this.morningOrEveningl = shiftType;
-        this.isTemp =  isTemp;
-        this.isAssigned = false;
+    private int employeeId;
+    private LocalDate date;
+    private boolean shiftType; //true-morning, false- evening
+    private PositionType assignedPosition; // also indicates if the employee assigned, null mean that not assigned yet.
+
+
+    public Constraint(int branch, int employeeId, LocalDate date, boolean shiftType) {
+        this.branch = branch;
+        this.employeeId = employeeId;
+        this.date = date;
+        this.shiftType = shiftType;
+        this.assignedPosition = null;
     }
 
-    public boolean isMorningOrEveningl() {
-        return morningOrEveningl;
+
+    public int getBranch() {
+        return branch;
     }
 
-    public PositionType getPosition() {
-        return position;
+    public PositionType getAssignedPosition() {
+        return assignedPosition;
     }
 
-    public String getPositionByString() {
-        return position.name();
+    public void setAssignedPosition(PositionType assignedPosition) {
+        this.assignedPosition = assignedPosition;
     }
 
-    public boolean isAssigned() {
-        return isAssigned;
+    public LocalDate getDate() {
+        return date;
     }
 
-    public String getDate(){
-        return  date;
-    }
-
-    public boolean getShiftType(){
-        return  morningOrEveningl;
-    }
-
-    public boolean isTemp(){
-        return  isTemp;
+    public boolean getShiftType() {
+        return shiftType;
     }
 }

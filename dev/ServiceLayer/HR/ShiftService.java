@@ -5,6 +5,7 @@ import BusinessLayer.HR.EmployeeController;
 import BusinessLayer.HR.ShiftController;
 import UtilSuper.PositionType;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 
 public class ShiftService {
@@ -14,14 +15,14 @@ public class ShiftService {
         this.shiftController = shiftController;
     }
 
-    public String addShiftRequirements(HashMap<String,Integer> howMany , String date , String shiftType){
+    public String addShiftRequirements(int branch,  HashMap<String,Integer> howMany , String date , String shiftType){
         Response res = new Response();
         try
         {
             boolean bool = true;
             if (shiftType.equals("e"))
                 bool = false;
-           shiftController.addRequirements(howMany,date,bool);
+           shiftController.addRequirements(branch, howMany,date,bool);
         }
         catch (Exception ex){
             return ex.getMessage();
@@ -29,28 +30,16 @@ public class ShiftService {
         return "succeed";
     }
 
-    public String shiftHistory(String date , String shiftType){
-        Response res = new Response();
-        try
-        {
-            boolean bool = true;
-            if (shiftType.equals("e"))
-                bool = false;
-            return shiftController.shiftHistory(date,bool);
-        }
-        catch (Exception ex){
-        }
-        return null;
-    }
 
-    public String ShowShiftStatus(String date , String shiftType){
+
+    public String ShowShiftStatus(int branch, LocalDate date , String shiftType){
         Response res = new Response();
         try
         {
             boolean bool = true;
             if (shiftType.equals("e"))
                 bool = false;
-            return shiftController.showShiftStatus(date,bool);
+            return shiftController.showShiftStatus(branch, date, bool);
         }
         catch (Exception ex){
         }

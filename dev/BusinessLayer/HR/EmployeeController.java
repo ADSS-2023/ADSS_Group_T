@@ -1,7 +1,9 @@
 package BusinessLayer.HR;
 
 import UtilSuper.PositionType;
+import UtilSuper.UserType;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,29 +18,27 @@ public class EmployeeController {
     public EmployeeController(){
         employeesMapper = new HashMap<Integer,Employee>();
     }
-    public void addNewEmployee(String employeeName, String bankAccount, List<PositionType> qualifiedPositions, String joiningDay, int employeeId, String password){
-       // Employee newEmployee = new Employee(employeeName, bankAccount, qualifiedPositions, joiningDay, employeeId, password);
-        //TODO: check if the ID is already exist, if so throw exception
-    //    employeesMapper.putIfAbsent(employeeId, newEmployee);
+    public void addNewEmployee(int id, String employeeName, String bankAccount, String description, int salary, LocalDate joiningDay, String password, UserType userType) throws Exception {
+        // Check if the ID already exists
+        if (employeesMapper.containsKey(id)) {
+            throw new Exception("Employee ID already exists.");
+        }
+
+        // Create and set properties of the new employee object
+        Employee newEmployee = new Employee(id, employeeName, bankAccount, description,  salary, joiningDay, password, userType);
+
+        // Add the new employee to the employeesMapper map
+        employeesMapper.put(id, newEmployee);
     }
 
-public void initEmployeeConroller (ShiftController shiftController){
+
+    public void initEmployeeConroller (ShiftController shiftController){
         this.shiftController = shiftController;
 }
 
 
-    public void addRestrictionToall(String date, boolean isMorning) {
-        for (Employee employee : employeesMapper.values()) {
-            if (employee.getShiftsRestriction().containsKey(date)) {
-                if (!employee.getShiftsRestriction().get(date).contains(isMorning)) {
-                    employee.getShiftsRestriction().get(date).add(isMorning);
-                }
-            } else {
-                List<Boolean> shiftTypes = new ArrayList<>();
-                shiftTypes.add(isMorning);
-                employee.getShiftsRestriction().put(date, shiftTypes);
-            }
-        }
+    public String addRestriction(int id, int branch, LocalDate date, boolean isMorning) {
+        return employeesMapper.get(id).addRestriction(branch, date, isMorning);
     }
 
     public String getListOfSubmittedConstraints(int Id) {
