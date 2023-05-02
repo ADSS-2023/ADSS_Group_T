@@ -144,7 +144,7 @@ public class TransportManagerPresentation {
     }
 
 
-    private int enterWeightFunction(String address, int deliveryID,DeliveryService deliveryService) {
+    public int enterWeightFunction(String address, int deliveryID) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("------- " + deliveryID + " -------");
         System.out.println("the truck in:" + address + "." +

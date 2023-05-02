@@ -97,8 +97,11 @@ public class Delivery {
      * @param p - the product to add
      * @param amount
      */
-    public void addProductToSupplier(Supplier supplier, Product p, int amount){
+    public int addProductToSupplier(Supplier supplier, Product p, int amount,int fileCounter){
+        if (!unHandledSuppliers.containsKey(supplier))
+            unHandledSuppliers.put(supplier, new File(fileCounter++));
         unHandledSuppliers.get(supplier).addProduct(p,amount);
+        return fileCounter;
     }
     public int getShippingArea() {
         return shippingArea;
