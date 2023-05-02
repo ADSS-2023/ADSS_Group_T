@@ -17,7 +17,7 @@ public class Employee extends User {
     private List<PositionType> qualifiedPositions;
     private Map<LocalDate, List<Constraint>> submittedShifts; // date, list[0]=morningShift list[1]=eveningShift
 
-    private HashMap<Integer, HashMap<LocalDate, List<Boolean>>>  shiftsRestriction; // branch, date, shiftType
+    private HashMap<String, HashMap<LocalDate, List<Boolean>>>  shiftsRestriction; // branch, date, shiftType
     private String description;
     private int salary;
 
@@ -48,7 +48,7 @@ public class Employee extends User {
      * @param shiftType  The type of the shift (true for morning, false for evening).
      * @throws IllegalArgumentException If the shift cannot be submitted due to a restriction or existing shift.
      */
-    public void addSubmittedShift(int branch, int employeeId, LocalDate date, boolean shiftType) {
+    public void addSubmittedShift(String branch, int employeeId, LocalDate date, boolean shiftType) {
         // Check if the shift is restricted based on the branch and date
         if (shiftsRestriction.containsKey(branch) && shiftsRestriction.get(branch).containsKey(date)
                 && shiftsRestriction.get(branch).get(date).contains(shiftType)) {
@@ -75,7 +75,7 @@ public class Employee extends User {
 
 
 
-    public void assignShift(int branch, LocalDate date, boolean shiftType, PositionType positionType) throws Exception{
+    public void assignShift(String branch, LocalDate date, boolean shiftType, PositionType positionType) throws Exception{
         List<Constraint> shifts = submittedShifts.get(date);
 
         if (shifts == null) {
@@ -136,7 +136,7 @@ public class Employee extends User {
         return sb.toString();
     }
 
-    public String addRestriction(int branch, LocalDate date, boolean isMorning) {
+    public String addRestriction(String branch, LocalDate date, boolean isMorning) {
 
             if (shiftsRestriction.containsKey(branch)) {
                 if (shiftsRestriction.get(branch).containsKey(date)) {

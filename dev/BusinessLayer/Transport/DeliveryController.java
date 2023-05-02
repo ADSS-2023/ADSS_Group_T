@@ -21,7 +21,7 @@ public class DeliveryController {
     private LinkedHashMap<Integer, Delivery> deliveries;
 
     private LinkedHashMap<LocalDate, ArrayList<Truck>> date2trucks;
-    private LinkedHashMap<LocalDate, ArrayList<Driver>> date2drivers;
+
     private LinkedHashMap<LocalDate, ArrayList<Delivery>> date2deliveries;
 
 

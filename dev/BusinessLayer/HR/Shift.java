@@ -14,8 +14,9 @@ public class Shift {
 
     private HashMap<String, HashMap<Employee, Boolean>> submittedPositionByEmployees; // positionType, Empoyee, isAssigned
 
-    private int shiftManagerId;
 
+
+    private int shiftManagerId;
 
 
 
@@ -124,13 +125,24 @@ public class Shift {
 
 
 
-
-
-    public void addNewSubmittedPositionByEmpoyee(Employee emp, boolean isTemp, List<String> qualigiedPosition) {
-            for (String pos : qualigiedPosition){
-                submittedPositionByEmployees.get(pos).add(emp);
+    public String submitShiftForEmployee(Employee emp, List<String> qualifiedPositions) throws Exception {
+        for (String pos : qualifiedPositions) {
+            HashMap<Employee, Boolean> employeesByPosition = submittedPositionByEmployees.get(pos);
+            if (employeesByPosition == null) {
+                employeesByPosition = new LinkedHashMap<>();
+                submittedPositionByEmployees.put(pos, employeesByPosition);
             }
+                employeesByPosition.put(emp, false);
         }
+        return "Shift submitted successfully";
+    }
+
+
+
+    public void makeSureThereIsStorekeeperRequirement() {
+      if (!employeesRequirement.containsKey(PositionType.storekeeper.name()) || employeesRequirement.get(PositionType.storekeeper.name()) < 1){
+          employeesRequirement.put(PositionType.storekeeper.name(), 1);
+    }
 
 
 
