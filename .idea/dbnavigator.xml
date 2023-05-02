@@ -5,6 +5,22 @@
     <value-preview-text-wrapping value="false" />
     <value-preview-pinned value="false" />
   </component>
+  <component name="DBNavigator.Project.DataExportManager">
+    <export-instructions>
+      <create-header value="true" />
+      <friendly-headers value="false" />
+      <quote-values-containing-separator value="true" />
+      <quote-all-values value="false" />
+      <value-separator value="" />
+      <file-name value="" />
+      <file-location value="" />
+      <scope value="GLOBAL" />
+      <destination value="FILE" />
+      <format value="EXCEL" />
+      <charset value="windows-1255" />
+      <charset value="windows-1255" />
+    </export-instructions>
+  </component>
   <component name="DBNavigator.Project.DatabaseBrowserManager">
     <autoscroll-to-editor value="false" />
     <autoscroll-from-editor value="true" />
@@ -12,8 +28,10 @@
     <loaded-nodes />
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
+
     <connection id="aed7569d-309f-434e-89b3-679209d2b10f">
       <console name="Connection" type="STANDARD" schema="" session="Main" />
+
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseEditorStateManager">
@@ -22,6 +40,7 @@
   <component name="DBNavigator.Project.DatabaseFileManager">
     <open-files />
   </component>
+
   <component name="DBNavigator.Project.DatasetFilterManager">
     <filter-actions connection-id="aed7569d-309f-434e-89b3-679209d2b10f" dataset="main.BranchToShift" active-filter-id="" />
     <filter-actions connection-id="aed7569d-309f-434e-89b3-679209d2b10f" dataset="main.DeliveryToBranches" active-filter-id="EMPTY_FILTER" />
@@ -29,6 +48,7 @@
     <filter-actions connection-id="aed7569d-309f-434e-89b3-679209d2b10f" dataset="main.Constraint" active-filter-id="" />
     <filter-actions connection-id="aed7569d-309f-434e-89b3-679209d2b10f" dataset="main.BranchToEmployee" active-filter-id="EMPTY_FILTER" />
     <filter-actions connection-id="aed7569d-309f-434e-89b3-679209d2b10f" dataset="main.Branch" active-filter-id="EMPTY_FILTER" />
+
   </component>
   <component name="DBNavigator.Project.ExecutionManager">
     <retain-sticky-names value="false" />
@@ -45,11 +65,16 @@
     <last-used-operator value="EQUAL" />
     <filters />
   </component>
+  <component name="DBNavigator.Project.ParserDiagnosticsManager">
+    <diagnostics-history />
+  </component>
   <component name="DBNavigator.Project.Settings">
     <connections>
+
       <connection id="aed7569d-309f-434e-89b3-679209d2b10f" active="true" signed="true">
+
         <database>
-          <name value="Connection" />
+          <name value="HR_T" />
           <description value="" />
           <database-type value="SQLITE" />
           <config-type value="BASIC" />
@@ -62,7 +87,9 @@
           <port value="" />
           <database value="" />
           <files>
+
             <file path="$PROJECT_DIR$/dev/DataLayer/HR_Transport_DB.db" schema="main" />
+
           </files>
           <type value="NONE" />
           <user value="" />

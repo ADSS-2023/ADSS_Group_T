@@ -1,28 +1,27 @@
 package BusinessLayer.Transport;
 
-public class Driver {
+import BusinessLayer.User;
+import UtilSuper.PositionType;
+import UtilSuper.UserType;
+
+import java.util.List;
+
+public class Driver extends User {
     private int id;
     private String name;
     private LicenseType licenseType;
     private CoolingLevel coolingLevel;
 
-
-
-    public Driver(int id, String name, int licenseType, int coolingLevel) {
-        this.id = id;
-        this.name = name;
-        this.licenseType = LicenseType.getByNumber(licenseType);
-        this.coolingLevel = CoolingLevel.get(coolingLevel);
+    public Driver(int id, String employeeName, String bankAccount, List<PositionType> qualifiedPositions, String description, int salary, String joiningDay, String password, UserType userType, LicenseType licenseType, CoolingLevel coolingLevel) {
+        super(id, employeeName, bankAccount, qualifiedPositions, description, salary, joiningDay, password, userType);
+        this.licenseType = licenseType;
+        this.coolingLevel = coolingLevel;
     }
 
 
-    public String getName() {
-        return this.name;
-    }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+
+
 
     public CoolingLevel getCoolingLevel() {
         return coolingLevel;

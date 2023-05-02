@@ -5,42 +5,63 @@ import BusinessLayer.User;
 import UtilSuper.PositionType;
 import UtilSuper.UserType;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Employee extends User {
 
-    private String employeeName;
-    private String bankAccount;
+
     private List<PositionType> qualifiedPositions;
-    private Map<String, List<Constraint>> submittedShifts;
-    private Map<String, List<Constraint>> assignedShifts;
-    private Map<String, List<Boolean>> shiftsRestriction;
+    private Map<LocalDate, List<Constraint>> submittedShifts; // date, list[0]=morningShift list[1]=eveningShift
+
+    private HashMap<Integer, HashMap<LocalDate, List<Boolean>>>  shiftsRestriction; // branch, date, shiftType
     private String description;
     private int salary;
-    private String joiningDay;
-    private boolean isHRManager;
-    private boolean isShiftManager;
-    private String password;
 
-    public Employee(int id, String employeeName, String bankAccount, List<PositionType> qualifiedPositions, String description, int salary, String joiningDay, String password, UserType userType, List<PositionType> qualifiedPositions1, Map<String, List<Constraint>> submittedShifts, Map<String, List<Constraint>> assignedShifts, Map<String, List<Boolean>> shiftsRestriction) {
-        super(id, employeeName, bankAccount, qualifiedPositions, description, salary, joiningDay, password, userType);
-        this.qualifiedPositions = qualifiedPositions1;
-        this.submittedShifts = submittedShifts;
-        this.assignedShifts = assignedShifts;
-        this.shiftsRestriction = shiftsRestriction;
+
+    public Employee(int id, String employeeName, String bankAccount, String description, int salary, LocalDate joiningDay, String password, UserType userType,  Map<String,   HashMap<Integer, HashMap<LocalDate) {
+        super(id, employeeName, bankAccount, description, salary, joiningDay, password, userType);
+        this.qualifiedPositions = new ArrayList<>();
+        this.submittedShifts = new LinkedHashMap<>();
+        this.shiftsRestriction = new LinkedHashMap<>();
+        description = null;
     }
 
-    public void addSubmittedShift(String date, boolean shiftType, boolean isTemp) {
-        if (shiftsRestriction.containsKey(date) && shiftsRestriction.get(date).contains(shiftType)) {
+    /**
+     * Adds a submitted shift to the employee's submittedShifts map, after checking if it is legal
+     *
+     * @param branch - the branch ID of the shift
+     * @param employeeId - the ID of the employee who submits the shift
+     * @param date - the date of the shift
+     * @param shiftType - the shift type of the shift
+     * @throws IllegalArgumentException if the shift is restricted according to shiftsRestriction map, or already exists in the submittedShifts map
+     */
+    /**
+     * Add a new submitted shift for the employee.
+     *
+     * @param branch     The branch ID where the shift is submitted.
+     * @param employeeId The ID of the employee submitting the shift.
+     * @param date       The date of the shift.
+     * @param shiftType  The type of the shift (true for morning, false for evening).
+     * @throws IllegalArgumentException If the shift cannot be submitted due to a restriction or existing shift.
+     */
+    public void addSubmittedShift(int branch, int employeeId, LocalDate date, boolean shiftType) {
+        // Check if the shift is restricted based on the branch and date
+        if (shiftsRestriction.containsKey(branch) && shiftsRestriction.get(branch).containsKey(date)
+                && shiftsRestriction.get(branch).get(date).contains(shiftType)) {
             throw new IllegalArgumentException("Cannot submit to that shift");
         }
-        else if (submittedShifts.containsKey(date) && submittedShifts.get(date).stream().anyMatch(c -> c.getShiftType() == shiftType)) {
-            throw new IllegalArgumentException("Shift for that date and shift type already exists");
+        // Check if a shift for the same date and shift type already exists
+        else if (submittedShifts.containsKey(date)
+                && submittedShifts.get(date).stream().anyMatch(c -> c.getShiftType() == shiftType)) {
+            throw new IllegalArgumentException("You have been already submit to that shift.");
         }
-    /* else if (isLeagalPosition(position.name()))
-        throw new IllegalArgumentException("Unfortunately, you are not qualified for the selected position.");*/
+        // Add the new constraint to the list of submitted shifts
         else {
-            Constraint cons = new Constraint(date, shiftType, isTemp);
+            Constraint cons = new Constraint(branch, employeeId, date, shiftType);
             List<Constraint> constraints = submittedShifts.get(date);
             if (constraints == null) {
                 constraints = new ArrayList<>();
@@ -54,120 +75,92 @@ public class Employee extends User {
 
 
 
-    public void addSAssignShifts(String date, boolean shiftType, String positionType) {
-        if (!submittedShifts.containsKey(date)) {
-            throw new IllegalArgumentException("No such submitted shift exists for the date: " + date);
-        }
-        int shType = shiftType ? 0 : 1;
-        Constraint constraint =  submittedShifts.get(date).get(shType);
-        if (constraint == null) {
-            throw new IllegalArgumentException("No constraint exists for the submitted shift on the date: " + date);
+    public void assignShift(int branch, LocalDate date, boolean shiftType, PositionType positionType) throws Exception{
+        List<Constraint> shifts = submittedShifts.get(date);
+
+        if (shifts == null) {
+            throw new IllegalArgumentException("Wrong date");
         }
 
-
-
-        // Move the constraint from submittedShifts to assignedShifts
-        List<Constraint> assigns = assignedShifts.get(date);
-        if (assigns == null) {
-            assigns = new ArrayList<>();
+        if (shifts.stream().anyMatch(c -> c.getAssignedPosition() != null)) {
+            throw new IllegalArgumentException("Employee already assigned to a shift on this day.");
         }
-        assigns.add(constraint);
-        assignedShifts.put(date, assigns);
 
-        // Remove the constraint from submittedShifts
-        submittedShifts.remove(date);
+
+        // Requirement 2: An employee cannot work if he has a restriction.
+        if (shiftsRestriction.containsKey(branch) && shiftsRestriction.get(branch).containsKey(date)
+                && shiftsRestriction.get(branch).get(date).contains(shiftType)) {
+            throw new IllegalArgumentException("Cannot submit to that shift");
+        }
+
+        // Requirement 3: An employee cannot work more than six times a week.
+        LocalDate startOfWeek = date.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+        LocalDate endOfWeek = startOfWeek.with(TemporalAdjusters.next(DayOfWeek.SATURDAY));
+        long assignedShiftsThisWeek = submittedShifts.entrySet().stream()
+                .filter(e -> !e.getKey().isBefore(startOfWeek) && !e.getKey().isAfter(endOfWeek))
+                .flatMap(e -> e.getValue().stream())
+                .filter(c -> c.getAssignedPosition() != null)
+                .count();
+        if (assignedShiftsThisWeek >= 6) {
+            throw new IllegalArgumentException("Employee has already worked six shifts this week.");
+        }
+
+        // set the assigned position of the shift
+        Constraint constraint =  shiftType ?  shifts.get(0) : shifts.get(1);
+        constraint.setAssignedPosition(positionType);
+
     }
 
 
-
-
-
-
-    public Constraint getSubmittedShiftByPosition(String date, boolean shiftType, String position ) {
-        for (Map.Entry<String, List<Constraint>> entry : submittedShifts.entrySet()) {
-            List<Constraint> constraints = entry.getValue();
-            for (Constraint constraint : constraints) {
-                if (constraint.getDate().equals(date) && constraint.getShiftType() == shiftType) {
-                    return constraint;
-                }
+    public String showShiftsStatusByEmployee(LocalDate localDate) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 30; i++) {
+            LocalDate date = localDate.plusDays(i);
+            List<Constraint> morningShifts = submittedShifts.getOrDefault(date, new ArrayList<>()).stream()
+                    .filter(Constraint::getShiftType)
+                    .toList();
+            List<Constraint> eveningShifts = submittedShifts.getOrDefault(date, new ArrayList<>()).stream()
+                    .filter(c -> !c.getShiftType())
+                    .toList();
+            sb.append(String.format("%-12s%-12s%-12s%-12s\n", "Date", "Shift Type", "Is Approved", "Assigned Position"));
+            sb.append(String.format("%-12s%-12s%-12s%-12s\n", date, "Morning", "", ""));
+            for (Constraint c : morningShifts) {
+                sb.append(String.format("%-12s%-12s%-12s%-12s\n", "", "", c.getAssignedPosition() == null ? "No" : "Yes", c.getAssignedPosition()));
             }
+            sb.append(String.format("%-12s%-12s%-12s%-12s\n", "", "Evening", "", ""));
+            for (Constraint c : eveningShifts) {
+                sb.append(String.format("%-12s%-12s%-12s%-12s\n", "", "", c.getAssignedPosition() == null ? "No" : "Yes", c.getAssignedPosition()));
+            }
+            sb.append("\n");
         }
-        return null;
+        return sb.toString();
     }
 
+    public String addRestriction(int branch, LocalDate date, boolean isMorning) {
 
-
-
-
-    public String getListOfSubmittedConstraints() {
-        String concat = "";
-        String type = "";
-        for (List<Constraint> constraints : submittedShifts.values()) {
-            for (Constraint cons : constraints) {
-                if (cons.getShiftType()) {
-                    type = "morning";
+            if (shiftsRestriction.containsKey(branch)) {
+                if (shiftsRestriction.get(branch).containsKey(date)) {
+                    if (!shiftsRestriction.get(branch).get(date).contains(isMorning)) {
+                        shiftsRestriction.get(branch).get(date).add(isMorning);
+                    } else {
+                        return "Restriction already exists for the given date and shift type.";
+                    }
                 } else {
-                    type = "evening";
+                    List<Boolean> shiftTypes = new ArrayList<>();
+                    shiftTypes.add(isMorning);
+                    shiftsRestriction.get(branch).put(date, shiftTypes);
                 }
-                concat += "Date: " + cons.getDate() + " Type: " + type + "\n";
+            } else {
+                HashMap<LocalDate, List<Boolean>> dateMap = new HashMap<>();
+                List<Boolean> shiftTypes = new ArrayList<>();
+                shiftTypes.add(isMorning);
+                dateMap.put(date, shiftTypes);
+                shiftsRestriction.put(branch, dateMap);
             }
-        }
-        return concat;
-    }
-
-    public String getListOfAssignedShifts() {
-        String concat = "";
-        String type = "";
-        for (List<Constraint> assignedShifts : assignedShifts.values()) {
-            for (Constraint cons : assignedShifts) {
-                if (cons.getShiftType()) {
-                    type = "morning";
-                } else {
-                    type = "evening";
-                }
-                concat += "Date: " + cons.getDate() + " Type: " + type + "\n";
-            }
-        }
-        return concat;
+            return "Restriction added successfully.";
     }
 
 
-    public Map<String, List<Constraint>> getSubmittedShifts() {
-        return submittedShifts;
-    }
-
-    public Map<String, List<Constraint>> getAssignedShifts() {
-        return assignedShifts;
-    }
-
-    public Map<String, List<Boolean>> getShiftsRestriction() {
-        return shiftsRestriction;
-    }
-
-
-
-    public void  setDescription(String description){
-        this.description = description;
-    }
-
-
-
-    public void addRestriction(String date, boolean isMorning) {
-        if (shiftsRestriction.containsKey(date)) {
-            if (!shiftsRestriction.get(date).contains(isMorning)) {
-                shiftsRestriction.get(date).add(isMorning);
-            }
-
-        } else {
-            List<Boolean> shiftTypes = new ArrayList<>();
-            shiftTypes.add(isMorning);
-            shiftsRestriction.put(date, shiftTypes);
-        }
-    }
-
-    public String getJoiningDay() {
-        return joiningDay;
-    }
 
     public void addQualification(String position) {
         if (! isLeagalPosition(position))
@@ -183,9 +176,6 @@ public class Employee extends User {
        return  false;
     }
 
-
-
-
     public List<String> getListOfQualifiedPositions() {
         List<String> positionNames = new ArrayList<>();
         for (PositionType position : qualifiedPositions) {
@@ -193,19 +183,6 @@ public class Employee extends User {
         }
         return positionNames;
     }
-
-    public void setShiftManager(boolean shiftManager) {
-        isShiftManager = shiftManager;
-    }
-
-    public void setSalary(int salary) {
-        this.salary = salary;
-    }
-
-    public int getSalary() {
-        return salary;
-    }
-
 
 
     }
