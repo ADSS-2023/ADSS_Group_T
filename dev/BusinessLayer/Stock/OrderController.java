@@ -57,10 +57,11 @@ public class OrderController {
      * @param curDay
      * @return
      */
-    public String makeAutomaticallyOrder(DayOfWeek curDay) {
+    public String makeAutomaticallyOrder(DayOfWeek curDay) throws Exception {
         List<Item> cur_shortage_list = inventory.getShortageList();
-        //List<ItemToOrder> curDay_list = order_service.getRegularOrder(curDay.toString());
-        //List<ItemToOrder> curDay_list = order_service.getSpecialOrder(curDay.toString());
+        //List<ItemToOrder> curDay_list1 = order_service.getRegularOrder(curDay);
+        //List<ItemToOrder> curDay_list2 = order_service.getSpecialOrder(curDay);
+        //figure out what should do here - if connect the 2 lists .
         List<ItemToOrder> curDay_list = new LinkedList<>(); // NOT CORRECT
         Map<Integer , Integer> item_to_order_map = new HashMap<>();
         boolean found = false;
@@ -146,7 +147,7 @@ public class OrderController {
         return toReturn;
     }
 
-    public void nextDay(DayOfWeek tomorrow_day) {
+    public void nextDay(DayOfWeek tomorrow_day) throws Exception {
         this.makeAutomaticallyOrder(tomorrow_day);
         this.inventory.nextDay(tomorrow_day);
     }
