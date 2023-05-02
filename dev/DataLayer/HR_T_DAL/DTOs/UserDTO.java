@@ -1,4 +1,4 @@
-package DataLayer.HR_T_DAL.DTO;
+package DataLayer.HR_T_DAL.DTOs;
 
 import DataLayer.Util.DTO;
 
