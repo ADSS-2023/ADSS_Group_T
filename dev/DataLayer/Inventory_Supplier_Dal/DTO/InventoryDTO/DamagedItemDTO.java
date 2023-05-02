@@ -1,18 +1,18 @@
 package DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO;
 
 public class DamagedItemDTO {
-    private ItemDTO item;
+    private int item_id;
     private int amount;
     private String description;
 
-    public DamagedItemDTO(ItemDTO item, int amount, String description) {
-        this.item = item;
+    public DamagedItemDTO(int item_id, int amount, String description) {
+        this.item_id = item_id;
         this.amount = amount;
         this.description = description;
     }
 
-    public ItemDTO getItem() {
-        return item;
+    public int getItem_id() {
+        return item_id;
     }
 
     public int getAmount() {

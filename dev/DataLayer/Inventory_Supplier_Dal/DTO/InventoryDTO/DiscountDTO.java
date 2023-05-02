@@ -4,12 +4,12 @@ import java.time.LocalDate;
 
 public class DiscountDTO {
     private int id;
-    private LocalDate start_date;
-    private LocalDate end_date;
+    private String start_date;
+    private String end_date;
     private double percentage;
     private boolean is_category;
 
-    public DiscountDTO(LocalDate start_date, LocalDate end_date, double percentage , int id, boolean is_category) {
+    public DiscountDTO(String start_date, String end_date, double percentage , int id, boolean is_category) {
         this.start_date = start_date;
         this.end_date = end_date;
         this.percentage = percentage;
@@ -17,11 +17,11 @@ public class DiscountDTO {
         this.is_category = is_category;
     }
 
-    public LocalDate getStartDate() {
+    public String getStartDate() {
         return start_date;
     }
 
-    public LocalDate getEndDate() {
+    public String getEndDate() {
         return end_date;
     }
 

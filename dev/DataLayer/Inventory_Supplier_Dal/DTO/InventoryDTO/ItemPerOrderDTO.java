@@ -7,11 +7,11 @@ public class ItemPerOrderDTO {
     private int amountStore;
     private double costPrice;
     private String location;
-    private LocalDate validity;
+    private String validity;
     private int orderId;
     private int itemId;
 
-    public ItemPerOrderDTO(int amountWarehouse, int amountStore, double costPrice, String location, LocalDate validity, int orderId , int itemId) {
+    public ItemPerOrderDTO(int amountWarehouse, int amountStore, double costPrice, String location, String validity, int orderId , int itemId) {
         this.amountWarehouse = amountWarehouse;
         this.amountStore = amountStore;
         this.costPrice = costPrice;
@@ -45,7 +45,7 @@ public class ItemPerOrderDTO {
     }
 
 
-    public LocalDate getValidity() {
+    public String getValidity() {
         return validity;
     }
 
