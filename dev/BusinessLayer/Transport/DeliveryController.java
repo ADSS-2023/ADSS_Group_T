@@ -406,33 +406,26 @@ public class DeliveryController {
     }
 
     private void reScheduleDelivery(LinkedHashMap<Supplier,File> suppliers,LinkedHashMap<Branch,File> branches){
-        //TODO: implement method
         boolean found = false;
         LocalDate newDeliveredDate = this.currDate.plusDays(2);
         CoolingLevel coolingLevel = CoolingLevel.non;
-        for(Supplier s : suppliers.keySet()){
-//            if(s.getCoolingLevel().ordinal() > coolingLevel.ordinal())
-//                coolingLevel = s.getCoolingLevel();
-        }
         Truck t;
-        Driver d;
         while(!found){
-            t = scheduleTruck(date,coolingLevel);
+            t = scheduleTruck(newDeliveredDate,coolingLevel);
             if(t == null){
-                date = date.plusDays(1);
+                newDeliveredDate = newDeliveredDate.plusDays(1);
                 continue;
             }
-//            d = scheduleDriver(date,coolingLevel);
-//            if(d == null){
-//                date2trucks.get(date).remove(t);
-//                date = date.plusDays(1);
-//                continue;
-//            }
-            Delivery newDelivery = new Delivery(deliveryCounter,date,LocalTime.NOON,t.getWeight(),suppliers,branches,
+            shiftController.addDirverRequirement(newDeliveredDate,t.getLicenseType(),t.getCoolingLevel());
+            for (Branch branch : branches.keySet()){
+                shiftController.addStoreKeeperRequirement(newDeliveredDate,branch.getAddress());
+            }
+
+            Delivery newDelivery = new Delivery(deliveryCounter,newDeliveredDate,LocalTime.NOON,t.getWeight(),suppliers,branches,
                     suppliers.entrySet().iterator().next().getKey(),t.getLicenseNumber(),branches.entrySet().iterator().next().getKey().getShippingArea());
-            if(!date2deliveries.containsKey(date))
-                date2deliveries.put(date,new ArrayList<>());
-            date2deliveries.get(date).add(newDelivery);
+            if(!date2deliveries.containsKey(newDeliveredDate))
+                date2deliveries.put(newDeliveredDate,new ArrayList<>());
+            date2deliveries.get(newDeliveredDate).add(newDelivery);
             found = true;
         }
     }
