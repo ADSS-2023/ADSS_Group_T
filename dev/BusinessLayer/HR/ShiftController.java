@@ -1,5 +1,6 @@
 package BusinessLayer.HR;
 
+import BusinessLayer.Transport.Driver;
 import UtilSuper.PositionType;
 
 import java.time.LocalDate;
@@ -101,5 +102,14 @@ public class ShiftController {
     }
 
 
-
+    //todo from Noam Gilad pls
+    public void addDirverRequirement(LocalDate requiredDate, Driver.LicenseType licenseType, Driver.CoolingLevel coolingLevel) {
+    }
+    //todo from Noam Gilad pls
+    public void addStoreKeeperRequirement(LocalDate requiredDate, String address) {
+    }
+    //todo from Noam Gilad pls
+    public ArrayList<String> getBranchesWithoutStoreKeeper(LocalDate tomorrow) {
+        return null;
+    }
 }

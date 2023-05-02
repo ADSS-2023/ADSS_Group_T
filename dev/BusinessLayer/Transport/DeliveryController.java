@@ -24,12 +24,9 @@ public class DeliveryController {
 
     private LinkedHashMap<LocalDate, ArrayList<Delivery>> date2deliveries;
 
-
-
     private int deliveryCounter = 0;
     private int filesCounter = 0;
     private LocalDate currDate;
-
 
     // private Listener listener;
     private EnterWeightInterface enterWeightInterface;
@@ -89,8 +86,11 @@ public class DeliveryController {
         if (date2deliveries.containsKey(requiredDate)) { // there is delivery in this date
             for (Delivery d : date2deliveries.get(requiredDate)) { // the delivery is to the required date
                 if (branch.getShippingArea() == d.getShippingArea()) { // the delivery is to the required branch
-                    if (!d.getUnHandledBranches().containsKey(branch))
+                    if (!d.getUnHandledBranches().containsKey(branch)){
                         d.addBranch(branch, filesCounter++);
+                        shiftController.addStoreKeeperRequirement(requiredDate,branch.getAddress());
+                    }
+
                     for (Supplier supplier : new ArrayList<>(suppliers.keySet())) {
                         Map<Product, Integer> products = suppliers.get(supplier);
                         for (Product product : new LinkedHashSet<>(products.keySet())) {
@@ -117,7 +117,8 @@ public class DeliveryController {
 
                 Delivery delivery = new Delivery(deliveryCounter++, requiredDate, LocalTime.NOON, truck.getWeight(), new LinkedHashMap<>(),
                         new LinkedHashMap<>(), null, truck.getLicenseNumber(), branch.getShippingArea());
-                shiftController.addRequirements();
+                shiftController.addDirverRequirement(requiredDate,truck.getLicenseType(),truck.getCoolingLevel());
+                shiftController.addStoreKeeperRequirement(requiredDate,branch.getAddress());
                 delivery.addBranch(branch, filesCounter++);
                 deliveries.put(delivery.getId(), delivery);
                 date2deliveries.get(requiredDate).add(delivery);
@@ -407,7 +408,7 @@ public class DeliveryController {
     private void reScheduleDelivery(LinkedHashMap<Supplier,File> suppliers,LinkedHashMap<Branch,File> branches){
         //TODO: implement method
         boolean found = false;
-        LocalDate date = LocalDate.now();
+        LocalDate newDeliveredDate = this.currDate.plusDays(2);
         CoolingLevel coolingLevel = CoolingLevel.non;
         for(Supplier s : suppliers.keySet()){
 //            if(s.getCoolingLevel().ordinal() > coolingLevel.ordinal())
@@ -450,9 +451,35 @@ public class DeliveryController {
     }
 
     public ArrayList<Delivery> getNextDayDeatails() {
-        return scheduleDriversForTomorrow();
-
+        ArrayList<Delivery> deliveriesThatReScheduleDelivery = new ArrayList<>();
+        deliveriesThatReScheduleDelivery.addAll(checkStoreKeeperForTomorrow());
+        deliveriesThatReScheduleDelivery.addAll(scheduleDriversForTomorrow());
+        return deliveriesThatReScheduleDelivery;
     }
 
-
+    private ArrayList<Delivery> checkStoreKeeperForTomorrow() {
+        LocalDate tomorrow = this.currDate.plusDays(1);
+        ArrayList<String> branchWithoutStoreKeeper = shiftController.getBranchesWithoutStoreKeeper(tomorrow);
+        ArrayList<Delivery> deliveriesTomorrow = new ArrayList<>(date2deliveries.get(tomorrow));
+        ArrayList<Delivery> deliveriesWithoutStoreKeeper = new ArrayList<>();
+        for (Delivery delivery: deliveriesTomorrow) {
+            LinkedHashSet<Branch> branchesOfDeliveries = new LinkedHashSet<>(delivery.getUnHandledBranches().keySet());
+            for (Branch branch: branchesOfDeliveries) {
+                if (branchWithoutStoreKeeper.contains(branch.getAddress())) {
+                    reScheduleDelivery(delivery.getUnHandledSuppliers(),delivery.getUnHandledBranches());
+                    date2deliveries.get(tomorrow).remove(deliveries.get(delivery.getId()));
+                    date2trucks.get(tomorrow).remove(logisticCenterController.getTruck(delivery.getTruckNumber()));
+                    deliveriesWithoutStoreKeeper.add(delivery);
+                    break;
+                }
+            }
+        }
+        return deliveriesWithoutStoreKeeper;
+    }
 }
+
+
+
+
+
+
