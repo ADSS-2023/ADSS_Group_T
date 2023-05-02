@@ -42,10 +42,14 @@ public class ServiceFactory {
         branchService = new BranchService(branchController);
         supplierController = new SupplierController();
         supplierService = new SupplierService(supplierController);
-        deliveryController = new DeliveryController(logisticCenterController,supplierController,branchController,driverController);
+        deliveryController = new DeliveryController(logisticCenterController,supplierController,branchController,driverController,shiftController);
         deliveryService = new DeliveryService(deliveryController);
 
 
+
+    }
+    public void callbackEnterWeight(EnterWeightInterface enterWeightInterface){
+        deliveryService.setEnterWeightInterface(enterWeightInterface);
     }
 
     public ShiftController getShiftController() {

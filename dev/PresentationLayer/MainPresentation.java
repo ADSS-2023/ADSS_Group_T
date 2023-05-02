@@ -35,8 +35,9 @@ public class MainPresentation {
         this.userService = serviceFactory.getUserService();
         this.branchService = serviceFactory.getBranchService();
         this.supplierService = serviceFactory.getSupplierService();
-
         transportManagerPresentation = new TransportManagerPresentation(logisticCenterService,deliveryService,supplierService,branchService);
+        serviceFactory.callbackEnterWeight(this.transportManagerPresentation::enterWeightFunction);
+
     }
 
 
