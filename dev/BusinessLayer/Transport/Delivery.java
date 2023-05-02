@@ -1,6 +1,7 @@
 package BusinessLayer.Transport;
 import java.time.LocalDate;
 import java.time.LocalTime;
+
 import java.util.*;;
 
 public class Delivery {
@@ -17,6 +18,7 @@ public class Delivery {
     private int truckNumber;
     private int shippingArea;
     private String note;
+    private Driver.CoolingLevel coolingLevel;
 
     public Delivery(int id, LocalDate date, LocalTime departureTime, int truckWeight, LinkedHashMap<Supplier, File> suppliers,
                     LinkedHashMap<Branch, File> branches, Site source, int truckNumber, int shippingArea) {
@@ -95,7 +97,7 @@ public class Delivery {
      * @param p - the product to add
      * @param amount
      */
-    public void addProductsToSupplier(Supplier supplier, Product p, int amount){
+    public void addProductToSupplier(Supplier supplier, Product p, int amount){
         unHandledSuppliers.get(supplier).addProduct(p,amount);
     }
     public int getShippingArea() {
@@ -186,4 +188,7 @@ public class Delivery {
     public LinkedHashMap<Supplier, File> getSuppliers() {
         return null;
     }
+
+
+
 }

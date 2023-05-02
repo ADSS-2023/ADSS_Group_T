@@ -5,8 +5,8 @@ import java.util.*;
 
 public class LogisticCenterController {
 
-        private  LogisticCenter logisticCenter;
-        private LinkedHashMap<Integer,Truck> trucks;
+         private  LogisticCenter logisticCenter;
+//        private LinkedHashMap<Integer,Truck> trucks;
 
         public LogisticCenterController() {
             this.logisticCenter = new LogisticCenter();
@@ -47,13 +47,7 @@ public class LogisticCenterController {
      * @return true if the truck added successfully , and false otherwise
      */
     public boolean addTruck(int licenseNumber, String model, int weight, int maxWeight, int coolingLevel) {
-        if(trucks.containsKey(licenseNumber))
-            throw new IllegalArgumentException("truck num taken");
-        else{
-            Truck truck = new Truck(licenseNumber,model,weight,maxWeight,coolingLevel);
-            trucks.put(licenseNumber, truck);
-            return true;
-        }
+       return logisticCenter.addTruck(licenseNumber, model, weight, maxWeight, coolingLevel);
     }
 
     /**
@@ -65,23 +59,15 @@ public class LogisticCenterController {
 
 
     public boolean removeTruck(int licenseNumber) {
-        if(!trucks.containsKey(licenseNumber))
-            throw new IllegalArgumentException("no such truck num");
-        else{
-            trucks.remove(licenseNumber);
-            return true;
-        }
+        return logisticCenter.removeTruck(licenseNumber);
     }
 
     public LinkedHashMap<Integer, Truck> getAllTrucks() {
-        return trucks;
+        return logisticCenter.getAllTrucks();
     }
 
     public Truck getTruck(int licenseNumber) {
-        if(!trucks.containsKey(licenseNumber))
-            throw new IllegalArgumentException("no such truck num");
-        else
-            return trucks.get(licenseNumber);
+    return logisticCenter.getTruck(licenseNumber);
     }
 
 }

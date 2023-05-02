@@ -61,6 +61,8 @@ public class SupplierController {
         return true;
     }
 
+
+
     public LinkedHashMap<String, Supplier> getAllSuppliers() {
         return suppliers;
     }
@@ -78,4 +80,26 @@ public class SupplierController {
         else
             return suppliers.get(supplier).getAllProducts().toString();
     }
+
+
+    /**
+     * Adds a set of products to a supplier.
+     *
+     * @param supplierAddress - the address of the supplier to add the products to
+     * @param productMap1 - a map from product names to cooling levels
+     * @throws IllegalArgumentException if the supplier does not exist
+     */
+    public void addProductsToSupplier(String supplierAddress, LinkedHashMap<String, Integer> productMap1) {
+
+        if(!suppliers.containsKey(supplierAddress))
+            throw new IllegalArgumentException("no such supp");
+        else {
+            Supplier supplier = suppliers.get(supplierAddress);
+            for (String productName : productMap1.keySet()) {
+                Integer coolingLevel = productMap1.get(productName);
+                supplier.addProduct(productName, coolingLevel);
+            }
+        }
+    }
+
 }

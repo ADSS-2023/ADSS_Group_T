@@ -17,9 +17,9 @@ public class EmployeeController {
         employeesMapper = new HashMap<Integer,Employee>();
     }
     public void addNewEmployee(String employeeName, String bankAccount, List<PositionType> qualifiedPositions, String joiningDay, int employeeId, String password){
-        Employee newEmployee = new Employee(employeeName, bankAccount, qualifiedPositions, joiningDay, employeeId, password);
+       // Employee newEmployee = new Employee(employeeName, bankAccount, qualifiedPositions, joiningDay, employeeId, password);
         //TODO: check if the ID is already exist, if so throw exception
-        employeesMapper.putIfAbsent(employeeId, newEmployee);
+    //    employeesMapper.putIfAbsent(employeeId, newEmployee);
     }
 
 public void initEmployeeConroller (ShiftController shiftController){
@@ -68,8 +68,8 @@ public void initEmployeeConroller (ShiftController shiftController){
             throw new IllegalArgumentException("Employee ID does not exist");
         } else if (!employee.getPassword().equals(password)) {
             throw new IllegalArgumentException("Wrong password");
-        } else if (employee.isManager()) {
-            return true;
+     //   } else if (employee.isManager()) {
+      //      return true;
         } else {
             return false;
         }
