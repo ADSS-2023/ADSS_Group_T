@@ -1,8 +1,7 @@
 package PresentationLayer;
 
-import Initialization.Truck_init;
+import Initialization.*;
 import ServiceLayer.HR.EmployeeService;
-import Initialization.HR_Initialization;
 import ServiceLayer.HR.ShiftService;
 import ServiceLayer.Transport.*;
 import ServiceLayer.UserService;
@@ -26,7 +25,6 @@ public class MainPresentation {
     private TransportManagerPresentation transportManagerPresentation;
     private HRManagerPresentation hrManagerPresentation;
     private EmployeePresentation employeePresentation;
-    private TruckService truckService;
 
     public MainPresentation() {
         ServiceFactory serviceFactory = new ServiceFactory();
@@ -37,11 +35,8 @@ public class MainPresentation {
         this.userService = serviceFactory.getUserService();
         this.branchService = serviceFactory.getBranchService();
         this.supplierService = serviceFactory.getSupplierService();
-        this.truckService = serviceFactory.getTruckService();
 
-        transportManagerPresentation = new TransportManagerPresentation(logisticCenterService,deliveryService,supplierService,branchService,truckService);
-
-
+        transportManagerPresentation = new TransportManagerPresentation(logisticCenterService,deliveryService,supplierService,branchService);
     }
 
 
@@ -56,8 +51,11 @@ public class MainPresentation {
         if (choice == 1)
             loginWindow();
         if (choice == 2) {
-            HR_Initialization.init_data(shiftService,employeeService);
-            Truck_init.init(truckService);
+            //HR_Initialization.init_data(shiftService,employeeService);
+            LogisticCenter_init.init(logisticCenterService);
+            Branch_init.init(branchService);
+            Suppliers_init.init(supplierService);
+            Delivery_init.init(deliveryService);
             loginWindow();
         }
     }
@@ -66,6 +64,9 @@ public class MainPresentation {
      * the main window of the system
      */
     public void loginWindow() {
+        //TODO remove shortCut:
+        this.transportManagerPresentation.start();
+
         Scanner scanner = new Scanner(System.in);
         System.out.println(" ");
         System.out.println("------ login window -------");

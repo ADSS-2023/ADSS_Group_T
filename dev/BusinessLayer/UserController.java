@@ -16,7 +16,7 @@ import java.util.List;
 public class UserController {
     private EmployeeController employeeController;
     //driverController
-    private HRManager hrManager;
+    //private HRManager hrManager;
 
     private DriverController driverController;
     private TransportManager transportManager;
@@ -73,5 +73,4 @@ public class UserController {
         }
         throw new NoSuchFieldException("User Don't exist.");
     }
-
 }

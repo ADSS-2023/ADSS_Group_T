@@ -68,8 +68,8 @@ public class EmployeeController {
             throw new IllegalArgumentException("Employee ID does not exist");
         } else if (!employee.getPassword().equals(password)) {
             throw new IllegalArgumentException("Wrong password");
-        } else if (employee.isManager()) {
-            return true;
+     //   } else if (employee.isManager()) {
+      //      return true;
         } else {
             return false;
         }
