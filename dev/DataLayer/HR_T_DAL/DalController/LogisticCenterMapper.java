@@ -5,6 +5,7 @@ import DataLayer.Util.DAO;
 
 public class LogisticCenterMapper implements Mapper {
     public LogisticCenterMapper(){
+
     }
 }
 
