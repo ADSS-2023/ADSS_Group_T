@@ -8,6 +8,7 @@ public class Shift {
 
     private LocalDate date;
 
+    String branch;
     private boolean shiftType;
 
     private HashMap<String, Integer> employeesRequirement; // HashMap<PositionType, amount> - require employees per shift
@@ -15,14 +16,11 @@ public class Shift {
     private HashMap<String, HashMap<Employee, Boolean>> submittedPositionByEmployees; // positionType, Empoyee, isAssigned
 
 
-
     private int shiftManagerId;
 
 
-
-
-
-    public Shift(LocalDate date,  boolean shiftType ) {
+    public Shift(String branch, LocalDate date, boolean shiftType) {
+        this.branch = branch;
         this.date = date;
         this.shiftType = shiftType;
         employeesRequirement = new LinkedHashMap<>();
@@ -48,7 +46,7 @@ public class Shift {
         boolean hasManager = false;
         String missing = "";
         // Check if the shift contains a manager
-       if (shiftManagerId == -1)
+        if (shiftManagerId == -1)
             missing += "Noticed- the shift must have a manager!!!" + "\n";
         // Check if all position requirements are fulfilled
         for (Map.Entry<String, Integer> entry : employeesRequirement.entrySet()) {
@@ -69,10 +67,9 @@ public class Shift {
             }
         }
         if (missing.isEmpty())
-            return "All the requierments of the shift are fullfillled";
+            return "All the requierments of the employees in the shift are fullfillled";
         return missing;
     }
-
 
 
     // TODO-check it
@@ -124,7 +121,6 @@ public class Shift {
     }
 
 
-
     public String submitShiftForEmployee(Employee emp, List<String> qualifiedPositions) throws Exception {
         for (String pos : qualifiedPositions) {
             HashMap<Employee, Boolean> employeesByPosition = submittedPositionByEmployees.get(pos);
@@ -132,47 +128,44 @@ public class Shift {
                 employeesByPosition = new LinkedHashMap<>();
                 submittedPositionByEmployees.put(pos, employeesByPosition);
             }
-                employeesByPosition.put(emp, false);
+            employeesByPosition.put(emp, false);
         }
         return "Shift submitted successfully";
     }
 
 
-
-    public void makeSureThereIsStorekeeperRequirement() {
-      if (!employeesRequirement.containsKey(PositionType.storekeeper.name()) || employeesRequirement.get(PositionType.storekeeper.name()) < 1){
-          employeesRequirement.put(PositionType.storekeeper.name(), 1);
+    public void makeSureThereIsStorekeeperRequirement() throws Exception {
+        if (!employeesRequirement.containsKey(PositionType.storekeeper.name()) || employeesRequirement.get(PositionType.storekeeper.name()) < 1) {
+            employeesRequirement.put(PositionType.storekeeper.name(), 1);
+        }
     }
 
 
-
-
-
-    public String assignEmployeeForShift(String pos, Employee emp) throws Exception {
+    public String assignEmployeeForShift(String pos, Employee employee) throws Exception {
         // Get the map of employees and their assigned status for the given position
         HashMap<Employee, Boolean> employees = submittedPositionByEmployees.get(pos);
         if (employees != null) {
             // Check if the employee has submitted to this position before
-            if (!employees.containsKey(emp)) {
-                return emp.getEmployeeName() + " has not submitted to position " + pos + " yet.";
+            if (!employees.containsKey(employee)) {
+                return employee.getEmployeeName() + " has not submitted to position " + pos + " yet.";
             }
             // Check if the employee is already assigned to this position
-            Boolean isAssigned = employees.get(emp);
+            Boolean isAssigned = employees.get(employee);
             if (isAssigned != null && isAssigned) {
                 return "Employee already assigned to this position";
             } else {
-                //TODO- make ths constraint assigned in employee, also had to check if he has alreadty assign to shifth at this day and has already assigne to 6 shifts(in employee)
+                // Assign the employee to to his list- make sure that he leagal assignes
+                employee.assignShift(this.branch, this.date, this.shiftType, PositionType.valueOf(pos));
 
                 // Assign the employee to the position by updating their assigned status in the map
-                employees.put(emp, true);
-                return emp.getEmployeeName() + " has been assigned to position " + pos + " successfully.";
+                employees.put(employee, true);
+                return employee.getEmployeeName() + " has been assigned to position " + pos + " successfully.";
             }
         } else {
             // The position doesn't exist in the map, throw an exception
             throw new NoSuchElementException("Invalid position");
         }
     }
-
 
 
     public String assignAll() {
@@ -199,12 +192,17 @@ public class Shift {
             if (remainingCount > 0 && unassignedEmployees.size() > 0) {
                 for (int i = 0; i < remainingCount && i < unassignedEmployees.size(); i++) {
                     Employee employee = unassignedEmployees.get(i);
-                    //TODO- make ths constraint assigned in employee, also had to check if he has alreadty assign to shifth at this day and has already assigne to 6 shifts(in employee)
-                    employeeMap.put(employee, true);
-                    assignedCount++;
-                    if (positionType.equals("shiftManager") && shiftManagerId==-1){
-                        shiftManagerId = employee.getId();
+                    try {
+                        employee.assignShift(this.branch, this.date, this.shiftType, PositionType.valueOf(positionType));
+                        employeeMap.put(employee, true);
+                        assignedCount++;
+                        if (positionType.equals("shiftManager") && shiftManagerId == -1) {
+                            shiftManagerId = employee.getId();
+                        }
+                    } catch (Exception exception) {
+                        //continue- this employee cannot assign
                     }
+
                 }
             }
 
@@ -215,32 +213,9 @@ public class Shift {
     }
 
 
-
-
-
-
-    public boolean isContainInSumittedPositionByEmployee(String pos, Employee emp) {
-        if (submittedPositionByEmployees.containsKey(pos)) {
-            return submittedPositionByEmployees.get(pos).contains(emp);
-        } else {
-            return false;
-        }
-    }
-
-    public boolean isContainInassignedEmployee(String pos, Employee emp) {
-        if (assignedEmployee.containsKey(pos)) {
-            return assignedEmployee.get(pos).contains(emp);
-        } else {
-            return false;
-        }
-    }
-
-    public String getDate() {
+    public LocalDate getDate() {
         return date;
     }
-
-    public void setApproved(boolean approved) {
-        isApproved = approved;
-    }
+}
 
 

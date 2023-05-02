@@ -28,7 +28,7 @@ public class ShiftController {
     }
 
 
-    public void ensureStorekeeperRequirements(LocalDate localDate, List<String> branches) {
+    public void ensureStorekeeperRequirements(LocalDate localDate, List<String> branches) throws Exception {
         driverController.addDriverRequirement(localDate);
         for (String branch : branches) {
             HashMap<LocalDate, ArrayList<Shift>> shiftsBranch = shifts.get(branch);
@@ -43,6 +43,9 @@ public class ShiftController {
         }
     }
 
+    public void SkipDay(LocalDate localDate) {
+       //TODO
+    }
 
 
     public String showShiftStatus(String branchId, LocalDate date, boolean shiftType){
@@ -67,16 +70,17 @@ public class ShiftController {
 
 
     // TODo- fix it
-    public String assignEmployeeForShift(int id, String date, boolean shiftType, String positionType) {
-        Shift shift = shiftType ?  shifts.get(date).get(0) : shifts.get(date).get(1);
-        String st = shift.assignEmployeeForShift(positionType, employeesMapper.get(id));
-        return st;
+    public String assignEmployeeForShift(String branch, int id, LocalDate date, boolean shiftType, String positionType) throws Exception {
+        HashMap<LocalDate, ArrayList<Shift>>  shiftsBranch =  shifts.get(branch);
+        Shift shift = shiftType ?  shiftsBranch.get(date).get(0) : shiftsBranch.get(date).get(1);
+        return  shift.assignEmployeeForShift(positionType, employeesMapper.get(id));
     }
 
-    public String assignAll(int branch LocalDate date, boolean shiftType) {
-        Shift shift = shiftType ?  shifts.get(date).get(0) : shifts.get(date).get(1);
-        String st = shift.assignAll();
-        return st;
+    public String assignAll(String branch, int id, LocalDate date, boolean shiftType) {
+        HashMap<LocalDate, ArrayList<Shift>>  shiftsBranch =  shifts.get(branch);
+        Shift shift = shiftType ?  shiftsBranch.get(date).get(0) : shiftsBranch.get(date).get(1);
+        shift.assignAll();
+        return shift.showShiftStatus();
     }
 
 

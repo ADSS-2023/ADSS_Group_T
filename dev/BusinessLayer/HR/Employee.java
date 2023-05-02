@@ -22,7 +22,7 @@ public class Employee extends User {
     private int salary;
 
 
-    public Employee(int id, String employeeName, String bankAccount, String description, int salary, LocalDate joiningDay, String password, UserType userType,  Map<String,   HashMap<Integer, HashMap<LocalDate) {
+    public Employee(int id, String employeeName, String bankAccount, String description, int salary, LocalDate joiningDay, String password, UserType userType) {
         super(id, employeeName, bankAccount, description, salary, joiningDay, password, userType);
         this.qualifiedPositions = new ArrayList<>();
         this.submittedShifts = new LinkedHashMap<>();

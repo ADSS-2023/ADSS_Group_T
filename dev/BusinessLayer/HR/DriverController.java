@@ -5,10 +5,7 @@ import UtilSuper.PositionType;
 import UtilSuper.UserType;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 public class DriverController {
     private LinkedHashMap<Integer, Driver> drivers;
@@ -17,24 +14,47 @@ public class DriverController {
     private LinkedHashMap<LocalDate, HashMap<Driver, Boolean>> date2driversSubmission; // date, driver. isAssigned
 
 
+// TODO- modify it if needed
     public DriverController() {
         drivers = new LinkedHashMap<Integer, Driver>();
     }
 
-    public boolean assignDriver(LocalDate date, int id) {
-
+    public String areRequirementsFulfilled(LocalDate date) {
+        int requiredDrivers = driversRequirements.getOrDefault(date, 0);
+        int assignedDrivers = 0;
+        if (date2driversSubmission.containsKey(date)) {
+            for (Boolean isAssigned : date2driversSubmission.get(date).values()) {
+                if (isAssigned) {
+                    assignedDrivers++;
+                }
+            }
+        }
+        if (assignedDrivers < requiredDrivers) {
+            return "There are not enough drivers assigned for the date " + date + ". Required: " + requiredDrivers + ", Assigned: " + assignedDrivers;
+        } else {
+            return "All driver requirements are fulfilled for the date " + date + ". Required: " + requiredDrivers + ", Assigned: " + assignedDrivers;
+        }
     }
 
-    public boolean assignAllDriver(LocalDate date) {
 
+
+    public void assignDriver(LocalDate date, int id) {
+  //TODO
     }
+
+    public void assignAllDriver(LocalDate date) {
+//TODO
+    }
+
+
+
     public boolean submitShift(LocalDate date, int id) {
         if (!drivers.containsKey(id)) {
             throw new IllegalArgumentException("Driver with id " + id + " does not exist.");
         }
-        if (!drivers.get(id).isLegalDate(date)) {
-            throw new IllegalArgumentException("The driver cannot work on " + date);
-        }
+//        if (!drivers.get(id).isLegalDate(date)) {
+//            throw new IllegalArgumentException("The driver cannot work on " + date);
+//        }
 
         if (date2driversSubmission.containsKey(date) && date2driversSubmission.get(date).containsKey(drivers.get(id))) {
             throw new IllegalArgumentException("Driver with id " + id + " has already submitted for " + date);
