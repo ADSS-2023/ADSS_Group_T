@@ -9,6 +9,8 @@ public class LogisticCenter extends Site {
     private LinkedHashMap<Product, Integer> productsInStock;
     public LogisticCenter() {
         super("Main address","0000000000","logictic center manager", 0,0);
+        this.trucks = new LinkedHashMap<>();
+        this.productsInStock = new LinkedHashMap<>();
     }
 
     public boolean addTruck(int licenseNumber, String model, int weight, int maxWeight, int coolingLevel) {
