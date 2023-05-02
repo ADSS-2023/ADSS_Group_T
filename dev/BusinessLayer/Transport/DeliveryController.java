@@ -37,7 +37,9 @@ public class DeliveryController {
 
 
 
-    public DeliveryController(LogisticCenterController logisticCenterController, SupplierController supplierController, BranchController branchController,DriverController driverController) {
+    public DeliveryController(LogisticCenterController logisticCenterController, SupplierController supplierController,
+                              BranchController branchController,DriverController driverController, ShiftController shiftController) {
+
         this.deliveries = new LinkedHashMap<>();
         this.date2trucks = new LinkedHashMap<>();
         this.date2deliveries = new LinkedHashMap<>();
@@ -46,6 +48,7 @@ public class DeliveryController {
         this.driverController = driverController;
         this.supplierController = supplierController;;
         this.logisticCenterController = logisticCenterController;
+        this.shiftController = shiftController;
     }
     public void initLogisticCenterController (LogisticCenterController lcC){
         this.logisticCenterController = lcC;
@@ -67,6 +70,7 @@ public class DeliveryController {
         }
         return suppliers;
     }
+
     /**
      * handle the request for a new delivery
      * <p>
@@ -76,78 +80,6 @@ public class DeliveryController {
      *
      * @return map of the suppliers products that have not been schedule for delivery due to lack of drivers/trucks in that date
      */
-//    public LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> orderDelivery(String branchString, LinkedHashMap<String, LinkedHashMap<String, Integer>> suppliersString,
-//                                                                                  String requiredDateString) {
-//        Branch branch = this.branchController.getBranch(branchString);
-//        LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> suppliers = getSuppliersAnsProducts(suppliersString);//convert the string
-//
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-//        LocalDate requiredDate = LocalDate.parse(requiredDateString, formatter);
-//
-//
-//        if (date2deliveries.containsKey(requiredDate)) {          //there is delivery in this date
-//            for (Delivery d : date2deliveries.get(requiredDate)) {     //the delivery is to the required date
-//                if (branch.getShippingArea() == d.getShippingArea()) {        //the delivery is to the required branch
-//                    if (!d.getUnHandledBranches().containsKey(branch)) {
-//                        d.addBranch(branch, filesCounter);
-//                        filesCounter++;
-//                    }
-//                    ArrayList<Supplier> suppliersTmp = new ArrayList<>(suppliers.keySet());
-//                    for (Supplier supplier : suppliersTmp) {
-//                        Set<Product> productsTmp = new LinkedHashSet<>(suppliers.get(supplier).keySet());
-//                        for (Product p : productsTmp) {
-//                            if(p.getCoolingLevel() == logisticCenterController.getTruck(d.getTruckNumber()).getCoolingLevel()) {
-//                                d.addProductToSupplier(supplier, p, suppliers.get(supplier).get(p));
-//                                suppliers.get(supplier).remove(p);
-//                            }
-//                            d.addSupplier(supplier, filesCounter);
-//                        }
-//                        if (suppliers.get(supplier).isEmpty())   //all the suppliers products scheduled
-//                            suppliers.remove(supplier);
-//                    }
-//                }
-//            }
-//        }
-//        //TODO: create new driver request from HR manager
-//        if (!suppliers.isEmpty()) {   //open new delivery
-//            Set<CoolingLevel> newDeliveriesCoolingLevels = countCoolingOptions(suppliers);
-//            for (CoolingLevel coolingLevel : newDeliveriesCoolingLevels) {
-//                if (!date2deliveries.containsKey(requiredDate))
-//                    date2deliveries.put(requiredDate, new ArrayList<>());
-//                Truck t = scheduleTruck(requiredDate, coolingLevel);
-//                if (t == null)       //in case there is no truck available for this delivery
-//                    continue;
-////
-//                Delivery d = new Delivery(deliveryCounter, requiredDate, LocalTime.NOON, t.getWeight(), new LinkedHashMap<>(),
-//                        new LinkedHashMap<>(), null, t.getLicenseNumber(), branch.getShippingArea());
-//                deliveryCounter++;
-//                deliveries.put(d.getId(), d);
-//                date2deliveries.get(requiredDate).add(d);
-//                //add supply to the new delivery
-//                ArrayList<Supplier> suppliersTmp = new ArrayList<>(suppliers.keySet());
-//                for (Supplier supplier : suppliersTmp) {
-//
-//                    Set<Product> productsTmp = new LinkedHashSet<>(suppliers.get(supplier).keySet());
-//                    for (Product p : productsTmp) {
-//                        if (p.getCoolingLevel() == coolingLevel) {
-//                            if (d.getSource() == null)
-//                                d.setSource(supplier);
-//                            if (!d.getUnHandledSuppliers().containsKey(supplier))
-//                                d.addSupplier(supplier, filesCounter++);
-//                            d.addProductToSupplier(supplier, p, suppliers.get(supplier).get(p));
-//                            suppliers.get(supplier).remove(p);
-//                        }
-//                        d.setTruckWeight(d.getTruckWeight());
-//                        if (suppliers.get(supplier).isEmpty())   //all the suppliers products scheduled
-//                            suppliers.remove(supplier);
-//                    }
-//                }
-//            }
-//            //if (!suppliers.isEmpty())
-//                return suppliers;
-//        }
-//        return null;
-//    }
     public LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> orderDelivery(String branchString, LinkedHashMap<String, LinkedHashMap<String, Integer>> suppliersString,
                                                                                   String requiredDateString) {
         Branch branch = this.branchController.getBranch(branchString);
@@ -185,6 +117,7 @@ public class DeliveryController {
 
                 Delivery delivery = new Delivery(deliveryCounter++, requiredDate, LocalTime.NOON, truck.getWeight(), new LinkedHashMap<>(),
                         new LinkedHashMap<>(), null, truck.getLicenseNumber(), branch.getShippingArea());
+                shiftController.addRequirements();
                 delivery.addBranch(branch, filesCounter++);
                 deliveries.put(delivery.getId(), delivery);
                 date2deliveries.get(requiredDate).add(delivery);
@@ -279,6 +212,7 @@ public class DeliveryController {
      * @return List of the delivery ids that scheduled for the new day and have overweight problem
      */
     public ArrayList<Integer> skipDay() {
+        scheduleDriversForTomorow();
         this.currDate = this.currDate.plusDays(1);
         if (date2deliveries.get(currDate) == null || date2deliveries.get(currDate).isEmpty())
             return null;
@@ -287,6 +221,11 @@ public class DeliveryController {
             executeDelivery(d);
         }
         return null;
+    }
+
+    private void scheduleDriversForTomorow() {
+        ArrayList<Driver> drivers = driverController.getDrivers();
+        ArrayList<Delivery> deliverysF = date2deliveries.get(this.currDate.plusDays(1));
     }
 
 
