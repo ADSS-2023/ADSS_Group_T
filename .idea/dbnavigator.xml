@@ -28,9 +28,10 @@
     <loaded-nodes />
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
-    <connection id="627b50e7-bd92-4ceb-bf75-66cc7db27115">
+
+    <connection id="aed7569d-309f-434e-89b3-679209d2b10f">
       <console name="Connection" type="STANDARD" schema="" session="Main" />
-      <console name="HR_T" type="STANDARD" schema="main" session="Main" />
+
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseEditorStateManager">
@@ -39,15 +40,15 @@
   <component name="DBNavigator.Project.DatabaseFileManager">
     <open-files />
   </component>
-  <component name="DBNavigator.Project.DatabaseSessionManager">
-    <connection id="627b50e7-bd92-4ceb-bf75-66cc7db27115" />
-  </component>
+
   <component name="DBNavigator.Project.DatasetFilterManager">
-    <filter-actions connection-id="627b50e7-bd92-4ceb-bf75-66cc7db27115" dataset="main.BranchToShift" active-filter-id="" />
-    <filter-actions connection-id="627b50e7-bd92-4ceb-bf75-66cc7db27115" dataset="main.DeliveryToBranches" active-filter-id="" />
-    <filter-actions connection-id="627b50e7-bd92-4ceb-bf75-66cc7db27115" dataset="main.DateToTruck" active-filter-id="EMPTY_FILTER" />
-    <filter-actions connection-id="627b50e7-bd92-4ceb-bf75-66cc7db27115" dataset="main.BranchToEmployee" active-filter-id="EMPTY_FILTER" />
-    <filter-actions connection-id="627b50e7-bd92-4ceb-bf75-66cc7db27115" dataset="main.Branch" active-filter-id="EMPTY_FILTER" />
+    <filter-actions connection-id="aed7569d-309f-434e-89b3-679209d2b10f" dataset="main.BranchToShift" active-filter-id="" />
+    <filter-actions connection-id="aed7569d-309f-434e-89b3-679209d2b10f" dataset="main.DeliveryToBranches" active-filter-id="EMPTY_FILTER" />
+    <filter-actions connection-id="aed7569d-309f-434e-89b3-679209d2b10f" dataset="main.Delivery" active-filter-id="EMPTY_FILTER" />
+    <filter-actions connection-id="aed7569d-309f-434e-89b3-679209d2b10f" dataset="main.Constraint" active-filter-id="" />
+    <filter-actions connection-id="aed7569d-309f-434e-89b3-679209d2b10f" dataset="main.BranchToEmployee" active-filter-id="EMPTY_FILTER" />
+    <filter-actions connection-id="aed7569d-309f-434e-89b3-679209d2b10f" dataset="main.Branch" active-filter-id="EMPTY_FILTER" />
+
   </component>
   <component name="DBNavigator.Project.ExecutionManager">
     <retain-sticky-names value="false" />
@@ -69,7 +70,9 @@
   </component>
   <component name="DBNavigator.Project.Settings">
     <connections>
-      <connection id="627b50e7-bd92-4ceb-bf75-66cc7db27115" active="true" signed="true">
+
+      <connection id="aed7569d-309f-434e-89b3-679209d2b10f" active="true" signed="true">
+
         <database>
           <name value="HR_T" />
           <description value="" />
@@ -84,7 +87,9 @@
           <port value="" />
           <database value="" />
           <files>
-            <file path="C:\Users\noams\IdeaProjects\ADSS_Group_T\dev\DataLayer\HR_Transport_DB.db" schema="main" />
+
+            <file path="$PROJECT_DIR$/dev/DataLayer/HR_Transport_DB.db" schema="main" />
+
           </files>
           <type value="NONE" />
           <user value="" />

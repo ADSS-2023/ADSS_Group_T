@@ -41,6 +41,8 @@ public class TransportJsonConvert {
 
 
     public  String suppliersAndProductsToString (LinkedHashMap<Supplier,File> suppliersAndProductsToString) {
+        if (suppliersAndProductsToString == null)
+            return "all good";
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<Supplier, File> entry : suppliersAndProductsToString.entrySet()) {
             Supplier supplier = entry.getKey();

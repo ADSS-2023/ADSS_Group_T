@@ -46,6 +46,10 @@ public class ServiceFactory {
         deliveryService = new DeliveryService(deliveryController);
 
 
+
+    }
+    public void callbackEnterWeight(EnterWeightInterface enterWeightInterface){
+        deliveryService.setEnterWeightInterface(enterWeightInterface);
     }
 
     public ShiftController getShiftController() {
