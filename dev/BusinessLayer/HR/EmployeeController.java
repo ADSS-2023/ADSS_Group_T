@@ -37,17 +37,12 @@ public class EmployeeController {
 }
 
 
-    public String addRestriction(int id, int branch, LocalDate date, boolean isMorning) {
+    public String addRestriction(int id, String branch, LocalDate date, boolean isMorning) {
         return employeesMapper.get(id).addRestriction(branch, date, isMorning);
     }
 
-    public String getListOfSubmittedConstraints(int Id) {
-        return employeesMapper.get(Id).getListOfSubmittedConstraints();
-    }
 
-    public String getListOfAssignedShifts(int Id) {
-        return employeesMapper.get(Id).getListOfAssignedShifts();
-    }
+
 
     public void addQualification(int Id,  String position) {
        employeesMapper.get(Id).addQualification(position);
@@ -75,9 +70,7 @@ public class EmployeeController {
         }
     }
 
-    public void setEmployeeAsShiftManager(int id) {
-        employeesMapper.get(id).setShiftManager(true);
-    }
+
     public void deleteEmployee(int emploeeyId){
         if (! employeesMapper.containsKey(emploeeyId))
             throw new NoSuchElementException("employee Id not exist");

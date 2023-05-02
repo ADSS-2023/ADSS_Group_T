@@ -5,7 +5,7 @@ import UtilSuper.PositionType;
 import java.time.LocalDate;
 
 public class Constraint {
-    private int branch;
+    private String branch;
 
     private int employeeId;
     private LocalDate date;
@@ -13,7 +13,7 @@ public class Constraint {
     private PositionType assignedPosition; // also indicates if the employee assigned, null mean that not assigned yet.
 
 
-    public Constraint(int branch, int employeeId, LocalDate date, boolean shiftType) {
+    public Constraint(String branch, int employeeId, LocalDate date, boolean shiftType) {
         this.branch = branch;
         this.employeeId = employeeId;
         this.date = date;
@@ -22,7 +22,7 @@ public class Constraint {
     }
 
 
-    public int getBranch() {
+    public String getBranch() {
         return branch;
     }
 

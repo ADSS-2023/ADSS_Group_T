@@ -1,10 +1,15 @@
 package BusinessLayer.Transport;
 
+import BusinessLayer.HR.Constraint;
 import BusinessLayer.User;
 import UtilSuper.PositionType;
 import UtilSuper.UserType;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Driver extends User {
     private int id;
@@ -12,15 +17,25 @@ public class Driver extends User {
     private LicenseType licenseType;
     private CoolingLevel coolingLevel;
 
-    public Driver(int id, String employeeName, String bankAccount, List<PositionType> qualifiedPositions, String description, int salary, String joiningDay, String password, UserType userType, LicenseType licenseType, CoolingLevel coolingLevel) {
-        super(id, employeeName, bankAccount, qualifiedPositions, description, salary, joiningDay, password, userType);
+//    private Map<LocalDate, boolean > submittedShifts; //
+    private List<LocalDate>  restrictions; //
+
+    public Driver(int id, String employeeName, String bankAccount, List<PositionType> qualifiedPositions, String description, int salary, LocalDate joiningDay, String password, UserType userType, LicenseType licenseType, CoolingLevel coolingLevel) {
+        super(id, employeeName, bankAccount,  description, salary, joiningDay, password, userType);
         this.licenseType = licenseType;
         this.coolingLevel = coolingLevel;
+        restrictions = new ArrayList<>();
     }
 
 
 
+    public void addRestriction(LocalDate date) {
+        restrictions.add(date);
+    }
 
+    public boolean isLegalDate(LocalDate date) {
+        return !restrictions.contains(date);
+    }
 
 
     public CoolingLevel getCoolingLevel() {

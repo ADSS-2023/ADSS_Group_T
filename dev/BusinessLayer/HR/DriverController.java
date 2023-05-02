@@ -4,15 +4,65 @@ import BusinessLayer.Transport.Driver;
 import UtilSuper.PositionType;
 import UtilSuper.UserType;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 public class DriverController {
     private LinkedHashMap<Integer, Driver> drivers;
+
+    private LinkedHashMap<LocalDate, Integer> driversRequirements; // date, amount
+    private LinkedHashMap<LocalDate, HashMap<Driver, Boolean>> date2driversSubmission; // date, driver. isAssigned
+
+
     public DriverController() {
         drivers = new LinkedHashMap<Integer, Driver>();
     }
 
+    public boolean assignDriver(LocalDate date, int id) {
+
+    }
+
+    public boolean assignAllDriver(LocalDate date) {
+
+    }
+    public boolean submitShift(LocalDate date, int id) {
+        if (!drivers.containsKey(id)) {
+            throw new IllegalArgumentException("Driver with id " + id + " does not exist.");
+        }
+        if (!drivers.get(id).isLegalDate(date)) {
+            throw new IllegalArgumentException("The driver cannot work on " + date);
+        }
+
+        if (date2driversSubmission.containsKey(date) && date2driversSubmission.get(date).containsKey(drivers.get(id))) {
+            throw new IllegalArgumentException("Driver with id " + id + " has already submitted for " + date);
+        }
+
+        if (!date2driversSubmission.containsKey(date)) {
+            date2driversSubmission.put(date, new HashMap<>());
+        }
+        date2driversSubmission.get(date).put(drivers.get(id), false);
+        return true;
+    }
+
+
+
+
+
+    public boolean addDriverRequirement(LocalDate localDate) {
+        if (driversRequirements.containsKey(localDate)) {
+            int currentRequirement = driversRequirements.get(localDate);
+            driversRequirements.put(localDate, currentRequirement + 1);
+        } else {
+            driversRequirements.put(localDate, 1);
+        }
+        return true;
+    }
+
+
+    // TODO- make submit Shift to driver and assign shift
 
     /**
      * add a new driver to the drivers map
@@ -31,7 +81,7 @@ public class DriverController {
      * @return true if the driver added successfully , and false otherwise
      */
     public boolean addDriver(int id, String employeeName, String bankAccount, List<PositionType> qualifiedPositions,
-                             String description, int salary, String joiningDay, String password, UserType userType,
+                             String description, int salary, LocalDate joiningDay, String password, UserType userType,
                              Driver.LicenseType licenseType, Driver.CoolingLevel coolingLevel) {
         if (drivers.containsKey(id))
             throw new IllegalArgumentException("Driver already exists.");

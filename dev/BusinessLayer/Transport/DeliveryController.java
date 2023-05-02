@@ -21,7 +21,7 @@ public class DeliveryController {
     private LinkedHashMap<Integer, Delivery> deliveries;
 
     private LinkedHashMap<LocalDate, ArrayList<Truck>> date2trucks;
-    private LinkedHashMap<LocalDate, ArrayList<Driver>> date2drivers;
+
     private LinkedHashMap<LocalDate, ArrayList<Delivery>> date2deliveries;
 
 
@@ -40,7 +40,6 @@ public class DeliveryController {
     public DeliveryController(LogisticCenterController logisticCenterController, SupplierController supplierController, BranchController branchController,DriverController driverController) {
         this.deliveries = new LinkedHashMap<>();
         this.date2trucks = new LinkedHashMap<>();
-        this.date2drivers = new LinkedHashMap<>();
         this.date2deliveries = new LinkedHashMap<>();
         this.currDate = LocalDate.of(2023,1,1);
         this.branchController = branchController;
