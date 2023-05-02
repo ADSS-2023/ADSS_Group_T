@@ -51,7 +51,7 @@ public class MainPresentation {
         if (choice == 1)
             loginWindow();
         if (choice == 2) {
-            HR_Initialization.init_data(shiftService,employeeService);
+            //HR_Initialization.init_data(shiftService,employeeService);
             LogisticCenter_init.init(logisticCenterService);
             Branch_init.init(branchService);
             Suppliers_init.init(supplierService);
@@ -64,6 +64,9 @@ public class MainPresentation {
      * the main window of the system
      */
     public void loginWindow() {
+        //TODO remove shortCut:
+        this.transportManagerPresentation.start();
+
         Scanner scanner = new Scanner(System.in);
         System.out.println(" ");
         System.out.println("------ login window -------");

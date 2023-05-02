@@ -24,6 +24,6 @@ public class SupplierService {
     }
 
     public void addProducts(String supplierAddress, LinkedHashMap<String, Integer> productMap1) {
-
+        supplierController.addProductsToSupplier(supplierAddress,productMap1);
     }
 }

@@ -36,7 +36,7 @@ public class Presentaition {
                         repeat_2 = false;
                         System.out.println("" +
                                 "manger menu - choose action number" +
-                                " \n 1.approve shift" +
+                                " \n 1.manage shift" +
                                 " \n 2.add restriction to employee" +
                                 " \n 3.add employee qualification " +
                                 " \n 4.show shift history" +
