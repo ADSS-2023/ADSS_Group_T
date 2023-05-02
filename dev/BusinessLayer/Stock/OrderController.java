@@ -31,7 +31,7 @@ public class OrderController {
             list_to_order.addLast(new ItemToOrder(inventory.get_item_by_id(item_id).get_name(),
                     inventory.get_item_by_id(item_id).manufacturer_name, quantity, null, -1,-1));
         }
-        order_service.createSpecialOrder(list_to_order,isUrgent);
+        order_service.createRegularOrder(list_to_order);
     }
 
     /**
@@ -39,7 +39,7 @@ public class OrderController {
      * @param items_quantity a map that maps item id to the desired amount.
      * @param isUrgent boolean flag to indicate whether the order priority is arrival.
      */
-    public void createSpecialOrder(Map<Integer, Integer> items_quantity,boolean isUrgent){
+    public void createSpecialOrder(Map<Integer, Integer> items_quantity,boolean isUrgent) throws Exception {
         LinkedList<ItemToOrder> list_to_order = new LinkedList<>();
         for (Map.Entry<Integer, Integer> entry : items_quantity.entrySet()) {
             Integer item_id = entry.getKey();
@@ -47,7 +47,7 @@ public class OrderController {
             list_to_order.addLast(new ItemToOrder(inventory.get_item_by_id(item_id).get_name(),
                     inventory.get_item_by_id(item_id).manufacturer_name, quantity, null, -1,-1));
         }
-        //call to supplier service with list_to_order
+        order_service.createSpecialOrder(list_to_order,isUrgent);
     }
 
     /**
@@ -59,8 +59,8 @@ public class OrderController {
      */
     public String makeAutomaticallyOrder(DayOfWeek curDay) throws Exception {
         List<Item> cur_shortage_list = inventory.getShortageList();
-        //List<ItemToOrder> curDay_list1 = order_service.getRegularOrder(curDay);
-        //List<ItemToOrder> curDay_list2 = order_service.getSpecialOrder(curDay);
+        List<ItemToOrder> curDay_list1 = order_service.getRegularOrder(curDay);
+        List<ItemToOrder> curDay_list2 = order_service.getSpecialOrder(curDay);
         //figure out what should do here - if connect the 2 lists .
         List<ItemToOrder> curDay_list = new LinkedList<>(); // NOT CORRECT
         Map<Integer , Integer> item_to_order_map = new HashMap<>();
