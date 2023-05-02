@@ -3,7 +3,6 @@ package BusinessLayer;
 import BusinessLayer.HR.DriverController;
 import BusinessLayer.HR.Employee;
 import BusinessLayer.HR.EmployeeController;
-import BusinessLayer.HR.HRManager;
 import BusinessLayer.Transport.Driver;
 import BusinessLayer.Transport.TransportManager;
 import UtilSuper.PositionType;
@@ -18,31 +17,34 @@ public class UserController {
     //driverController
     //private HRManager hrManager;
 
+    private User Hr;
     private DriverController driverController;
     private TransportManager transportManager;
 
 
-    public UserController(EmployeeController employeeController, HRManager hrManager, TransportManager transportManager, DriverController driverController) {
+    public UserController(EmployeeController employeeController, TransportManager transportManager, DriverController driverController, int HRid) {
 
     }
 
     //TODO-init the user controller
-    public void initUserController(EmployeeController employeeController, HRManager hrManager, TransportManager transportManager, DriverController driverController) {
+    public void initUserController(EmployeeController employeeController, TransportManager transportManager, DriverController driverController, User Hr) {
+        this.Hr = Hr;
         this.employeeController =employeeController;
         this.driverController = driverController;
-        this.hrManager = hrManager;
         this.transportManager = transportManager;
     }
 
     public User login (int id, String password) throws Exception{
-        if (hrManager.getId() == id) {
-            if (hrManager.getPassword().equals(password))
-                return hrManager;
+
+
+        if (Hr.getId() == id){
+            if (Hr.getPassword().equals(password))
+                return Hr;
             else
                 throw new IllegalArgumentException("wrong password");
         }
 
-        else if (transportManager.getId() == id){
+        if (transportManager.getId() == id){
             if (transportManager.getPassword().equals(password))
                 return transportManager;
             else
