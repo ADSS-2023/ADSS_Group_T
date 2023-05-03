@@ -3,7 +3,7 @@ package ServiceLayer.Transport;
 import BusinessLayer.Transport.BranchController;
 
 public class BranchService {
-    private BranchController branchController;
+    private BranchControllerD branchController;
     public BranchService(BranchController branchController) {
         this.branchController = branchController;
     }
