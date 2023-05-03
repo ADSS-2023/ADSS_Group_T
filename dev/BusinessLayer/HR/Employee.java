@@ -48,7 +48,7 @@ public class Employee extends User {
      * @param shiftType  The type of the shift (true for morning, false for evening).
      * @throws IllegalArgumentException If the shift cannot be submitted due to a restriction or existing shift.
      */
-    public void addSubmittedShift(String branch, int employeeId, LocalDate date, boolean shiftType) {
+    public void addSubmittedShift(String branch,  LocalDate date, boolean shiftType) {
         // Check if the shift is restricted based on the branch and date
         if (shiftsRestriction.containsKey(branch) && shiftsRestriction.get(branch).containsKey(date)
                 && shiftsRestriction.get(branch).get(date).contains(shiftType)) {
@@ -61,7 +61,7 @@ public class Employee extends User {
         }
         // Add the new constraint to the list of submitted shifts
         else {
-            Constraint cons = new Constraint(branch, employeeId, date, shiftType);
+            Constraint cons = new Constraint(branch, id, date, shiftType);
             List<Constraint> constraints = submittedShifts.get(date);
             if (constraints == null) {
                 constraints = new ArrayList<>();

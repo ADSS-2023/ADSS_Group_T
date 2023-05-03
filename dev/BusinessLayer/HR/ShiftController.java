@@ -61,7 +61,7 @@ public class ShiftController {
 
     public String submitShiftForEmployee(String branch, int id, LocalDate date, boolean shiftType) throws Exception {
         Employee employee =    employeesMapper.get(id);
-        employee.addSubmittedShift(branch, id, date, shiftType);
+        employee.addSubmittedShift(branch, date, shiftType);
         HashMap<LocalDate, ArrayList<Shift>> branchShifts = shifts.get(branch);
         Shift shift = shiftType ?  branchShifts.get(date).get(0) : branchShifts.get(date).get(1);
         return shift.submitShiftForEmployee( employeesMapper.get(id),  employee.getListOfQualifiedPositions());

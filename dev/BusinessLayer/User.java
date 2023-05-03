@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public abstract class  User {
-    private int id;
+    protected int id;
     private String employeeName;
     private String bankAccount;
 
