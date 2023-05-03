@@ -5,7 +5,7 @@ import DataLayer.Util.DAO;
 
 import java.util.List;
 
-public class LogisticDTO {
+public class LogisticDAO {
     public class LogisticCenterDAO extends DAO {
 
         public LogisticCenterDAO() {
