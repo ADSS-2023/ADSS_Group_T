@@ -1,16 +1,11 @@
-package BusinessLayer;
+package BusinessLayer.HR.User;
 
 import BusinessLayer.HR.DriverController;
 import BusinessLayer.HR.Employee;
 import BusinessLayer.HR.EmployeeController;
-import BusinessLayer.Transport.Driver;
-import BusinessLayer.Transport.TransportManager;
-import UtilSuper.PositionType;
-import UtilSuper.UserType;
+import BusinessLayer.HR.Driver;
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
 
 public class UserController {
     private EmployeeController employeeController;

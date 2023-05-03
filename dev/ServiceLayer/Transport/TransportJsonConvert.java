@@ -8,9 +8,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class TransportJsonConvert {
-    public TransportJsonConvert(){
+    public TransportJsonConvert() {
 
     }
+
     public String deliveryToString(Delivery delivery) {
         StringBuilder sb = new StringBuilder();
         // Append delivery details to the string builder
@@ -20,9 +21,8 @@ public class TransportJsonConvert {
         sb.append(suppliersAndProductsToString(delivery.getSuppliers()));
 
 
-
         //sb.append("Source: ").append(delivery.getSource().getAddress()).append("\n");
-        sb.append("Driver Name: ").append(delivery.getDriverName()).append("\n");
+        sb.append("Driver Name: ").append(delivery.getDriverID()).append("\n");
         sb.append("Truck Number: ").append(delivery.getTruckNumber()).append("\n");
         sb.append("Shipping Area: ").append(delivery.getShippingArea()).append("\n");
         // Return the generated string
@@ -40,7 +40,7 @@ public class TransportJsonConvert {
     }
 
 
-    public  String suppliersAndProductsToString (LinkedHashMap<Supplier,File> suppliersAndProductsToString) {
+    public String suppliersAndProductsToString(LinkedHashMap<Supplier, File> suppliersAndProductsToString) {
         if (suppliersAndProductsToString == null)
             return "all good";
         StringBuilder sb = new StringBuilder();
@@ -74,12 +74,13 @@ public class TransportJsonConvert {
 
     public String branchesToString(Collection<Branch> allBranches) {
         StringBuilder sb = new StringBuilder();
-        for (Branch branch: allBranches) {
+        for (Branch branch : allBranches) {
             sb.append(branch.getAddress()).append("\n");
         }
         return sb.toString();
     }
-    public String branchToString(Branch branch){
+
+    public String branchToString(Branch branch) {
         StringBuilder sb = new StringBuilder();
         sb.append(branch.getAddress()).append("\n");
         sb.append(branch.getContactName()).append("\n");
@@ -90,17 +91,27 @@ public class TransportJsonConvert {
 
     public String getAllSuppliersAddress(Collection<Supplier> allSuppliers) {
         StringBuilder sb = new StringBuilder();
-        for (Supplier supplier: allSuppliers) {
+        for (Supplier supplier : allSuppliers) {
             sb.append(supplier.getAddress()).append("\n");
         }
         return sb.toString();
     }
 
-    public String productsToString(Collection<Product> products){
+    public String productsToString(Collection<Product> products) {
         StringBuilder sb = new StringBuilder();
-        for (Product product: products) {
+        for (Product product : products) {
             sb.append(product.getName()).append("\n");
         }
         return sb.toString();
     }
+
+
+    public String deliveryListToString(Collection<Delivery> deliveryList) {
+        StringBuilder sb = new StringBuilder();
+        for (Delivery delivery : deliveryList) {
+            sb.append(deliveryToString(delivery)).append("\n\n");
+        }
+        return sb.toString();
+    }
+
 }

@@ -4,7 +4,7 @@ package ServiceLayer.HR;
 import BusinessLayer.HR.EmployeeController;
 import BusinessLayer.HR.Shift;
 import BusinessLayer.HR.ShiftController;
-import UtilSuper.PositionType;
+import BusinessLayer.HR.User.PositionType;
 
 import java.util.ArrayList;
 import java.util.HashMap;

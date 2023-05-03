@@ -1,16 +1,17 @@
 package BusinessLayer.HR;
 
-import BusinessLayer.Transport.Driver;
-import UtilSuper.PositionType;
-import UtilSuper.UserType;
+import UtilSuper.Pair;
+import BusinessLayer.HR.User.PositionType;
+import BusinessLayer.HR.User.UserType;
+import BusinessLayer.HR.Driver.CoolingLevel;
+import BusinessLayer.HR.Driver.LicenseType;
 
 import java.time.LocalDate;
 import java.util.*;
 
 public class DriverController {
     private LinkedHashMap<Integer, Driver> drivers;
-
-    private LinkedHashMap<LocalDate, Integer> driversRequirements; // date, amount
+    private LinkedHashMap<LocalDate, ArrayList<Pair<Driver.LicenseType, Driver.CoolingLevel>>> driversRequirements; // date, amount
     private LinkedHashMap<LocalDate, HashMap<Driver, Boolean>> date2driversSubmission; // date, driver. isAssigned
 
 
@@ -39,12 +40,17 @@ public class DriverController {
 
 
     public void assignDriver(LocalDate date, int id) {
-  //TODO
+        if(this.date2driversSubmission.get(date).containsKey(drivers.get(id)))
+            this.date2driversSubmission.get(date).replace(drivers.get(id),false,true);
     }
 
     public void assignAllDriver(LocalDate date) {
-//TODO
+        HashMap<Driver, Boolean> driversForDate = date2driversSubmission.get(date);
+        for (Driver driver: driversForDate.keySet()) {
+                this.assignDriver(date,driver.getId());
+        }
     }
+
 
 
 
@@ -71,15 +77,6 @@ public class DriverController {
 
 
 
-    public boolean addDriverRequirement(LocalDate localDate) {
-        if (driversRequirements.containsKey(localDate)) {
-            int currentRequirement = driversRequirements.get(localDate);
-            driversRequirements.put(localDate, currentRequirement + 1);
-        } else {
-            driversRequirements.put(localDate, 1);
-        }
-        return true;
-    }
 
 
     // TODO- make submit Shift to driver and assign shift
@@ -142,4 +139,37 @@ public class DriverController {
         drivers.remove(id);
         return true;
     }
+
+    public ArrayList<Driver> getDriversByDate(LocalDate tomorrow) {
+        ArrayList<Driver> drivers = new ArrayList<>();
+        if (date2driversSubmission.containsKey(tomorrow)) {
+            HashMap<Driver, Boolean> driverStatusMap = date2driversSubmission.get(tomorrow);
+            for (Map.Entry<Driver, Boolean> entry : driverStatusMap.entrySet()) {
+                Driver driver = entry.getKey();
+                Boolean isAssigned = entry.getValue();
+                if (!isAssigned) {
+                    drivers.add(driver);
+                }
+            }
+        }
+        return drivers;
+    }
+
+    public void addDirverRequirement(LocalDate requiredDate, Driver.LicenseType licenseType, Driver.CoolingLevel coolingLevel) {
+        Pair<Driver.LicenseType, Driver.CoolingLevel> pair = new Pair(licenseType,coolingLevel);
+        if(this.driversRequirements.containsKey(requiredDate))
+            driversRequirements.get(requiredDate).add(pair);
+        else{
+            ArrayList<Pair<Driver.LicenseType, Driver.CoolingLevel>> newList = new ArrayList< Pair<LicenseType,CoolingLevel>>();
+            newList.add(pair);
+            this.driversRequirements.put(requiredDate, newList);
+        }
+    }
+    public ArrayList<Pair<Driver.LicenseType, Driver.CoolingLevel>> getDirverRequirement(LocalDate requiredDate) {
+        if(this.driversRequirements.containsKey(requiredDate))
+            return driversRequirements.get(requiredDate);
+        else
+            return null;
+    }
+
 }

@@ -1,7 +1,5 @@
 package BusinessLayer.HR;
 
-import UtilSuper.PositionType;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -76,11 +74,11 @@ public class ShiftController {
         return  shift.assignEmployeeForShift(positionType, employeesMapper.get(id));
     }
 
-    public String assignAll(String branch, int id, LocalDate date, boolean shiftType) {
+    public String assignAll(String branch,  LocalDate date, boolean shiftType) {
         HashMap<LocalDate, ArrayList<Shift>>  shiftsBranch =  shifts.get(branch);
         Shift shift = shiftType ?  shiftsBranch.get(date).get(0) : shiftsBranch.get(date).get(1);
         shift.assignAll();
-        return shift.showShiftStatus();
+        return shift.assignAll();
     }
 
 
@@ -101,5 +99,15 @@ public class ShiftController {
     }
 
 
-
+    //todo from Noam Gilad pls
+    public void addDirverRequirement(LocalDate requiredDate, Driver.LicenseType licenseType, Driver.CoolingLevel coolingLevel) {
+        driverController.addDirverRequirement(requiredDate,licenseType,coolingLevel);
+    }
+    //todo from Noam Gilad pls
+    public void addStoreKeeperRequirement(LocalDate requiredDate, String address) {
+    }
+    //todo from Noam Gilad pls
+    public ArrayList<String> getBranchesWithoutStoreKeeper(LocalDate tomorrow) {
+        return null;
+    }
 }

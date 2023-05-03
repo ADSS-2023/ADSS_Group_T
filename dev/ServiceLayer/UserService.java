@@ -1,7 +1,6 @@
 package ServiceLayer;
 
-import BusinessLayer.HR.EmployeeController;
-import BusinessLayer.UserController;
+import BusinessLayer.HR.User.UserController;
 import ServiceLayer.HR.Response;
 
 public class UserService {

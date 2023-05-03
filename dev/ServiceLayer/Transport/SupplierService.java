@@ -1,29 +1,54 @@
 package ServiceLayer.Transport;
 
-import BusinessLayer.Transport.Supplier;
 import BusinessLayer.Transport.SupplierController;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 public class SupplierService {
-    private SupplierController supplierController;
-    public SupplierService(SupplierController supplierController){
+    private final SupplierController supplierController;
+
+    public SupplierService(SupplierController supplierController) {
         this.supplierController = supplierController;
     }
+
     public String getSupplierProducts(String supplier) {
-        return (supplierController.getSupplierProducts(supplier));
+        try {
+            return (supplierController.getSupplierProducts(supplier));
+        } catch (Exception ex) {
+            return ex.toString();
+        }
+    }
+
+    public String getSupplierAddress(String supplier) {
+        try {
+            return (supplierController.getSupplier(supplier).getAddress());
+        } catch (Exception ex) {
+            return ex.toString();
+        }
     }
 
     public String getAllSuppliers() {
-        return supplierController.getAllSuppliers().toString();
+        try {
+            return supplierController.getAllSuppliers().toString();
+        } catch (Exception ex) {
+            return ex.toString();
+        }
     }
-    public void addSupplier(String supplierAddress, String telNumber, String contactName, int x, int y) {
 
-        supplierController.addSupplier(supplierAddress,telNumber,contactName,x,y);
+    public String addSupplier(String supplierAddress, String telNumber, String contactName, int x, int y) {
+        try {
+            return supplierController.addSupplier(supplierAddress, telNumber, contactName, x, y)+" ";
+        } catch (Exception ex) {
+            return ex.toString();
+        }
     }
 
-    public void addProducts(String supplierAddress, LinkedHashMap<String, Integer> productMap1) {
-        supplierController.addProductsToSupplier(supplierAddress,productMap1);
+    public String addProducts(String supplierAddress, LinkedHashMap<String, Integer> productMap1) {
+        try {
+            supplierController.addProductsToSupplier(supplierAddress, productMap1);
+            return "true";
+        } catch (Exception ex) {
+            return ex.toString();
+        }
     }
 }
