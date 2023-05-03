@@ -30,6 +30,16 @@ public class EmployeePresentation {
                 default -> System.out.println("Invalid choice. Please try again.");
             }
         }
+
+
+
+
+
     }
+
+    public String addNewEmployee(int id, String employeeName, String bankAccount, String description, int salary, String joiningDay, String password){return null;}
+
+    public String getListOfSubmittion(int id){
+        return "0";}
 
 }

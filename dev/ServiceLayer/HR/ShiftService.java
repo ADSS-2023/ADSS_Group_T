@@ -12,14 +12,14 @@ public class ShiftService {
         this.shiftController = shiftController;
     }
 
-    public String addShiftRequirements(int branch,  HashMap<String,Integer> howMany , String date , String shiftType){
+    public String addShiftRequirements(String branch,  HashMap<String,Integer> howMany , String date , String shiftType){
         Response res = new Response();
         try
         {
             boolean bool = true;
             if (shiftType.equals("e"))
                 bool = false;
-           shiftController.addRequirements(branch, howMany,date,bool);
+           shiftController.addRequirements(branch, date, bool,  howMany);
         }
         catch (Exception ex){
             return ex.getMessage();
@@ -29,7 +29,9 @@ public class ShiftService {
 
 
 
-    public String ShowShiftStatus(int branch, LocalDate date , String shiftType){
+
+
+    public String ShowShiftStatus(String branch, String date , String shiftType){
         Response res = new Response();
         try
         {
@@ -43,66 +45,43 @@ public class ShiftService {
         return null;
     }
 
-    public String assignEmployeeForShift(int ans_id, String ans_date, String ans_type, String position){
+    public String assignEmployeeForShift(String branch,  int ans_id, String ans_date, String ans_type, String position){
         Response res = new Response();
         try
         {
             boolean bool = true;
             if (ans_type.equals("e"))
                 bool = false;
-            return shiftController.assignEmployeeForShift(ans_id, ans_date, bool, position);
+            return shiftController.assignEmployeeForShift(branch, ans_id, ans_date, bool, position  );
         }
         catch (Exception ex){
         }
         return null;
     }
 
-    public String assignAll(String date, String shiftType) {
-        Response res = new Response();
-        String st = "";
-        try {
-            boolean bool = true;
-            if (shiftType.equals("e"))
-                bool = false;
-            st = shiftController.assignAll(date, bool);
-        } catch (Exception ex) {
-            // handle exception by printing error message
-
-        }
-        finally {
-            return st;
-        }
-
-    }
-
-    public String approveShift(String date , String shiftType){
+    public String assignAll(String branch,  String ans_date, String ans_type){
         Response res = new Response();
         try
         {
             boolean bool = true;
-            if (shiftType.equals("e"))
+            if (ans_type.equals("e"))
                 bool = false;
-            return shiftController.approveShift(date,bool);
+            return shiftController.assignAll(branch,  ans_date, bool);
         }
         catch (Exception ex){
         }
         return null;
     }
 
-    public void approveShiftAnyWay(String date , String shiftType){
-        Response res = new Response();
-        try
-        {
-            boolean bool = true;
-            if (shiftType.equals("e"))
-                bool = false;
-            shiftController.approveShiftAnyWay(date,bool);
-        }
-        catch (Exception ex){
-        }
-    }
 
-    public String addNewSubmittedPositionByEmployee(int id, String date, String type, String temp) {
+
+
+
+
+
+
+
+    public String submitShift(String branch, int id, String date, String type) {
         Response res = new Response();
         try {
             boolean boolType = true;

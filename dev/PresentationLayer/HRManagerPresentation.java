@@ -3,6 +3,7 @@ package PresentationLayer;
 import ServiceLayer.HR.EmployeeService;
 import ServiceLayer.HR.ShiftService;
 
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class HRManagerPresentation {
@@ -37,6 +38,38 @@ public class HRManagerPresentation {
             }
         }
     }
+
+    public String addShiftRequirements(String branch, HashMap<String, Integer> howMany, String date, String shiftType){return null;}
+
+
+
+
+
+        public String ShowShiftStatus(String branch, String date, String shiftType) {return null;}
+
+        public String assignEmployeeForShift(String branch, int ans_id, String ans_date, String ans_type, String position){return null;}
+
+        public String assignAll(String branch, String ans_date, String ans_type){return null;}
+
+
+
+
+        public String addRestrictionToEmployee(int id, String branchId, String date, String type){return null;}
+
+        public String addNewEmployee(int id, String employeeName, String bankAccount, String description, int salary, String joiningDay, String password){return null;}
+
+        public String addNewDriver(int id, String employeeName, String bankAccount, String description, int salary, String joiningDay, String password, String licenseType, int coolingLevel){return null;}
+
+        public String updateEmployeeDetails(int id, String employeeName, String bankAccount, String description, int salary, String joiningDay, String password){return null;}
+
+        public String updateDriverDetails(String bankAccount, String description, int salary, String password, String licenseType, int coolingLevel){return null;}
+
+        public String addQualification(int id, String quali){return null;}
+
+
+
+
+
 
     // option 3
 
