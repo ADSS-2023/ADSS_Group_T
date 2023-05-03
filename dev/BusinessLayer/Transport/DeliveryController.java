@@ -179,7 +179,7 @@ public class DeliveryController {
     }
 
 
-    public LocalDate getCurrDate() {
+    public LocalDate getCurrDateDetails() {
         return currDate;
     }
 
