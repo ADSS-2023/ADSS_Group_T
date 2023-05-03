@@ -1,15 +1,14 @@
 package BusinessLayer.HR;
 
 
-import BusinessLayer.User;
-import UtilSuper.PositionType;
-import UtilSuper.UserType;
+import BusinessLayer.HR.User.User;
+import BusinessLayer.HR.User.PositionType;
+import BusinessLayer.HR.User.UserType;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Employee extends User {
 

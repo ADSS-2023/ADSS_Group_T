@@ -1,65 +1,29 @@
 package ServiceLayer.Transport;
 
-import BusinessLayer.HR.DriverController;
-import ServiceLayer.HR.Response;
-
-
-import BusinessLayer.Transport.*;
-
-import java.util.HashMap;
-import java.util.LinkedHashMap;
+import BusinessLayer.Transport.LogisticCenterController;
 
 public class LogisticCenterService {
-    private LogisticCenterController logisticCenterController;
+    private final LogisticCenterController logisticCenterController;
+    private final TransportJsonConvert transportJsonConvert;
 
-    public LogisticCenterService(LogisticCenterController logisticCenterController){
+    public LogisticCenterService(LogisticCenterController logisticCenterController) {
         this.logisticCenterController = logisticCenterController;
-
-    }
-
-    /**
-     * store products in the logistics center stocks
-     *
-     * @param newSupply - map with the amount for each product required to store
-     */
-    public String storeProducts(LinkedHashMap<Product, Integer> newSupply) {
-        logisticCenterController.storeProducts(newSupply);
-        return "";
-    }
-
-    /**
-     * load products from the stock of the logistics center
-     *
-     * @param requestedSupply - map of the products and amounts required to load
-     * @return map of products and amounts that are not available in the logistics center stock
-     */
-    public String removeProductsFromStock(LinkedHashMap<Product, Integer> requestedSupply) {
-        return logisticCenterController.removeProductsFromStock(requestedSupply).toString();
+        this.transportJsonConvert = new TransportJsonConvert();
     }
 
     public String getProductsInStock() {
-        return logisticCenterController.getProductsInStock().toString();
+        try {
+            return transportJsonConvert.productAndAmountToString(logisticCenterController.getProductsInStock());
+        } catch (Exception ex) {
+            return ex.getMessage();
+        }
     }
 
     public String addTruck(int licenseNumber, String model, int weight, int maxWeight, int coolingLevel) {
-        Response res = new Response();
         try {
-            logisticCenterController.addTruck(licenseNumber, model, weight, maxWeight, coolingLevel);
-            return "good";
+            return logisticCenterController.addTruck(licenseNumber, model, weight, maxWeight, coolingLevel) + " ";
         } catch (Exception ex) {
-            return ex.toString();
+            return ex.getMessage();
         }
     }
-
-    public String removeTruck(int licenseNumber) {
-        Response res = new Response();
-        try {
-            logisticCenterController.removeTruck(licenseNumber);
-            return "good";
-        } catch (Exception ex) {
-            return ex.toString();
-        }
-    }
-
-
 }

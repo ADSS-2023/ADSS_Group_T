@@ -1,19 +1,15 @@
 package BusinessLayer.Transport;
-import BusinessLayer.Transport.Driver.CoolingLevel;
 
 import java.util.LinkedHashMap;
 
 public class Supplier extends Site {
 
 
-
-    private LinkedHashMap<String, Product> produces;
+    private final LinkedHashMap<String, Product> produces;
 
     public Supplier(String address, String telNumber, String contactName, int x, int y) {
         super(address, telNumber, contactName, x, y);
-
         this.produces = new LinkedHashMap<String, Product>();
-
     }
 
     public void addProduct(String productName, int productCoolingLevel) {
@@ -36,13 +32,5 @@ public class Supplier extends Site {
         return produces;
     }
 
-//        public boolean removeProductFromSupplier (Product p){
-//            if (products.contains(p))
-//                return false;
-//            products.remove(p);
-//            return true;
-//
-//        }
-//    }
 }
 

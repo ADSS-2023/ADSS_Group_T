@@ -4,7 +4,7 @@ import BusinessLayer.HR.DriverController;
 import BusinessLayer.HR.EmployeeController;
 import BusinessLayer.HR.ShiftController;
 import BusinessLayer.Transport.*;
-import BusinessLayer.UserController;
+import BusinessLayer.HR.User.UserController;
 import ServiceLayer.HR.EmployeeService;
 import ServiceLayer.HR.ShiftService;
 import ServiceLayer.Transport.*;

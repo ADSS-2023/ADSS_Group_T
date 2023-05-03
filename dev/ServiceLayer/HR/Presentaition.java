@@ -1,7 +1,7 @@
 //package ServiceLayer.HR;
 //
 //import BusinessLayer.HR.EmployeeController;
-//import UtilSuper.PositionType;
+//import BusinessLayer.HR.User.PositionType;
 //
 //import java.util.HashMap;
 //import java.util.Map;

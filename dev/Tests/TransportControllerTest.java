@@ -9,8 +9,8 @@
 //import java.util.Set;
 //import org.junit.Before;
 //import BusinessLayer.Transport.*;
-//import BusinessLayer.Transport.Driver.CoolingLevel;
-//import BusinessLayer.Transport.Driver.LicenseType;
+//import BusinessLayer.HR.Driver.CoolingLevel;
+//import BusinessLayer.HR.Driver.LicenseType;
 //
 //public class TransportControllerTest {
 //

@@ -1,6 +1,6 @@
 package BusinessLayer.HR;
 
-import UtilSuper.PositionType;
+import BusinessLayer.HR.User.PositionType;
 
 import java.time.LocalDate;
 

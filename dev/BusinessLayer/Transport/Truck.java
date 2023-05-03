@@ -1,18 +1,17 @@
 package BusinessLayer.Transport;
 
-import BusinessLayer.Transport.Driver.CoolingLevel;
-import BusinessLayer.Transport.Driver.LicenseType;
+import BusinessLayer.HR.Driver.CoolingLevel;
+import BusinessLayer.HR.Driver.LicenseType;
 
 public class Truck {
-    private int licenseNumber;
-    private String model;
-    private int weight;
-    private int maxWeight;
-    private LicenseType licenseType;
-    private CoolingLevel coolingLevel;
+    private final int licenseNumber;
+    private final String model;
+    private final int weight;
+    private final int maxWeight;
+    private final LicenseType licenseType;
+    private final CoolingLevel coolingLevel;
 
-
-    public Truck(int licenseNumber, String model, int weight, int maxWeight ,int coolingLevel){
+    public Truck(int licenseNumber, String model, int weight, int maxWeight, int coolingLevel) {
         this.licenseNumber = licenseNumber;
         this.model = model;
         this.weight = weight;
@@ -20,7 +19,6 @@ public class Truck {
         this.licenseType = LicenseType.getByWeight(weight);
         this.coolingLevel = CoolingLevel.get(coolingLevel);
     }
-
 
     public int getLicenseNumber() {
         return licenseNumber;
@@ -42,7 +40,7 @@ public class Truck {
         return coolingLevel;
     }
 
-    public int compareTo( Truck t2) {
+    public int compareTo(Truck t2) {
         return Integer.compare(this.getWeight(), t2.getWeight());
     }
 

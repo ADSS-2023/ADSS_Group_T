@@ -1,12 +1,9 @@
 package BusinessLayer.HR;
 
-import UtilSuper.PositionType;
-import UtilSuper.UserType;
+import BusinessLayer.HR.User.UserType;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 

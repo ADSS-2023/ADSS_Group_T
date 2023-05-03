@@ -1,12 +1,11 @@
 package BusinessLayer.HR;
 
-import BusinessLayer.Transport.Driver;
 import UtilSuper.Pair;
-import UtilSuper.PositionType;
-import UtilSuper.UserType;
-import BusinessLayer.Transport.Driver.CoolingLevel;
-import BusinessLayer.Transport.Driver.LicenseType;
-import java.security.KeyPair;
+import BusinessLayer.HR.User.PositionType;
+import BusinessLayer.HR.User.UserType;
+import BusinessLayer.HR.Driver.CoolingLevel;
+import BusinessLayer.HR.Driver.LicenseType;
+
 import java.time.LocalDate;
 import java.util.*;
 

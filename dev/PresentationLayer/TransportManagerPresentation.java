@@ -2,7 +2,6 @@ package PresentationLayer;
 
 import ServiceLayer.Transport.*;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Scanner;
 
@@ -61,7 +60,7 @@ public class TransportManagerPresentation {
      * skip day and let user choose way of action in case of problem
      */
     void skipDay() {
-        System.out.println(deliveryService.getNextDayDeatails());
+        System.out.println(deliveryService.getNextDayDetails());
         System.out.println(deliveryService.skipDay());
     }
 
@@ -190,7 +189,7 @@ public class TransportManagerPresentation {
         return scanner.nextInt();//product weight
     }
 
-    private int enterWeightFunction(int deliveryID) {
+    private int enterOverWeightAction(int deliveryID) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("There is overweight in delivery " + deliveryID + ".");
         System.out.println("Please choose an action to handle the overweight:");
