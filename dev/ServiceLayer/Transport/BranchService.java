@@ -4,7 +4,6 @@ import BusinessLayer.Transport.BranchController;
 
 public class BranchService {
     private BranchController branchController;
-
     public BranchService(BranchController branchController) {
         this.branchController = branchController;
     }
