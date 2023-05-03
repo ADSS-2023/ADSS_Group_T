@@ -2,8 +2,10 @@ package DataLayer.Util;
 
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 public class DAO {
     /**
@@ -130,5 +132,31 @@ public class DAO {
         }
         statement.executeUpdate();
     }
+
+    public static <T extends DTO> T getById(Connection connection, DTO dto, int id) throws SQLException {
+        String tableName = dto.getTableName();
+        String sql = "SELECT * FROM " + tableName + " WHERE id = ?";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setInt(1, id);
+        ResultSet resultSet = statement.executeQuery();
+        if (resultSet.next()) {
+            try {
+                T dto = clazz.getDeclaredConstructor().newInstance();
+                Field[] fields = clazz.getDeclaredFields();
+                for (Field field : fields) {
+                    field.setAccessible(true);
+                    Object value = resultSet.getObject(field.getName());
+                    field.set(dto, value);
+                }
+                return dto;
+            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException |
+                     InvocationTargetException e) {
+                throw new SQLException("Error creating DTO of class " + dto.getTableName(), e);
+            }
+        } else {
+            return null;
+        }
+    }
+
 }
 
