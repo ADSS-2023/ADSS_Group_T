@@ -7,10 +7,10 @@ import UtilSuper.OverweightActionInterface;
 import java.util.LinkedHashMap;
 
 public class DeliveryService {
-    private final TransportJsonConvert transportJsonConvert;
     public DeliveryController deliveryController;
     private EnterWeightInterface enterWeightInterface;
     private OverweightActionInterface overweightAction;
+    private final TransportJsonConvert transportJsonConvert;
 
     public DeliveryService(DeliveryController deliveryController) {
         this.deliveryController = deliveryController;
@@ -77,9 +77,9 @@ public class DeliveryService {
         }
     }
 
-    public String getCurrDate() {
+    public String getCurrDateDetails() {
         try {
-            return this.deliveryController.getCurrDate().toString();
+            return this.deliveryController.getCurrDateDetails().toString();
         } catch (Exception ex) {
             return ex.toString();
         }

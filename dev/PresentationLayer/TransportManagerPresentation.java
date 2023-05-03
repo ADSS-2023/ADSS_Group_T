@@ -59,7 +59,7 @@ public class TransportManagerPresentation {
     /**
      * skip day and let user choose way of action in case of problem
      */
-    void skipDay() {
+    private  void skipDay() {
         System.out.println(deliveryService.getNextDayDetails());
         System.out.println(deliveryService.skipDay());
     }
@@ -84,7 +84,7 @@ public class TransportManagerPresentation {
     /**
      * add new truck to the system
      */
-    void addNewTruck() {
+    private void addNewTruck() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter the truck details:");
         System.out.println("Please enter the truck's license number:");
@@ -105,7 +105,7 @@ public class TransportManagerPresentation {
     /**
      * add new supplier to the system
      */
-    public void addNewSupplier() {
+    private void addNewSupplier() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter the supplier details:");
         System.out.print("Enter supplier address: ");
@@ -122,7 +122,7 @@ public class TransportManagerPresentation {
     }
 
 
-    public void addNewSupplierProducts() {
+    private void addNewSupplierProducts() {
         Scanner scanner = new Scanner(System.in);
         LinkedHashMap<String, Integer> products = new LinkedHashMap<>();
         System.out.println("Please enter supplier from the list:");
@@ -162,7 +162,7 @@ public class TransportManagerPresentation {
     /**
      * add new branch to the system
      */
-    public void addNewBranch() {
+    private void addNewBranch() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter the delivery details:");
         System.out.print("Enter site address: ");
@@ -189,7 +189,7 @@ public class TransportManagerPresentation {
         return scanner.nextInt();//product weight
     }
 
-    private int enterOverWeightAction(int deliveryID) {
+    public int enterOverWeightAction(int deliveryID) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("There is overweight in delivery " + deliveryID + ".");
         System.out.println("Please choose an action to handle the overweight:");
@@ -221,7 +221,7 @@ public class TransportManagerPresentation {
      * @param selectedSuppliers - A list of suppliers from which the user has to choose one
      * @return Supplier that the user choose
      */
-    private  LinkedHashMap<String,LinkedHashMap<String,Integer>> getSuppliersAndProducts(DeliveryService deliveryService){
+    private LinkedHashMap<String,LinkedHashMap<String,Integer>> getSuppliersAndProducts(DeliveryService deliveryService){
         Scanner scanner = new Scanner(System.in);
         LinkedHashMap<String,LinkedHashMap<String,Integer>> suppliersAndProducts = new LinkedHashMap<>();
         System.out.println(supplierService.getAllSuppliers());

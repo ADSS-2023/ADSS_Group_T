@@ -72,7 +72,7 @@ public class MainPresentation {
         Scanner scanner = new Scanner(System.in);
         System.out.println(" ");
         System.out.println("------ login window -------");
-        System.out.println("Current date: " + deliveryService.getCurrDate());
+        System.out.println("Current date: " + deliveryService.getCurrDateDetails());
         while (true) {
             String result = null;
             boolean loginSuccess = false;
