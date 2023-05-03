@@ -1,4 +1,4 @@
-package UtilSuper;
+package BusinessLayer.HR.User;
 
 public enum UserType {
     employee, driver, HRManager, deliveryManager ;

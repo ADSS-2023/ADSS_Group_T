@@ -26,6 +26,7 @@ public class MainPresentation {
     private HRManagerPresentation hrManagerPresentation;
     private EmployeePresentation employeePresentation;
 
+
     public MainPresentation() {
         ServiceFactory serviceFactory = new ServiceFactory();
         this.shiftService = serviceFactory.getShiftService();

@@ -1,14 +1,14 @@
 package BusinessLayer.Transport;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 
 public class LogisticCenter extends Site {
-    private LinkedHashMap<Integer, Truck> trucks;
-    private LinkedHashMap<Product, Integer> productsInStock;
+    private final LinkedHashMap<Integer, Truck> trucks;
+    private final LinkedHashMap<Product, Integer> productsInStock;
+
     public LogisticCenter() {
-        super("Main address","0000000000","logictic center manager", 0,0);
+        super("Main address", "0000000000", "logictic center manager", 0, 0);
         this.trucks = new LinkedHashMap<>();
         this.productsInStock = new LinkedHashMap<>();
     }
@@ -19,12 +19,14 @@ public class LogisticCenter extends Site {
         trucks.put(licenseNumber, new Truck(licenseNumber, model, weight, maxWeight, coolingLevel));
         return true;
     }
+
     public boolean removeTruck(int licenseNumber) {
         if (!trucks.containsKey(licenseNumber))
             return false;
         trucks.remove(licenseNumber);
         return true;
     }
+
     public void storeProducts(LinkedHashMap<Product, Integer> newSupply) {
         newSupply.forEach((key, value) -> {
             if (productsInStock.containsKey(key))                           //product exist in stock - update amount
@@ -56,7 +58,7 @@ public class LogisticCenter extends Site {
         return requestedSupply;
     }
 
-    public HashMap<Product, Integer> getProductsInStock() {
+    public LinkedHashMap<Product, Integer> getProductsInStock() {
         return productsInStock;
     }
 
@@ -72,6 +74,4 @@ public class LogisticCenter extends Site {
     public Truck getTruck(int licenseNumber) {
         return trucks.get(licenseNumber);
     }
-
-
 }

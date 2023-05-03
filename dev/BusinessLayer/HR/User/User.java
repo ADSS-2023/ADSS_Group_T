@@ -1,12 +1,6 @@
-package BusinessLayer;
-
-import BusinessLayer.HR.Constraint;
-import UtilSuper.PositionType;
-import UtilSuper.UserType;
+package BusinessLayer.HR.User;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 public abstract class  User {

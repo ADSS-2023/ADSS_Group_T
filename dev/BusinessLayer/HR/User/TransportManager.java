@@ -1,8 +1,4 @@
-package BusinessLayer.Transport;
-
-import BusinessLayer.User;
-import UtilSuper.PositionType;
-import UtilSuper.UserType;
+package BusinessLayer.HR.User;
 
 import java.util.List;
 
