@@ -2,10 +2,11 @@ package DataLayer.HR_T_DAL.DAOs;
 
 import BusinessLayer.Transport.Delivery;
 import DataLayer.HR_T_DAL.DTOs.DeliveryDTO;
+import DataLayer.Util.DAO;
 
 import java.util.List;
 
-public class DeliveryDAO {
+public class DeliveryDAO extends DAO {
 
     public DeliveryDAO() {
     }
