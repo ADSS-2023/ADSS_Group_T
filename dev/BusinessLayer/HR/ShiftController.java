@@ -104,6 +104,7 @@ public class ShiftController {
 
     //todo from Noam Gilad pls
     public void addDirverRequirement(LocalDate requiredDate, Driver.LicenseType licenseType, Driver.CoolingLevel coolingLevel) {
+        driverController.addDirverRequirement(requiredDate,licenseType,coolingLevel);
     }
     //todo from Noam Gilad pls
     public void addStoreKeeperRequirement(LocalDate requiredDate, String address) {
