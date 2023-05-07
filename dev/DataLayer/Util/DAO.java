@@ -7,6 +7,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 public class DAO {
     /**
      * This function gets a dto type, and insert the dto into the suitable table.
@@ -132,31 +135,5 @@ public class DAO {
         }
         statement.executeUpdate();
     }
-
-    public static <T extends DTO> T getById(Connection connection, DTO dto, int id) throws SQLException {
-        String tableName = dto.getTableName();
-        String sql = "SELECT * FROM " + tableName + " WHERE id = ?";
-        PreparedStatement statement = connection.prepareStatement(sql);
-        statement.setInt(1, id);
-        ResultSet resultSet = statement.executeQuery();
-        if (resultSet.next()) {
-            try {
-                T dto = clazz.getDeclaredConstructor().newInstance();
-                Field[] fields = clazz.getDeclaredFields();
-                for (Field field : fields) {
-                    field.setAccessible(true);
-                    Object value = resultSet.getObject(field.getName());
-                    field.set(dto, value);
-                }
-                return dto;
-            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException |
-                     InvocationTargetException e) {
-                throw new SQLException("Error creating DTO of class " + dto.getTableName(), e);
-            }
-        } else {
-            return null;
-        }
-    }
-
 }
 
