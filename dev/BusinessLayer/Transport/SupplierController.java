@@ -17,7 +17,6 @@ public class SupplierController {
 
     // without products
     public boolean addSupplier(String supplierAddress, String telNumber, String contactName, int x, int y) {
-        Supplier s;
         if (suppliers.containsKey(supplierAddress)) {
             throw new IllegalArgumentException("supplier address is taken");
         }
@@ -56,12 +55,10 @@ public class SupplierController {
     }
 
     public LinkedHashMap<String, Supplier> getAllSuppliers() {
-        if(suppliers.isEmpty()){
-            try {
-                suppliers = dalDeliveryService.findAllSupplier();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
+        try {
+            suppliers = dalDeliveryService.findAllSupplier();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
         return suppliers;
     }

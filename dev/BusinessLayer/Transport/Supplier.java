@@ -60,12 +60,10 @@ public class Supplier extends Site {
     }
 
     public LinkedHashMap<String, Product> getAllProducts() {
-        if(products.isEmpty()){
-            try {
-                products = dalDeliveryService.findAllProducts();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
+        try {
+            products = dalDeliveryService.findAllProducts();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
         return products;
     }
