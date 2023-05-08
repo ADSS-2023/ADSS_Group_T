@@ -29,7 +29,8 @@
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="aed7569d-309f-434e-89b3-679209d2b10f">
-      <console name="HR_T" type="STANDARD" schema="" session="Main" />
+      <console name="HR_T" type="STANDARD" schema="main" session="Main"><![CDATA[SELECT * FROM Truck 
+ parameters=null]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseEditorStateManager">
@@ -92,7 +93,7 @@
           <deprecated-pwd value="" />
         </database>
         <properties>
-          <auto-commit value="false" />
+          <auto-commit value="true" />
         </properties>
         <ssh-settings>
           <active value="false" />
@@ -555,5 +556,8 @@
         </visibility-settings>
       </environment>
     </general-settings>
+  </component>
+  <component name="DBNavigator.Project.StatementExecutionManager">
+    <execution-variables />
   </component>
 </project>

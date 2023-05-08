@@ -24,6 +24,9 @@ public class TruckDTO extends DTO {
         this.maxWeight =maxWeight;
     }
 
+    public TruckDTO() {
+    }
+
     public int getLicenseNumber() {
         return licenseNumber;
     }
