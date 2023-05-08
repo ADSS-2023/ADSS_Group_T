@@ -63,14 +63,16 @@ public class OrderController {
         List<ItemToOrder> curDay_list1 = order_service.getRegularOrder(curDay);
         List<ItemToOrder> curDay_list2 = order_service.getSpecialOrder(curDay);
         //figure out what should do here - if connect the 2 lists .
-        List<ItemToOrder> curDay_list = new LinkedList<>(); // NOT CORRECT
+        List<ItemToOrder> curDay_list = new LinkedList<>();
+        curDay_list.addAll(curDay_list1);
+        curDay_list.addAll(curDay_list2);
         Map<Integer , Integer> item_to_order_map = new HashMap<>();
         boolean found = false;
         for (Item item : cur_shortage_list) {
             //calculate how many need to order
             int amount_to_order = (item.min_amount - item.current_amount())- amountOfReceivedItem(curDay_list , item.manufacturer_name , item.name);
             if(amount_to_order > 0) {
-                for (ItemToOrder item_to_order : curDay_list) {
+                for (ItemToOrder item_to_order : curDay_list1) {
                     if(!found) {
                         int item_to_order_id = inventory.name_to_id.get(item_to_order.getProductName() + " " + item_to_order.getManufacturer());
                         if (item.getItem_id() == item_to_order_id) { // if found an item that comes at curDay
