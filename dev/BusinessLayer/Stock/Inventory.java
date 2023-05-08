@@ -282,7 +282,9 @@ public class Inventory {
      * @param id
      * @return
      */
-    public Item get_item_by_id(int id){
+    public Item get_item_by_id(int id) throws Exception {
+        if (!items.containsKey(id))
+            throw new Exception("Illegal id");
         return items.get(id);
     }
 
