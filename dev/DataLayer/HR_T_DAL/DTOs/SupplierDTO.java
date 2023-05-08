@@ -10,12 +10,15 @@ public class SupplierDTO extends DTO {
     private int x;
     private int y;
 
-    public SupplierDTO(String supplierAddress, String telNumber, String contactName, int x, int y){
+    private int shippingArea;
+
+    public SupplierDTO(String supplierAddress, String telNumber, String contactName, int x, int y,int shippingArea){
         super("Supplier");
         this.supplierAddress = supplierAddress;
         this.telNumber = telNumber;
         this.contactName = contactName;
         this.x = x;
         this.y = y;
+        this.shippingArea = shippingArea;
     }
 }
