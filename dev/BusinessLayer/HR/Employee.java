@@ -16,7 +16,6 @@ public class Employee extends User {
     private List<PositionType> qualifiedPositions;
     private Map<LocalDate, List<Constraint>> submittedShifts; // date, list[0]=morningShift list[1]=eveningShift
 
-    private HashMap<String, HashMap<LocalDate, List<Boolean>>>  shiftsRestriction; // branch, date, shiftType
     private String description;
     private int salary;
 
@@ -25,7 +24,7 @@ public class Employee extends User {
         super(id, employeeName, bankAccount, description, salary, joiningDay, password, userType);
         this.qualifiedPositions = new ArrayList<>();
         this.submittedShifts = new LinkedHashMap<>();
-        this.shiftsRestriction = new LinkedHashMap<>();
+      /*  this.shiftsRestriction = new LinkedHashMap<>();*/
         description = null;
     }
 
@@ -48,13 +47,8 @@ public class Employee extends User {
      * @throws IllegalArgumentException If the shift cannot be submitted due to a restriction or existing shift.
      */
     public void addSubmittedShift(String branch, int employeeId, LocalDate date, boolean shiftType) {
-        // Check if the shift is restricted based on the branch and date
-        if (shiftsRestriction.containsKey(branch) && shiftsRestriction.get(branch).containsKey(date)
-                && shiftsRestriction.get(branch).get(date).contains(shiftType)) {
-            throw new IllegalArgumentException("Cannot submit to that shift");
-        }
         // Check if a shift for the same date and shift type already exists
-        else if (submittedShifts.containsKey(date)
+        if (submittedShifts.containsKey(date)
                 && submittedShifts.get(date).stream().anyMatch(c -> c.getShiftType() == shiftType)) {
             throw new IllegalArgumentException("You have been already submit to that shift.");
         }
@@ -85,12 +79,6 @@ public class Employee extends User {
             throw new IllegalArgumentException("Employee already assigned to a shift on this day.");
         }
 
-
-        // Requirement 2: An employee cannot work if he has a restriction.
-        if (shiftsRestriction.containsKey(branch) && shiftsRestriction.get(branch).containsKey(date)
-                && shiftsRestriction.get(branch).get(date).contains(shiftType)) {
-            throw new IllegalArgumentException("Cannot submit to that shift");
-        }
 
         // Requirement 3: An employee cannot work more than six times a week.
         LocalDate startOfWeek = date.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
@@ -135,7 +123,7 @@ public class Employee extends User {
         return sb.toString();
     }
 
-    public String addRestriction(String branch, LocalDate date, boolean isMorning) {
+/*    public String addRestriction(String branch, LocalDate date, boolean isMorning) {
 
             if (shiftsRestriction.containsKey(branch)) {
                 if (shiftsRestriction.get(branch).containsKey(date)) {
@@ -157,7 +145,8 @@ public class Employee extends User {
                 shiftsRestriction.put(branch, dateMap);
             }
             return "Restriction added successfully.";
-    }
+    }*/
+
 
 
 
@@ -181,6 +170,10 @@ public class Employee extends User {
             positionNames.add(position.name());
         }
         return positionNames;
+    }
+
+    public Map<LocalDate, List<Constraint>> getSubmittedShifts() {
+        return submittedShifts;
     }
 
 
