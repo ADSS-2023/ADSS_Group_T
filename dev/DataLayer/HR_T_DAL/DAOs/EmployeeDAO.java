@@ -22,7 +22,8 @@ import java.util.Map;
 
 public class EmployeeDAO extends DAO {
 
-    public EmployeeDAO() {
+    public EmployeeDAO(Connection connection) {
+        super(connection);
     }
 
     public EmployeeDTO getEmployeeById(int id) {

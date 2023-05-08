@@ -14,7 +14,8 @@ import java.util.List;
 
 public class DriverDAO extends DAO {
 
-    public DriverDAO() {
+    public DriverDAO(Connection connection) {
+        super(connection);
     }
 
     public DriverDTO getDriverById(int id) {

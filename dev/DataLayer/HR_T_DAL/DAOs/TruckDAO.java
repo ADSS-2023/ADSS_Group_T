@@ -12,8 +12,10 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 public class TruckDAO extends DAO {
-
-    // Find a single record by ID
+    public TruckDAO(Connection connection) {
+        super(connection);
+    }
+// Find a single record by ID
 //    public static DTO find(Connection connection, String tableName, int id) throws SQLException {
 //        TruckDTO dto = null;
 //        String sql = "SELECT * FROM " + tableName + " WHERE id=?";
