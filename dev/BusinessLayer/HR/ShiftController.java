@@ -1,5 +1,7 @@
 package BusinessLayer.HR;
 
+import DataLayer.HR_T_DAL.DalService.DalShiftService;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,6 +16,8 @@ public class ShiftController {
 
 
     private HashMap<Integer,Employee> employeesMapper;
+
+    private DalShiftService dalShiftService;
 
 
     public ShiftController(){

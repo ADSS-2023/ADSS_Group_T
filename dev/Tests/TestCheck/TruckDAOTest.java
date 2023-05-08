@@ -25,9 +25,9 @@ public class TruckDAOTest {
         conn = DriverManager.getConnection(testDBUrl);
         dao = new TruckDAO(conn);
         // Insert TruckDTO objects into Truck table
-        TruckDTO truckDTO1 = new TruckDTO("Truck", 1, "Model1", 1000, 2000, "A", "HIGH");
-        TruckDTO truckDTO2 = new TruckDTO("Truck", 2, "Model2", 2000, 3000, "B", "MEDIUM");
-        TruckDTO truckDTO3 = new TruckDTO("Truck", 3, "Model3", 3000, 4000, "C", "LOW");
+        TruckDTO truckDTO1 = new TruckDTO( 1, "Model1", 1000, 2000, "A", "HIGH");
+        TruckDTO truckDTO2 = new TruckDTO( 2, "Model2", 2000, 3000, "B", "MEDIUM");
+        TruckDTO truckDTO3 = new TruckDTO( 3, "Model3", 3000, 4000, "C", "LOW");
 
         dao.insert(truckDTO1);
         dao.insert(truckDTO2);
@@ -37,9 +37,9 @@ public class TruckDAOTest {
     @After
     public void tearDown() throws SQLException {
         // Delete all TruckDTO objects from Truck table
-        TruckDTO truckDTO1 = new TruckDTO("Truck", 1, "Model1", 1000, 2000, "A", "HIGH");
-        TruckDTO truckDTO2 = new TruckDTO("Truck", 2, "Model2", 2000, 3000, "B", "MEDIUM");
-        TruckDTO truckDTO3 = new TruckDTO("Truck", 3, "Model3", 3000, 4000, "C", "LOW");
+        TruckDTO truckDTO1 = new TruckDTO( 1, "Model1", 1000, 2000, "A", "HIGH");
+        TruckDTO truckDTO2 = new TruckDTO( 2, "Model2", 2000, 3000, "B", "MEDIUM");
+        TruckDTO truckDTO3 = new TruckDTO( 3, "Model3", 3000, 4000, "C", "LOW");
 
         dao.delete(truckDTO1);
         dao.delete(truckDTO2);

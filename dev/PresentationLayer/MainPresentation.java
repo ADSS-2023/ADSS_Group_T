@@ -13,7 +13,7 @@ public class MainPresentation {
 
 
 
-    ServiceFactory serviceFactory;
+    private ServiceFactory serviceFactory;
 
     private ShiftService shiftService;
     private EmployeeService employeeService;
@@ -28,7 +28,12 @@ public class MainPresentation {
 
 
     public MainPresentation() {
-        ServiceFactory serviceFactory = new ServiceFactory();
+        try {
+            this.serviceFactory = new ServiceFactory();
+        }
+        catch (Exception exception){
+
+        }
         this.shiftService = serviceFactory.getShiftService();
         this.employeeService = serviceFactory.getEmployeeService();
         this.logisticCenterService = serviceFactory.getLogisticCenterService();
