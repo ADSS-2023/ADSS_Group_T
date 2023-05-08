@@ -28,6 +28,7 @@ public class StockUI {
         System.out.println("\u001B[32m10.Add new category\u001B[0m");
         System.out.println("\u001B[32m11.Skip day\u001B[0m");
         System.out.println("\u001B[32m12.Orders menu\u001B[0m");
+        System.out.println("\u001B[32m13.Back to start menu\u001B[0m");
     }
 
     public  String presentCategories(){
@@ -189,6 +190,9 @@ public class StockUI {
             case "12":
                 edit_create_orders();
                 break;
+            case "13":
+                goBack();
+                break;
             case "21":
                 editRegularItemOrder();
                 break;
@@ -201,6 +205,8 @@ public class StockUI {
             case "24":
                 place_waiting_items();
                 break;
+            case "25":
+                run();
             case "logout":
                 break;
         }
@@ -258,7 +264,9 @@ public class StockUI {
             products.put(id,amount);
             isActive = choice==1;
         }
-        sf.manageOrderService.createRegularOrder(products);
+        System.out.println("Is it an urgent order?\n1.yes 2.no");
+        int choice = scanner.nextInt();
+        sf.manageOrderService.createRegularOrder(products,choice ==1);
     }
 
     private  void edit_create_orders() {
@@ -276,6 +284,7 @@ public class StockUI {
         System.out.println("\u001B[32m2.Create regular order\u001B[0m");
         System.out.println("\u001B[32m3.Create special order\u001B[0m");
         System.out.println("\u001B[32m4.Place waiting items\u001B[0m");
+        System.out.println("\u001B[32m5.Go back to inventory menu\u001B[0m");
     }
 
 
@@ -294,7 +303,7 @@ public class StockUI {
         sf.manageOrderService.editRegularOrder(id , cur_day , amount);
     }
 
-    private void moveToNextDay() {
+    public void moveToNextDay() {
         sf.manageOrderService.nextDay();
     }
 
@@ -309,17 +318,7 @@ public class StockUI {
     public void run(){
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("\033[1mWelcome to Superly inventory\033[0m\n\u001B[32m" +
-                "Would you like to load data or continue on an empty system?\n" +
-                "1.Load data\n2.Empty system\u001B[0m");
-
-        int action = scanner.nextInt();
-        scanner.nextLine();
-        if(action==1) {
-            loadData();
-
-
-        }
+        System.out.println("\033[1m-----------Inventory-----------\033[0m\n\u001B[32m" );
         while(true) {
             System.out.println("What would you like to do?");
             printOptions();
