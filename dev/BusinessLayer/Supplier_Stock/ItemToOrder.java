@@ -1,42 +1,32 @@
 package BusinessLayer.Supplier_Stock;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
+/**
+ * The mutual class between inventory and suppliers that represents a product
+ */
 public class ItemToOrder {
     private String productName;
     private String manufacturer;
     private int quantity;
-    private int orderId;
-    private double costPrice;
     private LocalDate expiryDate;
+    private double costPrice;
+    private int orderId;
 
-
-
-    public ItemToOrder(String productName, String manufacturer, int quantity, LocalDate expiryDate , int orderId, double costPrice){
-        this.productName = productName;
+    public ItemToOrder(String productName, String manufacturer, int quantity, LocalDate expiryDate, int orderId , double costPrice) {
+        this.expiryDate = expiryDate;
         this.manufacturer = manufacturer;
+        this.productName = productName;
         this.quantity = quantity;
-        this.expiryDate=expiryDate;
+        this.costPrice = costPrice;
         this.orderId = orderId;
-        this.costPrice=costPrice;
     }
 
     public String getProductName() {
         return productName;
     }
 
-    public void setProductName(String productName) {
-        this.productName = productName;
-    }
 
-    public void setManufacturer(String manufacturer) {
-        this.manufacturer = manufacturer;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
 
     public String getManufacturer() {
         return manufacturer;
@@ -46,16 +36,24 @@ public class ItemToOrder {
         return quantity;
     }
 
-    public int getOrderId() {
-        return orderId;
+    public LocalDate getExpiryDate() {
+        return expiryDate;
+    }
+
+    public ItemToOrder clone(){
+        return new ItemToOrder(this.productName , this.manufacturer , this.quantity , this.expiryDate , this.orderId,this.costPrice);
+    }
+
+    public void setQuantity(int new_quantity) {
+        this.quantity = new_quantity;
     }
 
     public double getCostPrice() {
         return costPrice;
     }
 
-    public LocalDate getExpiryDate() {
-        return expiryDate;
-    }
 
+    public int getOrderId() {
+        return orderId;
+    }
 }

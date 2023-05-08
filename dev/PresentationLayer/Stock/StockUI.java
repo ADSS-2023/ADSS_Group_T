@@ -264,7 +264,9 @@ public class StockUI {
             products.put(id,amount);
             isActive = choice==1;
         }
-        sf.manageOrderService.createRegularOrder(products);
+        System.out.println("Is it an urgent order?\n1.yes 2.no");
+        int choice = scanner.nextInt();
+        sf.manageOrderService.createRegularOrder(products,choice ==1);
     }
 
     private  void edit_create_orders() {
@@ -316,7 +318,7 @@ public class StockUI {
     public void run(){
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("\033[1m-----------Inventory-----------\033[0m\n\u001B[32m" +
+        System.out.println("\033[1m-----------Inventory-----------\033[0m\n\u001B[32m" );
         while(true) {
             System.out.println("What would you like to do?");
             printOptions();
