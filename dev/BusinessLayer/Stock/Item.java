@@ -249,4 +249,22 @@ public class Item implements ProductCategoryManagement {
         }
         return amount;
     }
+
+    public void move_items_to_store(int amount) {
+        for (Map.Entry<Integer, ItemPerOrder> entry : items.entrySet()) {
+            ItemPerOrder itemPerOrder = entry.getValue();
+            if (amount == 0)
+                return;
+            if (itemPerOrder.getAmount_warehouse()>amount){
+                itemPerOrder.move_to_store(amount);
+                amount = 0;
+            }
+            else {
+                int real_amount = itemPerOrder.getAmount_warehouse();
+                itemPerOrder.move_to_store(real_amount);
+                amount -=real_amount;
+            }
+
+        }
+    }
 }
