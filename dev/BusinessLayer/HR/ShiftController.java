@@ -26,20 +26,20 @@ public class ShiftController {
     }
 
 
-    public void ensureStorekeeperRequirements(LocalDate localDate, List<String> branches) throws Exception {
-        driverController.addDriverRequirement(localDate);
-        for (String branch : branches) {
-            HashMap<LocalDate, ArrayList<Shift>> shiftsBranch = shifts.get(branch);
-            ArrayList<Shift> shiftsOnDate = shiftsBranch.get(localDate);
-            if (shiftsOnDate != null) {
-                for (Shift shift : shiftsOnDate) {
-                    if (shift != null) {
-                        shift.makeSureThereIsStorekeeperRequirement();
-                    }
-                }
-            }
-        }
-    }
+//    public void ensureStorekeeperRequirements(LocalDate localDate, List<String> branches) throws Exception {
+//        driverController.addDriverRequirement(localDate);
+//        for (String branch : branches) {
+//            HashMap<LocalDate, ArrayList<Shift>> shiftsBranch = shifts.get(branch);
+//            ArrayList<Shift> shiftsOnDate = shiftsBranch.get(localDate);
+//            if (shiftsOnDate != null) {
+//                for (Shift shift : shiftsOnDate) {
+//                    if (shift != null) {
+//                        shift.makeSureThereIsStorekeeperRequirement();
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     public void SkipDay(LocalDate localDate) {
        //TODO

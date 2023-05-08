@@ -174,8 +174,8 @@ public class DAO {
     }
 
 
-    public <T extends DTO> List<T> findAll(String tableName, Class<T> dtoClass) throws SQLException {
-        List<T> results = new ArrayList<>();
+    public <T extends DTO> ArrayList<T> findAll(String tableName, Class<T> dtoClass) throws SQLException {
+        ArrayList<T> results = new ArrayList<>();
         String sql = "SELECT * FROM " + tableName;
 
         try (PreparedStatement statement = connection.prepareStatement(sql)) {

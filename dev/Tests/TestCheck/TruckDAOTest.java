@@ -2,80 +2,62 @@ package TestCheck;
 
 import DataLayer.HR_T_DAL.DAOs.TruckDAO;
 import DataLayer.HR_T_DAL.DTOs.TruckDTO;
-import org.junit.jupiter.api.*;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import java.util.ArrayList;
 
 public class TruckDAOTest {
-    private static final String TEST_DB_URL = "jdbc:sqlite:DataLayer/HR_Transport_DB.db";
-    private static Connection connection;
-    private static TruckDAO truckDAO;
 
-    @BeforeAll
-    public static void setUp() throws SQLException {
-        connection = DriverManager.getConnection(TEST_DB_URL);
-        truckDAO = new TruckDAO(connection);
-        //truckDAO.createTable();
-    }
+    private final String testDBUrl = "jdbc:sqlite:DataLayer/HR_T_DAL/DBs/test.db";
 
-    @AfterAll
-    public static void tearDown() throws SQLException {
-        //truckDAO.dropTable();
-        connection.close();
-    }
+    Connection conn;
 
-    @BeforeEach
-    public void resetTable() throws SQLException {
-        //truckDAO.clearTable();
+    @Before
+    public void setUp() throws Exception {
+        Connection conn = DriverManager.getConnection(testDBUrl);
+
     }
 
     @Test
-    public void testFindAll() throws SQLException {
-        // insert some test data
-        TruckDTO truck1 = new TruckDTO("trucks", 1, "Volvo", 5000, 10000, "B", "MEDIUM");
-        TruckDTO truck2 = new TruckDTO("trucks", 2, "Mercedes", 7500, 12000, "C", "HIGH");
-        TruckDTO truck3 = new TruckDTO("trucks", 3, "Scania", 10000, 15000, "C", "LOW");
-        truckDAO.insert(truck1);
-        truckDAO.insert(truck2);
-        truckDAO.insert(truck3);
+    public void testFindAll() throws Exception {
+        TruckDAO truckDAO = new TruckDAO(conn);
 
-        // test findAll method
-        List<TruckDTO> trucks = truckDAO.findAll("Truck",TruckDTO.class);
-        assertEquals(3, trucks.size());
-        assertEquals(truck1.getLicenseNumber(), trucks.get(0).getLicenseNumber());
-        assertEquals(truck2.getLicenseNumber(), trucks.get(1).getLicenseNumber());
-        assertEquals(truck3.getLicenseNumber(), trucks.get(2).getLicenseNumber());
+        ArrayList<TruckDTO> truckDTOs = truckDAO.findAll("Truck",TruckDTO.class);
+
+        Assert.assertEquals("There should be 3 trucks in the database", 3, truckDTOs.size());
+
+        TruckDTO truck1 = truckDTOs.get(0);
+        Assert.assertEquals("Truck 1 should have license number 12345", 12345, truck1.getLicenseNumber());
+        Assert.assertEquals("Truck 1 should have model F150", "F150", truck1.getModel());
+        Assert.assertEquals("Truck 1 should have weight 2000", 2000, truck1.getWeight());
+        Assert.assertEquals("Truck 1 should have max weight 3000", 3000, truck1.getMaxWeight());
+        Assert.assertEquals("Truck 1 should have license type C", "C", truck1.getLicenseType());
+        Assert.assertEquals("Truck 1 should have cooling level HIGH", "HIGH", truck1.getCoolingLevel());
+
+        // Repeat for truck2 and truck3
+        // ...
+
     }
 
     @Test
-    public void testFind() throws SQLException {
-        // insert some test data
-        TruckDTO truck1 = new TruckDTO("trucks", 1, "Volvo", 5000, 10000, "B", "MEDIUM");
-        TruckDTO truck2 = new TruckDTO("trucks", 2, "Mercedes", 7500, 12000, "C", "HIGH");
-        TruckDTO truck3 = new TruckDTO("trucks", 3, "Scania", 10000, 15000, "C", "LOW");
-        truckDAO.insert(truck1);
-        truckDAO.insert(truck2);
-        truckDAO.insert(truck3);
+    public void testFind() throws Exception {
+        TruckDAO truckDAO = new TruckDAO(conn);
 
-        // test find method
-        TruckDTO foundTruck = truckDAO.find(2,"Truck",TruckDTO.class);
-        assertNotNull(foundTruck);
-        assertEquals(truck2.getLicenseNumber(), foundTruck.getLicenseNumber());
-        assertEquals(truck2.getModel(), foundTruck.getModel());
-        assertEquals(truck2.getWeight(), foundTruck.getWeight());
-        assertEquals(truck2.getMaxWeight(), foundTruck.getMaxWeight());
-        assertEquals(truck2.getLicenseType(), foundTruck.getLicenseType());
-        assertEquals(truck2.getCoolingLevel(), foundTruck.getCoolingLevel());
+        TruckDTO truckDTO = truckDAO.find(12345,"Truck",TruckDTO.class);
 
-        // test find method with non-existing key
-        TruckDTO notFoundTruck = truckDAO.find(4,"Truck",TruckDTO.class);
-        assertNull(notFoundTruck);
+        Assert.assertNotNull("Truck with license number 12345 should exist in the database", truckDTO);
+        Assert.assertEquals("Truck with license number 12345 should have model F150", "F150", truckDTO.getModel());
+        Assert.assertEquals("Truck with license number 12345 should have weight 2000", 2000, truckDTO.getWeight());
+        Assert.assertEquals("Truck with license number 12345 should have max weight 3000", 3000, truckDTO.getMaxWeight());
+        Assert.assertEquals("Truck with license number 12345 should have license type C", "C", truckDTO.getLicenseType());
+        Assert.assertEquals("Truck with license number 12345 should have cooling level HIGH", "HIGH", truckDTO.getCoolingLevel());
+
+        TruckDTO truckDTO2 = truckDAO.find(99999,"Truck",TruckDTO.class);
+        Assert.assertNull("Truck with license number 99999 should not exist in the database", truckDTO2);
     }
+
 }
