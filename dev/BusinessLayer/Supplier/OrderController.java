@@ -163,7 +163,10 @@ public class OrderController {
             for(OrderProduct product:order.getProducts())
                 items.add(new ItemToOrder(product.getProductName(), product.getManufacturer(), product.getQuantity(),
                         product.getExpiryDate(), order.getOrderNum(), product.getFinalPrice()));
-            orders.add(order);
+
+            OrderBusiness clonedOrder =  order.clone();
+            clonedOrder.setOrderNum(orderCounter++);
+            orders.add(clonedOrder);
         }
         List<OrderBusiness> ordersToDelete =  new LinkedList<>();
         for(OrderBusiness order:ordersNotSupplied){
