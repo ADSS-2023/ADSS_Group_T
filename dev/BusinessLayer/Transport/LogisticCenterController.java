@@ -67,5 +67,8 @@ public class LogisticCenterController {
         return logisticCenter.getTruck(licenseNumber);
     }
 
+    public String getAddress() {
+        return this.getAddress();
+    }
 }
 
