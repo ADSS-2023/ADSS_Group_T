@@ -267,9 +267,7 @@ public class StockUI {
             products.put(id,amount);
             isActive = choice==1;
         }
-        System.out.println("Is it an urgent order?\n1.yes 2.no");
-        int choice = scanner.nextInt();
-        sf.manageOrderService.createRegularOrder(products,choice ==1);
+        sf.manageOrderService.createRegularOrder(products);
     }
 
     private  void edit_create_orders() {
