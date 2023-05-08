@@ -1,3 +1,5 @@
+package TestCheck;
+
 import DataLayer.HR_T_DAL.DAOs.TruckDAO;
 import DataLayer.HR_T_DAL.DTOs.TruckDTO;
 import org.junit.jupiter.api.*;
