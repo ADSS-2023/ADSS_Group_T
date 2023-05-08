@@ -25,6 +25,12 @@ public class OrderProduct {
         this.finalPrice = finalPrice;
     }
 
+    public OrderProduct clone(){
+        return new OrderProduct(
+                productName, productNumber, quantity, initialPrice, discount, finalPrice,
+                manufacturer, expiryDate);
+    }
+
     public LocalDate getExpiryDate() {
         return expiryDate;
     }
