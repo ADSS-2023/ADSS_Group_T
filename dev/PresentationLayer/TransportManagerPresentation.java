@@ -53,11 +53,8 @@ public class TransportManagerPresentation {
                 case 6 -> showProductsInStock();
                 case 7 -> showAllDeliveries();
                 case 8 -> addNewSupplierProducts();
-                case 9 -> {
-                }
-                case 10 -> {
-                    return;
-                }
+                case 9 -> {}
+                case 10 -> {return;}
                 default -> System.out.println("Invalid choice. Please try again.");
             }
         }
@@ -65,7 +62,6 @@ public class TransportManagerPresentation {
 
 
     // option 1
-
     /**
      * skip day and let user choose way of action in case of problem
      */
@@ -190,9 +186,6 @@ public class TransportManagerPresentation {
         supplierService.addProducts(supplier, products);
     }
 
-
-
-
     //enter Data from keyboard
     private int enterCoolingLevel() {
         Scanner scanner = new Scanner(System.in);
@@ -212,6 +205,9 @@ public class TransportManagerPresentation {
         return scanner.next();
     }
 
+
+
+
     /**
      * allow the user to select a supplier
      *
@@ -221,22 +217,47 @@ public class TransportManagerPresentation {
      */
     private LinkedHashMap<String, LinkedHashMap<String, Integer>> enterSuppliersAndProducts(DeliveryService deliveryService) {
         Scanner scanner = new Scanner(System.in);
+        System.out.println();
         LinkedHashMap<String, LinkedHashMap<String, Integer>> suppliersAndProducts = new LinkedHashMap<>();
-        System.out.println(supplierService.getAllSuppliers());
+
+        // Prompt user to choose between regular suppliers (1) or logistic center (2)
+        int choice;
         while (true) {
-            System.out.print("Enter supplier name name (or 0 to finish): ");
-            String supplier = scanner.nextLine();
-            if (supplier.equals("0") && !suppliersAndProducts.isEmpty()) {
-                break;
+            System.out.print("Enter 1 for regular suppliers or 2 for the logistic center: ");
+            try {
+                choice = Integer.parseInt(scanner.nextLine());
+                if (choice == 1 || choice == 2) {
+                    break;
+                }
+                System.out.println("Invalid choice. Please enter 1 or 2.");
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid choice. Please enter 1 or 2.");
             }
-            if (suppliersAndProducts.containsKey(supplier)) {
-                System.out.println(" supplier already selected. Please choose a different  supplier.");
-                continue;
-            }
-            suppliersAndProducts.put(supplier, enterSupplierProducts(supplier, deliveryService));
         }
+
+        // Get suppliers and products based on user's choice
+        if (choice == 1) {
+            System.out.println(supplierService.getAllSuppliers());
+            while (true) {
+                System.out.print("Enter supplier name (or 0 to finish): ");
+                String supplier = scanner.nextLine();
+                if (supplier.equals("0") && !suppliersAndProducts.isEmpty()) {
+                    break;
+                }
+                if (suppliersAndProducts.containsKey(supplier)) {
+                    System.out.println("Supplier already selected. Please choose a different supplier.");
+                    continue;
+                }
+                suppliersAndProducts.put(supplier, enterSupplierProducts(supplier, deliveryService));
+            }
+        } else {
+            // Get products from logistic center
+            suppliersAndProducts.put("Logistic Center", enterSupplierProducts(logisticCenterService.getAddress(), deliveryService));
+        }
+
         return suppliersAndProducts;
     }
+
 
     /**
      * allow the user to select Products
@@ -248,7 +269,10 @@ public class TransportManagerPresentation {
     private LinkedHashMap<String, Integer> enterSupplierProducts(String supplier, DeliveryService deliveryService) {
         Scanner scanner = new Scanner(System.in);
         LinkedHashMap<String, Integer> products = new LinkedHashMap<String, Integer>();
-        System.out.println(supplierService.getSupplierProducts(supplier));
+        if(supplier.equals(logisticCenterService.getAddress()))
+            System.out.println(logisticCenterService.getProductsInStock());
+        else
+            System.out.println(supplierService.getSupplierProducts(supplier));
 
         while (true) {
             System.out.print("Enter product name (or 0 to finish): ");

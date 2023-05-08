@@ -76,12 +76,20 @@ public class DeliveryController {
      *
      * @return map of the suppliers products that have not been schedule for delivery due to lack of drivers/trucks in that date
      */
-    public LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> orderDelivery(String branchString, LinkedHashMap<String, LinkedHashMap<String, Integer>> suppliersString,
-                                                                                  String requiredDateString) {
-        Branch branch = this.branchController.getBranch(branchString);
-        LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> suppliers = getSuppliersAnsProducts(suppliersString);//convert the string
+    public LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> orderDelivery(String destinationString, LinkedHashMap<String, LinkedHashMap<String, Integer>> suppliersString,
+                                                                                  String requiredDateString) throws Exception {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate requiredDate = LocalDate.parse(requiredDateString, formatter);
+        boolean isDestinationIsLogisticCenter = destinationString.equals(logisticCenterController.getAddress());
+        boolean isSupplierIsLogisticCenter = suppliersString.containsKey(logisticCenterController.getAddress());
+        if(isDestinationIsLogisticCenter && isSupplierIsLogisticCenter)
+            throw new Exception("cant delivery from LC to LC");
+        if(isDestinationIsLogisticCenter)
+            return orderDeliveryToLogisticCenter(suppliersString,requiredDate);
+
+        Branch branch = this.branchController.getBranch(destinationString);
+        LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> suppliers = getSuppliersAnsProducts(suppliersString);//convert the string
+
         if (date2deliveries.containsKey(requiredDate)) { // there is delivery in this date
             for (Delivery d : date2deliveries.get(requiredDate)) { // the delivery is to the required date
                 if (branch.getShippingArea() == d.getShippingArea()) { // the delivery is to the required branch
@@ -136,6 +144,10 @@ public class DeliveryController {
             }
         }
         return suppliers;
+    }
+
+    private LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> orderDeliveryToLogisticCenter(LinkedHashMap<String, LinkedHashMap<String, Integer>> suppliersString, LocalDate requiredDate) {
+        return null;
     }
 
 
