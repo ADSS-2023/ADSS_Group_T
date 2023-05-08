@@ -95,7 +95,6 @@ public class Employee extends User {
         // set the assigned position of the shift
         Constraint constraint =  shiftType ?  shifts.get(0) : shifts.get(1);
         constraint.setAssignedPosition(positionType);
-
     }
 
 
@@ -164,7 +163,7 @@ public class Employee extends User {
        return  false;
     }
 
-    public List<String> getListOfQualifiedPositions() {
+    public List<String> getQualifiedPositions() {
         List<String> positionNames = new ArrayList<>();
         for (PositionType position : qualifiedPositions) {
             positionNames.add(position.name());

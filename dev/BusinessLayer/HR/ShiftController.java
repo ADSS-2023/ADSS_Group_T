@@ -61,7 +61,7 @@ public class ShiftController {
         employee.addSubmittedShift(branch, id, date, shiftType);
         HashMap<LocalDate, ArrayList<Shift>> branchShifts = shifts.get(branch);
         Shift shift = shiftType ?  branchShifts.get(date).get(0) : branchShifts.get(date).get(1);
-        return shift.submitShiftForEmployee( employeesMapper.get(id),  employee.getListOfQualifiedPositions());
+        return shift.submitShiftForEmployee( employeesMapper.get(id),  employee.getQualifiedPositions());
     }
 
 
