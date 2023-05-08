@@ -2,6 +2,9 @@ package BusinessLayer.Stock;
 
 import BusinessLayer.Stock.Util.Util;
 import BusinessLayer.Supplier_Stock.ItemToOrder;
+import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.CategoryDTO;
+import DataLayer.Inventory_Supplier_Dal.DalController.InventoryDalController;
+import DataLayer.Util.DTO;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -18,6 +21,7 @@ public class Inventory {
     protected HashMap<String,Integer> name_to_id;
     protected List<Item> shortage_list;
     protected Damaged damaged;
+    protected InventoryDalController inv_dal_controller;
 
     public Inventory(){
         categories = new LinkedList<>();
@@ -27,6 +31,9 @@ public class Inventory {
         name_to_id = new HashMap<>();
     }
 
+    public void setInventoryDalController(InventoryDalController inv){
+        this.inv_dal_controller = inv;
+    }
     /**
      * this function gets an item and set his alert callback
      * to be added to shortage list, when needed.
@@ -175,7 +182,6 @@ public class Inventory {
         categories.get(1).getCategories_list().get(1).add_product(beef_sausage);
         items.put(3,beef_sausage);
         name_to_id.put("Beef Sausage Zogloveck",3);
-
     }
 
     /**
@@ -223,18 +229,29 @@ public class Inventory {
         int current_index = Integer.parseInt(Util.extractFirstNumber(categories_index));
         String next_index = Util.extractNextIndex(categories_index);
         categories.get(current_index).add_item(next_index, i);
-        shortage_list.add(i);
+        shortage_list.add(i); // why is it here?
         name_to_id.put(name+" "+manufacturer_name,item_id);
+        DTO curDTO = i.getDto();
+        inv_dal_controller.insert(curDTO);
     }
 
     public void add_category(String categories_index, String name) throws Exception {
-        if (categories_index == "")
-            categories.add(new Category(name,""+categories.size()));
+        if (categories_index == "") {
+            Category new_category = new Category(name, "" + categories.size());
+            categories.add(new_category);
+            CategoryDTO curDto = new_category.getDto();
+            inv_dal_controller.insert(curDto);
+        }
         else {
             int current_index = Integer.parseInt(Util.extractFirstNumber(categories_index));
             String next_index = Util.extractNextIndex(categories_index);
-            categories.get(current_index).add_product(next_index,name);
+            Category cur_category = categories.get(current_index);
+            cur_category.add_product(next_index,name);
+            int index = cur_category.getCategories_list().size()-1;
+            DTO curDTO = cur_category.categories_list.get(index).getDto();
+            inv_dal_controller.insert(curDTO);
         }
+
     }
 
     /**

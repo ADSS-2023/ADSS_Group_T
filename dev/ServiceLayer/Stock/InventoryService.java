@@ -68,7 +68,6 @@ public class InventoryService {
         catch (Exception e){
             e.getMessage();
         }
-
     }
 
     /**

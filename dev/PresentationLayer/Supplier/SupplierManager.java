@@ -19,62 +19,62 @@ public class SupplierManager {
         this.serviceFactory = new ServiceFactory();
     }
 
-    public void setUpData() throws Exception {
-        HashMap<String, String> contactsSupplier1 = new HashMap<>();
-        contactsSupplier1.put("yossi", "052284621");
-        serviceFactory.supplierService.addSupplier("Sapak1", "Shoham 43, Tel Aviv",
-                5018475, 1199922, contactsSupplier1,
-                List.of(new String[]{"sunday", "monday"}), true, PaymentTerms.SHOTEF_PLUS_30);
-
-        HashMap<String, String> contactsSupplier2 = new HashMap<>();
-        contactsSupplier2.put("menash", "18726312");
-        serviceFactory.supplierService.addSupplier("Sapak2", "Golani 2, Ashkelon",
-                4810203, 947182, contactsSupplier2, List.of(new String[]{"wednesday"}),
-                true, PaymentTerms.SHOTEF_PLUS_30);
-
-
-        serviceFactory.supplierService.addProduct(5018475, 982673, "Bamba",
-                "Osem", 6, 500, LocalDateTime.now().plusMonths(1));
-
-        serviceFactory.supplierService.addProduct(5018475, 1728439, "Click",
-                "Elite", 8, 300, LocalDateTime.now().plusWeeks(2));
-
-        serviceFactory.supplierService.addProduct(4810203, 9812763, "Ketchup",
-                "Heinz", 10, 600, LocalDateTime.now().plusMonths(1));
-
-        serviceFactory.supplierService.addProduct(4810203, 4918672, "Jasmin Rice",
-                "Sogat", 9, 400, LocalDateTime.now().plusYears(1));
-
-        serviceFactory.supplierService.addProduct(4810203, 675980, "Bamba",
-                "Osem", 5, 200, LocalDateTime.now().plusMonths(1));
-
-        serviceFactory.supplierService.addProductDiscount(5018475, 982673, 100, 5, true);
-        serviceFactory.supplierService.addProductDiscount(5018475, 982673, 200, 100, false);
-
-        serviceFactory.supplierService.addProductDiscount(5018475, 1728439, 50, 10, true);
-        serviceFactory.supplierService.addProductDiscount(5018475, 1728439, 100, 50, false);
-
-        serviceFactory.supplierService.addProductDiscount(4810203, 9812763, 20, 5, true);
-        serviceFactory.supplierService.addProductDiscount(4810203, 9812763, 60, 50, false);
-
-        serviceFactory.supplierService.addProductDiscount(4810203, 4918672, 50, 10, true);
-        serviceFactory.supplierService.addProductDiscount(4810203, 4918672, 100, 50, false);
-
-        serviceFactory.supplierService.addSupplierDiscount(5018475,Discounts.DISCOUNT_BY_TOTAL_QUANTITY,50,10,true);
-        serviceFactory.supplierService.addSupplierDiscount(5018475,Discounts.DISCOUNT_BY_TOTAL_PRICE,500,50,false);
-
-        serviceFactory.supplierService.addSupplierDiscount(4810203,Discounts.DISCOUNT_BY_TOTAL_QUANTITY,40,5,true);
-        serviceFactory.supplierService.addSupplierDiscount(4810203,Discounts.DISCOUNT_BY_TOTAL_PRICE,300,40,false);
-
-        ItemToOrder item1  = new ItemToOrder("Bamba","Osem",550,LocalDateTime.now().plusMonths(1));
-        ItemToOrder item2  = new ItemToOrder("Ketchup","Heinz",50,LocalDateTime.now().plusMonths(1));
-        ItemToOrder item3  = new ItemToOrder("Click","Elite",175,LocalDateTime.now().plusMonths(1));
-        List<ItemToOrder> itemsList = new LinkedList<>();
-        itemsList.add(item1);
-        itemsList.add(item2);
-        itemsList.add(item3);
-        System.out.println(serviceFactory.orderService.createSpecialOrder(itemsList,false));
-    }
+    public void setUpData() throws Exception {}
+//        HashMap<String, String> contactsSupplier1 = new HashMap<>();
+//        contactsSupplier1.put("yossi", "052284621");
+//        serviceFactory.supplierService.addSupplier("Sapak1", "Shoham 43, Tel Aviv",
+//                5018475, 1199922, contactsSupplier1,
+//                List.of(new String[]{"sunday", "monday"}), true, PaymentTerms.SHOTEF_PLUS_30);
+//
+//        HashMap<String, String> contactsSupplier2 = new HashMap<>();
+//        contactsSupplier2.put("menash", "18726312");
+//        serviceFactory.supplierService.addSupplier("Sapak2", "Golani 2, Ashkelon",
+//                4810203, 947182, contactsSupplier2, List.of(new String[]{"wednesday"}),
+//                true, PaymentTerms.SHOTEF_PLUS_30);
+//
+//
+//        serviceFactory.supplierService.addProduct(5018475, 982673, "Bamba",
+//                "Osem", 6, 500, LocalDateTime.now().plusMonths(1));
+//
+//        serviceFactory.supplierService.addProduct(5018475, 1728439, "Click",
+//                "Elite", 8, 300, LocalDateTime.now().plusWeeks(2));
+//
+//        serviceFactory.supplierService.addProduct(4810203, 9812763, "Ketchup",
+//                "Heinz", 10, 600, LocalDateTime.now().plusMonths(1));
+//
+//        serviceFactory.supplierService.addProduct(4810203, 4918672, "Jasmin Rice",
+//                "Sogat", 9, 400, LocalDateTime.now().plusYears(1));
+//
+//        serviceFactory.supplierService.addProduct(4810203, 675980, "Bamba",
+//                "Osem", 5, 200, LocalDateTime.now().plusMonths(1));
+//
+//        serviceFactory.supplierService.addProductDiscount(5018475, 982673, 100, 5, true);
+//        serviceFactory.supplierService.addProductDiscount(5018475, 982673, 200, 100, false);
+//
+//        serviceFactory.supplierService.addProductDiscount(5018475, 1728439, 50, 10, true);
+//        serviceFactory.supplierService.addProductDiscount(5018475, 1728439, 100, 50, false);
+//
+//        serviceFactory.supplierService.addProductDiscount(4810203, 9812763, 20, 5, true);
+//        serviceFactory.supplierService.addProductDiscount(4810203, 9812763, 60, 50, false);
+//
+//        serviceFactory.supplierService.addProductDiscount(4810203, 4918672, 50, 10, true);
+//        serviceFactory.supplierService.addProductDiscount(4810203, 4918672, 100, 50, false);
+//
+//        serviceFactory.supplierService.addSupplierDiscount(5018475,Discounts.DISCOUNT_BY_TOTAL_QUANTITY,50,10,true);
+//        serviceFactory.supplierService.addSupplierDiscount(5018475,Discounts.DISCOUNT_BY_TOTAL_PRICE,500,50,false);
+//
+//        serviceFactory.supplierService.addSupplierDiscount(4810203,Discounts.DISCOUNT_BY_TOTAL_QUANTITY,40,5,true);
+//        serviceFactory.supplierService.addSupplierDiscount(4810203,Discounts.DISCOUNT_BY_TOTAL_PRICE,300,40,false);
+//
+//        ItemToOrder item1  = new ItemToOrder("Bamba","Osem",550,LocalDateTime.now().plusMonths(1));
+//        ItemToOrder item2  = new ItemToOrder("Ketchup","Heinz",50,LocalDateTime.now().plusMonths(1));
+//        ItemToOrder item3  = new ItemToOrder("Click","Elite",175,LocalDateTime.now().plusMonths(1));
+//        List<ItemToOrder> itemsList = new LinkedList<>();
+//        itemsList.add(item1);
+//        itemsList.add(item2);
+//        itemsList.add(item3);
+//        System.out.println(serviceFactory.orderService.createSpecialOrder(itemsList,false));
+//    }
 
     public void start() throws Exception {
         Scanner scanner = new Scanner(System.in);
@@ -231,7 +231,7 @@ public class SupplierManager {
                 paymentTerms = PaymentTerms.SHOTEF_PLUS_90;
                 break;
         }
-        System.out.println(serviceFactory.supplierService.addSupplier(name, address, supplierNum, bankAccount, contacts, constDeliveryDays, selfDelivery,paymentTerms));
+        //System.out.println(serviceFactory.supplierService.addSupplier(name, address, supplierNum, bankAccount, contacts, constDeliveryDays, selfDelivery,paymentTerms));
     }
 
     private void deleteSupplier() {
@@ -306,7 +306,7 @@ public class SupplierManager {
         String date = getString(scannerString, "Enter the product expiry date:\nFirst select the date in this format:'YYYY-MM-DD");
         String time = getString(scannerString, "Enter the time(example to time format:'19:34:50.63'");
         LocalDateTime expiredDateTime = LocalDateTime.parse(date + 'T' + time);
-        System.out.println(serviceFactory.supplierService.addProduct(supplierNum, productNum, productName, manufacturer, price, maxAmount, expiredDateTime));
+        //System.out.println(serviceFactory.supplierService.addProduct(supplierNum, productNum, productName, manufacturer, price, maxAmount, expiredDateTime));
     }
 
     private void deleteProduct() {

@@ -5,6 +5,7 @@ import ServiceLayer.Stock.CategoryService;
 import ServiceLayer.Stock.DamagedService;
 import ServiceLayer.Stock.InventoryService;
 import ServiceLayer.Stock.ItemService;
+import ServiceLayer.Supplier_Stock.ServiceFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,15 +19,22 @@ class InventoryTest {
     public static DamagedService damagedService;
     public static ItemService itemService;
     private Inventory inventory;
+    public static ServiceFactory serviceFactory;
 
     @BeforeEach
-    public void setUp() {
-        inventoryService = new InventoryService();
-        categoryService = new CategoryService(inventoryService.get_inventory());
-        damagedService = new DamagedService(inventoryService.get_inventory());
-        itemService = new ItemService(inventoryService.get_inventory());
-        inventory = inventoryService.get_inventory();
-        inventory.setUp();
+    public void setUp(){
+        serviceFactory = new ServiceFactory();
+        inventory = serviceFactory.inventoryService.get_inventory();
+        damagedService = serviceFactory.damagedService;
+        categoryService = serviceFactory.categoryService;
+        inventoryService = serviceFactory.inventoryService;
+        itemService = serviceFactory.itemService;
+        try {
+            serviceFactory.dataSetUp();
+        }
+        catch (Exception e){
+            System.out.println(e.getMessage());
+        }
     }
 
     @Test
@@ -73,9 +81,10 @@ class InventoryTest {
         assertEquals(expected , result);
     }
 
+    //WORK
     @Test
     void add_item() {
-        itemService.addItem(".0.0",5, "Milky", 3, "Liran LTD", 2.0);
+        itemService.addItem(".0",5, "Milky", 3, "Liran LTD", 2.0);
         assertEquals(inventory.get_item_by_id(5).get_name() , "Milky");
         }
 }

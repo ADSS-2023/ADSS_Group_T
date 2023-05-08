@@ -14,7 +14,12 @@ public class UI_General {
         scanner.nextLine();
         switch (action){
             case 1:
-                supplierManager.start();
+                try {
+                    supplierManager.start();
+                }
+                catch (Exception e){
+                    System.out.println(e.getMessage());
+                }
             case 2:
                 stockUI.run();
         }
@@ -33,7 +38,7 @@ public class UI_General {
         scanner.nextLine();
         if(action==1) {
             stockUI.loadData();
-            supplierManager.setUpData();
+            //supplierManager.setUpData();
         }
         run(stockUI,supplierManager);
     }

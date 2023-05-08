@@ -1,5 +1,8 @@
 package BusinessLayer.Stock;
 
+import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.ItemDTO;
+import DataLayer.Util.DTO;
+
 import java.time.LocalDate;
 import java.util.*;
 
@@ -18,6 +21,7 @@ public class Item implements ProductCategoryManagement {
     protected double original_price;
     protected List<Discount> discount_list;
     private OnAlertCallBack onAlertCallBack;
+    protected ItemDTO item_dto;
 
     /**
      * Item constructor
@@ -34,11 +38,11 @@ public class Item implements ProductCategoryManagement {
         this.min_amount = min_amount;
         this.manufacturer_name = manufacturer_name;
         this.original_price = original_price;
-
         items = new Hashtable<>();
         discount_list = new LinkedList<>();
-
+        this.item_dto = new ItemDTO(item_id, name, min_amount, manufacturer_name, original_price);
     }
+
 
     /**
      * This function return the id of the current item.
@@ -54,6 +58,11 @@ public class Item implements ProductCategoryManagement {
      */
     public String get_name() {
         return name;
+    }
+
+    @Override
+    public DTO getDto() {
+        return item_dto;
     }
 
     /**

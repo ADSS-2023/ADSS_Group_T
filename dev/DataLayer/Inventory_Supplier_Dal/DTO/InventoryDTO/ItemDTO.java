@@ -1,6 +1,8 @@
 package DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO;
 
-public class ItemDTO {
+import DataLayer.Util.DTO;
+
+public class ItemDTO extends DTO {
     private int itemId;
     private String name;
     private int minAmount;
@@ -9,6 +11,7 @@ public class ItemDTO {
 
 
     public ItemDTO(int itemId, String name, int minAmount, String manufacturerName, double originalPrice) {
+        super("inventory_item");
         this.itemId = itemId;
         this.name = name;
         this.minAmount = minAmount;

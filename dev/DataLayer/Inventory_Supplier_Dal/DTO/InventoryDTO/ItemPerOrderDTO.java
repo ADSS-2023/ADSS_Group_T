@@ -1,17 +1,21 @@
 package DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO;
 
+import DataLayer.Util.DTO;
+
 import java.time.LocalDate;
 
-public class ItemPerOrderDTO {
-    private int amountWarehouse;
-    private int amountStore;
-    private double costPrice;
-    private String location;
-    private String validity;
-    private int orderId;
+public class ItemPerOrderDTO extends DTO {
     private int itemId;
+    private int orderId;
+    private String validity;
+    private String location;
+    private double costPrice;
+    private int amountStore;
+    private int amountWarehouse;
+
 
     public ItemPerOrderDTO(int amountWarehouse, int amountStore, double costPrice, String location, String validity, int orderId , int itemId) {
+        super("inventory_item_per_order");
         this.amountWarehouse = amountWarehouse;
         this.amountStore = amountStore;
         this.costPrice = costPrice;

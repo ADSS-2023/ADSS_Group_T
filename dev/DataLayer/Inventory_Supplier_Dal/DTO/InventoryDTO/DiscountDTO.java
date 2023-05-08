@@ -1,8 +1,10 @@
 package DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO;
 
+import DataLayer.Util.DTO;
+
 import java.time.LocalDate;
 
-public class DiscountDTO {
+public class DiscountDTO extends DTO {
     private int id;
     private String start_date;
     private String end_date;
@@ -10,6 +12,7 @@ public class DiscountDTO {
     private boolean is_category;
 
     public DiscountDTO(String start_date, String end_date, double percentage , int id, boolean is_category) {
+        super("inventory_discount");
         this.start_date = start_date;
         this.end_date = end_date;
         this.percentage = percentage;

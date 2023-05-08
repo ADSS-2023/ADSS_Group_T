@@ -1,6 +1,9 @@
 package BusinessLayer.Stock;
 
 import BusinessLayer.Stock.Util.Util;
+import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.CategoryDTO;
+import DataLayer.Inventory_Supplier_Dal.DalController.InventoryDalController;
+import DataLayer.Util.DTO;
 
 import java.awt.*;
 import java.util.LinkedList;
@@ -15,12 +18,16 @@ public class Category implements ProductCategoryManagement{
     protected String name;
     protected LinkedList<ProductCategoryManagement> categories_list;
     protected List<Discount> discount_list;
+    protected CategoryDTO categoryDTO;
+    protected InventoryDalController inv_dal_controller;
+
 
     public Category(String name,String index) {
         this.name = name;
-        this.index = index;
+        this.index = index; // need to change it to be 0.1.1...
         categories_list = new LinkedList<>();
         discount_list = new LinkedList<>();
+        categoryDTO = new CategoryDTO(index , name , "");
     }
 
     /**
@@ -45,6 +52,13 @@ public class Category implements ProductCategoryManagement{
             String next_index = Util.extractNextIndex(index);
             return categories_list.get(current_index).produceInventoryReport(next_index);
         }
+    }
+
+    /**
+     *
+     */
+    public CategoryDTO getDto(){
+        return categoryDTO;
     }
 
     /**
@@ -133,9 +147,13 @@ public class Category implements ProductCategoryManagement{
      * @param name
      */
     @Override
-    public void add_product(String index, String name) {
-        if (index == "")
-            categories_list.add(new Category(name,""+categories_list.size()));
+    public void add_product(String index, String name) throws Exception {
+        if (index == "") {
+            Category new_category = new Category(name, "" + categories_list.size());
+            categories_list.add(new_category);
+//            DTO curDto = new_category.getDto();
+//            inv_dal_controller.insert(curDto);
+        }
         else {
             int current_index = Integer.parseInt(Util.extractFirstNumber(index));
             String next_index = Util.extractNextIndex(index);
