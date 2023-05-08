@@ -2,11 +2,13 @@ package ServiceLayer.Supplier_Stock;
 
 import BusinessLayer.Supplier.OrderController;
 import BusinessLayer.Supplier.SupplierController;
+import BusinessLayer.Supplier_Stock.Util_Supplier_Stock;
 import ServiceLayer.Stock.*;
 import ServiceLayer.Supplier.OrderService;
 import ServiceLayer.Supplier.SupplierService;
 
 public class ServiceFactory {
+    private Util_Supplier_Stock uss;
     public SupplierController sc;
     public OrderController oc;
     public SupplierService supplierService;
@@ -18,7 +20,7 @@ public class ServiceFactory {
     public ManageOrderService manageOrderService;
 
     public ServiceFactory(){
-
+        uss = new Util_Supplier_Stock();
         this.inventoryService = new InventoryService();
         this.categoryService = new CategoryService(inventoryService.get_inventory());
         this.damagedService = new DamagedService(inventoryService.get_inventory());
@@ -30,5 +32,14 @@ public class ServiceFactory {
         this.orderService = new OrderService(oc,sc);
 
         manageOrderService.setOrderController(inventoryService.get_inventory(),orderService);
+    }
+    public String nextDay(){
+        try{
+            uss.nextDay();
+            return "Action succeeded";
+        }
+        catch (Exception e){
+            return e.getMessage();
+        }
     }
 }

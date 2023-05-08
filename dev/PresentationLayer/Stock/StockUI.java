@@ -13,8 +13,11 @@ import java.util.Scanner;
 import java.util.function.Supplier;
 
 public class StockUI {
-    public static ServiceFactory sf = new ServiceFactory();
+    private ServiceFactory sf;
     private PreviousCallBack previousCallBack;
+    public StockUI(ServiceFactory sf){
+        this.sf = sf;
+    }
     public void printOptions(){
         System.out.println("\u001B[32m1.See categories\u001B[0m");
         System.out.println("\u001B[32m2.Produce inventory report\u001B[0m");
