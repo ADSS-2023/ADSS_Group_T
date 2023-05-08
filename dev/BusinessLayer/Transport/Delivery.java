@@ -1,6 +1,7 @@
 package BusinessLayer.Transport;
 
 import BusinessLayer.HR.Driver;
+import DataLayer.HR_T_DAL.DalService.DalDeliveryService;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -25,9 +26,10 @@ public class Delivery {
     private int truckNumber;
     private String note;
     private Driver.CoolingLevel coolingLevel;
+    private DalDeliveryService dalDeliveryService;
 
     public Delivery(int id, LocalDate date, LocalTime departureTime, int truckWeight, LinkedHashMap<Supplier, File> suppliers,
-                    LinkedHashMap<Branch, File> branches, Site source, int truckNumber, int shippingArea) {
+                    LinkedHashMap<Branch, File> branches, Site source, int truckNumber, int shippingArea, DalDeliveryService dalDeliveryService) {
         this.id = id;
         this.date = date;
         this.departureTime = departureTime;
@@ -40,6 +42,7 @@ public class Delivery {
         this.handledBranches = new LinkedHashMap<>();
         this.shippingArea = shippingArea;
         this.note = "";
+        this.dalDeliveryService = dalDeliveryService;
     }
 
     public void addHandledSupplier(Supplier supplier, File f) {

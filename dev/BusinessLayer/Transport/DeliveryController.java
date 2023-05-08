@@ -128,7 +128,7 @@ public class DeliveryController {
                     continue;
 
                 Delivery delivery = new Delivery(deliveryCounter++, requiredDate, LocalTime.NOON, truck.getWeight(), new LinkedHashMap<>(),
-                        new LinkedHashMap<>(), null, truck.getLicenseNumber(), branch.getShippingArea());
+                        new LinkedHashMap<>(), null, truck.getLicenseNumber(), branch.getShippingArea(),dalDeliveryService);
                 shiftController.addDirverRequirement(requiredDate, truck.getLicenseType(), truck.getCoolingLevel());
                 shiftController.addStoreKeeperRequirement(requiredDate, branch.getAddress());
                 delivery.addBranch(branch, filesCounter++);
@@ -393,7 +393,7 @@ public class DeliveryController {
             }
 
             Delivery newDelivery = new Delivery(deliveryCounter, newDeliveredDate, LocalTime.NOON, t.getWeight(), suppliers, branches,
-                    suppliers.entrySet().iterator().next().getKey(), t.getLicenseNumber(), branches.entrySet().iterator().next().getKey().getShippingArea());
+                    suppliers.entrySet().iterator().next().getKey(), t.getLicenseNumber(), branches.entrySet().iterator().next().getKey().getShippingArea(),dalDeliveryService);
             if (!date2deliveries.containsKey(newDeliveredDate))
                 date2deliveries.put(newDeliveredDate, new ArrayList<>());
             date2deliveries.get(newDeliveredDate).add(newDelivery);
