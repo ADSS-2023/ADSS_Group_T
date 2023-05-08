@@ -2,20 +2,20 @@ package ServiceLayer.Transport;
 
 import BusinessLayer.Transport.DeliveryController;
 import UtilSuper.EnterWeightInterface;
-import UtilSuper.OverweightActionInterface;
+import UtilSuper.EnterOverWeightInterface;
 
 import java.util.LinkedHashMap;
 
 public class DeliveryService {
     public DeliveryController deliveryController;
     private EnterWeightInterface enterWeightInterface;
-    private OverweightActionInterface overweightAction;
+    private EnterOverWeightInterface enterOverWeightInterface;
     private final TransportJsonConvert transportJsonConvert;
 
     public DeliveryService(DeliveryController deliveryController) {
         this.deliveryController = deliveryController;
         deliveryController.setEnterWeightInterface((String address, int deliveryID) -> enterWeightInterface.enterWeightFunction(address, deliveryID));
-        deliveryController.setOverweightAction((int deliveryID) -> overweightAction.EnterOverweightAction(deliveryID));
+        deliveryController.setOverweightAction((int deliveryID) -> enterOverWeightInterface.EnterOverweightAction(deliveryID));
         transportJsonConvert = new TransportJsonConvert();
     }
 
@@ -45,13 +45,6 @@ public class DeliveryService {
         }
     }
 
-    public String getAllDeliveriesDetail() {
-        try {
-            return (transportJsonConvert.deliveryListToString(deliveryController.getAllDeliveries().values()));
-        } catch (Exception ex) {
-            return ex.toString();
-        }
-    }
 
     public String getDeliveryDetail(int deliveryID) {
         try {
@@ -89,8 +82,15 @@ public class DeliveryService {
         this.enterWeightInterface = enterWeightInterface;
     }
 
-    public void setOverweightAction(OverweightActionInterface overweightAction) {
-        this.overweightAction = overweightAction;
+    public void setEnterOverWeightInterface(EnterOverWeightInterface enterOverWeightInterface) {
+        this.enterOverWeightInterface = enterOverWeightInterface;
     }
 
+    public String getCurrDate() {
+        return this.deliveryController.getCurrDate().toString();
+    }
+
+    public String showAllDeliveries() {
+        return transportJsonConvert.deliveryListToString(this.deliveryController.getAllDeliveries());
+    }
 }
