@@ -2,10 +2,15 @@ package DataLayer.Util;
 
 
 import java.lang.reflect.Field;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
 public class DAO {
+
+    private Connection connection;
+
+
     /**
      * This function gets a dto type, and insert the dto into the suitable table.
      * @param connection sql connection
@@ -129,6 +134,67 @@ public class DAO {
             index++;
         }
         statement.executeUpdate();
+    }
+
+    public <T extends DTO> T find(Object primaryKey, String tableName, Class<T> dtoClass) throws SQLException {
+        T result = null;
+        String sql = "SELECT * FROM " + tableName + " WHERE id = ?";
+
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setObject(1, primaryKey);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                result = dtoClass.getDeclaredConstructor().newInstance();
+                result.setTableName(tableName);
+
+                ResultSetMetaData metaData = resultSet.getMetaData();
+                int columnCount = metaData.getColumnCount();
+
+                for (int i = 1; i <= columnCount; i++) {
+                    String columnName = metaData.getColumnName(i);
+                    Object value = resultSet.getObject(i);
+                    Field field = result.getClass().getDeclaredField(columnName);
+                    field.setAccessible(true);
+                    field.set(result, value);
+                }
+            }
+        } catch (ReflectiveOperationException e) {
+            throw new SQLException("Error creating DTO instance", e);
+        }
+
+        return result;
+    }
+
+
+    public <T extends DTO> List<T> findAll(String tableName, Class<T> dtoClass) throws SQLException {
+        List<T> results = new ArrayList<>();
+        String sql = "SELECT * FROM " + tableName;
+
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            ResultSet resultSet = statement.executeQuery();
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            int columnCount = metaData.getColumnCount();
+
+            while (resultSet.next()) {
+                T dto = dtoClass.getDeclaredConstructor().newInstance();
+                dto.setTableName(tableName);
+
+                for (int i = 1; i <= columnCount; i++) {
+                    String columnName = metaData.getColumnName(i);
+                    Object value = resultSet.getObject(i);
+                    Field field = dto.getClass().getDeclaredField(columnName);
+                    field.setAccessible(true);
+                    field.set(dto, value);
+                }
+
+                results.add(dto);
+            }
+        } catch (ReflectiveOperationException e) {
+            throw new SQLException("Error creating DTO instance", e);
+        }
+
+        return results;
     }
 }
 
