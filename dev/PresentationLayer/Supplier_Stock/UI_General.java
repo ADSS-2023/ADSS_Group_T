@@ -52,5 +52,4 @@ public class UI_General {
         }
         run(stockUI,supplierManager,sf);
     }
-
 }
