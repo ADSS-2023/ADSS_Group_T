@@ -10,7 +10,7 @@ public class UI_General {
     public static void run(StockUI stockUI,SupplierManager supplierManager,ServiceFactory sf){
         Scanner scanner = new Scanner(System.in);
         System.out.println("What would like to do?\n" +
-                "1.Enter suppliers system 2.Enter Inventory system 3.Skip day");
+                "1.Enter suppliers system\n2.Enter Inventory system\n3.Skip day");
         int action = scanner.nextInt();
         scanner.nextLine();
         switch (action){
@@ -29,8 +29,8 @@ public class UI_General {
         ServiceFactory sf = new ServiceFactory();
         StockUI stockUI = new StockUI(sf);
         SupplierManager supplierManager = new SupplierManager(sf);
-        stockUI.setPreviousCallBack(()->run(stockUI,supplierManager));
-        supplierManager.setPreviousCallBack(()->run(stockUI,supplierManager));
+        stockUI.setPreviousCallBack(()->run(stockUI,supplierManager,sf));
+        supplierManager.setPreviousCallBack(()->run(stockUI,supplierManager,sf));
         Scanner scanner = new Scanner(System.in);
         System.out.println("\033[1mWelcome to Superly inventory and supplier system\033[0m\n\u001B[32m" +
                 "Would you like to load data or continue on an empty system?\n" +

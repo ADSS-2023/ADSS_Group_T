@@ -1,6 +1,7 @@
 package BusinessLayer.Supplier.Suppliers;
 
 import BusinessLayer.Supplier.Supplier_Util.PaymentTerms;
+import BusinessLayer.Supplier_Stock.Util_Supplier_Stock;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;

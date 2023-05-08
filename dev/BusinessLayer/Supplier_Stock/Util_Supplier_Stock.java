@@ -5,7 +5,7 @@ import java.util.Date;
 public class Util_Supplier_Stock {
     private static LocalDate currDay;
     public Util_Supplier_Stock(){
-        currDay = LocalDate.of(2023, 1, 1);
+        currDay = LocalDate.of(2023, 9, 15);
     }
     public static LocalDate getCurrDay(){
         return currDay;
