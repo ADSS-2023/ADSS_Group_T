@@ -20,6 +20,7 @@ public class LogisticCenter extends Site {
         this.productsInStock = new LinkedHashMap<>();
     }
 
+
     public boolean addTruck(int licenseNumber, String model, int weight, int maxWeight, int coolingLevel) throws Exception {
         if (trucks.containsKey(licenseNumber))
             throw new Exception("trucks contains licenseNumber");
