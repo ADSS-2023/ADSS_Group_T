@@ -1,6 +1,8 @@
 package BusinessLayer.HR;
 
 import BusinessLayer.HR.User.UserType;
+import DataLayer.HR_T_DAL.DalService.DalEmployeeService;
+import DataLayer.HR_T_DAL.DalService.DalUserService;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -10,6 +12,9 @@ import java.util.NoSuchElementException;
 public class EmployeeController {
     private HashMap<Integer,Employee> employeesMapper;
     public ShiftController shiftController;
+    public DalEmployeeService dalEmployeeService;
+
+    public DalUserService dalUserService;
 
 
     public EmployeeController(){
@@ -23,6 +28,7 @@ public class EmployeeController {
 
         // Create and set properties of the new employee object
         Employee newEmployee = new Employee(id, employeeName, bankAccount, description,  salary, joiningDay, password, userType);
+        dalUserService.addNewEmployee(newEmployee);
 
         // Add the new employee to the employeesMapper map
         employeesMapper.put(id, newEmployee);

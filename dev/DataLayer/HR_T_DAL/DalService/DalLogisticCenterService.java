@@ -10,8 +10,6 @@ import java.sql.SQLException;
 public class DalLogisticCenterService {
     private TruckDAO truckDAO;
     private Connection connection;
-
-
     public DalLogisticCenterService(Connection connection) {
         this.connection = connection;
         this.truckDAO = new TruckDAO(connection);

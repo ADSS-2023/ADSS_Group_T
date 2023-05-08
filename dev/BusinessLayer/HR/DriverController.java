@@ -1,11 +1,13 @@
 package BusinessLayer.HR;
 
+import DataLayer.HR_T_DAL.DalService.DalDriverService;
 import UtilSuper.Pair;
 import BusinessLayer.HR.User.PositionType;
 import BusinessLayer.HR.User.UserType;
 import BusinessLayer.HR.Driver.CoolingLevel;
 import BusinessLayer.HR.Driver.LicenseType;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -13,6 +15,8 @@ public class DriverController {
     private LinkedHashMap<Integer, Driver> drivers;
     private LinkedHashMap<LocalDate, ArrayList<Pair<Driver.LicenseType, Driver.CoolingLevel>>> driversRequirements; // date, amount
     private LinkedHashMap<LocalDate, HashMap<Driver, Boolean>> date2driversSubmission; // date, driver. isAssigned
+
+    private DalDriverService dalDriverService;
 
 
 // TODO- modify it if needed
@@ -99,12 +103,13 @@ public class DriverController {
      */
     public boolean addDriver(int id, String employeeName, String bankAccount, List<PositionType> qualifiedPositions,
                              String description, int salary, LocalDate joiningDay, String password, UserType userType,
-                             Driver.LicenseType licenseType, Driver.CoolingLevel coolingLevel) {
+                             Driver.LicenseType licenseType, Driver.CoolingLevel coolingLevel) throws SQLException {
         if (drivers.containsKey(id))
             throw new IllegalArgumentException("Driver already exists.");
         else {
             Driver driver = new Driver(id, employeeName, bankAccount, qualifiedPositions, description, salary,
                     joiningDay, password, userType, licenseType, coolingLevel);
+            dalDriverService.addDriver(driver);
             this.drivers.put(id, driver);
         }
         return true;
