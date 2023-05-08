@@ -1,5 +1,8 @@
 package BusinessLayer.Transport;
 
+import DataLayer.HR_T_DAL.DalService.DalLogisticCenterService;
+
+import java.sql.SQLException;
 import java.util.LinkedHashMap;
 
 
@@ -7,8 +10,9 @@ public class LogisticCenterController {
 
     private final LogisticCenter logisticCenter;
 
-    public LogisticCenterController() {
-        this.logisticCenter = new LogisticCenter();
+
+    public LogisticCenterController(DalLogisticCenterService dalLogisticCenterService) {
+        this.logisticCenter = new LogisticCenter(dalLogisticCenterService);
     }
 
     /**
@@ -45,7 +49,7 @@ public class LogisticCenterController {
      * @param coolingLevel  - the cooling level of the truck
      * @return true if the truck added successfully , and false otherwise
      */
-    public boolean addTruck(int licenseNumber, String model, int weight, int maxWeight, int coolingLevel) {
+    public boolean addTruck(int licenseNumber, String model, int weight, int maxWeight, int coolingLevel) throws Exception {
         return logisticCenter.addTruck(licenseNumber, model, weight, maxWeight, coolingLevel);
     }
 
@@ -55,7 +59,7 @@ public class LogisticCenterController {
      * @param licenseNumber of the truck
      * @return true if the truck removed successfully , false otherwise
      */
-    public boolean removeTruck(int licenseNumber) {
+    public boolean removeTruck(int licenseNumber) throws Exception {
         return logisticCenter.removeTruck(licenseNumber);
     }
 

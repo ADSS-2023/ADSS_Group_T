@@ -5,10 +5,17 @@ import BusinessLayer.HR.EmployeeController;
 import BusinessLayer.HR.ShiftController;
 import BusinessLayer.Transport.*;
 import BusinessLayer.HR.User.UserController;
+import DataLayer.HR_T_DAL.DAOs.TruckDAO;
+import DataLayer.HR_T_DAL.DalService.DalLogisticCenterService;
 import ServiceLayer.HR.EmployeeService;
 import ServiceLayer.HR.ShiftService;
 import ServiceLayer.Transport.*;
 import ServiceLayer.UserService;
+import org.junit.Before;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 public class ServiceFactory {
     private ShiftController shiftController;
@@ -25,17 +32,28 @@ public class ServiceFactory {
     private BranchController branchController;
     private SupplierService supplierService;
     private SupplierController supplierController;
+    private Connection connection;
+    private DalLogisticCenterService dalLogisticCenterService;
 
 
     private DriverController driverController;
 
-    public ServiceFactory() {
+    public ServiceFactory() throws SQLException {
+
+        String testDBUrl = "jdbc:sqlite:dev/DataLayer/HR_Transport_DB .db";
+        connection = DriverManager.getConnection(testDBUrl);
+
+
+
         shiftController = new ShiftController();
         shiftService = new ShiftService(shiftController);
         employeeController = new EmployeeController();
         employeeService = new EmployeeService(employeeController);
-        logisticCenterController = new LogisticCenterController();
+
+        this.dalLogisticCenterService = new DalLogisticCenterService(connection);
+        logisticCenterController = new LogisticCenterController(dalLogisticCenterService);
         logisticCenterService = new LogisticCenterService(logisticCenterController);
+
         //TODO //userController = new UserController();
         userService = new UserService(userController);
         branchController = new BranchController();

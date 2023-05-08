@@ -86,6 +86,8 @@ public class DeliveryController {
             throw new Exception("cant delivery from LC to LC");
         if(isDestinationIsLogisticCenter)
             return orderDeliveryToLogisticCenter(suppliersString,requiredDate);
+        if(isSupplierIsLogisticCenter);
+            //return orderDeliveryFromLogisticCenter();
 
         Branch branch = this.branchController.getBranch(destinationString);
         LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> suppliers = getSuppliersAnsProducts(suppliersString);//convert the string
