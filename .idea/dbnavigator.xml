@@ -36,12 +36,16 @@
     <last-used-providers />
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files />
+    <open-files>
+      <object connection-id="aed7569d-309f-434e-89b3-679209d2b10f" object-ref="schemas/main/tables/Truck" />
+    </open-files>
   </component>
   <component name="DBNavigator.Project.DatasetFilterManager">
     <filter-actions connection-id="aed7569d-309f-434e-89b3-679209d2b10f" dataset="main.BranchToShift" active-filter-id="" />
     <filter-actions connection-id="aed7569d-309f-434e-89b3-679209d2b10f" dataset="main.DeliveryToBranches" active-filter-id="EMPTY_FILTER" />
+    <filter-actions connection-id="aed7569d-309f-434e-89b3-679209d2b10f" dataset="main.SupplierToProducts" active-filter-id="EMPTY_FILTER" />
     <filter-actions connection-id="aed7569d-309f-434e-89b3-679209d2b10f" dataset="main.Delivery" active-filter-id="EMPTY_FILTER" />
+    <filter-actions connection-id="aed7569d-309f-434e-89b3-679209d2b10f" dataset="main.Truck" active-filter-id="EMPTY_FILTER" />
     <filter-actions connection-id="aed7569d-309f-434e-89b3-679209d2b10f" dataset="main.Constraint" active-filter-id="" />
     <filter-actions connection-id="aed7569d-309f-434e-89b3-679209d2b10f" dataset="main.BranchToEmployee" active-filter-id="EMPTY_FILTER" />
     <filter-actions connection-id="aed7569d-309f-434e-89b3-679209d2b10f" dataset="main.Branch" active-filter-id="EMPTY_FILTER" />
@@ -81,7 +85,7 @@
           <port value="" />
           <database value="" />
           <files>
-            <file path="$PROJECT_DIR$/dev/DataLayer/HR_Transport_DB.db" schema="main" />
+            <file path="$PROJECT_DIR$/dev/DataLayer/HR_Transport_DB .db" schema="main" />
           </files>
           <type value="NONE" />
           <user value="" />
