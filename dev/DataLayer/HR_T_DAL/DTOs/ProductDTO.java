@@ -12,4 +12,12 @@ public class ProductDTO extends DTO {
         this.productName = productName;
         this.coolingLevel = coolingLevel;
     }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public String getCoolingLevel() {
+        return coolingLevel;
+    }
 }

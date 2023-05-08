@@ -79,6 +79,11 @@ public class DalDeliveryService {
         dao.insert(dto);
     }
 
+    public void insertSupplierToProducts(String supplierAddress, String productName) throws SQLException {
+        SupplierToProductsDTO dto = new SupplierToProductsDTO(supplierAddress, productName);
+        dao.insert(dto);
+    }
+
     public void deleteUnHandledSupplier(int deliveryId, String supplierAddress, String productName, int amount) throws SQLException {
         DeliveryUnHandledSuppliersDTO dto = new DeliveryUnHandledSuppliersDTO(deliveryId,supplierAddress,productName,amount);
         dao.delete(dto);
@@ -111,19 +116,33 @@ public class DalDeliveryService {
 
     public Supplier findSupplier(String supplierAddress) throws SQLException {
         SupplierDTO dto = dao.find(supplierAddress,"supplierAddress","Supplier",SupplierDTO.class);
-        return new Supplier(dto);
+        return new Supplier(dto,this);
     }
 
+    public Branch findBranch(String branchAddress) throws SQLException {
+        BranchDTO dto = dao.find(branchAddress,"branchAddress","Branch",BranchDTO.class);
+        return new Branch(dto);
+    }
+
+    public Product findProduct(String productName) throws SQLException {
+        ProductDTO dto = dao.find(productName,"productName","Product",ProductDTO.class);
+        return new Product(dto);
+    }
     public LinkedHashMap<String, Supplier> findAllSupplier() throws SQLException {
         ArrayList<SupplierDTO> suppliersDTOs =  dao.findAll("Supplier", SupplierDTO.class);
         LinkedHashMap<String, Supplier> suppliers = new LinkedHashMap<>();
         for(SupplierDTO s : suppliersDTOs){
-            suppliers.put(s.getSupplierAddress(),new Supplier(s));
+            suppliers.put(s.getSupplierAddress(),new Supplier(s,this));
         }
-        return  suppliers;
+        return suppliers;
     }
-    public Branch findBranch(String branchAddress) throws SQLException {
-        BranchDTO dto = dao.find(branchAddress,"branchAddress","Branch",BranchDTO.class);
-        return new Branch(dto);
+
+    public LinkedHashMap<String, Product> findAllProducts() throws SQLException {
+        ArrayList<ProductDTO> ProductDTOs =  dao.findAll("Product", ProductDTO.class);
+        LinkedHashMap<String, Product> products = new LinkedHashMap<>();
+        for(ProductDTO p : ProductDTOs){
+            products.put(p.getProductName(),new Product(p));
+        }
+        return products;
     }
 }
