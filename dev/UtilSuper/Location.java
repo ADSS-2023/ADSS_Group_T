@@ -25,6 +25,14 @@ public class Location {
     public int getShippingArea() {
         return this.shippingArea;
     }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
 }
 
 
