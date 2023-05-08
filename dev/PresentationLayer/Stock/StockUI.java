@@ -29,9 +29,9 @@ public class StockUI {
         System.out.println("\u001B[32m8.Receive a new order (receive new supply of exists item)\u001B[0m");
         System.out.println("\u001B[32m9.Produce shortage report\u001B[0m");
         System.out.println("\u001B[32m10.Add new category\u001B[0m");
-        System.out.println("\u001B[32m11.Skip day\u001B[0m");
-        System.out.println("\u001B[32m12.Orders menu\u001B[0m");
-        System.out.println("\u001B[32m13.Back to start menu\u001B[0m");
+/*        System.out.println("\u001B[32m11.Skip day\u001B[0m");*/
+        System.out.println("\u001B[32m11.Orders menu\u001B[0m");
+        System.out.println("\u001B[32m12.Back to start menu\u001B[0m");
     }
 
     public  String presentCategories(){
@@ -188,12 +188,9 @@ public class StockUI {
                 addCategory();
                 break;
             case "11":
-                moveToNextDay();
-                break;
-            case "12":
                 edit_create_orders();
                 break;
-            case "13":
+            case "12":
                 goBack();
                 break;
             case "21":
