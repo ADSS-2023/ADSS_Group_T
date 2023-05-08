@@ -38,6 +38,7 @@ public class MainPresentation {
         this.supplierService = serviceFactory.getSupplierService();
         transportManagerPresentation = new TransportManagerPresentation(logisticCenterService,deliveryService,supplierService,branchService);
         serviceFactory.callbackEnterWeight(this.transportManagerPresentation::enterWeightFunction);
+        serviceFactory.callbackEnterOverWeight(this.transportManagerPresentation::enterOverWeightAction);
 
     }
 

@@ -26,4 +26,8 @@ public class LogisticCenterService {
             return ex.getMessage();
         }
     }
+
+    public String getAddress() {
+        return this.logisticCenterController.getAddress();
+    }
 }
