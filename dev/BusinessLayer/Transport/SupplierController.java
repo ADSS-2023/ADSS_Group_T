@@ -1,12 +1,17 @@
 package BusinessLayer.Transport;
 
+import DataLayer.HR_T_DAL.DalService.DalDeliveryService;
+
+import java.sql.SQLException;
 import java.util.LinkedHashMap;
 
 public class SupplierController {
-    private final LinkedHashMap<String, Supplier> suppliers;
+    private LinkedHashMap<String, Supplier> suppliers;
+    private DalDeliveryService dalDeliveryService;
 
-    public SupplierController() {
+    public SupplierController(DalDeliveryService dalDeliveryService) {
         this.suppliers = new LinkedHashMap<>();
+        this.dalDeliveryService = dalDeliveryService;
     }
 
 
@@ -37,17 +42,35 @@ public class SupplierController {
     }
 
     public LinkedHashMap<String, Supplier> getAllSuppliers() {
+        if(suppliers.isEmpty()){
+            try {
+                suppliers = dalDeliveryService.findAllSupplier();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
         return suppliers;
     }
 
     public Supplier getSupplier(String supplierAddress) {
-        if (!suppliers.containsKey(supplierAddress))
-            throw new IllegalArgumentException("no such supp");
+        Supplier s;
+        if (!suppliers.containsKey(supplierAddress)) {
+            try {
+                s = dalDeliveryService.findSupplier(supplierAddress);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            if(s == null)
+                throw new IllegalArgumentException("no such supp");
+            suppliers.put(supplierAddress,s);
+            return s;
+        }
         else
             return suppliers.get(supplierAddress);
     }
 
     public String getSupplierProducts(String supplier) {
+
         if (!suppliers.containsKey(supplier))
             throw new IllegalArgumentException("no such supp");
         else

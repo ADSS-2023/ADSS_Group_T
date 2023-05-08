@@ -6,6 +6,7 @@ import BusinessLayer.HR.ShiftController;
 import BusinessLayer.Transport.*;
 import BusinessLayer.HR.User.UserController;
 import DataLayer.HR_T_DAL.DAOs.TruckDAO;
+import DataLayer.HR_T_DAL.DalService.DalDeliveryService;
 import DataLayer.HR_T_DAL.DalService.DalLogisticCenterService;
 import ServiceLayer.HR.EmployeeService;
 import ServiceLayer.HR.ShiftService;
@@ -34,6 +35,7 @@ public class ServiceFactory {
     private SupplierController supplierController;
     private Connection connection;
     private DalLogisticCenterService dalLogisticCenterService;
+    private DalDeliveryService dalDeliveryService;
 
 
     private DriverController driverController;
@@ -43,7 +45,7 @@ public class ServiceFactory {
         String testDBUrl = "jdbc:sqlite:dev/DataLayer/HR_Transport_DB .db";
         connection = DriverManager.getConnection(testDBUrl);
 
-
+        dalDeliveryService = new DalDeliveryService(connection);
 
         shiftController = new ShiftController();
         shiftService = new ShiftService(shiftController);
@@ -58,9 +60,9 @@ public class ServiceFactory {
         userService = new UserService(userController);
         branchController = new BranchController();
         branchService = new BranchService(branchController);
-        supplierController = new SupplierController();
+        supplierController = new SupplierController(dalDeliveryService);
         supplierService = new SupplierService(supplierController);
-        deliveryController = new DeliveryController(logisticCenterController,supplierController,branchController,driverController,shiftController);
+        deliveryController = new DeliveryController(logisticCenterController,supplierController,branchController,driverController,shiftController,dalDeliveryService);
         deliveryService = new DeliveryService(deliveryController);
     }
     public void callbackEnterWeight(EnterWeightInterface enterWeightInterface){

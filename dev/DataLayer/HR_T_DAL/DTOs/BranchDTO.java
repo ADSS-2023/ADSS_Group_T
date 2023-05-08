@@ -20,4 +20,28 @@ public class BranchDTO extends DTO {
         this.y = y;
         this.shippingArea = shippingArea;
     }
+
+    public String getBranchAddress() {
+        return branchAddress;
+    }
+
+    public String getTelNumber() {
+        return telNumber;
+    }
+
+    public String getContactName() {
+        return contactName;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public int getShippingArea() {
+        return shippingArea;
+    }
 }

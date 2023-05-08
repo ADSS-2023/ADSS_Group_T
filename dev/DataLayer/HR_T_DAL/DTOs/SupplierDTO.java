@@ -21,4 +21,28 @@ public class SupplierDTO extends DTO {
         this.y = y;
         this.shippingArea = shippingArea;
     }
+
+    public String getSupplierAddress() {
+        return supplierAddress;
+    }
+
+    public String getTelNumber() {
+        return telNumber;
+    }
+
+    public String getContactName() {
+        return contactName;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public int getShippingArea() {
+        return shippingArea;
+    }
 }

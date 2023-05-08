@@ -1,5 +1,6 @@
 package DataLayer.HR_T_DAL.DalService;
 
+import BusinessLayer.Transport.Branch;
 import BusinessLayer.Transport.Delivery;
 import BusinessLayer.Transport.Product;
 import BusinessLayer.Transport.Supplier;
@@ -9,6 +10,8 @@ import DataLayer.Util.DAO;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 public class DalDeliveryService {
 
@@ -104,5 +107,23 @@ public class DalDeliveryService {
     public void deleteDateToTruck(String shiftDate, int truckId) throws SQLException {
         DateToTruckDTO dto = new DateToTruckDTO(shiftDate, truckId);
         dao.delete(dto);
+    }
+
+    public Supplier findSupplier(String supplierAddress) throws SQLException {
+        SupplierDTO dto = dao.find(supplierAddress,"supplierAddress","Supplier",SupplierDTO.class);
+        return new Supplier(dto);
+    }
+
+    public LinkedHashMap<String, Supplier> findAllSupplier() throws SQLException {
+        ArrayList<SupplierDTO> suppliersDTOs =  dao.findAll("Supplier", SupplierDTO.class);
+        LinkedHashMap<String, Supplier> suppliers = new LinkedHashMap<>();
+        for(SupplierDTO s : suppliersDTOs){
+            suppliers.put(s.getSupplierAddress(),new Supplier(s));
+        }
+        return  suppliers;
+    }
+    public Branch findBranch(String branchAddress) throws SQLException {
+        BranchDTO dto = dao.find(branchAddress,"branchAddress","Branch",BranchDTO.class);
+        return new Branch(dto);
     }
 }
