@@ -15,14 +15,16 @@ public class DAO {
 
     private Connection connection;
 
+    public DAO(Connection connection) {
+        this.connection = connection;
+    }
 
     /**
      * This function gets a dto type, and insert the dto into the suitable table.
-     * @param connection sql connection
      * @param dto dto to be inserted
      * @throws SQLException
      */
-    public static void insert(Connection connection,DTO dto) throws SQLException {
+    public void insert(DTO dto) throws SQLException {
         String tableName = dto.getTableName();
         String sql = "INSERT INTO " + tableName + " (";
         Field[] fields = dto.getClass().getDeclaredFields();

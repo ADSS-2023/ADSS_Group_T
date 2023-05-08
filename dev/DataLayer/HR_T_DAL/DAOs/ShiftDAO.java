@@ -16,7 +16,9 @@ import java.util.List;
 
     public class ShiftDAO extends DAO {
 
-        public ShiftDAO() {}
+        public ShiftDAO(Connection connection) {
+            super(connection);
+        }
 
         public Shift getShiftByDateAndBranch(LocalDate date, String branch) {
             // Retrieve a shift's details from the database by its date and branch

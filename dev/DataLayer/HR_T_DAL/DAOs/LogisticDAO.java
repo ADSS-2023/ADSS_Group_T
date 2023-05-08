@@ -3,12 +3,14 @@ package DataLayer.HR_T_DAL.DAOs;
 import DataLayer.HR_T_DAL.DTOs.LogisticCenterStockDTO;
 import DataLayer.Util.DAO;
 
+import java.sql.Connection;
 import java.util.List;
 
 public class LogisticDAO {
     public class LogisticCenterDAO extends DAO {
 
-        public LogisticCenterDAO() {
+        public LogisticCenterDAO(Connection connection) {
+            super(connection);
         }
 
         public LogisticCenterStockDTO LogisticCenterDTOgetLogisticCenterById(int id) {

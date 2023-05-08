@@ -1,3 +1,5 @@
+package Tests;
+
 import DataLayer.HR_T_DAL.DAOs.TruckDAO;
 import DataLayer.HR_T_DAL.DTOs.TruckDTO;
 import org.junit.jupiter.api.*;
@@ -12,26 +14,26 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class TruckDAOTest {
-    private static final String TEST_DB_URL = "jdbc:sqlite::memory:";
+    private static final String TEST_DB_URL = "jdbc:sqlite:DataLayer/HR_Transport_DB.db";
     private static Connection connection;
-    private static DAO truckDAO;
+    private static TruckDAO truckDAO;
 
     @BeforeAll
     public static void setUp() throws SQLException {
         connection = DriverManager.getConnection(TEST_DB_URL);
         truckDAO = new TruckDAO(connection);
-        truckDAO.createTable();
+        //truckDAO.createTable();
     }
 
     @AfterAll
     public static void tearDown() throws SQLException {
-        truckDAO.dropTable();
+        //truckDAO.dropTable();
         connection.close();
     }
 
     @BeforeEach
     public void resetTable() throws SQLException {
-        truckDAO.clearTable();
+        //truckDAO.clearTable();
     }
 
     @Test
@@ -45,11 +47,11 @@ public class TruckDAOTest {
         truckDAO.insert(truck3);
 
         // test findAll method
-        List<TruckDTO> trucks = truckDAO.findAll();
-        assertEquals(3, trucks.size());
-        assertEquals(truck1.getLicenseNumber(), trucks.get(0).getLicenseNumber());
-        assertEquals(truck2.getLicenseNumber(), trucks.get(1).getLicenseNumber());
-        assertEquals(truck3.getLicenseNumber(), trucks.get(2).getLicenseNumber());
+        List<TruckDTO> trucks = truckDAO.findAll("Truck",TruckDTO.class);
+        Assertions.assertEquals(3, trucks.size());
+        Assertions.assertEquals(truck1.getLicenseNumber(), trucks.get(0).getLicenseNumber());
+        Assertions.assertEquals(truck2.getLicenseNumber(), trucks.get(1).getLicenseNumber());
+        Assertions.assertEquals(truck3.getLicenseNumber(), trucks.get(2).getLicenseNumber());
     }
 
     @Test
@@ -63,17 +65,17 @@ public class TruckDAOTest {
         truckDAO.insert(truck3);
 
         // test find method
-        TruckDTO foundTruck = truckDAO.find(2);
-        assertNotNull(foundTruck);
-        assertEquals(truck2.getLicenseNumber(), foundTruck.getLicenseNumber());
-        assertEquals(truck2.getModel(), foundTruck.getModel());
-        assertEquals(truck2.getWeight(), foundTruck.getWeight());
-        assertEquals(truck2.getMaxWeight(), foundTruck.getMaxWeight());
-        assertEquals(truck2.getLicenseType(), foundTruck.getLicenseType());
-        assertEquals(truck2.getCoolingLevel(), foundTruck.getCoolingLevel());
+        TruckDTO foundTruck = truckDAO.find(2,"Truck",TruckDTO.class);
+        Assertions.assertNotNull(foundTruck);
+        Assertions.assertEquals(truck2.getLicenseNumber(), foundTruck.getLicenseNumber());
+        Assertions.assertEquals(truck2.getModel(), foundTruck.getModel());
+        Assertions.assertEquals(truck2.getWeight(), foundTruck.getWeight());
+        Assertions.assertEquals(truck2.getMaxWeight(), foundTruck.getMaxWeight());
+        Assertions.assertEquals(truck2.getLicenseType(), foundTruck.getLicenseType());
+        Assertions.assertEquals(truck2.getCoolingLevel(), foundTruck.getCoolingLevel());
 
         // test find method with non-existing key
-        TruckDTO notFoundTruck = truckDAO.find(4);
-        assertNull(notFoundTruck);
+        TruckDTO notFoundTruck = truckDAO.find(4,"Truck",TruckDTO.class);
+        Assertions.assertNull(notFoundTruck);
     }
 }
