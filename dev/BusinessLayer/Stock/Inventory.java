@@ -144,7 +144,7 @@ public class Inventory {
      * This function is a setup function with specific items and categories
      * in order to test the system.
      */
-    public void setUp() {
+    public void setUp() throws Exception {
         Item click = new Item(4 , "Click" , 5 , "Elite",  15);
         set_item_call_back(click);
         Item milk_3 = new Item(0 , "3% milk" , 5 , "IDO LTD",  3.5);
@@ -155,6 +155,7 @@ public class Inventory {
         set_item_call_back(yellow_cheese);
         Item beef_sausage = new Item(3,"Beef Sausage",3,"Zogloveck",25);
         set_item_call_back(beef_sausage);
+        shortage_list.add(click);
         categories.add(new Category("Milk-product", "0"));
         categories.get(0).add_product(new Category("Cheese" , "0"));
         categories.get(0).add_product(new Category("bottle milk" , "1"));
@@ -171,7 +172,8 @@ public class Inventory {
         name_to_id.put("3% milk IDO LTD",0);
         items.put(1,milk_1_5);
         name_to_id.put("1.5% milk IDO LTD",1);
-        yellow_cheese.recive_order(20,3,3,5.3,"ile 2 shelf 3",Util.stringToDate("2023-04-25"));
+
+        receive_order(20,yellow_cheese.item_id,6,"ile 2 shelf 3",Util.stringToDate("2023-10-25"),5.3);
         milk_3.recive_order(155,20,20,2.15,"ile 5 shelf 10",Util.stringToDate("2023-05-20"));
         milk_1_5.recive_order(120,10,10,2.55,"ile 5 shelf 11",Util.stringToDate("2023-05-23"));
         beef_sausage.recive_order(345,5,15,12.25,"ile 6 shelf 2",Util.stringToDate("2023-10-20"));
