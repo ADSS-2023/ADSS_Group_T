@@ -31,4 +31,9 @@ public class ServiceFactory {
 
         manageOrderService.setOrderController(inventoryService.get_inventory(),orderService);
     }
+    public String nextDay(){
+        try{
+
+        }
+    }
 }
