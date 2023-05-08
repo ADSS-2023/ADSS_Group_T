@@ -45,13 +45,6 @@ public class DeliveryService {
         }
     }
 
-    public String getAllDeliveriesDetail() {
-        try {
-            return (transportJsonConvert.deliveryListToString(deliveryController.getAllDeliveries().values()));
-        } catch (Exception ex) {
-            return ex.toString();
-        }
-    }
 
     public String getDeliveryDetail(int deliveryID) {
         try {
@@ -95,5 +88,9 @@ public class DeliveryService {
 
     public String getCurrDate() {
         return this.deliveryController.getCurrDate().toString();
+    }
+
+    public String showAllDeliveries() {
+        return transportJsonConvert.deliveryListToString(this.deliveryController.getAllDeliveries());
     }
 }

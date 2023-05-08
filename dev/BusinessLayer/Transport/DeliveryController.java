@@ -424,8 +424,8 @@ public class DeliveryController {
         return deliveriesWithoutStoreKeeper;
     }
 
-    public LinkedHashMap<Integer, Delivery> getAllDeliveries() {
-        return deliveries;
+    public Collection<Delivery> getAllDeliveries() {
+        return deliveries.values();
     }
 
     public LocalDate getCurrDate() {

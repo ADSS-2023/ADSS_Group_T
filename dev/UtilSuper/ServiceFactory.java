@@ -44,9 +44,6 @@ public class ServiceFactory {
         supplierService = new SupplierService(supplierController);
         deliveryController = new DeliveryController(logisticCenterController,supplierController,branchController,driverController,shiftController);
         deliveryService = new DeliveryService(deliveryController);
-
-
-
     }
     public void callbackEnterWeight(EnterWeightInterface enterWeightInterface){
         deliveryService.setEnterWeightInterface(enterWeightInterface);

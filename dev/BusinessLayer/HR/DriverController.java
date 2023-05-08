@@ -20,22 +20,22 @@ public class DriverController {
         drivers = new LinkedHashMap<Integer, Driver>();
     }
 
-    public String areRequirementsFulfilled(LocalDate date) {
-        int requiredDrivers = driversRequirements.getOrDefault(date, 0);
-        int assignedDrivers = 0;
-        if (date2driversSubmission.containsKey(date)) {
-            for (Boolean isAssigned : date2driversSubmission.get(date).values()) {
-                if (isAssigned) {
-                    assignedDrivers++;
-                }
-            }
-        }
-        if (assignedDrivers < requiredDrivers) {
-            return "There are not enough drivers assigned for the date " + date + ". Required: " + requiredDrivers + ", Assigned: " + assignedDrivers;
-        } else {
-            return "All driver requirements are fulfilled for the date " + date + ". Required: " + requiredDrivers + ", Assigned: " + assignedDrivers;
-        }
-    }
+//    public String areRequirementsFulfilled(LocalDate date) {
+//        int requiredDrivers = driversRequirements.getOrDefault(date, 0);
+//        int assignedDrivers = 0;
+//        if (date2driversSubmission.containsKey(date)) {
+//            for (Boolean isAssigned : date2driversSubmission.get(date).values()) {
+//                if (isAssigned) {
+//                    assignedDrivers++;
+//                }
+//            }
+//        }
+//        if (assignedDrivers < requiredDrivers) {
+//            return "There are not enough drivers assigned for the date " + date + ". Required: " + requiredDrivers + ", Assigned: " + assignedDrivers;
+//        } else {
+//            return "All driver requirements are fulfilled for the date " + date + ". Required: " + requiredDrivers + ", Assigned: " + assignedDrivers;
+//        }
+//    }
 
 
 
