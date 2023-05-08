@@ -1,36 +1,49 @@
 package BusinessLayer.Transport;
 
+import DataLayer.HR_T_DAL.DAOs.TruckDAO;
+import DataLayer.HR_T_DAL.DalService.DalLogisticCenterService;
+
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 
 public class LogisticCenter extends Site {
+
     private final LinkedHashMap<Integer, Truck> trucks;
     private final LinkedHashMap<Product, Integer> productsInStock;
+    private DalLogisticCenterService dalLogisticCenterService;
 
-    public LogisticCenter() {
+    public LogisticCenter(DalLogisticCenterService dalLogisticCenterService) {
         super("Main address", "0000000000", "logictic center manager", 0, 0);
+        this.dalLogisticCenterService = dalLogisticCenterService;
         this.trucks = new LinkedHashMap<>();
         this.productsInStock = new LinkedHashMap<>();
     }
 
-    public boolean addTruck(int licenseNumber, String model, int weight, int maxWeight, int coolingLevel) {
+    public boolean addTruck(int licenseNumber, String model, int weight, int maxWeight, int coolingLevel) throws Exception {
         if (trucks.containsKey(licenseNumber))
-            return false;
-        trucks.put(licenseNumber, new Truck(licenseNumber, model, weight, maxWeight, coolingLevel));
+            throw new Exception("trucks contains licenseNumber");
+        Truck truck = new Truck(licenseNumber, model, weight, maxWeight, coolingLevel);
+        dalLogisticCenterService.addNewTruck(truck);
+        trucks.put(licenseNumber,truck);
         return true;
     }
 
-    public boolean removeTruck(int licenseNumber) {
+    public boolean removeTruck(int licenseNumber) throws Exception {
         if (!trucks.containsKey(licenseNumber))
-            return false;
+            throw new Exception("trucks Not contains licenseNumber");
+        Truck truck = trucks.get(licenseNumber);
+        dalLogisticCenterService.removeTruck(truck);
         trucks.remove(licenseNumber);
         return true;
     }
 
     public void storeProducts(LinkedHashMap<Product, Integer> newSupply) {
         newSupply.forEach((key, value) -> {
-            if (productsInStock.containsKey(key))                           //product exist in stock - update amount
-                productsInStock.replace(key, productsInStock.get(key) + value);
+            if (productsInStock.containsKey(key)) {
+                productsInStock.replace(key, productsInStock.get(key) + value);//product exist in stock - update amount
+            }
+
             else
                 productsInStock.put(key, value);
         });
