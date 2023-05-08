@@ -46,7 +46,7 @@ public class DAO {
      * This function gets an old dto and updates the suitable row with new dto.
      * @param connection sql connection
      * @param oldDto dto to be updated
-     * @param newDto new values
+     * @param newDto new value
      * @throws SQLException
      */
     public static void update(Connection connection, DTO oldDto, DTO newDto) throws SQLException {

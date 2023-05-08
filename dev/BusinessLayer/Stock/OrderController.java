@@ -23,7 +23,7 @@ public class OrderController {
      * This method send an order to suppliers which will be supplied each week in a permanent day.
      * @param items_quantity a map that maps item id to the desired amount
      */
-    public void createRegularOrder(Map<Integer, Integer> items_quantity) {
+    public void createRegularOrder(Map<Integer, Integer> items_quantity,boolean isUrgent) throws Exception {
         LinkedList<ItemToOrder> list_to_order = new LinkedList<>();
         for (Map.Entry<Integer, Integer> entry : items_quantity.entrySet()) {
             Integer item_id = entry.getKey();
@@ -31,7 +31,7 @@ public class OrderController {
             list_to_order.addLast(new ItemToOrder(inventory.get_item_by_id(item_id).get_name(),
                     inventory.get_item_by_id(item_id).manufacturer_name, quantity, null, -1,-1));
         }
-        //call to supplier service with list_to_order
+        order_service.createRegularOrder(list_to_order);
     }
 
     /**
@@ -39,7 +39,7 @@ public class OrderController {
      * @param items_quantity a map that maps item id to the desired amount.
      * @param isUrgent boolean flag to indicate whether the order priority is arrival.
      */
-    public void createSpecialOrder(Map<Integer, Integer> items_quantity,boolean isUrgent){
+    public void createSpecialOrder(Map<Integer, Integer> items_quantity,boolean isUrgent) throws Exception {
         LinkedList<ItemToOrder> list_to_order = new LinkedList<>();
         for (Map.Entry<Integer, Integer> entry : items_quantity.entrySet()) {
             Integer item_id = entry.getKey();
@@ -47,7 +47,7 @@ public class OrderController {
             list_to_order.addLast(new ItemToOrder(inventory.get_item_by_id(item_id).get_name(),
                     inventory.get_item_by_id(item_id).manufacturer_name, quantity, null, -1,-1));
         }
-        //call to supplier service with list_to_order
+        order_service.createSpecialOrder(list_to_order,isUrgent);
     }
 
     /**
@@ -57,10 +57,11 @@ public class OrderController {
      * @param curDay
      * @return
      */
-    public String makeAutomaticallyOrder(DayOfWeek curDay) {
+    public String makeAutomaticallyOrder(DayOfWeek curDay) throws Exception {
         List<Item> cur_shortage_list = inventory.getShortageList();
-        //List<ItemToOrder> curDay_list = order_service.getRegularOrder(curDay.toString());
-        //List<ItemToOrder> curDay_list = order_service.getSpecialOrder(curDay.toString());
+        List<ItemToOrder> curDay_list1 = order_service.getRegularOrder(curDay);
+        List<ItemToOrder> curDay_list2 = order_service.getSpecialOrder(curDay);
+        //figure out what should do here - if connect the 2 lists .
         List<ItemToOrder> curDay_list = new LinkedList<>(); // NOT CORRECT
         Map<Integer , Integer> item_to_order_map = new HashMap<>();
         boolean found = false;
@@ -146,19 +147,27 @@ public class OrderController {
         return toReturn;
     }
 
-    public void nextDay(DayOfWeek tomorrow_day) {
+    public void nextDay(DayOfWeek tomorrow_day) throws Exception {
         this.makeAutomaticallyOrder(tomorrow_day);
         this.inventory.nextDay(tomorrow_day);
     }
 
     public String presentItemsByDay(DayOfWeek cur_day) throws Exception {
         String toReturn = "";
-        List<ItemToOrder> items_to_show = order_service.getRegularOrder(cur_day.toString());
+        List<ItemToOrder> items_to_show = order_service.getRegularOrder(cur_day);
+        Map<String , Integer> map_of_amount = new HashMap(); // list that sums all the items from a specific one
         if (items_to_show.isEmpty())
             throw new Exception("No items to present");
-        for(ItemToOrder item : items_to_show){
-            toReturn+=String.format("%d. Item id:%s, item name:%s, manufacturer:%s\n",4,
-                    inventory.name_to_id.get(item.getProductName()+" "+item.getManufacturer()),item.getProductName());
+        for(ItemToOrder item : items_to_show) {
+            String item_key = item.getProductName() +" "+ item.getManufacturer();
+            if(map_of_amount.containsKey(item_key))
+                map_of_amount.put(item_key , map_of_amount.get(item_key) + item.getQuantity());
+            else
+                map_of_amount.put(item_key, item.getQuantity());
+        }
+        for (Map.Entry<String, Integer> entry : map_of_amount.entrySet()) {
+            toReturn+=String.format("%d. Item id: %s, item name and manufacturer name: %s, amount: %s\n"
+                    ,4, inventory.name_to_id.get(entry.getKey()),entry.getKey(),entry.getValue());
         }
         return toReturn;
     }
