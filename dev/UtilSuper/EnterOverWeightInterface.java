@@ -1,5 +1,5 @@
 package UtilSuper;
 
-public interface OverweightActionInterface {
+public interface EnterOverWeightInterface {
     int EnterOverweightAction(int deliveryID);
 }

@@ -5,7 +5,7 @@ import BusinessLayer.HR.Driver.CoolingLevel;
 import BusinessLayer.HR.DriverController;
 import BusinessLayer.HR.ShiftController;
 import UtilSuper.EnterWeightInterface;
-import UtilSuper.OverweightActionInterface;
+import UtilSuper.EnterOverWeightInterface;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -29,7 +29,7 @@ public class DeliveryController {
 
     // private Listener listener;
     private EnterWeightInterface enterWeightInterface;
-    private OverweightActionInterface overweightAction;
+    private EnterOverWeightInterface overweightAction;
 
 
     public DeliveryController(LogisticCenterController logisticCenterController, SupplierController supplierController,
@@ -393,7 +393,7 @@ public class DeliveryController {
         this.enterWeightInterface = enterWeightInterface;
     }
 
-    public void setOverweightAction(OverweightActionInterface overweightAction) {
+    public void setOverweightAction(EnterOverWeightInterface overweightAction) {
         this.overweightAction = overweightAction;
     }
 
@@ -426,6 +426,10 @@ public class DeliveryController {
 
     public LinkedHashMap<Integer, Delivery> getAllDeliveries() {
         return deliveries;
+    }
+
+    public LocalDate getCurrDate() {
+        return this.currDate;
     }
 }
 

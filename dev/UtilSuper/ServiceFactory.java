@@ -51,6 +51,9 @@ public class ServiceFactory {
     public void callbackEnterWeight(EnterWeightInterface enterWeightInterface){
         deliveryService.setEnterWeightInterface(enterWeightInterface);
     }
+    public void callbackEnterOverWeight(EnterOverWeightInterface enterOverWeightInterface){
+        deliveryService.setEnterOverWeightInterface(enterOverWeightInterface);
+    }
 
     public ShiftController getShiftController() {
         return shiftController;
