@@ -1,13 +1,17 @@
 package BusinessLayer.Transport;
 
 
+import DataLayer.HR_T_DAL.DAOs.BranchDAO;
+
 import java.util.LinkedHashMap;
 
 public class BranchController {
     private final LinkedHashMap<String, Branch> branches;
+    private BranchDAO branchDAO;
 
-    public BranchController() {
+    public BranchController(BranchDAO branchDAO) {
         this.branches = new LinkedHashMap<String, Branch>();
+        this.branchDAO = branchDAO;
     }
 
     /**
@@ -21,11 +25,12 @@ public class BranchController {
      * @return true if the branch added successfully , and false otherwise
      */
     public boolean addBranch(String address, String telNumber, String contactName, int x, int y) {
-
         if (branches.containsKey(address))
             throw new IllegalArgumentException("branch name taken");
         Branch branch = new Branch(address, telNumber, contactName, x, y);
         branches.put(branch.getAddress(), branch);
+        //TODO
+        // branchDAO.insert(branch);
         return true;
     }
 

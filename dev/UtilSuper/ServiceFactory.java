@@ -5,6 +5,10 @@ import BusinessLayer.HR.EmployeeController;
 import BusinessLayer.HR.ShiftController;
 import BusinessLayer.Transport.*;
 import BusinessLayer.HR.User.UserController;
+import DataLayer.HR_T_DAL.DAOs.BranchDAO;
+import DataLayer.HR_T_DAL.DAOs.DeliveryDAO;
+import DataLayer.HR_T_DAL.DAOs.LogisticCenterDAO;
+import DataLayer.HR_T_DAL.DAOs.SupplierDAO;
 import ServiceLayer.HR.EmployeeService;
 import ServiceLayer.HR.ShiftService;
 import ServiceLayer.Transport.*;
@@ -17,14 +21,18 @@ public class ServiceFactory {
     private EmployeeService employeeService;
     private LogisticCenterController logisticCenterController;
     private LogisticCenterService logisticCenterService;
+    private LogisticCenterDAO logisticDAO;
     private DeliveryController deliveryController;
     private DeliveryService deliveryService;
+    private DeliveryDAO deliveryDAO;
     private UserService userService;
     private UserController userController;
     private BranchService branchService;
     private BranchController branchController;
+    private BranchDAO branchDAO;
     private SupplierService supplierService;
     private SupplierController supplierController;
+    private SupplierDAO supplierDAO;
 
 
     private DriverController driverController;
@@ -32,17 +40,26 @@ public class ServiceFactory {
     public ServiceFactory() {
         shiftController = new ShiftController();
         shiftService = new ShiftService(shiftController);
+
         employeeController = new EmployeeController();
         employeeService = new EmployeeService(employeeController);
-        logisticCenterController = new LogisticCenterController();
+
+        logisticDAO = new LogisticCenterDAO();
+        logisticCenterController = new LogisticCenterController(logisticDAO);
         logisticCenterService = new LogisticCenterService(logisticCenterController);
+
         //TODO //userController = new UserController();
         userService = new UserService(userController);
-        branchController = new BranchController();
+
+        branchDAO = new BranchDAO();
+        branchController = new BranchController(branchDAO);
         branchService = new BranchService(branchController);
-        supplierController = new SupplierController();
+
+        supplierDAO = new SupplierDAO();
+        supplierController = new SupplierController(supplierDAO);
         supplierService = new SupplierService(supplierController);
-        deliveryController = new DeliveryController(logisticCenterController,supplierController,branchController,driverController,shiftController);
+
+        deliveryController = new DeliveryController(logisticCenterController,supplierController,branchController,driverController,shiftController,deliveryDAO);
         deliveryService = new DeliveryService(deliveryController);
 
 

@@ -1,13 +1,16 @@
 package BusinessLayer.Transport;
 
+import DataLayer.HR_T_DAL.DAOs.LogisticCenterDAO;
+
 import java.util.LinkedHashMap;
 
 
 public class LogisticCenterController {
 
     private final LogisticCenter logisticCenter;
-
-    public LogisticCenterController() {
+    private LogisticCenterDAO logisticCenterDAO;
+    public LogisticCenterController(LogisticCenterDAO logisticCenterDAO) {
+        this.logisticCenterDAO = logisticCenterDAO;
         this.logisticCenter = new LogisticCenter();
     }
 
