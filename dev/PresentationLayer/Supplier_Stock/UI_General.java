@@ -2,11 +2,12 @@ package PresentationLayer.Supplier_Stock;
 
 import PresentationLayer.Stock.StockUI;
 import PresentationLayer.Supplier.SupplierManager;
+import ServiceLayer.Supplier_Stock.ServiceFactory;
 
 import java.util.Scanner;
 
 public class UI_General {
-    public static void run(StockUI stockUI,SupplierManager supplierManager){
+    public static void run(StockUI stockUI,SupplierManager supplierManager,ServiceFactory sf){
         Scanner scanner = new Scanner(System.in);
         System.out.println("What would like to do?\n" +
                 "1.Enter suppliers system 2.Enter Inventory system 3.Skip day");
@@ -19,13 +20,15 @@ public class UI_General {
                 stockUI.run();
             case 3:
                 stockUI.moveToNextDay();
+                sf.nextDay();
                 supplierManager.nextDay();
         }
     }
 
     public static void main(String[] args) {
-        StockUI stockUI = new StockUI();
-        SupplierManager supplierManager = new SupplierManager();
+        ServiceFactory sf = new ServiceFactory();
+        StockUI stockUI = new StockUI(sf);
+        SupplierManager supplierManager = new SupplierManager(sf);
         stockUI.setPreviousCallBack(()->run(stockUI,supplierManager));
         supplierManager.setPreviousCallBack(()->run(stockUI,supplierManager));
         Scanner scanner = new Scanner(System.in);
@@ -38,7 +41,7 @@ public class UI_General {
             stockUI.loadData();
             supplierManager.setUpData();
         }
-        run(stockUI,supplierManager);
+        run(stockUI,supplierManager,sf);
     }
 
 }
