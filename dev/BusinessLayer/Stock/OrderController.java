@@ -99,7 +99,7 @@ public class OrderController {
         return amount;
     }
 
-    public void editRegularOrder(int id, DayOfWeek day, int new_amount) {
+    public void editRegularOrder(int id, DayOfWeek day, int new_amount) throws Exception {
         Item cur_item = inventory.get_item_by_id(id);
         order_service.editRegularItem(new ItemToOrder(cur_item.get_name(), cur_item.manufacturer_name , new_amount , null, -1,-1), day);
     }
