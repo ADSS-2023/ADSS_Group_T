@@ -34,9 +34,9 @@ public class EmployeeController {
 }
 
 
-    public String addRestriction(int id, String branch, LocalDate date, boolean isMorning) {
+   /* public String addRestriction(int id, String branch, LocalDate date, boolean isMorning) {
         return employeesMapper.get(id).addRestriction(branch, date, isMorning);
-    }
+    }*/
 
 
 

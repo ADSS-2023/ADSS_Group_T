@@ -21,6 +21,13 @@ public class Constraint {
         this.assignedPosition = null;
     }
 
+    public int getEmployeeId() {
+        return employeeId;
+    }
+
+    public boolean isShiftType() {
+        return shiftType;
+    }
 
     public String getBranch() {
         return branch;

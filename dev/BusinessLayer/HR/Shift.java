@@ -61,7 +61,7 @@ public class Shift {
                     }
                 }
             }
-            if (assignedAmount != requiredAmount) {
+            if (assignedAmount != requiredAmount && position.equals(PositionType.shiftManager.name())) {
                 int num = requiredAmount - assignedAmount;
                 missing += num + " employees are missing in the position of " + position + "\n";
             }
@@ -212,6 +212,14 @@ public class Shift {
         return result.toString();
     }
 
+    // just for tests!!
+    public void setSubmittedPositionByEmployees(HashMap<String, HashMap<Employee, Boolean>> submittedPositionByEmployees) {
+        this.submittedPositionByEmployees = submittedPositionByEmployees;
+    }
+
+    public HashMap<String, Integer> getEmployeesRequirement() {
+        return employeesRequirement;
+    }
 
     public LocalDate getDate() {
         return date;
