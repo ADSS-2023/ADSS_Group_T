@@ -1,6 +1,6 @@
 package BusinessLayer.Supplier.Suppliers;
 
-import BusinessLayer.Supplier.Util.PaymentTerms;
+import BusinessLayer.Supplier.Supplier_Util.PaymentTerms;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -18,7 +18,7 @@ public class ConstantSupplier extends SupplierBusiness {
 
     @Override
     public int findEarliestSupplyDay() {
-        LocalDate today = LocalDate.now();
+        LocalDate today = Util_Supplier_Stock.getCurrDay();
         int todayValue = today.getDayOfWeek().getValue();
         int daysToAdd = 7;
         for (DayOfWeek weekDay : constDeliveryDays) {

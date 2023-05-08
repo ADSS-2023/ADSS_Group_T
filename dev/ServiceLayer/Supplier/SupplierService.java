@@ -6,8 +6,8 @@ import BusinessLayer.Supplier.Suppliers.ConstantSupplier;
 import BusinessLayer.Supplier.Suppliers.SupplierBusiness;
 import BusinessLayer.Supplier.SupplierController;
 import BusinessLayer.Supplier.SupplierProductBusiness;
-import BusinessLayer.Supplier.Util.Discounts;
-import BusinessLayer.Supplier.Util.PaymentTerms;
+import BusinessLayer.Supplier.Supplier_Util.Discounts;
+import BusinessLayer.Supplier.Supplier_Util.PaymentTerms;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;

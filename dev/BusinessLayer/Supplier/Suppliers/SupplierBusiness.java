@@ -4,8 +4,8 @@ import BusinessLayer.Supplier.Discounts.Discount;
 import BusinessLayer.Supplier.Discounts.PercentDiscount;
 import BusinessLayer.Supplier.Discounts.NumberDiscount;
 import BusinessLayer.Supplier.SupplierProductBusiness;
-import BusinessLayer.Supplier.Util.Discounts;
-import BusinessLayer.Supplier.Util.PaymentTerms;
+import BusinessLayer.Supplier.Supplier_Util.Discounts;
+import BusinessLayer.Supplier.Supplier_Util.PaymentTerms;
 
 import java.util.*;
 import java.time.LocalDate;
@@ -57,14 +57,14 @@ public abstract class  SupplierBusiness {
     public void addProduct(int productNum, String productName, String manufacturer, int price, int maxAmount, LocalDate expiryDate) throws Exception {
         if (getProduct(productName,manufacturer) != null)
             throw new Exception("product already exists.");
-        else if(expiryDate.isBefore(LocalDate.now()))
+        else if(expiryDate.isBefore(Util_Supplier_Stock.getCurrDay()))
             throw new Exception("expiry date has passed.");
         else
             products.put(productNum, new SupplierProductBusiness( supplierNum,productName,productNum, manufacturer, price, maxAmount, expiryDate));
     }
 
     public void editProduct(String productName, String manufacturer, int price, int maxAmount, LocalDate expiredDate) throws Exception {
-        if(expiredDate.isBefore(LocalDate.now()))
+        if(expiredDate.isBefore(Util_Supplier_Stock.getCurrDay()))
             throw new Exception("expiry date has passed.");
         SupplierProductBusiness sp = getProduct(productName,manufacturer);
         if (sp != null)
