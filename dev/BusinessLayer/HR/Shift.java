@@ -28,6 +28,13 @@ public class Shift {
         this.shiftManagerId = -1;
     }
 
+    public boolean getShiftType() {
+        return shiftType;
+    }
+
+    public int getShiftManagerId() {
+        return shiftManagerId;
+    }
 
     public void addEmployeeRequirements(HashMap<String, Integer> requirements) {
         for (Map.Entry<String, Integer> entry : requirements.entrySet()) {

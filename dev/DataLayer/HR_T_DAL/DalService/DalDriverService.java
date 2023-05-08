@@ -9,6 +9,7 @@ import DataLayer.HR_T_DAL.DTOs.UserDTO;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 public class DalDriverService {
     private Connection connection;
@@ -27,6 +28,10 @@ public class DalDriverService {
         UserDTO userDTO = new UserDTO(user);
         dalUserService.addUserFromDriver(userDTO);
         driverDAO.insert(driverDTO);
+    }
+
+    public List<DriverDTO> getDriversByLicenseType(Driver.LicenseType licenseType) throws SQLException {
+        return driverDAO.getDriversByLicenseType(licenseType);
     }
 
 }
