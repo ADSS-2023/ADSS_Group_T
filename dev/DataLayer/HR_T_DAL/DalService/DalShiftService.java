@@ -19,9 +19,8 @@ public class DalShiftService {
         this.shiftDAO = new ShiftDAO(connection);
     }
 
-    public List<ShiftDTO> getshifsByDate(LocalDate localDate) {
-        // Retrieve all shifts from the database with the same local date in String format
-        return null;
+    public List<ShiftDTO> getshifsByDate(LocalDate localDate) throws SQLException {
+        return shiftDAO.getShiftsByDate(localDate);
     }
 
     public List<ShiftDTO> getshifsByDateAndShiftType(LocalDate localDate, boolean shiftType) {
