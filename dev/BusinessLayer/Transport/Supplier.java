@@ -1,5 +1,7 @@
 package BusinessLayer.Transport;
 
+import DataLayer.HR_T_DAL.DTOs.SupplierDTO;
+
 import java.util.LinkedHashMap;
 
 public class Supplier extends Site {
@@ -9,6 +11,11 @@ public class Supplier extends Site {
 
     public Supplier(String address, String telNumber, String contactName, int x, int y) {
         super(address, telNumber, contactName, x, y);
+        this.produces = new LinkedHashMap<String, Product>();
+    }
+
+    public Supplier(SupplierDTO dto){
+        super(dto.getSupplierAddress(), dto.getTelNumber(), dto.getContactName(), dto.getX(), dto.getY());
         this.produces = new LinkedHashMap<String, Product>();
     }
 

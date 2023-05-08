@@ -173,6 +173,11 @@ public class Delivery {
             this.driverName = driverName;
         }
      */
+
+    public LocalTime getDepartureTime() {
+        return departureTime;
+    }
+
     public int getTruckNumber() {
         return this.truckNumber;
     }

@@ -4,6 +4,7 @@ import BusinessLayer.HR.Driver;
 import BusinessLayer.HR.Driver.CoolingLevel;
 import BusinessLayer.HR.DriverController;
 import BusinessLayer.HR.ShiftController;
+import DataLayer.HR_T_DAL.DalService.DalDeliveryService;
 import UtilSuper.EnterWeightInterface;
 import UtilSuper.EnterOverWeightInterface;
 
@@ -30,11 +31,12 @@ public class DeliveryController {
     // private Listener listener;
     private EnterWeightInterface enterWeightInterface;
     private EnterOverWeightInterface overweightAction;
+    private DalDeliveryService dalDeliveryService;
 
 
     public DeliveryController(LogisticCenterController logisticCenterController, SupplierController supplierController,
-                              BranchController branchController, DriverController driverController, ShiftController shiftController) {
-
+                              BranchController branchController, DriverController driverController,
+                              ShiftController shiftController, DalDeliveryService dalDeliveryService) {
         this.deliveries = new LinkedHashMap<>();
         this.date2trucks = new LinkedHashMap<>();
         this.date2deliveries = new LinkedHashMap<>();
@@ -44,13 +46,14 @@ public class DeliveryController {
         this.supplierController = supplierController;
         this.logisticCenterController = logisticCenterController;
         this.shiftController = shiftController;
+        this.dalDeliveryService = dalDeliveryService;
     }
 
     public void initLogisticCenterController(LogisticCenterController lcC) {
         this.logisticCenterController = lcC;
     }
 
-    private LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> getSuppliersAnsProducts(LinkedHashMap<String, LinkedHashMap<String, Integer>> suppliersString) {
+    private LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> getSuppliersAndProducts(LinkedHashMap<String, LinkedHashMap<String, Integer>> suppliersString) {
         LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> suppliers = new LinkedHashMap<>();
         for (String supplierAddress : suppliersString.keySet()) {
             Supplier supplier = this.supplierController.getSupplier(supplierAddress);
@@ -90,7 +93,7 @@ public class DeliveryController {
             //return orderDeliveryFromLogisticCenter();
 
         Branch branch = this.branchController.getBranch(destinationString);
-        LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> suppliers = getSuppliersAnsProducts(suppliersString);//convert the string
+        LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> suppliers = getSuppliersAndProducts(suppliersString);//convert the string
 
         if (date2deliveries.containsKey(requiredDate)) { // there is delivery in this date
             for (Delivery d : date2deliveries.get(requiredDate)) { // the delivery is to the required date

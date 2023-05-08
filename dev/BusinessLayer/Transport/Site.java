@@ -31,5 +31,7 @@ public abstract class Site {
         return this.location.getShippingArea();
     }
 
-
+    public Location getLocation() {
+        return location;
+    }
 }
