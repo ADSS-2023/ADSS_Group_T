@@ -70,7 +70,7 @@ public class OrderBusiness {
 
     public OrderBusiness clone(){
         List<OrderProduct> clonedProducts = new LinkedList<>();
-        for (OrderProduct product:products )
+        for (OrderProduct product:products)
             clonedProducts.add(product.clone());
         return new OrderBusiness(
                 orderNum, supplierName, orderDate, supplierAddress, destinationAddress,
