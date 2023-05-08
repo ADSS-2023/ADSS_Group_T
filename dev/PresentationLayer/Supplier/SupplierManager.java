@@ -107,9 +107,7 @@ public class SupplierManager {
             System.out.println("16.Show all discounts of a certain product's supplier.");
             System.out.println("17.Show all general discounts of a certain supplier.");
             System.out.println("18.Go back to main menu.");
-            System.out.println("19.Set up System.");
-            System.out.println("20.Exit System.");
-            int choice = getInteger(scanner, "Please select an integer between 1 to 20.", 1, 20);
+            int choice = getInteger(scanner, "Please select an integer between 1 to 18.", 1, 18);
             switch (choice) {
                 case 1:
                     addSupplier();
@@ -164,12 +162,6 @@ public class SupplierManager {
                     break;
                 case 18:
                     goBack();
-                    break;
-                case 19:
-                    setUpData();
-                    break;
-                case 20:
-                    over = true;
                     break;
             }
         }

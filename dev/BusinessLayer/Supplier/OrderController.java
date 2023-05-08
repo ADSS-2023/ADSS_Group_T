@@ -26,6 +26,9 @@ public class OrderController {
         this.mos=mos;
         shoppingLists = new HashMap<>();
         dayToConstantOrders = new HashMap<>();
+        for (DayOfWeek day: DayOfWeek.values() ) {
+            dayToConstantOrders.put(day,new LinkedList<>());
+        }
         orderCounter=0;
         ordersNotSupplied = new LinkedList<>();
     }
@@ -106,11 +109,9 @@ public class OrderController {
                int deliveryDay = supplier.findEarliestSupplyDay();
                LocalDate today = Util_Supplier_Stock.getCurrDay();
                LocalDate futureDay = today.plusDays(deliveryDay);
-               DayOfWeek orderDay = DayOfWeek.valueOf(futureDay.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ENGLISH));
-               if(!dayToConstantOrders.containsKey(orderDay))
-                   dayToConstantOrders.put(orderDay,new LinkedList<>());
+               //the next line produces an error
+               DayOfWeek orderDay = futureDay.getDayOfWeek();
                dayToConstantOrders.get(orderDay).add(order);
-               orders.add(order);
            }
            else{
                ordersNotSupplied.add(order);
@@ -154,7 +155,7 @@ public class OrderController {
                 shoppingLists.put(supplierNum,new LinkedList());
             shoppingLists.get(supplierNum).add(orderProduct);
         }
-
+    //change
     public void executeTodayOrders(){
         List<ItemToOrder> items = new ArrayList<>();
         List<OrderBusiness> ordersForToday = dayToConstantOrders.get(Util_Supplier_Stock.getCurrDay().getDayOfWeek());
@@ -162,8 +163,9 @@ public class OrderController {
             for(OrderProduct product:order.getProducts())
                 items.add(new ItemToOrder(product.getProductName(), product.getManufacturer(), product.getQuantity(),
                         product.getExpiryDate(), order.getOrderNum(), product.getFinalPrice()));
+            orders.add(order);
         }
-        List<OrderBusiness> ordersToDelete =  new ArrayList<>();
+        List<OrderBusiness> ordersToDelete =  new LinkedList<>();
         for(OrderBusiness order:ordersNotSupplied){
             if(order.getDaysToSupplied() == 0) {
                 for (OrderProduct product : order.getProducts())
@@ -177,7 +179,8 @@ public class OrderController {
             }
         for(OrderBusiness order:ordersToDelete)
             ordersNotSupplied.remove(order);
-        mos.receiveOrders(items);
+        if(!items.isEmpty())
+            mos.receiveOrders(items);
     }
 
     /**
