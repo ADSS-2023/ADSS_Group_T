@@ -61,7 +61,7 @@ public class DAO {
      * @param newDto new value
      * @throws SQLException
      */
-    public static void update(Connection connection, DTO oldDto, DTO newDto) throws SQLException {
+    public void update(DTO oldDto, DTO newDto) throws SQLException {
         String tableName = newDto.getTableName();
         String sql = "UPDATE " + tableName + " SET ";
         Field[] fields = newDto.getClass().getDeclaredFields();
