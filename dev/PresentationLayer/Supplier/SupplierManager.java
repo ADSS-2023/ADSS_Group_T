@@ -184,6 +184,7 @@ public class SupplierManager {
     }
 
     private void addSupplier() {
+        int daysToDeliver=-1;
         Scanner scannerString = new Scanner(System.in);
         Scanner scannerInt = new Scanner(System.in);
         String name = getString(scannerString, "Select the supplier name:");
@@ -228,6 +229,9 @@ public class SupplierManager {
                 constDeliveryDays.add(days.get(deliveryDayChoice));
             }
         }
+        else{
+            daysToDeliver = getInteger(scannerInt,"Enter the time takes to the supplier to deliver:", Integer.MIN_VALUE, Integer.MAX_VALUE);
+        }
         int selfDeliveryChoice = getInteger(scannerInt, "Is the supplier deliver by himself?\n1.Yes.\n2.No.", 1, 2);
         boolean selfDelivery = selfDeliveryChoice == 1;
         int paymentChoose = getInteger(scannerInt, "What is the payment terms of the supplier?\n1.Shotef+30\n2.Shotef+45\n3.Shotef+60\n4.Shotef+90\n",1,4);
@@ -246,7 +250,7 @@ public class SupplierManager {
                 paymentTerms = PaymentTerms.SHOTEF_PLUS_90;
                 break;
         }
-        System.out.println(serviceFactory.supplierService.addSupplier(name, address, supplierNum, bankAccount, contacts, constDeliveryDays, selfDelivery,paymentTerms));
+            System.out.println(serviceFactory.supplierService.addSupplier(name, address, supplierNum, bankAccount, daysToDeliver, contacts, constDeliveryDays, selfDelivery,paymentTerms));
     }
 
     private void deleteSupplier() {
