@@ -2,6 +2,7 @@ package BusinessLayer.Stock;
 
 import BusinessLayer.Stock.Util.Util;
 import BusinessLayer.Supplier_Stock.ItemToOrder;
+import BusinessLayer.Supplier_Stock.Util_Supplier_Stock;
 import ServiceLayer.Supplier.OrderService;
 import java.time.DayOfWeek;
 
@@ -147,9 +148,9 @@ public class OrderController {
         return toReturn;
     }
 
-    public void nextDay(DayOfWeek tomorrow_day) throws Exception {
-        this.makeAutomaticallyOrder(tomorrow_day);
-        this.inventory.nextDay(tomorrow_day);
+    public void nextDay() throws Exception {
+        this.makeAutomaticallyOrder(Util_Supplier_Stock.getCurrDay().plusDays(1).getDayOfWeek());
+        this.inventory.nextDay(Util_Supplier_Stock.getCurrDay().plusDays(1).getDayOfWeek());
     }
 
     public String presentItemsByDay(DayOfWeek cur_day) throws Exception {

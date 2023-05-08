@@ -68,7 +68,7 @@ public class ManageOrderService {
 
     public String nextDay() {
         try {
-            this.orderController.nextDay(LocalDate.now().getDayOfWeek().plus(1));
+            this.orderController.nextDay();
         }
         catch (Exception e){
             return e.getMessage();
