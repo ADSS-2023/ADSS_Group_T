@@ -395,6 +395,7 @@ public class DeliveryController {
         delivery.setTruckWeight(currentWeight + productsWeight);
     }
 
+
     private void executeDeliveryToLC(Delivery delivery) throws Exception {
         ArrayList<Supplier> suppliersTmp = new ArrayList<>(delivery.getUnHandledSuppliers().keySet());
         for (Supplier supplier : suppliersTmp) {
