@@ -58,7 +58,7 @@ public class ServiceFactory {
 
         //TODO //userController = new UserController();
         userService = new UserService(userController);
-        branchController = new BranchController();
+        branchController = new BranchController(dalDeliveryService);
         branchService = new BranchService(branchController);
         supplierController = new SupplierController(dalDeliveryService);
         supplierService = new SupplierService(supplierController);
