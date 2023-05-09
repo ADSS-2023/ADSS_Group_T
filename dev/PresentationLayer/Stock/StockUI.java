@@ -258,7 +258,7 @@ public class StockUI {
         System.out.println("Do you want to mark this order as urgent?\n1.yes 2.no");
         int choice = scanner.nextInt();
         boolean isUrgent = choice == 1;
-        sf.manageOrderService.createSpecialOrder(products,isUrgent);
+        System.out.println(sf.manageOrderService.createSpecialOrder(products,isUrgent));
     }
 
     private  void create_regular_order() {
@@ -275,7 +275,7 @@ public class StockUI {
             products.put(id,amount);
             isActive = choice==1;
         }
-        sf.manageOrderService.createRegularOrder(products);
+        System.out.println(sf.manageOrderService.createRegularOrder(products));
     }
 
     private  void edit_create_orders() {
