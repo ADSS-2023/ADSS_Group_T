@@ -1,6 +1,6 @@
 package BusinessLayer.Transport;
 
-import DataLayer.HR_T_DAL.DTOs.SupplierDTO;
+import DataLayer.HR_T_DAL.DTOs.SiteDTO;
 import DataLayer.HR_T_DAL.DalService.DalDeliveryService;
 
 import java.sql.SQLException;
@@ -18,8 +18,8 @@ public class Supplier extends Site {
         this.dalDeliveryService = dalDeliveryService;
     }
 
-    public Supplier(SupplierDTO dto,DalDeliveryService dalDeliveryService){
-        this(dto.getSupplierAddress(), dto.getTelNumber(), dto.getContactName(), dto.getX(), dto.getY(),dalDeliveryService);
+    public Supplier(SiteDTO dto, DalDeliveryService dalDeliveryService){
+        this(dto.getSiteAddress(), dto.getTelNumber(), dto.getContactName(), dto.getX(), dto.getY(),dalDeliveryService);
     }
 
     public void addProduct(String productName, int productCoolingLevel) throws SQLException {

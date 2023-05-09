@@ -23,4 +23,36 @@ public class DeliveryDTO extends DTO {
         this.truckNumber = truckNumber;
         this.shippingArea = shippingArea;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getDeliveryDate() {
+        return deliveryDate;
+    }
+
+    public String getDepartureTime() {
+        return departureTime;
+    }
+
+    public int getTruckWeight() {
+        return truckWeight;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public int getDriverId() {
+        return driverId;
+    }
+
+    public int getTruckNumber() {
+        return truckNumber;
+    }
+
+    public int getShippingArea() {
+        return shippingArea;
+    }
 }

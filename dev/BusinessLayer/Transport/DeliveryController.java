@@ -340,7 +340,9 @@ public class DeliveryController {
 
 
     public Delivery getDelivery(int id) {
-        return deliveries.get(id);
+        if(deliveries.containsKey(id))
+            return deliveries.get(id);
+        dalDeliveryService.find
     }
 
 
