@@ -20,17 +20,8 @@ public class Delivery {
     private final LinkedHashMap<Supplier, File> handledSuppliers;
     private final LinkedHashMap<Branch, File> unHandledBranches;
     private final LinkedHashMap<Branch, File> handledBranches;
-    private File ToLogisticsCenterFile;
-
-    public File getToLogisticsCenterFile() {
-        return ToLogisticsCenterFile;
-    }
-
-    public File getFromLogisticsCenterFile() {
-        return FromLogisticsCenterFile;
-    }
-
-    private File FromLogisticsCenterFile;
+    private File toLogisticsCenterFile;
+    private File fromLogisticsCenterFile;
     private final int shippingArea;
     private int truckWeight;
     private Site source;
@@ -60,6 +51,14 @@ public class Delivery {
     public Delivery(DeliveryDTO dto,DalDeliveryService dalDeliveryService) throws SQLException {
         this(dto.getId(), Time.stringToLocalDate(dto.getDeliveryDate()),Time.stringToLocalTime(dto.getDepartureTime()), dto.getTruckWeight(),new LinkedHashMap<>(),
                 new LinkedHashMap<>(), dalDeliveryService.findSite(dto.getSource()), dto.getTruckNumber(), dto.getShippingArea(), dalDeliveryService);
+    }
+  
+    public File getToLogisticsCenterFile() {
+        return ToLogisticsCenterFile;
+    }
+
+    public File getFromLogisticsCenterFile() {
+        return FromLogisticsCenterFile;
     }
 
     public void addHandledSupplier(Supplier supplier, File f) throws SQLException {
@@ -133,6 +132,14 @@ public class Delivery {
         if (!unHandledSuppliers.containsKey(supplier))
             unHandledSuppliers.put(supplier, new File(fileCounter++));
         unHandledSuppliers.get(supplier).addProduct(p, amount);
+        return fileCounter;
+    }
+
+    public int addProductToLogisticCenterFromFile(Product p, int amount, int fileCounter) {
+        if (fromLogisticsCenterFile == null)
+            fromLogisticsCenterFile = new File(fileCounter++);
+        dalDeliveryService.in
+        fromLogisticsCenterFile.addProduct(p, amount);
         return fileCounter;
     }
 
@@ -235,5 +242,10 @@ public class Delivery {
 
     public void setDriver(Driver driver) {
         this.driverID = driver.getId();
+    }
+
+    public void addLogisticCenterDestination(int fileCounter){
+        toLogisticsCenterFile = new File(fileCounter);
+        //TODO: add to dal
     }
 }

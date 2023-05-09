@@ -38,23 +38,13 @@ public class DalDeliveryService {
        dao.insert(dto);
     }
 
-    public void insertUnHandledSupplier(int deliveryId, String supplierAddress, String productName, int amount) throws SQLException {
-        DeliveryUnHandledSuppliersDTO dto = new DeliveryUnHandledSuppliersDTO(deliveryId,supplierAddress,productName,amount);
+    public void insertUnHandledSite(int deliveryId, String siteAddress, String productName, int amount) throws SQLException {
+        DeliveryHandledSitesDTO dto = new DeliveryHandledSitesDTO(deliveryId,siteAddress,productName,amount);
         dao.insert(dto);
     }
 
-    public void insertHandledSupplier(int deliveryId, String supplierAddress, String productName, int amount) throws SQLException {
-        DeliveryHandledSuppliersDTO dto = new DeliveryHandledSuppliersDTO(deliveryId,supplierAddress,productName,amount);
-        dao.insert(dto);
-    }
-
-    public void insertUnHandledBranch(int deliveryId, String supplierAddress, String productName, int amount) throws SQLException {
-        DeliveryHandledBranchesDTO dto = new DeliveryHandledBranchesDTO(deliveryId,supplierAddress,productName,amount);
-        dao.insert(dto);
-    }
-
-    public void insertHandledBranch(int deliveryId, String supplierAddress, String productName, int amount) throws SQLException {
-        DeliveryHandledBranchesDTO dto = new DeliveryHandledBranchesDTO(deliveryId,supplierAddress,productName,amount);
+    public void insertHandledSite(int deliveryId, String siteAddress, String productName, int amount) throws SQLException {
+        DeliveryHandledSitesDTO dto = new DeliveryHandledSitesDTO(deliveryId,siteAddress,productName,amount);
         dao.insert(dto);
     }
 
@@ -89,23 +79,13 @@ public class DalDeliveryService {
         dao.insert(dto);
     }
 
-    public void deleteUnHandledSupplier(int deliveryId, String supplierAddress, String productName, int amount) throws SQLException {
-        DeliveryUnHandledSuppliersDTO dto = new DeliveryUnHandledSuppliersDTO(deliveryId,supplierAddress,productName,amount);
+    public void deleteUnHandledBranch(int deliveryId, String siteAddress, String productName, int amount) throws SQLException {
+        DeliveryHandledSitesDTO dto = new DeliveryHandledSitesDTO(deliveryId,siteAddress,productName,amount);
         dao.delete(dto);
     }
 
-    public void deleteHandledSupplier(int deliveryId, String supplierAddress, String productName, int amount) throws SQLException {
-        DeliveryHandledSuppliersDTO dto = new DeliveryHandledSuppliersDTO(deliveryId,supplierAddress,productName,amount);
-        dao.delete(dto);
-    }
-
-    public void deleteUnHandledBranch(int deliveryId, String supplierAddress, String productName, int amount) throws SQLException {
-        DeliveryHandledBranchesDTO dto = new DeliveryHandledBranchesDTO(deliveryId,supplierAddress,productName,amount);
-        dao.delete(dto);
-    }
-
-    public void deleteHandledBranch(int deliveryId, String supplierAddress, String productName, int amount) throws SQLException {
-        DeliveryHandledBranchesDTO dto = new DeliveryHandledBranchesDTO(deliveryId,supplierAddress,productName,amount);
+    public void deleteHandledBranch(int deliveryId, String siteAddress, String productName, int amount) throws SQLException {
+        DeliveryHandledSitesDTO dto = new DeliveryHandledSitesDTO(deliveryId,siteAddress,productName,amount);
         dao.delete(dto);
     }
 

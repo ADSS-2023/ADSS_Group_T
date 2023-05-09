@@ -27,6 +27,10 @@ public class LogisticCenterController {
         logisticCenter.storeProducts(newSupply);
     }
 
+    public LogisticCenter getLogisticCenter() {
+        return logisticCenter;
+    }
+
     /**
      * load products from the stock of the logistics center
      *
