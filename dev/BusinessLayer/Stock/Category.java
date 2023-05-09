@@ -184,6 +184,7 @@ public class Category implements ProductCategoryManagement{
 //            categories_list.get(current_index).add_product(next_index,name);
 //        }
 //    }
+
     /**
      * This function returns the name of the current category
      * @return

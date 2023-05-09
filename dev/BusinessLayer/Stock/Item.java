@@ -209,6 +209,11 @@ public class Item implements ProductCategoryManagement {
         if(items.get(orderId).amount()<amount)
             throw new IllegalArgumentException("not enough items in inventory");
         items.get(orderId).reduce(amount);
+        ItemPerOrderDTO old_dto = this.items.get(orderId).getDto();
+        ItemPerOrderDTO new_dto = old_dto.clone();
+        new_dto.setAmountWarehouse(items.get(orderId).getAmount_warehouse());
+        new_dto.setAmountStore(items.get(orderId).getAmount_store());
+        itemDalController.update(old_dto , new_dto);
         if (current_amount()<=min_amount)
             return alert();
         return "The operation was carried out successfully";
@@ -229,7 +234,9 @@ public class Item implements ProductCategoryManagement {
      */
     public String recive_order(int orderId,int amount_warehouse,int amount_store,double cost_price,String location, LocalDate validity) throws SQLException {
         items.put(orderId,new ItemPerOrder(orderId,amount_warehouse,amount_store,cost_price,location, validity));
-        itemDalController.insert(new ItemPerOrderDTO(amount_warehouse,amount_store,cost_price,location,validity.toString(),orderId,this.item_id));
+        ItemPerOrderDTO new_dto = items.get(orderId).getDto();
+        new_dto.setItemId(item_id);
+        itemDalController.insert(new_dto);
         if (current_amount()<=min_amount)
             return alert();
         return "";
@@ -260,9 +267,10 @@ public class Item implements ProductCategoryManagement {
         return amount;
     }
 
-    public void move_items_to_store(int amount) {
+    public void move_items_to_store(int amount) throws SQLException {
         for (Map.Entry<Integer, ItemPerOrder> entry : items.entrySet()) {
             ItemPerOrder itemPerOrder = entry.getValue();
+            ItemPerOrderDTO old_dto = itemPerOrder.getDto().clone();
             if (amount == 0)
                 return;
             if (itemPerOrder.getAmount_warehouse()>amount){
@@ -274,7 +282,10 @@ public class Item implements ProductCategoryManagement {
                 itemPerOrder.move_to_store(real_amount);
                 amount -=real_amount;
             }
-
+            ItemPerOrderDTO new_dto = itemPerOrder.getDto();
+            new_dto.setAmountStore(itemPerOrder.getAmount_store());
+            new_dto.setAmountWarehouse(itemPerOrder.getAmount_warehouse());
+            itemDalController.update(old_dto , new_dto);
         }
     }
 }

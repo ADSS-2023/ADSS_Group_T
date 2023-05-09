@@ -48,13 +48,27 @@ public class ItemPerOrderDTO extends DTO {
         return location;
     }
 
+    public ItemPerOrderDTO clone () {return new ItemPerOrderDTO(amountWarehouse , amountStore , costPrice
+            ,location , validity, orderId , itemId);}
 
+
+    public void setItemId(int itemId){
+        this.itemId = itemId;
+    }
     public String getValidity() {
         return validity;
     }
 
     public int getOrderId() {
         return orderId;
+    }
+
+    public void setAmountStore(int new_amount){
+        this.amountStore = new_amount;
+    }
+
+    public void setAmountWarehouse(int new_amount){
+        this.amountWarehouse = new_amount;
     }
 
 }

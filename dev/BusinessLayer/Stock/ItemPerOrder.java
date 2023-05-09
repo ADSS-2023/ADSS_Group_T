@@ -1,5 +1,9 @@
 package BusinessLayer.Stock;
 
+import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.ItemDTO;
+import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.ItemPerOrderDTO;
+import DataLayer.Inventory_Supplier_Dal.DalController.ItemDalController;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +17,8 @@ public class ItemPerOrder {
     private String location;
     private LocalDate validity;
     private int orderId;
+    private ItemPerOrderDTO item_per_order_dto;
+
 
     /**
      * This class represnts an item by order (validity)
@@ -24,13 +30,15 @@ public class ItemPerOrder {
      * @param validity
      * @param orderId
      */
-    public ItemPerOrder(int orderId,int amount_warehouse, int amount_store, double cost_price, String location, LocalDate validity) {
+    public ItemPerOrder(int orderId, int amount_warehouse, int amount_store, double cost_price, String location, LocalDate validity) {
         this.amount_warehouse = amount_warehouse;
         this.amount_store = amount_store;
         this.cost_price = cost_price;
         this.location = location;
         this.validity = validity;
         this.orderId = orderId;
+        this.item_per_order_dto = new ItemPerOrderDTO(amount_warehouse , amount_store,cost_price,location,validity.toString()
+                            ,orderId,0);
     }
 
     /**
@@ -103,5 +111,10 @@ public class ItemPerOrder {
     public void move_to_store(int amount){
         amount_store+=amount;
         amount_warehouse-=amount;
+
+    }
+
+    public ItemPerOrderDTO getDto() {
+        return this.item_per_order_dto;
     }
 }
