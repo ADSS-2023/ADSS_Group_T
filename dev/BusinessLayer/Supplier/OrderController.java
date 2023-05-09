@@ -160,10 +160,10 @@ public class OrderController {
         List<ItemToOrder> items = new ArrayList<>();
         List<OrderBusiness> ordersForToday = dayToConstantOrders.get(Util_Supplier_Stock.getCurrDay().getDayOfWeek());
         for(OrderBusiness order:ordersForToday){
-            for(OrderProduct product:order.getProducts())
+            for(OrderProduct product:order.getProducts()) {
                 items.add(new ItemToOrder(product.getProductName(), product.getManufacturer(), product.getQuantity(),
                         product.getExpiryDate(), order.getOrderNum(), product.getFinalPrice()));
-
+            }
             OrderBusiness clonedOrder =  order.clone();
             clonedOrder.setOrderNum(orderCounter++);
             orders.add(clonedOrder);
@@ -171,11 +171,12 @@ public class OrderController {
         List<OrderBusiness> ordersToDelete =  new LinkedList<>();
         for(OrderBusiness order:ordersNotSupplied){
             if(order.getDaysToSupplied() == 0) {
-                for (OrderProduct product : order.getProducts())
+                for (OrderProduct product : order.getProducts()) {
                     items.add(new ItemToOrder(product.getProductName(), product.getManufacturer(), product.getQuantity(),
-                            product.getExpiryDate(), order.getOrderNum(), product.getFinalPrice()/ product.getQuantity()));
-                orders.add(order);
-                ordersToDelete.add(order);
+                            product.getExpiryDate(), order.getOrderNum(), product.getFinalPrice() / product.getQuantity()));
+                }
+                    orders.add(order);
+                    ordersToDelete.add(order);
             }
             else
                 order.setDaysToSupplied(order.getDaysToSupplied() - 1);
