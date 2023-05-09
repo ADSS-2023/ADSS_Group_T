@@ -20,8 +20,8 @@ public class Delivery {
     private final LinkedHashMap<Supplier, File> handledSuppliers;
     private final LinkedHashMap<Branch, File> unHandledBranches;
     private final LinkedHashMap<Branch, File> handledBranches;
-    private File ToLogisticsCenterFile;
-    private File FromLogisticsCenterFile;
+    private File toLogisticsCenterFile;
+    private File fromLogisticsCenterFile;
     private final int shippingArea;
     private int truckWeight;
     private Site source;
@@ -226,5 +226,10 @@ public class Delivery {
 
     public void setDriver(Driver driver) {
         this.driverID = driver.getId();
+    }
+
+    public void addLogisticCenterDestination(int fileCounter){
+        toLogisticsCenterFile = new File(fileCounter);
+        //TODO: add to dal
     }
 }

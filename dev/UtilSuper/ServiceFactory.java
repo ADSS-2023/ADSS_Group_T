@@ -42,7 +42,7 @@ public class ServiceFactory {
 
     public ServiceFactory() throws Exception {
 
-        String testDBUrl = "jdbc:sqlite:dev/DataLayer/HR_Transport_DB .db";
+        String testDBUrl = "jdbc:sqlite:dev/DataLayer/HR_Transport_DB.db";
         connection = DriverManager.getConnection(testDBUrl);
         dalLogisticCenterService = new DalLogisticCenterService(connection);
         dalDeliveryService = new DalDeliveryService(connection,dalLogisticCenterService);
