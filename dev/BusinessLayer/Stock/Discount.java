@@ -9,6 +9,7 @@ import java.time.LocalDate;
     and the discount in percentage
  */
 public class Discount {
+    private int index;
     private LocalDate start_date;
     private LocalDate end_date;
     private double percentage;
@@ -20,11 +21,12 @@ public class Discount {
      * @param end_date
      * @param percentage
      */
-    public Discount(LocalDate start_date, LocalDate end_date, double percentage) {
+    public Discount(int index ,LocalDate start_date, LocalDate end_date, double percentage, String index_product) {
+        this.index = index;
         this.start_date = start_date;
         this.end_date = end_date;
         this.percentage = percentage;
-        //this.discount_dto = new DiscountDTO(start_date,end_date,percentage,)
+        this.discount_dto = new DiscountDTO(index,start_date.toString(),end_date.toString(),percentage,index_product);
     }
 
     /**

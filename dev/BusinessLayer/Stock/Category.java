@@ -151,7 +151,7 @@ public class Category implements ProductCategoryManagement{
         if (index == "") {
             Category new_category = new Category(name, "" + categories_list.size());
             categories_list.add(new_category);
-//            DTO curDto = new_category.getDto();
+            new_category.getDto().setFatherIndex(this.index);
 //            inv_dal_controller.insert(curDto);
         }
         else {

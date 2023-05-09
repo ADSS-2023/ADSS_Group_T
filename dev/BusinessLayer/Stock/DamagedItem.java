@@ -2,6 +2,7 @@ package BusinessLayer.Stock;
 
 import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.DamagedItemDTO;
 import DataLayer.Inventory_Supplier_Dal.DalController.InventoryDalController;
+import DataLayer.Util.DTO;
 
 import java.util.Map;
 
@@ -15,20 +16,12 @@ public class DamagedItem {
     private int amount;
     private String description;
     private DamagedItemDTO damaged_item_DTO;
-    private InventoryDalController inventoryDalController;
 
-    public DamagedItem(Item item, int amount, String description, InventoryDalController inventoryDalController) {
+    public DamagedItem(Item item, int amount, String description) {
         this.item = item;
         this.amount = amount;
         this.description = description;
-        this.inventoryDalController = inventoryDalController;
         this.damaged_item_DTO = new DamagedItemDTO(item.item_id , amount , description);
-        try {
-            inventoryDalController.insert(damaged_item_DTO);
-        }
-        catch (Exception e){
-            System.out.println(e.getMessage() + "\n" + "Couldn't add to the DB");
-        }
     }
 
     /**
@@ -48,6 +41,10 @@ public class DamagedItem {
      */
     public String produceReport(){
         return "Item name : " + item.get_name() + " , Item ID : " + item.getItem_id() + " , Amount : " + amount + " , Description : " + description;
+    }
+
+    public DTO getDto() {
+        return damaged_item_DTO;
     }
 }
 

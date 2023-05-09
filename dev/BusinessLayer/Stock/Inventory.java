@@ -24,6 +24,7 @@ public class Inventory {
     protected Damaged damaged;
     protected InventoryDalController inv_dal_controller;
     private ItemDalController itemDalController;
+    private int discount_counter;
 
     public Inventory(){
         categories = new LinkedList<>();
@@ -31,6 +32,7 @@ public class Inventory {
         shortage_list = new LinkedList<>();
         damaged = new Damaged(inv_dal_controller);
         name_to_id = new HashMap<>();
+        discount_counter = 0;
     }
 
     public void setInventoryDalController(InventoryDalController inv){
@@ -132,9 +134,10 @@ public class Inventory {
         LocalDate start_date = Util.stringToDate(start_date_string);
         if (categories.size()<= current_index)
             throw new Exception("Illegal index");
-        Discount new_discount = new Discount(start_date , end_date , percentageAmount);
+        Discount new_discount = new Discount(discount_counter , start_date , end_date , percentageAmount , index);
         categories.get(current_index).setDiscount(next_index , new_discount);
         inv_dal_controller.insert(new_discount.getDto());
+        discount_counter++;
     }
 
     /**
