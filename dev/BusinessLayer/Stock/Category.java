@@ -3,9 +3,7 @@ package BusinessLayer.Stock;
 import BusinessLayer.Stock.Util.Util;
 import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.CategoryDTO;
 import DataLayer.Inventory_Supplier_Dal.DalController.InventoryDalController;
-import DataLayer.Util.DTO;
 
-import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
 /*
@@ -223,6 +221,21 @@ public class Category implements ProductCategoryManagement{
             if (categories_list.size()<=current_index)
                 throw new Exception("Illegal index");
             categories_list.get(current_index).add_item(next_index, i);
+        }
+    }
+
+    @Override
+    public void add_product(CategoryDTO categoryDTO, String next_index) {
+        if (next_index == "") {
+            Category new_category = new Category(categoryDTO,inv_dal_controller);
+            categories_list.add(new_category);
+            new_category.categoryDTO.setFatherCategoryIndex(this.categoryDTO.getIndex());
+            new_category.categoryDTO.setIndex(categoryDTO.getIndex() +"."+ (categories_list.size()-1));
+        }
+        else {
+            int current_index = Integer.parseInt(Util.extractFirstNumber(index));
+            next_index = Util.extractNextIndex(index);
+            categories_list.get(current_index).add_product(categoryDTO,next_index);
         }
     }
 }
