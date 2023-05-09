@@ -1,5 +1,7 @@
 package BusinessLayer.Supplier;
 
+import BusinessLayer.Supplier_Stock.Util_Supplier_Stock;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
@@ -68,12 +70,12 @@ public class OrderBusiness {
         return daysToSupplied;
     }
 
-    public OrderBusiness clone(){
+    public OrderBusiness clone(int newOrderNum){
         List<OrderProduct> clonedProducts = new LinkedList<>();
         for (OrderProduct product:products)
             clonedProducts.add(product.clone());
         return new OrderBusiness(
-                orderNum, supplierName, orderDate, supplierAddress, destinationAddress,
+                newOrderNum, supplierName, Util_Supplier_Stock.getCurrDay(), supplierAddress, destinationAddress,
                 supplierNum,contactName,contactNumber,clonedProducts,daysToSupplied
         );
     }

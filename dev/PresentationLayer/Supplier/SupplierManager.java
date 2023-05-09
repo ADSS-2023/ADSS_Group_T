@@ -91,6 +91,7 @@ public class SupplierManager {
         boolean over = false;
         while(!over) {
             System.out.println("--------------------------");
+            System.out.println("Today is :" + Util_Supplier_Stock.getCurrDay());
             System.out.println("Hello!\n" + "Please select your choice:");
             System.out.println("1.Add supplier.");
             System.out.println("2.Delete supplier.");
@@ -171,6 +172,7 @@ public class SupplierManager {
     }
 
     public void nextDay() {
+        System.out.println("we moved s day. now its:"+ Util_Supplier_Stock.getCurrDay());
         serviceFactory.orderService.nextDay();
     }
 
