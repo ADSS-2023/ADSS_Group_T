@@ -21,6 +21,15 @@ public class Delivery {
     private final LinkedHashMap<Branch, File> unHandledBranches;
     private final LinkedHashMap<Branch, File> handledBranches;
     private File ToLogisticsCenterFile;
+
+    public File getToLogisticsCenterFile() {
+        return ToLogisticsCenterFile;
+    }
+
+    public File getFromLogisticsCenterFile() {
+        return FromLogisticsCenterFile;
+    }
+
     private File FromLogisticsCenterFile;
     private final int shippingArea;
     private int truckWeight;

@@ -36,6 +36,10 @@ public class LogisticCenterController {
     public LinkedHashMap<Product, Integer> removeProductsFromStock(LinkedHashMap<Product, Integer> requestedSupply) throws SQLException {
         return logisticCenter.loadProductsFromStock(requestedSupply);
     }
+    public LinkedHashMap<Product, Integer> removeFileFromStock(File file) throws SQLException {
+        return logisticCenter.loadProductsFromStock(file.getProducts());
+
+    }
 
     public LinkedHashMap<Product, Integer> getProductsInStock() throws Exception {
         return logisticCenter.getProductsInStock();
