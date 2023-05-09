@@ -1,34 +1,63 @@
 package BusinessLayer.Supplier;
 
+import BusinessLayer.Supplier.Supplier_Util.PaymentTerms;
 import BusinessLayer.Supplier.Suppliers.ConstantSupplier;
 import BusinessLayer.Supplier.Suppliers.OccasionalSupplier;
 import BusinessLayer.Supplier.Suppliers.SupplierBusiness;
 import BusinessLayer.Supplier_Stock.ItemToOrder;
-import BusinessLayer.Supplier.Supplier_Util.PaymentTerms;
+import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.SupplierContactDTO;
+import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.SupplierDTO;
+import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.SupplierDTO;
+import DataLayer.Inventory_Supplier_Dal.DalController.SupplierDalController;
 
+import java.sql.Connection;
 import java.time.DayOfWeek;
 import java.util.*;
 
 public class SupplierController {
-    HashMap<Integer, SupplierBusiness> suppliers;
-
-    public SupplierController(){
+    private HashMap<Integer, SupplierBusiness> suppliers;
+    private Connection connection;
+    private SupplierDalController supplierDalController;
+    public SupplierController(Connection connection, SupplierDalController supplierDalController){
         suppliers = new HashMap<>();
+        this.connection = connection;
+        this.supplierDalController = supplierDalController;
+    }
+
+    public void loadSuppliers(){
+        List<SupplierDTO> supplierDTOS = supplierDalController.findAll("supplier_supplier");
+        for (SupplierDTO supplierDTO : supplierDTOS) {
+            List<SupplierContactDTO> supplierContactDTOS = loadSupplierContacts(supplierDTOS);
+            addSupplier(supplierDTO.getSupplierName(), supplierDTO.getAddress(), supplierDTO.getSupplierNum(), supplierDTO.getBankAccountNum(), );
+        }
+    }
+
+    public List<SupplierContactDTO> loadSupplierContacts(int supplierNum){
+        return supplierDalController.findAllOfCondition("supplier_supplier_contact", "supplierNum", supplierNum, SupplierContactDTO.class);
     }
 
     public void addSupplier(String name, String address, int supplierNum, int bankAccountNum, HashMap<String, String> contacts, List<DayOfWeek> constDeliveryDays, boolean selfDelivery, PaymentTerms paymentTerms, int daysToDeliver) throws Exception {
         if(isSupplierExists(supplierNum))
             throw new Exception("supplier number is already exists.");
-        if(constDeliveryDays.isEmpty())
-            suppliers.put(supplierNum, new OccasionalSupplier(name, address, supplierNum, bankAccountNum, contacts, daysToDeliver, selfDelivery, paymentTerms));
-        else{
-            suppliers.put(supplierNum, new ConstantSupplier(name, address, supplierNum, bankAccountNum, contacts, constDeliveryDays, selfDelivery, paymentTerms));
+        if(constDeliveryDays.isEmpty()) {
+            suppliers.put(supplierNum, new OccasionalSupplier(name, address, supplierNum, bankAccountNum, contacts, daysToDeliver, selfDelivery, paymentTerms, supplierDalController));
         }
+        else{
+            suppliers.put(supplierNum, new ConstantSupplier(name, address, supplierNum, bankAccountNum, contacts, constDeliveryDays, selfDelivery, paymentTerms, supplierDalController));
+        }
+
+        supplierDalController.findAll("supplier", SupplierDTO.class);
+
     }
 
     public void deleteSupplier(int supplierNum) throws Exception {
         if(!isSupplierExists(supplierNum))
             throw new Exception("supplier number doesn't exist.");
+        SupplierBusiness sp = getSupplier(supplierNum);
+        sp.deleteContacts();
+        for (Map.Entry<Integer, SupplierProductBusiness> entry : sp.getProducts().entrySet())
+            sp.deleteProduct(entry.getKey());
+        supplierDalController.delete(getSupplier(supplierNum).getSupplierDTO());
         suppliers.remove(supplierNum);
 
     }

@@ -2,7 +2,13 @@ package BusinessLayer.Supplier;
 import BusinessLayer.Supplier.Discounts.Discount;
 import BusinessLayer.Supplier.Discounts.PercentDiscount;
 import BusinessLayer.Supplier.Discounts.NumberDiscount;
+import DataLayer.Inventory_Supplier_Dal.DAO.SupplierDAO.ProductDiscountDAO;
+import DataLayer.Inventory_Supplier_Dal.DAO.SupplierDAO.SupplierProductDAO;
+import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.ProductDiscountDTO;
+import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.SupplierProductDTO;
+import DataLayer.Inventory_Supplier_Dal.DalController.SupplierDalController;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -16,7 +22,11 @@ public class SupplierProductBusiness {
     private List<Discount> quantitiesAgreement;
     private LocalDate expiryDate;
 
-    public SupplierProductBusiness(int supplierNum, String name, int productNum, String manufacturer, float price, int maxAmount, LocalDate expiryDate){
+    private SupplierProductDTO supplierProductDTO;
+
+    protected SupplierDalController supplierDalController;
+
+    public SupplierProductBusiness(int supplierNum, String name, int productNum, String manufacturer, float price, int maxAmount, LocalDate expiryDate) throws SQLException {
         this.supplierNum = supplierNum;
         this.name = name;
         this.productNum = productNum;
@@ -25,6 +35,8 @@ public class SupplierProductBusiness {
         this.maxAmount = maxAmount;
         this.quantitiesAgreement = new ArrayList<>();
         this.expiryDate = expiryDate;
+        this.supplierProductDTO = new SupplierProductDTO(supplierNum, productNum, name, manufacturer, price, maxAmount, expiryDate.toString());
+        supplierDalController.insert(supplierProductDTO);
     }
 
     private boolean isDiscountExists(int productAmount, boolean isPercentage){
@@ -52,8 +64,13 @@ public class SupplierProductBusiness {
         if(!isDiscountValid(productAmount, newDiscount, isPercentage))
             throw new Exception("Discount details are not valid");
         for (Discount dis : quantitiesAgreement) {
-                if (dis.isPercentage() == isPercentage && dis.getAmount() == productAmount)
+                if (dis.isPercentage() == isPercentage && dis.getAmount() == productAmount) {
                     dis.editDiscount(productAmount, newDiscount);
+                    ProductDiscountDTO newDTO = new ProductDiscountDTO(supplierNum, productAmount, newDiscount, isPercentage, productNum);
+                    supplierDalController.update(dis.getDiscountDTO(), newDTO);
+                    dis.setDiscountDTO(newDTO);
+                }
+
             }
     }
 
@@ -63,9 +80,11 @@ public class SupplierProductBusiness {
         if(!isDiscountValid(productAmount, discount, isPercentage))
             throw new Exception("Discount details are not valid");
             if (isPercentage)
-                quantitiesAgreement.add(new PercentDiscount(productAmount, discount, true));
+                quantitiesAgreement.add(new PercentDiscount(productAmount, discount, true, supplierDalController,
+                        new ProductDiscountDTO(supplierNum, productAmount, discount, isPercentage, productNum)));
             else
-                quantitiesAgreement.add(new NumberDiscount(productAmount, discount, false));
+                quantitiesAgreement.add(new NumberDiscount(productAmount, discount, false, supplierDalController,
+                        new ProductDiscountDTO(supplierNum, productAmount, discount, isPercentage, productNum)));
 
     }
 
@@ -77,7 +96,9 @@ public class SupplierProductBusiness {
             if(dis.isPercentage() == isPercentage && dis.getAmount() == productAmount && dis.getDiscount() == discount)
                 curr = dis;
         }
+        supplierDalController.delete(curr.getDiscountDTO());
         quantitiesAgreement.remove(curr);
+
     }
 
     public boolean hasEnoughQuantity(int quantity){
@@ -129,13 +150,16 @@ public class SupplierProductBusiness {
         return supplierNum;
     }
 
-    public void editProduct(int supplierNum, String productName, String manufacturer, float price, int maxAmount, LocalDate expiryDate) {
+    public void editProduct(int supplierNum, String productName, String manufacturer, float price, int maxAmount, LocalDate expiryDate) throws SQLException {
         this.supplierNum = supplierNum;
         this.name = productName;
         this.manufacturer = manufacturer;
         this.price = price;
         this.maxAmount = maxAmount;
         this.expiryDate = expiryDate;
+        SupplierProductDTO newDTO = new SupplierProductDTO(supplierNum,productNum, name, manufacturer, price, maxAmount, expiryDate.toString());
+        supplierDalController.update(supplierProductDTO, newDTO);
+        supplierProductDTO = newDTO;
     }
 
     @Override
@@ -149,5 +173,9 @@ public class SupplierProductBusiness {
                 ", Max quantity in stock: " + maxAmount +
                 ", expiryDate: " + expiryDate;
 
+    }
+
+    public SupplierProductDTO getSupplierProductDTO() {
+        return supplierProductDTO;
     }
 }

@@ -1,7 +1,10 @@
 package DataLayer.Util;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 public abstract class DTO {
-    String tableName;
+    protected String tableName;
 
     /**
      * DTO constructor, must get a table name as 'name_of_object'
@@ -14,4 +17,9 @@ public abstract class DTO {
     public String getTableName() {
         return tableName;
     }
+
+    public void setTableName(String tableName) {
+        this.tableName=tableName;
+    }
+
 }

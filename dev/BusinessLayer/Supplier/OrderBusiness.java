@@ -1,6 +1,8 @@
 package BusinessLayer.Supplier;
 
 import BusinessLayer.Supplier_Stock.Util_Supplier_Stock;
+import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.OrderDTO;
+import DataLayer.Inventory_Supplier_Dal.DalController.OrderDalController;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -21,6 +23,11 @@ public class OrderBusiness {
     private String contactNumber;
     private int daysToSupplied;
     private List<OrderProduct> products ;
+
+    private OrderDTO orderDTO;
+
+    private OrderDalController orderDalController;
+
     public OrderBusiness(int orderNum, String supplierName, LocalDate  orderDate,
                          String supplierAddress, String destinationAddress
             , int supplierNum, String contactName, String contactNumber,
@@ -35,6 +42,7 @@ public class OrderBusiness {
         this.contactNumber = contactNumber;
         this.products = products;
         this.daysToSupplied = daysToSupplied;
+        this.orderDTO = new OrderDTO(orderNum, supplierNum, contactName, contactNumber, orderDate.toString(), supplierAddress, destinationAddress, orderSupplied, daysTodeliver, constantDay);
     }
 
     public int getOrderNum() {
@@ -57,8 +65,8 @@ public class OrderBusiness {
         }
         return
                 "Order Number: " + orderNum +
-                ",Supplier Number: "+supplierNum+
-                ",Products: " +"\n"+ s+"\n";
+                        ",Supplier Number: "+supplierNum+
+                        ",Products: " +"\n"+ s+"\n";
 
     }
 
@@ -76,8 +84,7 @@ public class OrderBusiness {
             clonedProducts.add(product.clone());
         return new OrderBusiness(
                 newOrderNum, supplierName, Util_Supplier_Stock.getCurrDay(), supplierAddress, destinationAddress,
-                supplierNum,contactName,contactNumber,clonedProducts,daysToSupplied
-        );
+                supplierNum,contactName,contactNumber,clonedProducts,daysToSupplied, true, -1, -1);
     }
     public String getSupplierName() {
         return supplierName;
@@ -102,6 +109,15 @@ public class OrderBusiness {
     public String getContactNumber() {
         return contactNumber;
     }
+
+    public OrderDTO getOrderDTO() {
+        return orderDTO;
+    }
+
+    public void setOrderDTO(OrderDTO orderDTO) {
+        this.orderDTO = orderDTO;
+    }
+
     public void setOrderNum(int orderNum) {
         this.orderNum = orderNum;
     }

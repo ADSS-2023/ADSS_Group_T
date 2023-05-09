@@ -6,8 +6,14 @@ import BusinessLayer.Supplier.Discounts.NumberDiscount;
 import BusinessLayer.Supplier.SupplierProductBusiness;
 import BusinessLayer.Supplier.Supplier_Util.Discounts;
 import BusinessLayer.Supplier.Supplier_Util.PaymentTerms;
+import DataLayer.Inventory_Supplier_Dal.DAO.SupplierDAO.SupplierDAO;
+import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.*;
+import DataLayer.Inventory_Supplier_Dal.DalController.SupplierDalController;
+import BusinessLayer.Supplier.Supplier_Util.Discounts;
+import BusinessLayer.Supplier.Supplier_Util.PaymentTerms;
 import BusinessLayer.Supplier_Stock.Util_Supplier_Stock;
 
+import java.sql.SQLException;
 import java.util.*;
 import java.time.LocalDate;
 
@@ -24,10 +30,15 @@ public abstract class  SupplierBusiness {
 
     private List<Discount> discountPerTotalQuantity;
 
-    private List<Discount> discountPerTotalPrice;
+    protected List<Discount> discountPerTotalPrice;
 
-    public SupplierBusiness(String supplierName, String address, int supplierNum,int bankAccountNum, HashMap<String, String> contacts, boolean selfDelivery,PaymentTerms paymentTerms){
+    protected SupplierDTO supplierDTO;
 
+    protected List<SupplierContactDTO> contactDTOS;
+
+    private SupplierDalController supplierDalController;
+
+    public SupplierBusiness(String supplierName, String address, int supplierNum,int bankAccountNum, HashMap<String, String> contacts, boolean selfDelivery,PaymentTerms paymentTerms, SupplierDalController supplierDalController) throws SQLException {
         this.supplierName = supplierName;
         this.address = address;
         this.supplierNum = supplierNum;
@@ -38,6 +49,12 @@ public abstract class  SupplierBusiness {
         this.discountPerTotalQuantity = new ArrayList<>();
         this.discountPerTotalPrice = new ArrayList<>();
         this.paymentTerms=paymentTerms;
+        this.supplierDalController = supplierDalController;
+        for (Map.Entry<String, String> entry : contacts.entrySet()) {
+            SupplierContactDTO supplierContactDTO = new SupplierContactDTO(supplierNum, entry.getKey(), entry.getValue());
+            supplierDalController.insert(supplierContactDTO);
+            contactDTOS.add(supplierContactDTO);
+        }
     }
 
     public SupplierProductBusiness getProduct(String productName, String manufacturer) {
@@ -64,17 +81,23 @@ public abstract class  SupplierBusiness {
             products.put(productNum, new SupplierProductBusiness( supplierNum,productName,productNum, manufacturer, price, maxAmount, expiryDate));
     }
 
-    public void editProduct(String productName, String manufacturer, int price, int maxAmount, LocalDate expiredDate) throws Exception {
-        if(expiredDate.isBefore(Util_Supplier_Stock.getCurrDay()))
+    public void editProduct(String productName, String manufacturer, int price, int maxAmount, LocalDate expiryDate) throws Exception {
+        if(expiryDate.isBefore(Util_Supplier_Stock.getCurrDay()))
             throw new Exception("expiry date has passed.");
         SupplierProductBusiness sp = getProduct(productName,manufacturer);
-        if (sp != null)
-            sp.editProduct(supplierNum, productName, manufacturer, price, maxAmount, expiredDate);
+        if (sp != null) {
+            sp.editProduct(supplierNum, productName, manufacturer, price, maxAmount, expiryDate);
+            SupplierProductDTO newProductDTO = new SupplierProductDTO(
+                    supplierNum, sp.getProductNum(), productName, manufacturer,
+                    price, maxAmount,expiryDate.toString());
+            supplierDalController.update(sp.getSupplierProductDTO(),newProductDTO);
+        }
         else
             throw new Exception("product doesn't exist.");
     }
 
     public void deleteProduct(int productNum) throws Exception {
+        //ToDo::make get all products from databsae
         if(!products.containsKey(productNum))
             throw new Exception("product is not exists.");
         //delete first all of product's discounts
@@ -83,12 +106,22 @@ public abstract class  SupplierBusiness {
                sp.deleteProductDiscount(dis.getAmount(),dis.getDiscount(),dis.isPercentage());
             }
             products.remove(productNum);
+            supplierDalController.delete(sp.getSupplierProductDTO());
+
+    }
+
+    public void deleteContacts () throws SQLException {
+        for (SupplierContactDTO contactDTO : contactDTOS)  {
+            supplierDalController.delete(contactDTO);
+        }
+        contacts=new HashMap<>();
     }
 
     public void editProductDiscount(int productNum, int productAmount, int discount, boolean isPercentage) throws Exception {
         if(getSupplierProduct(productNum) == null)
             throw new Exception("product doesn't exist.");
         getSupplierProduct(productNum).editProductDiscount(productAmount, discount, isPercentage);
+
     }
 
     public void addProductDiscount(int productNum, int productAmount, int discount, boolean isPercentage) throws Exception {
@@ -115,15 +148,17 @@ public abstract class  SupplierBusiness {
         switch(discountEnum){
             case DISCOUNT_BY_TOTAL_PRICE :
                 if(isPercentage)
-                     discountPerTotalPrice.add(new PercentDiscount(amount,discount,true));
+                     discountPerTotalPrice.add(new PercentDiscount(amount,discount,true, supplierDalController,
+                             new SupplierDiscountDTO(supplierNum, amount, discount, isPercentage, true)));
                 else
-                    discountPerTotalPrice.add(new NumberDiscount(amount,discount,false));
+                    discountPerTotalPrice.add(new NumberDiscount(amount,discount,false, supplierDalController,
+                            new SupplierDiscountDTO(supplierNum, amount, discount, isPercentage, true)));
                 break;
             case DISCOUNT_BY_TOTAL_QUANTITY:
                 if(isPercentage)
-                    discountPerTotalQuantity.add(new PercentDiscount(amount,discount,true));
+                    discountPerTotalQuantity.add(new PercentDiscount(amount,discount,true, supplierDalController, new SupplierDiscountDTO(supplierNum, amount, discount, isPercentage, false)));
                 else
-                    discountPerTotalQuantity.add(new NumberDiscount(amount,discount, false));
+                    discountPerTotalQuantity.add(new NumberDiscount(amount,discount, false, supplierDalController, new SupplierDiscountDTO(supplierNum, amount, discount, isPercentage, false)));
                 break;
         }
     }
@@ -244,6 +279,10 @@ public abstract class  SupplierBusiness {
 
     public int getSupplierNum() {
         return supplierNum;
+    }
+
+    public SupplierDTO getSupplierDTO() {
+        return supplierDTO;
     }
 
     public Map<String, String> getContacts() {
