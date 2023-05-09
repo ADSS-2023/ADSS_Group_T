@@ -14,7 +14,6 @@ public class InventoryDalController{
     private CategoryDAO category_DAO;
     private DamagedItemDAO damaged_item_DAO;
     private DiscountDAO discount_DAO;
-
     private DAO generic_DAO;
     private Connection connection;
 

@@ -27,12 +27,16 @@ public class Inventory {
         categories = new LinkedList<>();
         items = new HashMap<>();
         shortage_list = new LinkedList<>();
-        damaged = new Damaged();
+        damaged = new Damaged(inv_dal_controller);
         name_to_id = new HashMap<>();
     }
 
     public void setInventoryDalController(InventoryDalController inv){
         this.inv_dal_controller = inv;
+    }
+
+    public InventoryDalController getInv_dal_controller(){
+        return inv_dal_controller;
     }
     /**
      * this function gets an item and set his alert callback
@@ -234,29 +238,25 @@ public class Inventory {
         categories.get(current_index).add_item(next_index, i);
         shortage_list.add(i); // why is it here?
         name_to_id.put(name+" "+manufacturer_name,item_id);
-        DTO curDTO = i.getDto();
-        inv_dal_controller.insert(curDTO);
     }
 
     public void add_category(String categories_index, String name) throws Exception {
+        CategoryDTO curDTO;
         if (categories_index == "") {
             Category new_category = new Category(name, "" + categories.size());
             categories.add(new_category);
-            CategoryDTO curDto = new_category.getDto();
-            inv_dal_controller.insert(curDto);
+            curDTO = new_category.getDto();
         }
         else {
             int current_index = Integer.parseInt(Util.extractFirstNumber(categories_index));
             String next_index = Util.extractNextIndex(categories_index);
             Category cur_category = categories.get(current_index);
             cur_category.add_product(next_index,name);
-
-
             int index = cur_category.getCategories_list().size()-1;
-            CategoryDTO curDTO = (CategoryDTO) cur_category.categories_list.get(index).getDto();
-            curDTO.setIndex(next_index);
-            inv_dal_controller.insert(curDTO);
+            curDTO = (CategoryDTO) cur_category.categories_list.get(index).getDto();
         }
+        curDTO.setIndex(curDTO.getIndex() + categories_index);
+        inv_dal_controller.insert(curDTO);
     }
 
     /**

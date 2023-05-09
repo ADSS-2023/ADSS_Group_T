@@ -1,5 +1,7 @@
 package BusinessLayer.Stock;
 
+import DataLayer.Inventory_Supplier_Dal.DalController.InventoryDalController;
+
 import java.util.LinkedList;
 import java.util.List;
 /*
@@ -8,8 +10,10 @@ import java.util.List;
  */
 public class Damaged {
     protected List<DamagedItem> damagedItems;
+    protected InventoryDalController inventoryDalController;
 
-    public Damaged(){
+    public Damaged(InventoryDalController inventoryDalController){
+        this.inventoryDalController = inventoryDalController;
         damagedItems = new LinkedList<>();
     }
 
@@ -23,6 +27,7 @@ public class Damaged {
      */
     public String addDamagedItem(Item item ,int order_id, int amount , String description) throws Exception {
         damagedItems.add(new DamagedItem(item , amount , description));
+        //send invdalCon
         return item.reduce(order_id,amount);
     }
 
