@@ -28,8 +28,8 @@ import DataLayer.Util.DAO;
 import ServiceLayer.Stock.*;
 import ServiceLayer.Supplier.OrderService;
 import ServiceLayer.Supplier.SupplierService;
-import java.sql.Connection;
-import java.sql.DriverManager;
+
+import java.sql.*;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -79,6 +79,18 @@ public class ServiceFactory {
         }
     }
 
+    public void deleteAllData(){
+        String[] table_names = {"inventory_categories" , "inventory_item", "inventory_item_ordered"
+                , "inventory_item_per_order" , "inventory_damaged_items" , "inventory_discount",
+                "inventory_waiting_list"};
+        for(int i = 0 ; i < table_names.length ; i++) {
+            try {
+                inventoryDalController.getDAO().deleteAll(connection, table_names[i]);
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+    }
 
     public void dataSetUp() throws Exception {
         //need to clean the data manually!

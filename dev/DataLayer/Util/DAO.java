@@ -223,5 +223,12 @@ public class DAO {
         return results;
     }
 
+    public void deleteAll(Connection connection, String tableName) throws SQLException {
+        String sql = "DELETE FROM " + tableName;
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.executeUpdate();
+    }
+
+
 }
 
