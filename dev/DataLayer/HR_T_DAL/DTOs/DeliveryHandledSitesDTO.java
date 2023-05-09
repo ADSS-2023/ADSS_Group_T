@@ -16,4 +16,20 @@ public class DeliveryHandledSitesDTO extends DTO {
         this.productName = productName;
         this.amount = amount;
     }
+
+    public int getDeliveryId() {
+        return deliveryId;
+    }
+
+    public String getSiteAddress() {
+        return siteAddress;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public int getAmount() {
+        return amount;
+    }
 }
