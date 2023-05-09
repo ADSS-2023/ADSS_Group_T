@@ -7,10 +7,9 @@ import DataLayer.HR_T_DAL.DAOs.LogisticDAO;
 import DataLayer.HR_T_DAL.DAOs.TruckDAO;
 import DataLayer.HR_T_DAL.DTOs.LogisticCenterStockDTO;
 import DataLayer.HR_T_DAL.DTOs.ProductDTO;
-import DataLayer.HR_T_DAL.DTOs.SupplierDTO;
+import DataLayer.HR_T_DAL.DTOs.SiteDTO;
 import DataLayer.HR_T_DAL.DTOs.TruckDTO;
 import DataLayer.Util.DAO;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -73,5 +72,10 @@ public class DalLogisticCenterService {
             productsInStock.put(new Product(productDTO), logisticCenterStockDTO.getAmount());
         }
         return productsInStock;
+    }
+
+
+    public SiteDTO findLogisticCenter() throws SQLException {
+        return dao.find("logistic center address","siteAddress","Site", SiteDTO.class);
     }
 }

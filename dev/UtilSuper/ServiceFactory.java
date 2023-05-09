@@ -40,7 +40,7 @@ public class ServiceFactory {
 
     private DriverController driverController;
 
-    public ServiceFactory() throws SQLException {
+    public ServiceFactory() throws Exception {
 
         String testDBUrl = "jdbc:sqlite:dev/DataLayer/HR_Transport_DB .db";
         connection = DriverManager.getConnection(testDBUrl);
