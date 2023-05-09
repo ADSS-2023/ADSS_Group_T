@@ -61,6 +61,28 @@ public class ItemService {
         catch(Exception e){
             return e.getMessage();
         }
+    }
+    public String move_items_to_store(int item_id,int amount){
+        try {
+            inventory.get_item_by_id(item_id).move_items_to_store(amount);
+            return "Amount has changed successfully";
+        }
+        catch (Exception e){
+            return e.getMessage();
+        }
+    }
+    public String present_item_amount(int item_id){
+        try {
+            return  String.format("name:%s \namount in store:%s \namount in warehouse:%s",
+                    inventory.get_item_by_id(item_id).get_name(),
+                    inventory.get_item_by_id(item_id).amount_store(),
+                    inventory.get_item_by_id(item_id).amount_warehouse());
+        }
+        catch (Exception e){
+            return e.getMessage();
+        }
+
+
 
     }
 }

@@ -13,8 +13,11 @@ import java.util.Scanner;
 import java.util.function.Supplier;
 
 public class StockUI {
-    public static ServiceFactory sf = new ServiceFactory();
+    private ServiceFactory sf;
     private PreviousCallBack previousCallBack;
+    public StockUI(ServiceFactory sf){
+        this.sf = sf;
+    }
     public void printOptions(){
         System.out.println("\u001B[32m1.See categories\u001B[0m");
         System.out.println("\u001B[32m2.Produce inventory report\u001B[0m");
@@ -26,9 +29,10 @@ public class StockUI {
         System.out.println("\u001B[32m8.Receive a new order (receive new supply of exists item)\u001B[0m");
         System.out.println("\u001B[32m9.Produce shortage report\u001B[0m");
         System.out.println("\u001B[32m10.Add new category\u001B[0m");
-        System.out.println("\u001B[32m11.Skip day\u001B[0m");
+        System.out.println("\u001B[32m11.Move item to store\u001B[0m");
         System.out.println("\u001B[32m12.Orders menu\u001B[0m");
         System.out.println("\u001B[32m13.Back to start menu\u001B[0m");
+
     }
 
     public  String presentCategories(){
@@ -185,7 +189,7 @@ public class StockUI {
                 addCategory();
                 break;
             case "11":
-                moveToNextDay();
+                move_items_to_store();
                 break;
             case "12":
                 edit_create_orders();
@@ -206,10 +210,17 @@ public class StockUI {
                 place_waiting_items();
                 break;
             case "25":
+                show_all_orders();
+            case "26":
                 run();
+                break;
             case "logout":
                 break;
         }
+    }
+
+    private void show_all_orders() {
+        System.out.println(sf.manageOrderService.show_all_orders());
     }
 
     private void place_waiting_items() {
@@ -247,7 +258,7 @@ public class StockUI {
         System.out.println("Do you want to mark this order as urgent?\n1.yes 2.no");
         int choice = scanner.nextInt();
         boolean isUrgent = choice == 1;
-        sf.manageOrderService.createSpecialOrder(products,isUrgent);
+        System.out.println(sf.manageOrderService.createSpecialOrder(products,isUrgent));
     }
 
     private  void create_regular_order() {
@@ -264,7 +275,7 @@ public class StockUI {
             products.put(id,amount);
             isActive = choice==1;
         }
-        sf.manageOrderService.createRegularOrder(products);
+        System.out.println(sf.manageOrderService.createRegularOrder(products));
     }
 
     private  void edit_create_orders() {
@@ -278,11 +289,14 @@ public class StockUI {
     }
 
     private  void printOrderOptions() {
+        System.out.println("--------orders menu--------");
         System.out.println("\u001B[32m1.Edit regular order\u001B[0m");
         System.out.println("\u001B[32m2.Create regular order\u001B[0m");
         System.out.println("\u001B[32m3.Create special order\u001B[0m");
         System.out.println("\u001B[32m4.Place waiting items\u001B[0m");
-        System.out.println("\u001B[32m5.Go back to inventory menu\u001B[0m");
+        System.out.println("\u001B[32m5.Show all orders for the next week\u001B[0m");
+        System.out.println("\u001B[32m6.Go back to inventory menu\u001B[0m");
+
     }
 
 
@@ -301,7 +315,7 @@ public class StockUI {
         sf.manageOrderService.editRegularOrder(id , cur_day , amount);
     }
 
-    private void moveToNextDay() {
+    public void moveToNextDay() {
         sf.manageOrderService.nextDay();
     }
 
@@ -316,7 +330,7 @@ public class StockUI {
     public void run(){
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("\033[1m-----------Inventory-----------\033[0m\n\u001B[32m" +
+        System.out.println("\033[1m-----------Inventory-----------\033[0m\n\u001B[32m" );
         while(true) {
             System.out.println("What would you like to do?");
             printOptions();
@@ -336,5 +350,14 @@ public class StockUI {
     }
     private void goBack(){
         previousCallBack.goBack();
+    }
+    private void move_items_to_store(){
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Insert item id");
+        int id = scanner.nextInt();
+        System.out.println(sf.itemService.present_item_amount(id));
+        System.out.println("Insert amount to move");
+        int amount = scanner.nextInt();
+        sf.itemService.move_items_to_store(id,amount);
     }
 }

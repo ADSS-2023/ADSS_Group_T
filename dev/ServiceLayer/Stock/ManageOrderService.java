@@ -66,8 +66,14 @@ public class ManageOrderService {
         return "Order received successfully";
     }
 
-    public void nextDay() {
-        this.orderController.nextDay(LocalDate.now().getDayOfWeek().plus(1));
+    public String nextDay() {
+        try {
+            this.orderController.nextDay();
+        }
+        catch (Exception e){
+            return e.getMessage();
+        }
+        return "Next Day functions succeed";
     }
 
     /**
@@ -127,5 +133,14 @@ public class ManageOrderService {
 
     public void setOrderController(Inventory inv,OrderService orderService) {
         this.orderController = new OrderController(inv,orderService);
+    }
+
+    public String show_all_orders() {
+        try{
+            return orderController.show_all_orders();
+        }
+        catch(Exception e){
+            return e.getMessage();
+        }
     }
 }

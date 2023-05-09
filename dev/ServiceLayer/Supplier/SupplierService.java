@@ -6,8 +6,8 @@ import BusinessLayer.Supplier.Suppliers.ConstantSupplier;
 import BusinessLayer.Supplier.Suppliers.SupplierBusiness;
 import BusinessLayer.Supplier.SupplierController;
 import BusinessLayer.Supplier.SupplierProductBusiness;
-import BusinessLayer.Supplier.Util.Discounts;
-import BusinessLayer.Supplier.Util.PaymentTerms;
+import BusinessLayer.Supplier.Supplier_Util.Discounts;
+import BusinessLayer.Supplier.Supplier_Util.PaymentTerms;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -17,8 +17,10 @@ public class SupplierService {
     private SupplierController sc;
     private OrderController oc;
 
-    public SupplierService(SupplierController sc){
+    public SupplierService(SupplierController sc,OrderController oc)
+    {
         this.sc = sc;
+        this.oc=oc;
     }
 
     public String addSupplier(String name, String address, int supplierNum, int bankAccountNum, int daysToDeliver, HashMap<String, String> contacts, List<DayOfWeek> constDeliveryDays, boolean selfDelivery, PaymentTerms paymentTerms){
@@ -87,9 +89,9 @@ public class SupplierService {
         }
     }
 
-    public String addProduct(int supplierNum, int productNum, String productName, String manufacturer, int price, int maxAmount, LocalDate expiredDate){
+    public String addProduct(int supplierNum, int productNum, String productName, String manufacturer, int price, int maxAmount, LocalDate expiryDate){
         try {
-            sc.getSupplier(supplierNum).addProduct(productNum, productName, manufacturer, price, maxAmount, expiredDate);
+            sc.getSupplier(supplierNum).addProduct(productNum, productName, manufacturer, price, maxAmount, expiryDate);
             return "Product added successfully";
         }
         catch (Exception e){
@@ -97,9 +99,9 @@ public class SupplierService {
         }
     }
 
-    public String editProduct(int supplierNum, String productName, String manufacturer, int price, int maxAmount, LocalDate expiredDate){
+    public String editProduct(int supplierNum, String productName, String manufacturer, int price, int maxAmount, LocalDate expiryDate){
         try {
-            sc.getSupplier(supplierNum).editProduct(productName, manufacturer, price, maxAmount, expiredDate);
+            sc.getSupplier(supplierNum).editProduct(productName, manufacturer, price, maxAmount, expiryDate);
             if(sc.getSupplier(supplierNum) instanceof ConstantSupplier){
                 SupplierProductBusiness sProduct = sc.getSupplier(supplierNum).getProduct(productName, manufacturer);
                 oc.editRegularItem(sProduct.getName(), sProduct.getManufacturer(), supplierNum, ((ConstantSupplier) sc.getSupplier(supplierNum)).getConstDeliveryDays());
@@ -113,12 +115,11 @@ public class SupplierService {
 
     public String deleteProduct(int supplierNum, int productNum){
         try {
-            sc.getSupplier(supplierNum).deleteProduct(productNum);
             if(sc.getSupplier(supplierNum) instanceof ConstantSupplier){
                 SupplierProductBusiness sProduct = sc.getSupplier(supplierNum).getProduct(productNum);
                 oc.removeRegularItem(sProduct.getName(), sProduct.getManufacturer(), supplierNum, ((ConstantSupplier) sc.getSupplier(supplierNum)).getConstDeliveryDays());
             }
-            LocalDate.now().getDayOfWeek();
+            sc.getSupplier(supplierNum).deleteProduct(productNum);
             return "Product deleted successfully";
         }
         catch (Exception e){
@@ -146,7 +147,7 @@ public class SupplierService {
         }
     }
 
-    public String deleteSupplierDiscount(int supplierNum, Discounts discountEnum, int amount, int discount,boolean isPercentage){
+    public String deleteSupplierDiscount(int supplierNum, Discounts discountEnum, int amount,boolean isPercentage){
         try {
             sc.getSupplier(supplierNum).deleteSupplierDiscount(discountEnum, amount,isPercentage);
             return "Supplier discount deleted successfully";

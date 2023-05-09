@@ -99,4 +99,9 @@ public class ItemPerOrder {
     public void setValidity(LocalDate validity) {
         this.validity = validity;
     }
+
+    public void move_to_store(int amount){
+        amount_store+=amount;
+        amount_warehouse-=amount;
+    }
 }

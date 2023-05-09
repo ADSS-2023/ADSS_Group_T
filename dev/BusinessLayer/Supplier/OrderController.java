@@ -2,12 +2,12 @@ package BusinessLayer.Supplier;
 
 import BusinessLayer.Supplier.Suppliers.SupplierBusiness;
 import BusinessLayer.Supplier_Stock.ItemToOrder;
+import BusinessLayer.Supplier_Stock.Util_Supplier_Stock;
 import ServiceLayer.Stock.ManageOrderService;
 
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.TextStyle;
 import java.util.*;
 
@@ -26,6 +26,9 @@ public class OrderController {
         this.mos=mos;
         shoppingLists = new HashMap<>();
         dayToConstantOrders = new HashMap<>();
+        for (DayOfWeek day: DayOfWeek.values() ) {
+            dayToConstantOrders.put(day,new LinkedList<>());
+        }
         orderCounter=0;
         ordersNotSupplied = new LinkedList<>();
     }
@@ -100,17 +103,15 @@ public class OrderController {
            }
 
            //create order from products in the send and send to delivery if needed
-           OrderBusiness order = new OrderBusiness(orderCounter++, supplier.getName(), LocalDateTime.now(), supplier.getAddress(),
+           OrderBusiness order = new OrderBusiness(orderCounter++, supplier.getName(), Util_Supplier_Stock.getCurrDay(), supplier.getAddress(),
                    "SuperLi", supplier.getSupplierNum(), contactName, contactNum, products, daysToSupplied);
            if (isRegular){//save Regular order
                int deliveryDay = supplier.findEarliestSupplyDay();
-               LocalDate today = LocalDate.now();
+               LocalDate today = Util_Supplier_Stock.getCurrDay();
                LocalDate futureDay = today.plusDays(deliveryDay);
-               DayOfWeek orderDay = DayOfWeek.valueOf(futureDay.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ENGLISH));
-               if(!dayToConstantOrders.containsKey(orderDay))
-                   dayToConstantOrders.put(orderDay,new LinkedList<>());
+               //the next line produces an error
+               DayOfWeek orderDay = futureDay.getDayOfWeek();
                dayToConstantOrders.get(orderDay).add(order);
-               orders.add(order);
            }
            else{
                ordersNotSupplied.add(order);
@@ -148,28 +149,36 @@ public class OrderController {
             float initialPrice = product.getPrice()* quantity;
             float discount = initialPrice - product.getPriceByQuantity(quantity);
             float finalPrice = initialPrice-discount;
-            OrderProduct orderProduct = new OrderProduct(product.getName(),productNumber,quantity,initialPrice,discount,finalPrice);
+            OrderProduct orderProduct = new OrderProduct(product.getName(),productNumber,quantity,initialPrice,discount,finalPrice, product.getManufacturer(),product.getExpiryDate());
            //update the suppliers shopping list
             if(!shoppingLists.containsKey(supplierNum))
                 shoppingLists.put(supplierNum,new LinkedList());
             shoppingLists.get(supplierNum).add(orderProduct);
         }
-
-    public void executeOrders(){
+    //change
+    public void executeTodayOrders(){
         List<ItemToOrder> items = new ArrayList<>();
-        List<OrderBusiness> ordersForToday = dayToConstantOrders.get(LocalDate.now().getDayOfWeek());
+        List<OrderBusiness> ordersForToday = dayToConstantOrders.get(Util_Supplier_Stock.getCurrDay().getDayOfWeek());
         for(OrderBusiness order:ordersForToday){
-            for(OrderProduct product:order.getProducts())
+            for(OrderProduct product:order.getProducts()) {
                 items.add(new ItemToOrder(product.getProductName(), product.getManufacturer(), product.getQuantity(),
                         product.getExpiryDate(), order.getOrderNum(), product.getFinalPrice()));
+            }
+            if(!order.getProducts().isEmpty()) {
+                OrderBusiness clonedOrder = order.clone(orderCounter++);
+                orders.add(clonedOrder);
+            }
         }
-        List<OrderBusiness> ordersToDelete =  new ArrayList<>();
+        List<OrderBusiness> ordersToDelete =  new LinkedList<>();
         for(OrderBusiness order:ordersNotSupplied){
             if(order.getDaysToSupplied() == 0) {
-                for (OrderProduct product : order.getProducts())
+                for (OrderProduct product : order.getProducts()) {
                     items.add(new ItemToOrder(product.getProductName(), product.getManufacturer(), product.getQuantity(),
-                            product.getExpiryDate(), order.getOrderNum(), product.getFinalPrice()/ product.getQuantity()));
-                orders.add(order);
+                            product.getExpiryDate(), order.getOrderNum(), product.getFinalPrice() / product.getQuantity()));
+                }
+                if(!order.getProducts().isEmpty()) {
+                    orders.add(order);
+                }
                 ordersToDelete.add(order);
             }
             else
@@ -177,23 +186,24 @@ public class OrderController {
             }
         for(OrderBusiness order:ordersToDelete)
             ordersNotSupplied.remove(order);
-        //stockController.receiveOrders(items);
+        if(!items.isEmpty())
+            mos.receiveOrders(items);
     }
 
     /**
      *
-     * @param weekDay requested day to get its items coming as a special order
+     * @param day requested day to get its items coming as a special order
      * @return list of the item comes as a special order estimated to be delivered at the day comes as an input
      * @throws Exception
      */
-    public List<ItemToOrder> getSpecialOrder(DayOfWeek weekDay) throws Exception {
+    public List<ItemToOrder> getSpecialOrder(DayOfWeek day) throws Exception {
         List<ItemToOrder> itemsList = new LinkedList<>();
 
         //find the exact number of the days following the current day
-        LocalDate today = LocalDate.now();
+        LocalDate today = Util_Supplier_Stock.getCurrDay();
         int todayValue = today.getDayOfWeek().getValue();
         int daysToAdd = 7;
-        int dayValue = weekDay.getValue();
+        int dayValue = day.getValue();
         int daysToNext = (dayValue >= todayValue) ? dayValue - todayValue : 7 - (todayValue - dayValue);
         if (daysToNext < daysToAdd) {
             daysToAdd = daysToNext;
@@ -251,6 +261,7 @@ public class OrderController {
                                 SupplierProductBusiness spProduct = sc.getSupplier(supplierNum).getSupplierProduct(productName, manufacturer);
                                 if (product.getQuantity() > spProduct.getMaxAmount())
                                     removeRegularItem(productName, manufacturer, supplierNum, days);
+                                    //supplier does not have enough of the product's quantity
                                 else
                                     updateRegularItem(product, productName, manufacturer, supplierNum);
                             }
@@ -304,8 +315,73 @@ public class OrderController {
      * @param day
      * @throws Exception
      */
-    // go over all orders of the day and find out how much to add to one of the suppliers
-    public void editRegularItem(ItemToOrder item, DayOfWeek day) throws Exception{
+
+    //go over all the order products and  modify to the max quantity can be supplied
+    //update order product and all order
+    public void editRegularItem(ItemToOrder item, DayOfWeek day) throws Exception {
+        int newQuantity = item.getQuantity();
+        if (newQuantity == 0) {
+            removeRegularItem(item, day);
+            return;
+        }
+        int oldQuantity = 0;
+        boolean found = false;
+        if (!dayToConstantOrders.containsKey(day))
+            throw new Exception("item has not found");
+        //find out quantity to add or reduce
+        for (OrderBusiness order : dayToConstantOrders.get(day)) {
+            for (OrderProduct product : order.getProducts()) {
+                if (product.getProductName().equals(item.getProductName()) &&
+                        product.getManufacturer().equals(item.getManufacturer())) {
+                    oldQuantity += product.getQuantity();
+                    found=true;
+                }
+            }
+        }
+        if(!found)
+            throw new Exception("item has not found");
+
+        int quantityToChange = newQuantity - oldQuantity;
+        if(quantityToChange==0)//if no need to change a thing
+            return;
+
+        //add or reduce a specific amount from an item
+        for (OrderBusiness order : dayToConstantOrders.get(day)) {
+            for (OrderProduct product : order.getProducts()) {
+                if (product.getProductName().equals(item.getProductName()) &&
+                        product.getManufacturer().equals(item.getManufacturer())) {
+                    SupplierProductBusiness spProduct = sc.getSupplier(order.getSupplierNum()).getProduct(product.getProductNumber());
+                    if (quantityToChange > 0) { // if there is a need to add - if an existing supplier has enough to add
+                        if (spProduct.hasEnoughQuantity(product.getQuantity() + quantityToChange)) {
+                            product.setQuantity(product.getQuantity() + quantityToChange);
+                            updateRegularItem(product, product.getProductName(), product.getManufacturer(), spProduct.getSupplierNum());
+                            updateRegularOrder(order);
+                            quantityToChange=0;
+                            return;
+                        }
+                    }
+                    else if(quantityToChange<0){//if there is a need to reduce
+                        // if the current product has the whole amount to be reduced
+                        if(product.getQuantity()>=Math.abs(quantityToChange)) {
+                            product.setQuantity(product.getQuantity() - Math.abs(quantityToChange));
+                            updateRegularItem(product, product.getProductName(), product.getManufacturer(), spProduct.getSupplierNum());
+                            updateRegularOrder(order);
+                            quantityToChange=0;
+                            return;
+                        }
+                        else{//else - remove the whole amount of the OrderProduct and continue reducing
+                            quantityToChange -= Math.abs(product.getQuantity());
+                            order.getProducts().remove(product);
+                            updateRegularOrder(order);
+                        }
+                    }
+                }
+                if(quantityToChange!=0)
+                    throw new Exception("no such item has been found");
+            }
+        }
+    }
+    /*public void editRegularItem(ItemToOrder item, DayOfWeek day) throws Exception{
         int newQuantity = item.getQuantity();
         if(newQuantity==0){
             removeRegularItem(item,day);
@@ -336,9 +412,8 @@ public class OrderController {
 
         throw new Exception("no such item has been found");
 
-        //remove the order and make it again from scratch
+    }*/
 
-    }
 
     /**
      * a user from inventory tries to delete an item in a regular order which needs to be updated
