@@ -210,10 +210,17 @@ public class StockUI {
                 place_waiting_items();
                 break;
             case "25":
+                show_all_orders();
+            case "26":
                 run();
+                break;
             case "logout":
                 break;
         }
+    }
+
+    private void show_all_orders() {
+        System.out.println(sf.manageOrderService.show_all_orders());
     }
 
     private void place_waiting_items() {
@@ -282,11 +289,14 @@ public class StockUI {
     }
 
     private  void printOrderOptions() {
+        System.out.println("--------orders menu--------");
         System.out.println("\u001B[32m1.Edit regular order\u001B[0m");
         System.out.println("\u001B[32m2.Create regular order\u001B[0m");
         System.out.println("\u001B[32m3.Create special order\u001B[0m");
         System.out.println("\u001B[32m4.Place waiting items\u001B[0m");
-        System.out.println("\u001B[32m5.Go back to inventory menu\u001B[0m");
+        System.out.println("\u001B[32m5.Show all orders for the next week\u001B[0m");
+        System.out.println("\u001B[32m6.Go back to inventory menu\u001B[0m");
+
     }
 
 

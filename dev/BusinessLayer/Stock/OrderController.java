@@ -192,7 +192,7 @@ public class OrderController {
         List<ItemToOrder> items_to_show = order_service.getRegularOrder(cur_day);
         Map<String , Integer> map_of_amount = new HashMap(); // list that sums all the items from a specific one
         if (items_to_show.isEmpty())
-            throw new Exception("No items to present");
+            return "No items to present\n";
         for(ItemToOrder item : items_to_show) {
             String item_key = item.getProductName() +" "+ item.getManufacturer();
             if(map_of_amount.containsKey(item_key))
@@ -201,8 +201,8 @@ public class OrderController {
                 map_of_amount.put(item_key, item.getQuantity());
         }
         for (Map.Entry<String, Integer> entry : map_of_amount.entrySet()) {
-            toReturn+=String.format("%d. Item id: %s, item name and manufacturer name: %s, amount: %s\n"
-                    ,4, inventory.name_to_id.get(entry.getKey()),entry.getKey(),entry.getValue());
+            toReturn+=String.format("Item id: %s, item name and manufacturer name: %s, amount: %s\n"
+                    ,inventory.name_to_id.get(entry.getKey()),entry.getKey(),entry.getValue());
         }
         return toReturn;
     }
@@ -214,5 +214,16 @@ public class OrderController {
         ItemToOrder milk_3 = new ItemToOrder("3% milk","IDO LTD",40, Util.stringToDate("2023-05-10"),12,1.2);
         ItemToOrder beef_sausage = new ItemToOrder("Beef Sausage","Zogloveck",15,Util.stringToDate("2023-10-01"),1005,10.05);
         receiveOrders(Arrays.asList(milk_3,beef_sausage));
+    }
+
+    public String show_all_orders() throws Exception {
+        String to_return = "";
+        for(int i = 0; i < 7 ;i++){
+            to_return +=
+                    String.format("---------%s---------\n%s",
+            Util_Supplier_Stock.getCurrDay().plusDays(i).getDayOfWeek().toString()
+            ,presentItemsByDay(Util_Supplier_Stock.getCurrDay().plusDays(i).getDayOfWeek()));
+        }
+        return to_return;
     }
 }
