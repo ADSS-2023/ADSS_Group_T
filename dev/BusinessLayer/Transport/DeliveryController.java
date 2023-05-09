@@ -55,7 +55,7 @@ public class DeliveryController {
         this.logisticCenterController = lcC;
     }
 
-    private LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> getSuppliersAndProducts(LinkedHashMap<String, LinkedHashMap<String, Integer>> suppliersString) {
+    private LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> getSuppliersAndProducts(LinkedHashMap<String, LinkedHashMap<String, Integer>> suppliersString) throws SQLException {
         LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> suppliers = new LinkedHashMap<>();
         for (String supplierAddress : suppliersString.keySet()) {
             Supplier supplier = this.supplierController.getSupplier(supplierAddress);
@@ -342,7 +342,9 @@ public class DeliveryController {
 
 
     public Delivery getDelivery(int id) {
-        return deliveries.get(id);
+        if(deliveries.containsKey(id))
+            return deliveries.get(id);
+        dalDeliveryService.find
     }
 
 
@@ -404,7 +406,7 @@ public class DeliveryController {
         }
     }
 
-    public File getLoadedProducts(int deliveryID, String address) {
+    public File getLoadedProducts(int deliveryID, String address) throws SQLException {
         LinkedHashMap<String, Supplier> suppliers = supplierController.getAllSuppliers();
         return deliveries.get(deliveryID).getUnHandledSuppliers().get(suppliers.get(address));
     }

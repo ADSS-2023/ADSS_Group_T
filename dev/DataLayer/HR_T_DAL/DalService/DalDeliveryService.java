@@ -1,9 +1,6 @@
 package DataLayer.HR_T_DAL.DalService;
 
-import BusinessLayer.Transport.Branch;
-import BusinessLayer.Transport.Delivery;
-import BusinessLayer.Transport.Product;
-import BusinessLayer.Transport.Supplier;
+import BusinessLayer.Transport.*;
 import DataLayer.HR_T_DAL.DAOs.DeliveryDAO;
 import DataLayer.HR_T_DAL.DTOs.*;
 import DataLayer.Util.DAO;
@@ -54,14 +51,14 @@ public class DalDeliveryService {
     }
 
     public void insertSupplier(Supplier supplier) throws SQLException {
-        SupplierDTO dto = new SupplierDTO(supplier.getAddress(),supplier.getTelNumber(),
-                supplier.getContactName(),supplier.getLocation().getX(),supplier.getLocation().getY(),supplier.getShippingArea());
+        SiteDTO dto = new SiteDTO(supplier.getAddress(),supplier.getTelNumber(),
+                supplier.getContactName(),supplier.getLocation().getX(),supplier.getLocation().getY(),supplier.getShippingArea(),"Supplier");
         dao.insert(dto);
     }
 
     public void insertBranch(Branch branch) throws SQLException {
-        BranchDTO dto = new BranchDTO(branch.getAddress(),branch.getTelNumber(),
-                branch.getContactName(),branch.getLocation().getX(),branch.getLocation().getY(),branch.getShippingArea());
+        SiteDTO dto = new SiteDTO(branch.getAddress(),branch.getTelNumber(),
+                branch.getContactName(),branch.getLocation().getX(),branch.getLocation().getY(),branch.getShippingArea(),"Branch");
         dao.insert(dto);
     }
 
@@ -115,24 +112,40 @@ public class DalDeliveryService {
     }
 
     public Supplier findSupplier(String supplierAddress) throws SQLException {
-        SupplierDTO dto = dao.find(supplierAddress,"supplierAddress","Supplier",SupplierDTO.class);
+        //TODO change function call
+        SiteDTO dto = dao.find(supplierAddress,"SiteAddress","Site",SiteDTO.class);
         return new Supplier(dto,this);
     }
 
     public Branch findBranch(String branchAddress) throws SQLException {
-        BranchDTO dto = dao.find(branchAddress,"branchAddress","Branch",BranchDTO.class);
+        //TODO change function call
+        SiteDTO dto = dao.find(branchAddress,"branchAddress","Branch", SiteDTO.class);
         return new Branch(dto);
+    }
+    public Site findSite(String siteAddress) throws SQLException{
+        SiteDTO dto = dao.find(siteAddress,"siteAddress","Site", SiteDTO.class);
+        if(dto.getType().equals("Branch"))
+            return new Branch(dto);
+        else if(dto.getType().equals("Supplier"))
+            return new Supplier(dto,this);
+        return new LogisticCenter(dto);
     }
 
     public Product findProduct(String productName) throws SQLException {
         ProductDTO dto = dao.find(productName,"productName","Product",ProductDTO.class);
         return new Product(dto);
     }
+
+    public Delivery findDelivery(int deliveryId) throws SQLException {
+        DeliveryDTO dto = dao.find(deliveryId,"id","Delivery",DeliveryDTO.class);
+        return new Delivery(dto,this);
+    }
     public LinkedHashMap<String, Supplier> findAllSupplier() throws SQLException {
-        ArrayList<SupplierDTO> suppliersDTOs =  dao.findAll("Supplier", SupplierDTO.class);
+        //TODO : change call to find all
+        ArrayList<SiteDTO> suppliersDTOs =  dao.findAll("Site", SiteDTO.class);
         LinkedHashMap<String, Supplier> suppliers = new LinkedHashMap<>();
-        for(SupplierDTO s : suppliersDTOs){
-            suppliers.put(s.getSupplierAddress(),new Supplier(s,this));
+        for(SiteDTO s : suppliersDTOs){
+            suppliers.put(s.getSiteAddress(),new Supplier(s,this));
         }
         return suppliers;
     }
@@ -147,11 +160,13 @@ public class DalDeliveryService {
     }
 
     public LinkedHashMap<String, Branch> findAllBranch() throws SQLException {
-        ArrayList<BranchDTO> branchesDTOs =  dao.findAll("Branch", BranchDTO.class);
+        ArrayList<SiteDTO> branchesDTOs =  dao.findAll("Branch", SiteDTO.class);
         LinkedHashMap<String, Branch> branches = new LinkedHashMap<>();
-        for(BranchDTO b : branchesDTOs){
-            branches.put(b.getBranchAddress(),new Branch(b));
+        for(SiteDTO b : branchesDTOs){
+            branches.put(b.getSiteAddress(),new Branch(b));
         }
         return branches;
     }
+
+
 }

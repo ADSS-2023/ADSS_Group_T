@@ -1,8 +1,10 @@
 package BusinessLayer.Transport;
 
 import BusinessLayer.HR.Driver;
+import DataLayer.HR_T_DAL.DTOs.DeliveryDTO;
 import DataLayer.HR_T_DAL.DalService.DalDeliveryService;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -45,7 +47,16 @@ public class Delivery {
         this.dalDeliveryService = dalDeliveryService;
     }
 
-    public void addHandledSupplier(Supplier supplier, File f) {
+    public Delivery(DeliveryDTO dto,DalDeliveryService dalDeliveryService) throws SQLException {
+        this(dto.getId(), dto.getDeliveryDate(),dto.getDepartureTime(), dto.getTruckWeight(),new LinkedHashMap<>(),
+                new LinkedHashMap<>(), dalDeliveryService.findSite(dto.getSource()), dto.getTruckNumber(), dto.getShippingArea(), dalDeliveryService);
+    }
+
+    public void addHandledSupplier(Supplier supplier, File f) throws SQLException {
+        LinkedHashMap<Product,Integer> products = f.getProducts();
+        for(Product p : products.keySet()){
+            dalDeliveryService.insertHandledSupplier(id,supplier.getAddress(),p.getName(),products.get(p));
+        }
         handledSuppliers.put(supplier, f);
     }
 

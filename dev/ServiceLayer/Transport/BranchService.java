@@ -18,10 +18,8 @@ public class BranchService {
 
     public String addBranch(String address, String telNumber, String contactName, int x, int y) {
         try {
-            if (branchController.addBranch(address, telNumber, contactName, x, y))
-                return "good";
-            else
-                throw new IllegalArgumentException("error in add branch");
+            branchController.addBranch(address, telNumber, contactName, x, y);
+            return "branch added successfully";
         } catch (Exception ex) {
             return ex.getMessage();
         }

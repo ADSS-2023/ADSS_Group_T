@@ -1,6 +1,6 @@
 package BusinessLayer.Transport;
 
-import DataLayer.HR_T_DAL.DTOs.SupplierDTO;
+import DataLayer.HR_T_DAL.DTOs.SiteDTO;
 import DataLayer.HR_T_DAL.DalService.DalDeliveryService;
 
 import java.sql.SQLException;
@@ -18,53 +18,34 @@ public class Supplier extends Site {
         this.dalDeliveryService = dalDeliveryService;
     }
 
-    public Supplier(SupplierDTO dto,DalDeliveryService dalDeliveryService){
-        this(dto.getSupplierAddress(), dto.getTelNumber(), dto.getContactName(), dto.getX(), dto.getY(),dalDeliveryService);
+    public Supplier(SiteDTO dto, DalDeliveryService dalDeliveryService){
+        this(dto.getSiteAddress(), dto.getTelNumber(), dto.getContactName(), dto.getX(), dto.getY(),dalDeliveryService);
     }
 
-    public void addProduct(String productName, int productCoolingLevel) {
-        if (products.containsKey(productName))
+    public void addProduct(String productName, int productCoolingLevel) throws SQLException {
+        if (products.containsKey(productName) ||
+                dalDeliveryService.findProduct(productName) != null)
             throw new IllegalArgumentException("product already exist");
-        else {
-            try {
-                if(dalDeliveryService.findProduct(productName) != null)
-                    throw new IllegalArgumentException("product already exist");
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-            try {
-                dalDeliveryService.insertSupplierToProducts(address,productName);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-            Product product = new Product(productName, productCoolingLevel);
-            products.put(productName, product);
-        }
+        dalDeliveryService.insertSupplierToProducts(address,productName);
+        Product product = new Product(productName, productCoolingLevel);
+        products.put(productName, product);
     }
 
-    public Product getProduct(String productName){
+    public Product getProduct(String productName) throws SQLException {
         Product p;
-        if (!products.containsKey(productName))
-            try {
-                p = dalDeliveryService.findProduct(productName);
-                if(p==null)
-                    return null;
-                products.put(productName,p);
-                return p;
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        else{
-            return products.get(productName);
+        if (!products.containsKey(productName)) {
+            p = dalDeliveryService.findProduct(productName);
+            if (p == null)
+                return null;
+            products.put(productName, p);
+            return p;
         }
+        else
+            return products.get(productName);
     }
 
-    public LinkedHashMap<String, Product> getAllProducts() {
-        try {
-            products = dalDeliveryService.findAllProducts();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+    public LinkedHashMap<String, Product> getAllProducts() throws SQLException {
+        products = dalDeliveryService.findAllProducts();
         return products;
     }
 }
