@@ -39,5 +39,11 @@ public class ItemDTO extends DTO {
     public double getOriginalPrice() {
         return originalPrice;
     }
+    public ItemDTO clone(){
+        return new ItemDTO(itemId,name,minAmount,manufacturerName,originalPrice);
+    }
 
+    public void setMinAmount(int minAmount) {
+        this.minAmount = minAmount;
+    }
 }

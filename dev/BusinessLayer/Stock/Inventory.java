@@ -207,7 +207,6 @@ public class Inventory {
             throw new Exception("illegal item id");
         }
     }
-
     /**
      * This function produces the report of the damaged items.
      * @return
