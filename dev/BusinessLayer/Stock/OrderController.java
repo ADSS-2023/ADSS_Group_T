@@ -46,9 +46,12 @@ public class OrderController {
         for (Map.Entry<Integer, Integer> entry : items_quantity.entrySet()) {
             Integer item_id = entry.getKey();
             Integer quantity = entry.getValue();
-            list_to_order.addLast(new ItemToOrder(inventory.get_item_by_id(item_id).get_name(),
-                    inventory.get_item_by_id(item_id).manufacturer_name, quantity, null, -1,-1));
+            ItemToOrder new_item = new ItemToOrder(inventory.get_item_by_id(item_id).get_name(),
+                    inventory.get_item_by_id(item_id).manufacturer_name, quantity, null, -1,-1);
+            list_to_order.addLast(new_item);
+            inventoryDalController.insert(new ItemOrderdDTO("inventory_item_ordered",item_id,quantity));
         }
+
         if(!order_service.createRegularOrder(list_to_order)){
             throw new Exception("\u001B[31mOrder cannot be supplied\u001B[0m");
         }
@@ -141,6 +144,7 @@ public class OrderController {
      */
     public void receiveOrders(List<ItemToOrder> newOrder) throws SQLException {
         for (ItemToOrder ito:newOrder) {
+            //int num = this.inventory.name_to_id.get(ito.getProductName() + ito.getProductName());
             inventoryDalController.insert(new ItemToOrderDTO(
                     "inventory_waiting_list",ito.getProductName(),ito.getManufacturer(),
                     ito.getQuantity(),ito.getExpiryDate().toString(),ito.getCostPrice(),ito.getOrderId()));
@@ -243,6 +247,7 @@ public class OrderController {
         ItemToOrder milk_3 = new ItemToOrder("3% milk","IDO LTD",40, Util.stringToDate("2023-05-10"),12,1.2);
         ItemToOrder beef_sausage = new ItemToOrder("Beef Sausage","Zogloveck",15,Util.stringToDate("2023-10-01"),1005,10.05);
         receiveOrders(Arrays.asList(milk_3,beef_sausage));
+
     }
 
     public String show_all_orders() throws Exception {

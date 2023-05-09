@@ -11,13 +11,14 @@ public class ItemDTO extends DTO {
     private String categoriesIndex;
 
 
-    public ItemDTO(int itemId, String name, int minAmount, String manufacturerName, double originalPrice) {
+    public ItemDTO(int itemId, String name, int minAmount, String manufacturerName, double originalPrice, String category_index) {
         super("inventory_item");
         this.itemId = itemId;
         this.name = name;
         this.minAmount = minAmount;
         this.manufacturerName = manufacturerName;
         this.originalPrice = originalPrice;
+        this.categoriesIndex = category_index;
     }
 
     // Getters and setters
@@ -41,14 +42,12 @@ public class ItemDTO extends DTO {
         return originalPrice;
     }
     public ItemDTO clone(){
-        return new ItemDTO(itemId,name,minAmount,manufacturerName,originalPrice);
+        return new ItemDTO(itemId,name,minAmount,manufacturerName,originalPrice, categoriesIndex);
     }
 
     public void setMinAmount(int minAmount) {
         this.minAmount = minAmount;
     }
 
-    public void setCategoriesIndex(String categoriesIndex) {
-        this.categoriesIndex = categoriesIndex;
-    }
+
 }

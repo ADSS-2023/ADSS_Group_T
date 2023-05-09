@@ -87,7 +87,7 @@ public class InventoryService {
             inventory.setUp();
         }
         catch (Exception e){
-
+            System.out.println(e.getMessage());
         }
 
     }

@@ -64,7 +64,7 @@ public class ServiceFactory {
         this.manageOrderService.setOrderController(this.inventoryService.get_inventory(), this.orderService,inventoryDalController);
         this.inventoryService.get_inventory().setInventoryDalController(inventoryDalController);
         inventoryService.get_inventory().setItemDalController(new ItemDalController(connection));
-
+        this.deleteAllData();
     }
 
     private Connection makeCon() {

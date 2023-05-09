@@ -4,16 +4,16 @@ import DataLayer.Util.DTO;
 
 public class ItemOrderdDTO extends DTO {
     private int id;
-    private int amount;
+    private int quantity;
 
     /**
      * DTO constructor, must get a table name as 'name_of_object'
      *
      * @param tableName
      */
-    public ItemOrderdDTO(String tableName,int id,int amount) {
+    public ItemOrderdDTO(String tableName,int id,int quantity) {
         super(tableName);
         this.id=id;
-        this.amount=amount;
+        this.quantity=quantity;
     }
 }
