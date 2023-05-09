@@ -13,7 +13,7 @@ import java.util.List;
 
 public class DAO {
 
-    private Connection connection;
+    protected Connection connection;
 
     public DAO(Connection connection) {
         this.connection = connection;
