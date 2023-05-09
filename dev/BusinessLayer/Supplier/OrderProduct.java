@@ -1,5 +1,9 @@
 package BusinessLayer.Supplier;
 
+import DataLayer.Inventory_Supplier_Dal.DAO.SupplierDAO.OrderProductDAO;
+import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.OrderProductDTO;
+import DataLayer.Inventory_Supplier_Dal.DalController.OrderDalController;
+
 import java.time.LocalDate;
 
 public class OrderProduct {
@@ -12,7 +16,9 @@ public class OrderProduct {
     private float discount;
     private float finalPrice;
 
+    private OrderProductDTO orderProductDTO;
 
+    private OrderDalController orderDalController;
 
     public OrderProduct(String productName, int productNumber, int quantity, float initialPrice, float discount, float finalPrice, String manufacturer, LocalDate expiryDate) {
         this.productName = productName;
@@ -23,6 +29,10 @@ public class OrderProduct {
         this.initialPrice = initialPrice;
         this.discount = discount;
         this.finalPrice = finalPrice;
+    }
+
+    public void setOrderProductDTO(OrderProductDTO orderProductDTO) {
+        this.orderProductDTO = orderProductDTO;
     }
 
     public LocalDate getExpiryDate() {

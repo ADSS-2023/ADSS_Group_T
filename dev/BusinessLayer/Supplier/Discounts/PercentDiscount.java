@@ -1,9 +1,12 @@
 package BusinessLayer.Supplier.Discounts;
 
+import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.DiscountDTO;
+import DataLayer.Inventory_Supplier_Dal.DalController.SupplierDalController;
+
 public class PercentDiscount extends Discount {
     //in this class discount per product presented in percentage
-    public PercentDiscount(int amount, float discount,boolean isPercentage) {
-        super(amount, discount,isPercentage);
+    public PercentDiscount(int amount, float discount,boolean isPercentage, SupplierDalController supplierDalController, DiscountDTO dto) {
+        super(amount, discount,isPercentage, supplierDalController, dto);
     }
 
     @Override

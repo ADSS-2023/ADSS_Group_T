@@ -1,5 +1,8 @@
 package BusinessLayer.Supplier;
 
+import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.OrderDTO;
+import DataLayer.Inventory_Supplier_Dal.DalController.OrderDalController;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,6 +21,26 @@ public class OrderBusiness {
     private int daysToSupplied;
     private List<OrderProduct> products ;
 
+    private OrderDTO orderDTO;
+
+    private OrderDalController orderDalController;
+
+    public OrderBusiness(int orderNum, String supplierName, LocalDate  orderDate,
+                         String supplierAddress, String destinationAddress
+            , int supplierNum, String contactName, String contactNumber,
+                         List<OrderProduct> products, int daysToSupplied) {
+        this.orderNum = orderNum;
+        this.supplierName = supplierName;
+        this.orderDate = orderDate;
+        this.supplierAddress = supplierAddress;
+        this.destinationAddress = destinationAddress;
+        this.supplierNum = supplierNum;
+        this.contactName = contactName;
+        this.contactNumber = contactNumber;
+        this.products = products;
+        this.daysToSupplied = daysToSupplied;
+        this.orderDTO = new OrderDTO(orderNum, supplierNum, contactName, contactNumber, orderDate.toString(), supplierAddress, destinationAddress);
+    }
 
     public int getOrderNum() {
         return orderNum;
@@ -39,8 +62,8 @@ public class OrderBusiness {
         }
         return
                 "Order Number: " + orderNum +
-                ",Supplier Number: "+supplierNum+
-                ",Products: " +"\n"+ s+"\n";
+                        ",Supplier Number: "+supplierNum+
+                        ",Products: " +"\n"+ s+"\n";
 
     }
 
@@ -50,21 +73,5 @@ public class OrderBusiness {
 
     public int getDaysToSupplied() {
         return daysToSupplied;
-    }
-
-    public OrderBusiness(int orderNum, String supplierName, LocalDate  orderDate,
-                         String supplierAddress, String destinationAddress
-            , int supplierNum, String contactName, String contactNumber,
-                         List<OrderProduct> products, int daysToSupplied) {
-        this.orderNum = orderNum;
-        this.supplierName = supplierName;
-        this.orderDate = orderDate;
-        this.supplierAddress = supplierAddress;
-        this.destinationAddress = destinationAddress;
-        this.supplierNum = supplierNum;
-        this.contactName = contactName;
-        this.contactNumber = contactNumber;
-        this.products = products;
-        this.daysToSupplied = daysToSupplied;
     }
 }

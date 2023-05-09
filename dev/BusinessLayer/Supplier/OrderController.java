@@ -2,9 +2,12 @@ package BusinessLayer.Supplier;
 
 import BusinessLayer.Supplier.Suppliers.SupplierBusiness;
 import BusinessLayer.Supplier_Stock.ItemToOrder;
+import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.OrderProductDTO;
+import DataLayer.Inventory_Supplier_Dal.DalController.OrderDalController;
 import ServiceLayer.Stock.ManageOrderService;
 
 
+import java.sql.Connection;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
@@ -19,7 +22,11 @@ public class OrderController {
     private HashMap<Integer,List<OrderProduct>> shoppingLists; // supplierNumber to list of products
     private ManageOrderService mos;
 
-    public OrderController(SupplierController sc ,ManageOrderService mos) {
+    private Connection connection;
+
+    private OrderDalController orderDalController;
+
+    public OrderController(SupplierController sc , ManageOrderService mos, Connection connection, OrderDalController orderDalController) {
         orders = new LinkedList<>();
         this.sc = sc;
         this.mos=mos;
@@ -27,6 +34,8 @@ public class OrderController {
         dayToConstantOrders = new HashMap<>();
         orderCounter=0;
         ordersNotSupplied = new LinkedList<>();
+        this.connection = connection;
+        this.orderDalController = orderDalController;
     }
 
     /**
@@ -87,11 +96,12 @@ public class OrderController {
 
            //calculate supplier general discounts and final prices
            float finalTotalPrice = supplier.getPriceAfterTotalDiscount(totalProductsNum,totalorderPrice);
-
+           int orderID = orderCounter++;
            for (OrderProduct product : products){
                float discountPerProducts = (product.getFinalPrice()/totalorderPrice)*(totalorderPrice-finalTotalPrice);
                product.setDiscount(discountPerProducts+product.getDiscount());
                product.setFinalPrice(product.getFinalPrice()-discountPerProducts);
+               product.setOrderProductDTO(new OrderProductDTO(orderID, product.getManufacturer(), product.getExpiryDate().toString(), product.getProductNumber(), product.getQuantity(), product.getInitialPrice(), product.getDiscount(), product.getProductName()));
            }
            int daysToSupplied = -1;
            if(!isRegular){

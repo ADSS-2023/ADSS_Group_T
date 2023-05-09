@@ -12,7 +12,7 @@ public class DAO {
      * @param dto dto to be inserted
      * @throws SQLException
      */
-    public static void insert(Connection connection,DTO dto) throws SQLException {
+    public void insert(Connection connection, DTO dto) throws SQLException {
         String tableName = dto.getTableName();
         String sql = "INSERT INTO " + tableName + " (";
         Field[] fields = dto.getClass().getDeclaredFields();
@@ -49,7 +49,7 @@ public class DAO {
      * @param newDto new value
      * @throws SQLException
      */
-    public static void update(Connection connection, DTO oldDto, DTO newDto) throws SQLException {
+    public void update(Connection connection, DTO oldDto, DTO newDto) throws SQLException {
         String tableName = newDto.getTableName();
         String sql = "UPDATE " + tableName + " SET ";
         Field[] fields = newDto.getClass().getDeclaredFields();
@@ -107,7 +107,7 @@ public class DAO {
      * @param dto
      * @throws SQLException
      */
-    public static void delete(Connection connection, DTO dto) throws SQLException {
+    public void delete(Connection connection, DTO dto) throws SQLException {
         String tableName = dto.getTableName();
         String sql = "DELETE FROM " + tableName + " WHERE ";
         Field[] idFields = dto.getClass().getDeclaredFields();

@@ -2,6 +2,10 @@ package BusinessLayer.Supplier;
 import BusinessLayer.Supplier.Discounts.Discount;
 import BusinessLayer.Supplier.Discounts.PercentDiscount;
 import BusinessLayer.Supplier.Discounts.NumberDiscount;
+import DataLayer.Inventory_Supplier_Dal.DAO.SupplierDAO.SupplierProductDAO;
+import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.ProductDiscountDTO;
+import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.SupplierProductDTO;
+import DataLayer.Inventory_Supplier_Dal.DalController.SupplierDalController;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -16,6 +20,10 @@ public class SupplierProductBusiness {
     private List<Discount> quantitiesAgreement;
     private LocalDate expiryDate;
 
+    private SupplierProductDTO supplierProductDTO;
+
+    protected SupplierDalController supplierDalController;
+
     public SupplierProductBusiness(int supplierNum, String name, int productNum, String manufacturer, float price, int maxAmount, LocalDate expiryDate){
         this.supplierNum = supplierNum;
         this.name = name;
@@ -25,6 +33,7 @@ public class SupplierProductBusiness {
         this.maxAmount = maxAmount;
         this.quantitiesAgreement = new ArrayList<>();
         this.expiryDate = expiryDate;
+        this.supplierProductDTO = new SupplierProductDTO(supplierNum, productNum, name, manufacturer, price, maxAmount, expiryDate.toString());
     }
 
     private boolean isDiscountExists(int productAmount, boolean isPercentage){
@@ -63,9 +72,9 @@ public class SupplierProductBusiness {
         if(!isDiscountValid(productAmount, discount, isPercentage))
             throw new Exception("Discount details are not valid");
             if (isPercentage)
-                quantitiesAgreement.add(new PercentDiscount(productAmount, discount, true));
+                quantitiesAgreement.add(new PercentDiscount(productAmount, discount, true, supplierDalController, new ProductDiscountDTO(supplierNum, productAmount, discount, isPercentage, productNum)));
             else
-                quantitiesAgreement.add(new NumberDiscount(productAmount, discount, false));
+                quantitiesAgreement.add(new NumberDiscount(productAmount, discount, false, supplierDalController, new ProductDiscountDTO(supplierNum, productAmount, discount, isPercentage, productNum)));
 
     }
 

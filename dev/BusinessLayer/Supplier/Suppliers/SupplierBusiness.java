@@ -6,7 +6,14 @@ import BusinessLayer.Supplier.Discounts.NumberDiscount;
 import BusinessLayer.Supplier.SupplierProductBusiness;
 import BusinessLayer.Supplier.Util.Discounts;
 import BusinessLayer.Supplier.Util.PaymentTerms;
+import DataLayer.Inventory_Supplier_Dal.DAO.SupplierDAO.SupplierDAO;
+import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.ProductDiscountDTO;
+import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.SupplierContactDTO;
+import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.SupplierDTO;
+import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.SupplierDiscountDTO;
+import DataLayer.Inventory_Supplier_Dal.DalController.SupplierDalController;
 
+import java.sql.SQLException;
 import java.util.*;
 import java.time.LocalDate;
 
@@ -25,8 +32,13 @@ public abstract class  SupplierBusiness {
 
     private List<Discount> discountPerTotalPrice;
 
-    public SupplierBusiness(String supplierName, String address, int supplierNum,int bankAccountNum, HashMap<String, String> contacts, boolean selfDelivery,PaymentTerms paymentTerms){
+    private SupplierDTO supplierDTO;
 
+    private List<SupplierContactDTO> contactDTOS;
+
+    private SupplierDalController supplierDalController;
+
+    public SupplierBusiness(String supplierName, String address, int supplierNum,int bankAccountNum, HashMap<String, String> contacts, boolean selfDelivery,PaymentTerms paymentTerms, SupplierDalController supplierDalController) throws SQLException {
         this.supplierName = supplierName;
         this.address = address;
         this.supplierNum = supplierNum;
@@ -37,6 +49,14 @@ public abstract class  SupplierBusiness {
         this.discountPerTotalQuantity = new ArrayList<>();
         this.discountPerTotalPrice = new ArrayList<>();
         this.paymentTerms=paymentTerms;
+        this.supplierDalController = supplierDalController;
+        this.supplierDTO = new SupplierDTO(supplierNum, supplierName, address, bankAccountNum, selfDelivery);
+        supplierDalController.insert(supplierDTO);
+        for (Map.Entry<String, String> entry : contacts.entrySet()) {
+            SupplierContactDTO supplierContactDTO = new SupplierContactDTO(supplierNum, entry.getKey(), entry.getValue());
+            supplierDalController.insert(supplierContactDTO);
+            contactDTOS.add(supplierContactDTO);
+        }
     }
 
     public SupplierProductBusiness getProduct(String productName, String manufacturer) {
@@ -114,15 +134,15 @@ public abstract class  SupplierBusiness {
         switch(discountEnum){
             case DISCOUNT_BY_TOTAL_PRICE :
                 if(isPercentage)
-                     discountPerTotalPrice.add(new PercentDiscount(amount,discount,true));
+                     discountPerTotalPrice.add(new PercentDiscount(amount,discount,true, supplierDalController, new SupplierDiscountDTO(supplierNum, amount, discount, isPercentage, true)));
                 else
-                    discountPerTotalPrice.add(new NumberDiscount(amount,discount,false));
+                    discountPerTotalPrice.add(new NumberDiscount(amount,discount,false, supplierDalController, new SupplierDiscountDTO(supplierNum, amount, discount, isPercentage, true)));
                 break;
             case DISCOUNT_BY_TOTAL_QUANTITY:
                 if(isPercentage)
-                    discountPerTotalQuantity.add(new PercentDiscount(amount,discount,true));
+                    discountPerTotalQuantity.add(new PercentDiscount(amount,discount,true, supplierDalController, new SupplierDiscountDTO(supplierNum, amount, discount, isPercentage, false)));
                 else
-                    discountPerTotalQuantity.add(new NumberDiscount(amount,discount, false));
+                    discountPerTotalQuantity.add(new NumberDiscount(amount,discount, false, supplierDalController, new SupplierDiscountDTO(supplierNum, amount, discount, isPercentage, false)));
                 break;
         }
     }

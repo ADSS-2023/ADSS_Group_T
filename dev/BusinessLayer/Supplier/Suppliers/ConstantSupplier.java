@@ -1,7 +1,9 @@
 package BusinessLayer.Supplier.Suppliers;
 
 import BusinessLayer.Supplier.Util.PaymentTerms;
+import DataLayer.Inventory_Supplier_Dal.DalController.SupplierDalController;
 
+import java.sql.SQLException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -11,8 +13,8 @@ import java.util.Locale;
 public class ConstantSupplier extends SupplierBusiness {
 
     private List<DayOfWeek> constDeliveryDays;
-    public ConstantSupplier(String supplierName, String address, int supplierNum, int bankAccountNum, HashMap<String, String> contacts, List<DayOfWeek> constDeliveryDays, boolean selfDelivery, PaymentTerms paymentTerms) {
-        super(supplierName, address, supplierNum, bankAccountNum, contacts, selfDelivery, paymentTerms);
+    public ConstantSupplier(String supplierName, String address, int supplierNum, int bankAccountNum, HashMap<String, String> contacts, List<DayOfWeek> constDeliveryDays, boolean selfDelivery, PaymentTerms paymentTerms, SupplierDalController supplierDalController) throws SQLException {
+        super(supplierName, address, supplierNum, bankAccountNum, contacts, selfDelivery, paymentTerms, supplierDalController);
         this.constDeliveryDays =constDeliveryDays;
     }
 
