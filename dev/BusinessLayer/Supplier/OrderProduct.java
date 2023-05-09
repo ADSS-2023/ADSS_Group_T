@@ -88,6 +88,10 @@ public class OrderProduct {
         return discount;
     }
 
+    public OrderProductDTO getOrderProductDTO() {
+        return orderProductDTO;
+    }
+
     @Override
     public String toString() {
         return

@@ -267,6 +267,10 @@ public abstract class  SupplierBusiness {
         return supplierNum;
     }
 
+    public SupplierDTO getSupplierDTO() {
+        return supplierDTO;
+    }
+
     public Map<String, String> getContacts() {
         return contacts;
     }

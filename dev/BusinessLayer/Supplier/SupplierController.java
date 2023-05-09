@@ -5,6 +5,8 @@ import BusinessLayer.Supplier.Suppliers.ConstantSupplier;
 import BusinessLayer.Supplier.Suppliers.OccasionalSupplier;
 import BusinessLayer.Supplier.Suppliers.SupplierBusiness;
 import BusinessLayer.Supplier_Stock.ItemToOrder;
+import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.SupplierContactDTO;
+import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.SupplierDTO;
 import DataLayer.Inventory_Supplier_Dal.DalController.SupplierDalController;
 
 import java.sql.Connection;
@@ -21,6 +23,18 @@ public class SupplierController {
         this.supplierDalController = supplierDalController;
     }
 
+    public void loadSuppliers(){
+        List<SupplierDTO> supplierDTOS = supplierDalController.findAll("supplier_supplier");
+        for (SupplierDTO supplierDTO : supplierDTOS) {
+            List<SupplierContactDTO> supplierContactDTOS = loadSupplierContacts(supplierDTOS);
+            addSupplier(supplierDTO.getSupplierName(), supplierDTO.getAddress(), supplierDTO.getSupplierNum(), supplierDTO.getBankAccountNum(), );
+        }
+    }
+
+    public List<SupplierContactDTO> loadSupplierContacts(int supplierNum){
+        return supplierDalController.findAllOfCondition("supplier_supplier_contact", "supplierNum", supplierNum, SupplierContactDTO.class);
+    }
+
     public void addSupplier(String name, String address, int supplierNum, int bankAccountNum, HashMap<String, String> contacts, List<DayOfWeek> constDeliveryDays, boolean selfDelivery, PaymentTerms paymentTerms, int daysToDeliver) throws Exception {
         if(isSupplierExists(supplierNum))
             throw new Exception("supplier number is already exists.");
@@ -35,8 +49,12 @@ public class SupplierController {
     public void deleteSupplier(int supplierNum) throws Exception {
         if(!isSupplierExists(supplierNum))
             throw new Exception("supplier number doesn't exist.");
+        SupplierBusiness sp = getSupplier(supplierNum);
+        sp.deleteContacts();
+        for (Map.Entry<Integer, SupplierProductBusiness> entry : sp.getProducts().entrySet())
+            sp.deleteProduct(entry.getKey());
+        supplierDalController.delete(getSupplier(supplierNum).getSupplierDTO());
         suppliers.remove(supplierNum);
-
     }
 
     public HashMap<Integer, SupplierProductBusiness> getProducts(int supplierNum) throws Exception {
