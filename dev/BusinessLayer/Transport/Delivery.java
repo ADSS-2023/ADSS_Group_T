@@ -49,8 +49,16 @@ public class Delivery {
     }
 
     public Delivery(DeliveryDTO dto,DalDeliveryService dalDeliveryService) throws SQLException {
-        this(dto.getId(), Time.stringToDate(dto.getDeliveryDate()),Time.stringToTime(dto.getDepartureTime()), dto.getTruckWeight(),new LinkedHashMap<>(),
+        this(dto.getId(), Time.stringToLocalDate(dto.getDeliveryDate()),Time.stringToLocalTime(dto.getDepartureTime()), dto.getTruckWeight(),new LinkedHashMap<>(),
                 new LinkedHashMap<>(), dalDeliveryService.findSite(dto.getSource()), dto.getTruckNumber(), dto.getShippingArea(), dalDeliveryService);
+    }
+  
+    public File getToLogisticsCenterFile() {
+        return ToLogisticsCenterFile;
+    }
+
+    public File getFromLogisticsCenterFile() {
+        return FromLogisticsCenterFile;
     }
 
     public void addHandledSupplier(Supplier supplier, File f) throws SQLException {

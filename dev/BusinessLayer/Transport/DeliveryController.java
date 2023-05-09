@@ -6,6 +6,7 @@ import BusinessLayer.HR.DriverController;
 import BusinessLayer.HR.ShiftController;
 import DataLayer.HR_T_DAL.DTOs.DeliveryDTO;
 import DataLayer.HR_T_DAL.DTOs.ProductDTO;
+import DataLayer.HR_T_DAL.DTOs.DateToDeliveryDTO;
 import DataLayer.HR_T_DAL.DalService.DalDeliveryService;
 import UtilSuper.EnterWeightInterface;
 import UtilSuper.EnterOverWeightInterface;
@@ -14,12 +15,10 @@ import UtilSuper.Time;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 
 public class DeliveryController {
-
     private final DriverController driverController;
     private final ShiftController shiftController;
     private final SupplierController supplierController;
@@ -28,8 +27,8 @@ public class DeliveryController {
     private final LinkedHashMap<LocalDate, ArrayList<Truck>> date2trucks;
     private final LinkedHashMap<LocalDate, ArrayList<Delivery>> date2deliveries;
     private LogisticCenterController logisticCenterController;
-    private int deliveryCounter = 0;
-    private int filesCounter = 0;
+    private int deliveryCounter;
+    private int filesCounter;
     private LocalDate currDate;
 
     // private Listener listener;
@@ -39,17 +38,24 @@ public class DeliveryController {
 
     public DeliveryController(LogisticCenterController logisticCenterController, SupplierController supplierController,
                               BranchController branchController, DriverController driverController,
-                              ShiftController shiftController, DalDeliveryService dalDeliveryService) {
+                              ShiftController shiftController, DalDeliveryService dalDeliveryService) throws Exception {
         this.deliveries = new LinkedHashMap<>();
         this.date2trucks = new LinkedHashMap<>();
         this.date2deliveries = new LinkedHashMap<>();
-        this.currDate = LocalDate.of(2023, 1, 1);
         this.branchController = branchController;
         this.driverController = driverController;
         this.supplierController = supplierController;
         this.logisticCenterController = logisticCenterController;
         this.shiftController = shiftController;
         this.dalDeliveryService = dalDeliveryService;
+
+        //Load Data:
+        this.currDate = Time.stringToLocalDate(dalDeliveryService.findTime().getCounter());
+        this.filesCounter = Integer.parseInt(dalDeliveryService.findFilesCounter().getCounter());
+        this.deliveryCounter = Integer.parseInt(dalDeliveryService.findDeliveryCounter().getCounter());
+        loadData();
+
+
     }
 
     private LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> getSuppliersAndProducts(LinkedHashMap<String, LinkedHashMap<String, Integer>> suppliersString) throws SQLException {
@@ -81,7 +87,7 @@ public class DeliveryController {
     public LinkedHashMap<? extends Site,LinkedHashMap<Product, Integer>> orderDelivery(String destinationString, LinkedHashMap<String, LinkedHashMap<String, Integer>> suppliersString,
                                                                                   String requiredDateString) throws Exception {
 
-        LocalDate requiredDate = Time.stringToDate(requiredDateString);
+        LocalDate requiredDate = Time.stringToLocalDate(requiredDateString);
         boolean isDestinationIsLogisticCenter = destinationString.equals(logisticCenterController.getAddress());
         boolean isSupplierIsLogisticCenter = suppliersString.containsKey(logisticCenterController.getAddress());
         if(isDestinationIsLogisticCenter && isSupplierIsLogisticCenter)
@@ -488,6 +494,47 @@ public class DeliveryController {
 
 
     public void executeDelivery(Delivery delivery) throws Exception {
+        if (isDeliveryFromLC(delivery))
+            executeDeliveryFromLC(delivery);
+        else if (isDeliveryToLC(delivery))
+            executeDeliveryToLC(delivery);
+        else
+            executeDeliveryRegular(delivery);
+    }
+
+    private void executeDeliveryFromLC(Delivery delivery) throws Exception {
+        int productsWeight = enterWeightInterface.enterWeightFunction(logisticCenterController.getAddress(), delivery.getId());
+        int currentWeight = delivery.getTruckWeight();
+        int maxWeight = logisticCenterController.getAllTrucks().get(delivery.getTruckNumber()).getMaxWeight();
+        if (maxWeight < currentWeight + productsWeight) {
+            overWeightAction(delivery.getId(), overweightAction.EnterOverweightAction(delivery.getId()), logisticCenterController.getAddress(), productsWeight);
+        }
+        logisticCenterController.removeFileFromStock(delivery.getFromLogisticsCenterFile());
+        delivery.setTruckWeight(currentWeight + productsWeight);
+    }
+
+
+    private void executeDeliveryToLC(Delivery delivery) throws Exception {
+        ArrayList<Supplier> suppliersTmp = new ArrayList<>(delivery.getUnHandledSuppliers().keySet());
+        for (Supplier supplier : suppliersTmp) {
+            int productsWeight = enterWeightInterface.enterWeightFunction(supplier.getAddress(), delivery.getId());
+            int currentWeight = delivery.getTruckWeight();
+            int maxWeight = logisticCenterController.getAllTrucks().get(delivery.getTruckNumber()).getMaxWeight();
+            if (maxWeight < currentWeight + productsWeight) {
+                overWeightAction(delivery.getId(), overweightAction.EnterOverweightAction(delivery.getId()), supplier.getAddress(), productsWeight);
+                if (delivery.getTruckWeight() == logisticCenterController.getAllTrucks().get(delivery.getTruckNumber()).getMaxWeight())
+                    break;
+            } else {
+                delivery.setTruckWeight(currentWeight + productsWeight);
+                File f = delivery.getUnHandledSuppliers().get(supplier);
+                delivery.getHandledSuppliers().put(supplier, f);
+                delivery.getUnHandledSuppliers().remove(supplier);
+            }
+        }
+        reScheduleDelivery(delivery.getUnHandledSuppliers(), delivery.getUnHandledBranches());
+    }
+
+    private void executeDeliveryRegular(Delivery delivery) throws Exception {
         ArrayList<Supplier> suppliersTmp = new ArrayList<>(delivery.getUnHandledSuppliers().keySet());
         for (Supplier supplier : suppliersTmp) {
             int productsWeight = enterWeightInterface.enterWeightFunction(supplier.getAddress(), delivery.getId());
@@ -554,6 +601,7 @@ public class DeliveryController {
         return deliveriesThatReScheduleDelivery;
     }
 
+
     private ArrayList<Delivery> checkStoreKeeperForTomorrow() throws Exception {
         LocalDate tomorrow = this.currDate.plusDays(1);
         ArrayList<String> branchWithoutStoreKeeper = shiftController.getBranchesWithoutStoreKeeper(tomorrow);
@@ -573,6 +621,9 @@ public class DeliveryController {
         }
         return deliveriesWithoutStoreKeeper;
     }
+
+
+
 
     public Collection<Delivery> getAllDeliveries() {
         return deliveries.values();
@@ -597,6 +648,18 @@ public class DeliveryController {
             dalDeliveryService.insertDateToDelivery(requiredDate.toString(),delivery.getId());
         date2deliveries.get(requiredDate).add(delivery);
     }
+
+    private void loadData(){
+
+//        ArrayList<DateToDeliveryDTO> dateToDeliveryDTOs = dalDeliveryService.findAllDateToDeliveries();
+//        for (DateToDeliveryDTO dateToDeliveryDTO: dateToDeliveryDTOs){
+//            addDeliveryToDate(dateToDeliveryDTO.getShiftDate(),new Delivery(dateToDeliveryDTO),false);
+//        }
+
+    }
+    private boolean isDeliveryFromLC(Delivery delivery){return delivery.getUnHandledSuppliers()==null;}
+    private boolean isDeliveryToLC(Delivery delivery){return delivery.getHandledBranches()==null;}
+
 }
 
 
