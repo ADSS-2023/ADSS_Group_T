@@ -43,6 +43,9 @@ public class ServiceFactory {
     public DamagedService damagedService;
     public ItemService itemService;
     public ManageOrderService manageOrderService;
+    public InventoryDalController inventoryDalController;
+    public Connection connection;
+    public Util_Supplier_Stock uss;
 
     public ServiceFactory() {
         this.categoryService = new CategoryService(this.inventoryService.get_inventory());
@@ -71,7 +74,7 @@ public class ServiceFactory {
             return null;
         }
     }
-}
+
 
     public void dataSetUp() throws Exception {
         //need to clean the data manually!
@@ -84,18 +87,6 @@ public class ServiceFactory {
         this.manageOrderService.setOrderController(this.inventoryService.get_inventory(), this.orderService);
         this.inventoryDalController = new InventoryDalController(this.connection, dao);
         this.inventoryService.get_inventory().setInventoryDalController(this.inventoryDalController);
-    }
-
-    private Connection makeCon() {
-        try {
-            String dbFile = "C:/liran/Program/SMSRT4/ADSS/ADSS_Group_T/dev/DataLayer/stock_supplier_db.db";
-            String url = "jdbc:sqlite:" + dbFile;
-            Class.forName("org.sqlite.JDBC");
-            return DriverManager.getConnection(url);
-        } catch (Exception var3) {
-            System.out.println(var3.getMessage());
-            return null;
-        }
     }
 
 
