@@ -13,11 +13,14 @@ import java.util.LinkedHashMap;
 public class DalDeliveryService {
 
     private Connection connection;
+
+    private DalLogisticCenterService dalLogisticCenterService;
     private DeliveryDAO deliveryDAO;
     private DAO dao;
 
-    public DalDeliveryService(Connection connection) {
+    public DalDeliveryService(Connection connection,DalLogisticCenterService dalLogisticCenterService) {
         this.connection = connection;
+        this.dalLogisticCenterService = dalLogisticCenterService;
         this.deliveryDAO = new DeliveryDAO(connection);
         this.dao = new DAO(connection);
     }
@@ -112,14 +115,16 @@ public class DalDeliveryService {
     }
 
     public Supplier findSupplier(String supplierAddress) throws SQLException {
-        //TODO change function call
         SiteDTO dto = dao.find(supplierAddress,"SiteAddress","Site",SiteDTO.class);
+        if(dto == null)
+            throw new RuntimeException("there is no supplier with address: " + supplierAddress);
         return new Supplier(dto,this);
     }
 
     public Branch findBranch(String branchAddress) throws SQLException {
-        //TODO change function call
-        SiteDTO dto = dao.find(branchAddress,"branchAddress","Branch", SiteDTO.class);
+        SiteDTO dto = dao.find(branchAddress,"siteAddress","Site", SiteDTO.class);
+        if(dto == null)
+            throw new RuntimeException("there is no branch with address: " + branchAddress);
         return new Branch(dto);
     }
     public Site findSite(String siteAddress) throws SQLException{
@@ -128,16 +133,20 @@ public class DalDeliveryService {
             return new Branch(dto);
         else if(dto.getType().equals("Supplier"))
             return new Supplier(dto,this);
-        return new LogisticCenter(dto);
+        return new LogisticCenter(dto,dalLogisticCenterService);
     }
 
     public Product findProduct(String productName) throws SQLException {
         ProductDTO dto = dao.find(productName,"productName","Product",ProductDTO.class);
+        if(dto == null)
+            throw new RuntimeException("there is no product with name: " + productName);
         return new Product(dto);
     }
 
     public Delivery findDelivery(int deliveryId) throws SQLException {
         DeliveryDTO dto = dao.find(deliveryId,"id","Delivery",DeliveryDTO.class);
+        if(dto == null)
+            throw new RuntimeException("there is no delivery with id: " + deliveryId);
         return new Delivery(dto,this);
     }
     public LinkedHashMap<String, Supplier> findAllSupplier() throws SQLException {

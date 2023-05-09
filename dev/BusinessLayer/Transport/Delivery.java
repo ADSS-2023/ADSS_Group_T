@@ -3,6 +3,7 @@ package BusinessLayer.Transport;
 import BusinessLayer.HR.Driver;
 import DataLayer.HR_T_DAL.DTOs.DeliveryDTO;
 import DataLayer.HR_T_DAL.DalService.DalDeliveryService;
+import UtilSuper.Time;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -48,7 +49,7 @@ public class Delivery {
     }
 
     public Delivery(DeliveryDTO dto,DalDeliveryService dalDeliveryService) throws SQLException {
-        this(dto.getId(), dto.getDeliveryDate(),dto.getDepartureTime(), dto.getTruckWeight(),new LinkedHashMap<>(),
+        this(dto.getId(), Time.stringToDate(dto.getDeliveryDate()),Time.stringToTime(dto.getDepartureTime()), dto.getTruckWeight(),new LinkedHashMap<>(),
                 new LinkedHashMap<>(), dalDeliveryService.findSite(dto.getSource()), dto.getTruckNumber(), dto.getShippingArea(), dalDeliveryService);
     }
 
