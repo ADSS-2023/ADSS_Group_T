@@ -314,13 +314,12 @@ public class DeliveryController {
      */
     public ArrayList<Delivery> skipDay() throws Exception {
         this.currDate = this.currDate.plusDays(1);
-        if (date2deliveries.get(currDate) == null || date2deliveries.get(currDate).isEmpty())
+        if (!deliveryInDate(currDate))
             return null;
-        ArrayList<Integer> overWeightDeliveries = new ArrayList<>();
-        for (Delivery d : date2deliveries.get(currDate)) {
+        for (Delivery d : getDeliveriesByDate(currDate)) {
             executeDelivery(d);
         }
-        return null;
+        return null; //TODO: why returning null?
     }
 
     private ArrayList<Delivery> scheduleDriversForTomorrow() throws Exception {
