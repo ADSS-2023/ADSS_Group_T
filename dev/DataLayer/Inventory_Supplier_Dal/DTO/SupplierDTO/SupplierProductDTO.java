@@ -2,6 +2,8 @@ package DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO;
 
 import DataLayer.Util.DTO;
 
+import java.time.LocalDate;
+
 public class SupplierProductDTO extends DTO {
 
     private int supplierNum;

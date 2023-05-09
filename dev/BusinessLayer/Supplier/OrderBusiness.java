@@ -43,6 +43,7 @@ public class OrderBusiness {
         this.products = products;
         this.daysToSupplied = daysToSupplied;
         this.orderDTO = new OrderDTO(orderNum, supplierNum, contactName, contactNumber, orderDate.toString(), supplierAddress, destinationAddress);
+
     }
 
     public int getOrderNum() {

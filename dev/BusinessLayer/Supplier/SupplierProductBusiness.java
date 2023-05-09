@@ -172,4 +172,8 @@ public class SupplierProductBusiness {
                 ", expiryDate: " + expiryDate;
 
     }
+
+    public SupplierProductDTO getSupplierProductDTO() {
+        return supplierProductDTO;
+    }
 }

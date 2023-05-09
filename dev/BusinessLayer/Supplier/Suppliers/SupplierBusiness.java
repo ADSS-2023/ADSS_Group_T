@@ -7,10 +7,7 @@ import BusinessLayer.Supplier.SupplierProductBusiness;
 import BusinessLayer.Supplier.Supplier_Util.Discounts;
 import BusinessLayer.Supplier.Supplier_Util.PaymentTerms;
 import DataLayer.Inventory_Supplier_Dal.DAO.SupplierDAO.SupplierDAO;
-import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.ProductDiscountDTO;
-import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.SupplierContactDTO;
-import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.SupplierDTO;
-import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.SupplierDiscountDTO;
+import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.*;
 import DataLayer.Inventory_Supplier_Dal.DalController.SupplierDalController;
 import BusinessLayer.Supplier.Supplier_Util.Discounts;
 import BusinessLayer.Supplier.Supplier_Util.PaymentTerms;
@@ -53,7 +50,6 @@ public abstract class  SupplierBusiness {
         this.discountPerTotalPrice = new ArrayList<>();
         this.paymentTerms=paymentTerms;
         this.supplierDalController = supplierDalController;
-        supplierDalController.insert(supplierDTO);
         for (Map.Entry<String, String> entry : contacts.entrySet()) {
             SupplierContactDTO supplierContactDTO = new SupplierContactDTO(supplierNum, entry.getKey(), entry.getValue());
             supplierDalController.insert(supplierContactDTO);
@@ -85,17 +81,23 @@ public abstract class  SupplierBusiness {
             products.put(productNum, new SupplierProductBusiness( supplierNum,productName,productNum, manufacturer, price, maxAmount, expiryDate));
     }
 
-    public void editProduct(String productName, String manufacturer, int price, int maxAmount, LocalDate expiredDate) throws Exception {
-        if(expiredDate.isBefore(Util_Supplier_Stock.getCurrDay()))
+    public void editProduct(String productName, String manufacturer, int price, int maxAmount, LocalDate expiryDate) throws Exception {
+        if(expiryDate.isBefore(Util_Supplier_Stock.getCurrDay()))
             throw new Exception("expiry date has passed.");
         SupplierProductBusiness sp = getProduct(productName,manufacturer);
-        if (sp != null)
-            sp.editProduct(supplierNum, productName, manufacturer, price, maxAmount, expiredDate);
+        if (sp != null) {
+            sp.editProduct(supplierNum, productName, manufacturer, price, maxAmount, expiryDate);
+            SupplierProductDTO newProductDTO = new SupplierProductDTO(
+                    supplierNum, sp.getProductNum(), productName, manufacturer,
+                    price, maxAmount,expiryDate.toString());
+            supplierDalController.update(sp.getSupplierProductDTO(),newProductDTO);
+        }
         else
             throw new Exception("product doesn't exist.");
     }
 
     public void deleteProduct(int productNum) throws Exception {
+        //ToDo::make get all products from databsae
         if(!products.containsKey(productNum))
             throw new Exception("product is not exists.");
         //delete first all of product's discounts
@@ -104,6 +106,15 @@ public abstract class  SupplierBusiness {
                sp.deleteProductDiscount(dis.getAmount(),dis.getDiscount(),dis.isPercentage());
             }
             products.remove(productNum);
+            supplierDalController.delete(sp.getSupplierProductDTO());
+
+    }
+
+    public void deleteContacts() throws SQLException {
+        for (SupplierContactDTO contactDTO : contactDTOS)  {
+            supplierDalController.delete(contactDTO);
+        }
+        contacts=new HashMap<>();
     }
 
     public void editProductDiscount(int productNum, int productAmount, int discount, boolean isPercentage) throws Exception {
