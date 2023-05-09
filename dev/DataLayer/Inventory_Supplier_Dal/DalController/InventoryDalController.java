@@ -14,8 +14,7 @@ public class InventoryDalController{
     private CategoryDAO category_DAO;
     private DamagedItemDAO damaged_item_DAO;
     private DiscountDAO discount_DAO;
-    private ItemDAO item_DAO;
-    private ItemPerOrderDAO item_per_order_DAO;
+
     private DAO generic_DAO;
     private Connection connection;
 
@@ -25,7 +24,11 @@ public class InventoryDalController{
         this.connection = connection;
     }
 
-    public void insert(DTO curDto) throws SQLException {
-        category_DAO.insert(connection, curDto);
+    public void insert(DTO new_dto) throws SQLException {
+        generic_DAO.insert(connection, new_dto);
+    }
+
+    public void update(DTO old_dto , DTO new_dto) throws SQLException {
+        generic_DAO.update(connection , old_dto , new_dto);
     }
 }

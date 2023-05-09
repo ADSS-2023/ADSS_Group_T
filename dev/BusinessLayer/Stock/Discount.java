@@ -1,5 +1,8 @@
 package BusinessLayer.Stock;
 
+import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.DiscountDTO;
+import DataLayer.Util.DTO;
+
 import java.time.LocalDate;
 /*
     This class represents a discount. Each discount has a start and an end dates,
@@ -9,6 +12,7 @@ public class Discount {
     private LocalDate start_date;
     private LocalDate end_date;
     private double percentage;
+    private DiscountDTO discount_dto;
 
     /**
      *
@@ -20,6 +24,7 @@ public class Discount {
         this.start_date = start_date;
         this.end_date = end_date;
         this.percentage = percentage;
+        //this.discount_dto = new DiscountDTO(start_date,end_date,percentage,)
     }
 
     /**
@@ -38,5 +43,9 @@ public class Discount {
      */
     public double getPercentageAmount() {
         return percentage;
+    }
+
+    public DTO getDto() {
+        return discount_dto;
     }
 }

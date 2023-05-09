@@ -124,7 +124,9 @@ public class Inventory {
         LocalDate start_date = Util.stringToDate(start_date_string);
         if (categories.size()<= current_index)
             throw new Exception("Illegal index");
-        categories.get(current_index).setDiscount(next_index , new Discount(start_date , end_date , percentageAmount));
+        Discount new_discount = new Discount(start_date , end_date , percentageAmount);
+        categories.get(current_index).setDiscount(next_index , new_discount);
+        inv_dal_controller.insert(new_discount.getDto());
     }
 
     /**
@@ -179,6 +181,7 @@ public class Inventory {
         categories.add(new Category("Meat-product", "1"));
         categories.get(1).add_product(new Category("chicken" , "0"));
         categories.get(1).add_product(new Category("beef" , "1"));
+        categories.get(1).categories_list.get(0).add_product(new Category("KRAAI'IM" , "0"));
         categories.get(1).getCategories_list().get(1).add_product(beef_sausage);
         items.put(3,beef_sausage);
         name_to_id.put("Beef Sausage Zogloveck",3);
@@ -247,11 +250,13 @@ public class Inventory {
             String next_index = Util.extractNextIndex(categories_index);
             Category cur_category = categories.get(current_index);
             cur_category.add_product(next_index,name);
+
+
             int index = cur_category.getCategories_list().size()-1;
-            DTO curDTO = cur_category.categories_list.get(index).getDto();
+            CategoryDTO curDTO = (CategoryDTO) cur_category.categories_list.get(index).getDto();
+            curDTO.setIndex(next_index);
             inv_dal_controller.insert(curDTO);
         }
-
     }
 
     /**

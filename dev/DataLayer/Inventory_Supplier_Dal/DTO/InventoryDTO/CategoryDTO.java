@@ -24,4 +24,7 @@ public class CategoryDTO extends DataLayer.Util.DTO{
         return name;
     }
 
+    public void setIndex(String next_index) {
+        this.index_item = next_index;
+    }
 }

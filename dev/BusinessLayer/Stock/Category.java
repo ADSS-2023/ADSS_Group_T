@@ -161,6 +161,18 @@ public class Category implements ProductCategoryManagement{
         }
     }
 
+    public Category getCategoryByIndex(String index) throws Exception {
+        if (index == "") {
+            return this;
+//            DTO curDto = new_category.getDto();
+//            inv_dal_controller.insert(curDto);
+        }
+        else {
+            int current_index = Integer.parseInt(Util.extractFirstNumber(index));
+            String next_index = Util.extractNextIndex(index);
+            categories_list.get(current_index).add_product(next_index,name);
+        }
+    }
     /**
      * This function returns the name of the current category
      * @return
