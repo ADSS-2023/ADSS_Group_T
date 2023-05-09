@@ -13,6 +13,10 @@ public class ProductDTO extends DTO {
         this.coolingLevel = coolingLevel;
     }
 
+    public static String getPKStatic(){return "productName";}
+    public static String getTableNameStatic(){return "Product";}
+
+
     public String getProductName() {
         return productName;
     }
@@ -20,4 +24,5 @@ public class ProductDTO extends DTO {
     public String getCoolingLevel() {
         return coolingLevel;
     }
+
 }

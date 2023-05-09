@@ -4,12 +4,14 @@ import BusinessLayer.Transport.Truck;
 import DataLayer.Util.DTO;
 
 public class TruckDTO extends DTO {
+
     private int licenseNumber;
     private String model;
     private int weight;
     private int maxWeight;
     private String licenseType;
     private String coolingLevel;
+    private static String tableName = "truck";
     /**
      * DTO constructor, must get a table name as 'name_of_object'
      *
@@ -17,6 +19,7 @@ public class TruckDTO extends DTO {
      */
     public TruckDTO(int licenseNumber, String model,int weight,int maxWeight,String licenseType,String coolingLevel) {
         super("Truck");
+
         this.coolingLevel = coolingLevel;
         this.licenseNumber = licenseNumber;
         this.licenseType = licenseType;
@@ -37,6 +40,8 @@ public class TruckDTO extends DTO {
 
     public TruckDTO() {
     }
+
+
 
     public int getLicenseNumber() {
         return licenseNumber;
@@ -61,4 +66,6 @@ public class TruckDTO extends DTO {
     public String getCoolingLevel() {
         return coolingLevel;
     }
+    public static String getPKStatic(){return "licenseNumber";}
+    public static String getTableNameStatic(){return "Truck";}
 }

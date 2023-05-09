@@ -1,5 +1,6 @@
 package BusinessLayer.Transport;
 
+import DataLayer.HR_T_DAL.DAOs.LogisticDAO;
 import DataLayer.HR_T_DAL.DalService.DalLogisticCenterService;
 
 import java.sql.SQLException;
@@ -9,21 +10,26 @@ import java.util.Map;
 
 public class LogisticCenter extends Site {
 
-    private final LinkedHashMap<Integer, Truck> trucks;
-    private final LinkedHashMap<Product, Integer> productsInStock;
+    private LinkedHashMap<Integer, Truck> trucks;
+    private LinkedHashMap<Product, Integer> productsInStock;
     private DalLogisticCenterService dalLogisticCenterService;
 
     public LogisticCenter(DalLogisticCenterService dalLogisticCenterService) {
-        super("Main address", "0000000000", "logictic center manager", 0, 0);
+        super("logistic center address", "0000000000", "logictic center manager", 0, 0);
         this.dalLogisticCenterService = dalLogisticCenterService;
         this.trucks = new LinkedHashMap<>();
         this.productsInStock = new LinkedHashMap<>();
     }
 
 
+
+
+
+
+
     public boolean addTruck(int licenseNumber, String model, int weight, int maxWeight, int coolingLevel) throws Exception {
         if (trucks.containsKey(licenseNumber))
-            throw new Exception("trucks contains licenseNumber");
+            throw new RuntimeException("trucks contains licenseNumber");
         Truck truck = new Truck(licenseNumber, model, weight, maxWeight, coolingLevel);
         dalLogisticCenterService.insertTruck(truck);
         trucks.put(licenseNumber,truck);
@@ -76,11 +82,17 @@ public class LogisticCenter extends Site {
         return requestedSupply;
     }
 
-    public LinkedHashMap<Product, Integer> getProductsInStock() {
+    public LinkedHashMap<Product, Integer> getProductsInStock() throws Exception {
+        productsInStock = dalLogisticCenterService.findAllProductsInStock();
+        if(productsInStock == null || productsInStock.isEmpty())
+            throw new Exception("no products in stock");
         return productsInStock;
     }
 
-    public LinkedHashMap<Integer, Truck> getAllTrucks() {
+    public LinkedHashMap<Integer, Truck> getAllTrucks() throws Exception {
+        trucks =  dalLogisticCenterService.findAllTrucks();
+        if (trucks == null || trucks.isEmpty())
+            throw new RuntimeException("no trucks in the system");
         return trucks;
     }
 

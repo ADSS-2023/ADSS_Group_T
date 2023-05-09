@@ -7,6 +7,7 @@ import BusinessLayer.HR.ShiftController;
 import DataLayer.HR_T_DAL.DalService.DalDeliveryService;
 import UtilSuper.EnterWeightInterface;
 import UtilSuper.EnterOverWeightInterface;
+import UtilSuper.Time;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -82,8 +83,8 @@ public class DeliveryController {
      */
     public LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> orderDelivery(String destinationString, LinkedHashMap<String, LinkedHashMap<String, Integer>> suppliersString,
                                                                                   String requiredDateString) throws Exception {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate requiredDate = LocalDate.parse(requiredDateString, formatter);
+
+        LocalDate requiredDate = Time.stringToDate(requiredDateString);
         boolean isDestinationIsLogisticCenter = destinationString.equals(logisticCenterController.getAddress());
         boolean isSupplierIsLogisticCenter = suppliersString.containsKey(logisticCenterController.getAddress());
         if(isDestinationIsLogisticCenter && isSupplierIsLogisticCenter)
@@ -164,7 +165,7 @@ public class DeliveryController {
      * @param coolingLevel - the cooling level required for this delivery
      * @return the Truck that scheduled for the delivery if exist , null otherwise
      */
-    public Truck scheduleTruck(LocalDate date, CoolingLevel coolingLevel) {
+    public Truck scheduleTruck(LocalDate date, CoolingLevel coolingLevel) throws Exception {
         if (logisticCenterController.getAllTrucks() != null) {
             for (Truck truck : logisticCenterController.getAllTrucks().values()) {
                 if (date2trucks.containsKey(date) &&
@@ -206,7 +207,7 @@ public class DeliveryController {
      *
      * @return List of the delivery ids that scheduled for the new day and have overweight problem
      */
-    public ArrayList<Delivery> skipDay() {
+    public ArrayList<Delivery> skipDay() throws Exception {
         this.currDate = this.currDate.plusDays(1);
         if (date2deliveries.get(currDate) == null || date2deliveries.get(currDate).isEmpty())
             return null;
@@ -266,7 +267,8 @@ public class DeliveryController {
      * @param deliveryID - the delivery who needed a truck replacement
      * @return true if the truck was replaced, false otherwise(there is no available truck)
      */
-    public boolean replaceTruck(int deliveryID) {
+    public boolean replaceTruck(int deliveryID) throws Exception {
+
         Truck t = logisticCenterController.getAllTrucks().get(deliveries.get(deliveryID).getTruckNumber());
         LocalDate date = deliveries.get(deliveryID).getDate();
         for (int licenseNumber : logisticCenterController.getAllTrucks().keySet()) {
@@ -289,7 +291,7 @@ public class DeliveryController {
      *
      * @param deliveryID the delivery id to unload products from
      */
-    public void unloadProducts(int deliveryID, int weight, String supplierAddress) throws SQLException {
+    public void unloadProducts(int deliveryID, int weight, String supplierAddress) throws Exception {
         LinkedHashMap<String, Supplier> suppliers = supplierController.getAllSuppliers();
         double currWeight = deliveries.get(deliveryID).getTruckWeight();
         int maxWeight = logisticCenterController.getAllTrucks().get(deliveries.get(deliveryID).getTruckNumber()).getMaxWeight();
@@ -324,7 +326,7 @@ public class DeliveryController {
      * @param deliveryID - the id of the delivery that has overweight
      * @param action     - the action required
      */
-    public void overWeightAction(int deliveryID, int action, String address, int weight) {
+    public void overWeightAction(int deliveryID, int action, String address, int weight) throws Exception {
         //if (action == 1)
         //do nothing?
         //DropSite(deliveryID, address);
@@ -357,7 +359,7 @@ public class DeliveryController {
     }
 
 
-    public void executeDelivery(Delivery delivery) {
+    public void executeDelivery(Delivery delivery) throws Exception {
         ArrayList<Supplier> suppliersTmp = new ArrayList<>(delivery.getUnHandledSuppliers().keySet());
         for (Supplier supplier : suppliersTmp) {
             int productsWeight = enterWeightInterface.enterWeightFunction(supplier.getAddress(), delivery.getId());
@@ -379,7 +381,7 @@ public class DeliveryController {
         reScheduleDelivery(delivery.getUnHandledSuppliers(), delivery.getUnHandledBranches());
     }
 
-    private void reScheduleDelivery(LinkedHashMap<Supplier, File> suppliers, LinkedHashMap<Branch, File> branches) {
+    private void reScheduleDelivery(LinkedHashMap<Supplier, File> suppliers, LinkedHashMap<Branch, File> branches) throws Exception {
         boolean found = false;
         LocalDate newDeliveredDate = this.currDate.plusDays(2);
         CoolingLevel coolingLevel = CoolingLevel.non;
@@ -417,14 +419,14 @@ public class DeliveryController {
         this.overweightAction = overweightAction;
     }
 
-    public ArrayList<Delivery> getNextDayDeatails() {
+    public ArrayList<Delivery> getNextDayDeatails() throws Exception {
         ArrayList<Delivery> deliveriesThatReScheduleDelivery = new ArrayList<>();
         deliveriesThatReScheduleDelivery.addAll(checkStoreKeeperForTomorrow());
         deliveriesThatReScheduleDelivery.addAll(scheduleDriversForTomorrow());
         return deliveriesThatReScheduleDelivery;
     }
 
-    private ArrayList<Delivery> checkStoreKeeperForTomorrow() {
+    private ArrayList<Delivery> checkStoreKeeperForTomorrow() throws Exception {
         LocalDate tomorrow = this.currDate.plusDays(1);
         ArrayList<String> branchWithoutStoreKeeper = shiftController.getBranchesWithoutStoreKeeper(tomorrow);
         ArrayList<Delivery> deliveriesTomorrow = new ArrayList<>(date2deliveries.get(tomorrow));
