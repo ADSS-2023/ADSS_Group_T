@@ -134,4 +134,13 @@ public class ManageOrderService {
     public void setOrderController(Inventory inv,OrderService orderService) {
         this.orderController = new OrderController(inv,orderService);
     }
+
+    public String show_all_orders() {
+        try{
+            return orderController.show_all_orders();
+        }
+        catch(Exception e){
+            return e.getMessage();
+        }
+    }
 }

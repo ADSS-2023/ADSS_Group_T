@@ -22,8 +22,6 @@ class InventoryTest {
     @BeforeEach
     public void setUp() {
         try {
-
-
             inventoryService = new InventoryService();
             categoryService = new CategoryService(inventoryService.get_inventory());
             damagedService = new DamagedService(inventoryService.get_inventory());
