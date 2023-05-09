@@ -51,12 +51,17 @@ public class ServiceFactory {
 
 
 
+
+        dalLogisticCenterService = new DalLogisticCenterService(connection);
+        dalDeliveryService = new DalDeliveryService(connection,dalLogisticCenterService);
+
+
         shiftController = new ShiftController();
         shiftService = new ShiftService(shiftController);
         employeeController = new EmployeeController();
         employeeService = new EmployeeService(employeeController);
 
-        this.dalLogisticCenterService = new DalLogisticCenterService(connection);
+
         logisticCenterController = new LogisticCenterController(dalLogisticCenterService);
         logisticCenterService = new LogisticCenterService(logisticCenterController);
         dalDeliveryService = new DalDeliveryService(connection,dalLogisticCenterService);
