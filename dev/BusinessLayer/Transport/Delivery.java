@@ -140,8 +140,10 @@ public class Delivery {
     }
 
     public int addProductToLogisticCenterFromFile(String logisticCenterAddress,Product p, int amount, int fileCounter) throws SQLException {
-        if (fromLogisticsCenterFile == null)
+        if (fromLogisticsCenterFile == null){
             fromLogisticsCenterFile = new File(fileCounter++);
+            dalDeliveryService.updateCounter("fileCounter",fileCounter);
+        }
         dalDeliveryService.insertUnHandledSite(id,logisticCenterAddress,p.getName(),amount);
         fromLogisticsCenterFile.addProduct(p, amount);
         return fileCounter;
@@ -248,8 +250,8 @@ public class Delivery {
         this.driverID = driver.getId();
     }
 
-    public void addLogisticCenterDestination(int fileCounter){
+    public void addLogisticCenterDestination(int fileCounter) throws SQLException {
         toLogisticsCenterFile = new File(fileCounter);
-        //TODO: add to dal
+        dalDeliveryService.updateCounter("fileCounter",fileCounter);
     }
 }

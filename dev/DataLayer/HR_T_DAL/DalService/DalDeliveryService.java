@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 public class DalDeliveryService {
 
@@ -111,7 +112,7 @@ public class DalDeliveryService {
         DeliveryUnHandledSitesDTO dto = findDeliveryUnHandledSites(pk);
         int oldAmount = dto.getAmount();
         dao.update(new DeliveryUnHandledSitesDTO(deliveryId,siteAddress,productName,oldAmount),
-                new DeliveryUnHandledSitesDTO(deliveryId,siteAddress,productName,newAmount));
+            new DeliveryUnHandledSitesDTO(deliveryId,siteAddress,productName,newAmount));
     }
 
     public Supplier findSupplier(String supplierAddress) throws SQLException {
@@ -180,11 +181,12 @@ public class DalDeliveryService {
         return branches;
     }
 
-
-
-
     public ArrayList<DateToDeliveryDTO> findAllDateToDeliveries() throws SQLException {
         return dao.findAll(DateToDeliveryDTO.getTableNameStatic(),DateToDeliveryDTO.class);
+    }
+
+    public List<DateToDeliveryDTO> findAllDeliveriesByDate(String date) throws SQLException {
+        return deliveryDAO.findAllDeliveriesByDate(date);
     }
 
     public CounterDTO findTime() throws SQLException {
@@ -195,6 +197,6 @@ public class DalDeliveryService {
         return dao.find("fileCounter",CounterDTO.getPKStatic(),CounterDTO.getTableNameStatic(), CounterDTO.class);
     }
     public CounterDTO findDeliveryCounter() throws SQLException {
-        return dao.find("dekiveryCounter",CounterDTO.getPKStatic(),CounterDTO.getTableNameStatic(), CounterDTO.class);
+        return dao.find("deliveryCounter",CounterDTO.getPKStatic(),CounterDTO.getTableNameStatic(), CounterDTO.class);
     }
 }

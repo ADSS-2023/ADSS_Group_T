@@ -100,9 +100,8 @@ public class DeliveryController {
         LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> suppliers = getSuppliersAndProducts(suppliersString);//convert the string
         Branch branch = this.branchController.getBranch(destinationString);
 
-
-        if (date2deliveries.containsKey(requiredDate)) { // there is delivery in this date
-            for (Delivery d : date2deliveries.get(requiredDate)) { // the delivery is to the required date
+        if (deliveryInDate(requiredDate)) { // there is delivery in this date
+            for (Delivery d : getDeliveriesByDate(requiredDate)) { // the delivery is to the required date
                 if (branch.getShippingArea() == d.getShippingArea()) { // the delivery is to the required branch
                     for (Supplier supplier : new ArrayList<>(suppliers.keySet())) {
                         Map<Product, Integer> products = suppliers.get(supplier);
@@ -112,7 +111,6 @@ public class DeliveryController {
                                     d.addBranch(branch, filesCounter++);
                                     shiftController.addStoreKeeperRequirement(requiredDate, branch.getAddress());
                                 }
-                                //TODO update fileCounter in DB
                                 this.filesCounter = d.addProductToSupplier(supplier, product, products.get(product), filesCounter);
                                 products.remove(product);
                             }
@@ -127,17 +125,14 @@ public class DeliveryController {
         if (!suppliers.isEmpty()) { // open new delivery
             Set<CoolingLevel> newDeliveriesCoolingLevels = countCoolingOptions(suppliers);
             for (CoolingLevel coolingLevel : newDeliveriesCoolingLevels) {
-                if (!date2deliveries.containsKey(requiredDate))
-                    date2deliveries.put(requiredDate, new ArrayList<>());
                 Truck truck = scheduleTruck(requiredDate, coolingLevel);
                 if (truck == null) // in case there is no truck available for this delivery
                     continue;
-                //TODO update deliveryCounter in data
                 Delivery delivery = new Delivery(deliveryCounter++, requiredDate, LocalTime.NOON, truck.getWeight(), new LinkedHashMap<>(),
                         new LinkedHashMap<>(), null, truck.getLicenseNumber(), branch.getShippingArea(),dalDeliveryService);
+                dalDeliveryService.updateCounter("deliveryCounter",deliveryCounter);
                 shiftController.addDirverRequirement(requiredDate, truck.getLicenseType(), truck.getCoolingLevel());
                 shiftController.addStoreKeeperRequirement(requiredDate, branch.getAddress());
-                //TODO update deliveryCounter in data
                 delivery.addBranch(branch, filesCounter++);
                 addDelivery(delivery);
                 addDeliveryToDate(requiredDate,delivery,true);
@@ -145,7 +140,6 @@ public class DeliveryController {
                     Map<Product, Integer> products = suppliers.get(supplier);
                     for (Product product : new LinkedHashSet<>(products.keySet())) {
                         if (product.getCoolingLevel() == coolingLevel) {
-                            //TODO update fileCounter in DB
                             this.filesCounter = delivery.addProductToSupplier(supplier, product, products.get(product), filesCounter);
                             products.remove(product);
                         }
@@ -163,8 +157,8 @@ public class DeliveryController {
             LinkedHashMap<String,Integer> logisticCenterFile,LocalDate requiredDate) throws Exception {
         Branch branch = this.branchController.getBranch(branchAddress);
         LinkedHashMap<Product, Integer> products = getProducts(logisticCenterFile);
-        if (date2deliveries.containsKey(requiredDate)) { // there is delivery in this date
-            for (Delivery d : date2deliveries.get(requiredDate)) { // the delivery is to the required date
+        if (deliveryInDate(requiredDate)) { // there is delivery in this date
+            for (Delivery d : getDeliveriesByDate(requiredDate)) { // the delivery is to the required date
                 if (branch.getShippingArea() == d.getShippingArea()) { // the delivery is to the required branch
                     for (Product product : new LinkedHashSet<>(products.keySet())) {
                         if (product.getCoolingLevel() == logisticCenterController.getTruck(d.getTruckNumber()).getCoolingLevel()) {
@@ -174,7 +168,6 @@ public class DeliveryController {
                             }
                             this.filesCounter = d.addProductToLogisticCenterFromFile(logisticCenterController.getLogisticCenter().getAddress()
                                     ,product, products.get(product), filesCounter);
-                            //TODO update fileCounter in DB
                             products.remove(product);
                         }
                     }
@@ -184,24 +177,19 @@ public class DeliveryController {
         if (!products.isEmpty()) { // open new delivery
             Set<CoolingLevel> newDeliveriesCoolingLevels = countCoolingOptions(products,new HashSet<>());
             for (CoolingLevel coolingLevel : newDeliveriesCoolingLevels) {
-                if (!date2deliveries.containsKey(requiredDate))
-                    //TODO add to data
-                    date2deliveries.put(requiredDate, new ArrayList<>());
                 Truck truck = scheduleTruck(requiredDate, coolingLevel);
                 if (truck == null) // in case there is no truck available for this delivery
                     continue;
-                //TODO update deliveryCounter in data
                 Delivery delivery = new Delivery(deliveryCounter++, requiredDate, LocalTime.NOON, truck.getWeight(), null,
                         new LinkedHashMap<>(), logisticCenterController.getLogisticCenter(), truck.getLicenseNumber(), branch.getShippingArea(),dalDeliveryService);
+                dalDeliveryService.updateCounter("deliveryCounter",deliveryCounter);
                 shiftController.addDirverRequirement(requiredDate, truck.getLicenseType(), truck.getCoolingLevel());
                 shiftController.addStoreKeeperRequirement(requiredDate, branch.getAddress());
-                //TODO update deliveryCounter in data
                 delivery.addBranch(branch, filesCounter++);
                 addDelivery(delivery);
                 addDeliveryToDate(requiredDate,delivery,true);
                 for (Product product : new LinkedHashSet<>(products.keySet())) {
                     if (product.getCoolingLevel() == coolingLevel) {
-                        //TODO update fileCounter in DB
                         this.filesCounter = delivery.addProductToLogisticCenterFromFile(logisticCenterController.getLogisticCenter().getAddress(),
                                 product, products.get(product), filesCounter);
                         products.remove(product);
@@ -224,14 +212,13 @@ public class DeliveryController {
 
     private LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> orderDeliveryToLogisticCenter(LinkedHashMap<String, LinkedHashMap<String, Integer>> suppliersString, LocalDate requiredDate) throws Exception {
         LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> suppliers = getSuppliersAndProducts(suppliersString);//convert the string
-        if (date2deliveries.containsKey(requiredDate)) { // there is delivery in this date
-            for (Delivery d : date2deliveries.get(requiredDate)) { // the delivery is to the required date
+        if (deliveryInDate(requiredDate)) { // there is delivery in this date
+            for (Delivery d : getDeliveriesByDate(requiredDate)) { // the delivery is to the required date
                 if (d.getUnHandledBranches() == null) { // the delivery is to the logisticCenter
                     for (Supplier supplier : new ArrayList<>(suppliers.keySet())) {
                         Map<Product, Integer> products = suppliers.get(supplier);
                         for (Product product : new LinkedHashSet<>(products.keySet())) {
                             if (product.getCoolingLevel() == logisticCenterController.getTruck(d.getTruckNumber()).getCoolingLevel()) {
-                                //TODO update fileCounter in DB
                                 this.filesCounter = d.addProductToSupplier(supplier, product, products.get(product), filesCounter);
                                 products.remove(product);
                             }
@@ -249,19 +236,17 @@ public class DeliveryController {
                 Truck truck = scheduleTruck(requiredDate, coolingLevel);
                 if (truck == null) // in case there is no truck available for this delivery
                     continue;
-                //TODO update deliveryCounter in data
                 Delivery delivery = new Delivery(deliveryCounter++, requiredDate, LocalTime.NOON, truck.getWeight(), new LinkedHashMap<>(),
                         new LinkedHashMap<>(), null, truck.getLicenseNumber(), 0,dalDeliveryService);
+                dalDeliveryService.updateCounter("deliveryCounter",deliveryCounter);
                 shiftController.addDirverRequirement(requiredDate, truck.getLicenseType(), truck.getCoolingLevel());
-                //TODO update deliveryCounter in data
-                delivery.addLogisticCenterDestination(filesCounter++);
+                delivery.addLogisticCenterDestination(++filesCounter);
                 addDelivery(delivery);
                 addDeliveryToDate(requiredDate,delivery,true);
                 for (Supplier supplier : new ArrayList<>(suppliers.keySet())) {
                     Map<Product, Integer> products = suppliers.get(supplier);
                     for (Product product : new LinkedHashSet<>(products.keySet())) {
                         if (product.getCoolingLevel() == coolingLevel) {
-                            //TODO update fileCounter in DB
                             this.filesCounter = delivery.addProductToSupplier(supplier, product, products.get(product), filesCounter);
                             products.remove(product);
                         }
@@ -478,7 +463,9 @@ public class DeliveryController {
     public Delivery getDelivery(int id) throws SQLException {
         if(deliveries.containsKey(id))
             return deliveries.get(id);
-        return dalDeliveryService.findDelivery(id);
+        Delivery d = dalDeliveryService.findDelivery(id);
+        deliveries.put(id,d);
+        return d;
     }
 
 
@@ -660,6 +647,20 @@ public class DeliveryController {
     private boolean isDeliveryFromLC(Delivery delivery){return delivery.getUnHandledSuppliers()==null;}
     private boolean isDeliveryToLC(Delivery delivery){return delivery.getHandledBranches()==null;}
 
+    private ArrayList<Delivery> getDeliveriesByDate(LocalDate date) throws SQLException {
+        ArrayList<Delivery> dateDeliveries = new ArrayList<>();
+        List<DateToDeliveryDTO> dateDeliveriesDTOs = dalDeliveryService.findAllDeliveriesByDate(date.toString());
+        for(DateToDeliveryDTO dto : dateDeliveriesDTOs){
+            Delivery d = getDelivery(dto.getDeliveryId());
+            dateDeliveries.add(d);
+            addDeliveryToDate(date,d,false);
+        }
+        return dateDeliveries;
+    }
+
+    private boolean deliveryInDate(LocalDate date) throws SQLException {
+        return date2deliveries.containsKey(date) || dalDeliveryService.findAllDeliveriesByDate(date.toString()) != null;
+    }
 }
 
 
