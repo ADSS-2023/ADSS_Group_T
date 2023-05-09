@@ -173,8 +173,10 @@ public class OrderController {
                 items.add(new ItemToOrder(product.getProductName(), product.getManufacturer(), product.getQuantity(),
                         product.getExpiryDate(), order.getOrderNum(), product.getFinalPrice()));
             }
-            OrderBusiness clonedOrder =  order.clone(orderCounter++);
-            orders.add(clonedOrder);
+            if(!order.getProducts().isEmpty()) {
+                OrderBusiness clonedOrder = order.clone(orderCounter++);
+                orders.add(clonedOrder);
+            }
         }
         List<OrderBusiness> ordersToDelete =  new LinkedList<>();
         for(OrderBusiness order:ordersNotSupplied){
@@ -183,8 +185,10 @@ public class OrderController {
                     items.add(new ItemToOrder(product.getProductName(), product.getManufacturer(), product.getQuantity(),
                             product.getExpiryDate(), order.getOrderNum(), product.getFinalPrice() / product.getQuantity()));
                 }
+                if(!order.getProducts().isEmpty()) {
                     orders.add(order);
-                    ordersToDelete.add(order);
+                }
+                ordersToDelete.add(order);
             }
             else
                 order.setDaysToSupplied(order.getDaysToSupplied() - 1);
@@ -266,6 +270,7 @@ public class OrderController {
                                 SupplierProductBusiness spProduct = sc.getSupplier(supplierNum).getSupplierProduct(productName, manufacturer);
                                 if (product.getQuantity() > spProduct.getMaxAmount())
                                     removeRegularItem(productName, manufacturer, supplierNum, days);
+                                    //supplier does not have enough of the product's quantity
                                 else
                                     updateRegularItem(product, productName, manufacturer, supplierNum);
                             }
@@ -319,8 +324,7 @@ public class OrderController {
      * @param day
      * @throws Exception
      */
-    // go over all orders of the day and find out how much to add to one of the suppliers
-    //loop to find out what is the number of the requested product
+
     //go over all the order products and  modify to the max quantity can be supplied
     //update order product and all order
     public void editRegularItem(ItemToOrder item, DayOfWeek day) throws Exception {
