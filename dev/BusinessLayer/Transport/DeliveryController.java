@@ -17,7 +17,6 @@ import java.util.*;
 
 
 public class DeliveryController {
-
     private final DriverController driverController;
     private final ShiftController shiftController;
     private final SupplierController supplierController;
@@ -26,8 +25,8 @@ public class DeliveryController {
     private final LinkedHashMap<LocalDate, ArrayList<Truck>> date2trucks;
     private final LinkedHashMap<LocalDate, ArrayList<Delivery>> date2deliveries;
     private LogisticCenterController logisticCenterController;
-    private int deliveryCounter = 0;
-    private int filesCounter = 0;
+    private int deliveryCounter;
+    private int filesCounter;
     private LocalDate currDate;
 
     // private Listener listener;
@@ -42,7 +41,6 @@ public class DeliveryController {
         this.deliveries = new LinkedHashMap<>();
         this.date2trucks = new LinkedHashMap<>();
         this.date2deliveries = new LinkedHashMap<>();
-        this.currDate = Time.stringToLocalDate(dalDeliveryService.findTime().getTime());
         this.branchController = branchController;
         this.driverController = driverController;
         this.supplierController = supplierController;
@@ -50,6 +48,10 @@ public class DeliveryController {
         this.shiftController = shiftController;
         this.dalDeliveryService = dalDeliveryService;
 
+        //Load Data:
+        this.currDate = Time.stringToLocalDate(dalDeliveryService.findTime().getCounter());
+        this.filesCounter = Integer.parseInt(dalDeliveryService.findFilesCounter().getCounter());
+        this.deliveryCounter = Integer.parseInt(dalDeliveryService.findDeliveryCounter().getCounter());
         loadData();
 
 
@@ -474,12 +476,11 @@ public class DeliveryController {
 
     private void loadData(){
 
+//        ArrayList<DateToDeliveryDTO> dateToDeliveryDTOs = dalDeliveryService.findAllDateToDeliveries();
+//        for (DateToDeliveryDTO dateToDeliveryDTO: dateToDeliveryDTOs){
+//            addDeliveryToDate(dateToDeliveryDTO.getShiftDate(),new Delivery(dateToDeliveryDTO),false);
+//        }
 
-
-        ArrayList<DateToDeliveryDTO> dateToDeliveryDTOs = dalDeliveryService.findAllDateToDeliveries();
-        for (DateToDeliveryDTO dateToDeliveryDTO: dateToDeliveryDTOs){
-            addDeliveryToDate(dateToDeliveryDTO.getShiftDate(),new Delivery(dateToDeliveryDTO),false);
-        }
     }
 }
 

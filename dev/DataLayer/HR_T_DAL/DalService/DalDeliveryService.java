@@ -179,11 +179,20 @@ public class DalDeliveryService {
     }
 
 
-    public TimeDTO findTime() throws SQLException {
-        return dao.findAll(TimeDTO.getTableNameStatic(), TimeDTO.class).get(0);
+
+
+    public ArrayList<DateToDeliveryDTO> findAllDateToDeliveries() throws SQLException {
+        return dao.findAll(DateToDeliveryDTO.getTableNameStatic(),DateToDeliveryDTO.class);
     }
 
-    public ArrayList<DateToDeliveryDTO> findAllDateToDeliveries() {
-        return dao.findAll(DateToDeliveryDTO.getTableName(),DateToDeliveryDTO.class)
+    public CounterDTO findTime() throws SQLException {
+        return dao.find("dateCounter",CounterDTO.getPKStatic(),CounterDTO.getTableNameStatic(), CounterDTO.class);
+    }
+
+    public CounterDTO findFilesCounter() throws SQLException {
+        return dao.find("fileCounter",CounterDTO.getPKStatic(),CounterDTO.getTableNameStatic(), CounterDTO.class);
+    }
+    public CounterDTO findDeliveryCounter() throws SQLException {
+        return dao.find("dekiveryCounter",CounterDTO.getPKStatic(),CounterDTO.getTableNameStatic(), CounterDTO.class);
     }
 }
