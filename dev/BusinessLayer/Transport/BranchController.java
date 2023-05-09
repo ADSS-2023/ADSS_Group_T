@@ -23,36 +23,20 @@ public class BranchController {
      * @param y           - the y coordinate of the branch
      * @return true if the branch added successfully , and false otherwise
      */
-    public boolean addBranch(String branchAddress, String telNumber, String contactName, int x, int y) {
-        if (branches.containsKey(branchAddress)) {
+    public void addBranch(String branchAddress, String telNumber, String contactName, int x, int y) throws SQLException {
+        if (branches.containsKey(branchAddress) ||
+                dalDeliveryService.findBranch(branchAddress) != null) {
             throw new IllegalArgumentException("branch address is taken");
         }
-        else{
-            try {
-                if(dalDeliveryService.findBranch(branchAddress) != null)
-                    throw new IllegalArgumentException("branch address is taken");
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        }
         Branch branch = new Branch(branchAddress, telNumber, contactName, x, y);
-        try {
-            dalDeliveryService.insertBranch(branch);
-            branches.put(branch.getAddress(), branch);
-            return true;
-        } catch (SQLException e) {
-            return false;
-        }
+        dalDeliveryService.insertBranch(branch);
+        branches.put(branch.getAddress(), branch);
     }
 
-    public Branch getBranch(String branchAddress) {
+    public Branch getBranch(String branchAddress) throws SQLException {
         Branch b;
         if (!branches.containsKey(branchAddress)) {
-            try {
-                b = dalDeliveryService.findBranch(branchAddress);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
+            b = dalDeliveryService.findBranch(branchAddress);
             if(b == null)
                 return null;
             branches.put(branchAddress,b);
@@ -62,12 +46,8 @@ public class BranchController {
             return branches.get(branchAddress);
     }
 
-    public LinkedHashMap<String, Branch> getAllBranches() {
-        try {
-            branches = dalDeliveryService.findAllBranch();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+    public LinkedHashMap<String, Branch> getAllBranches() throws SQLException {
+        branches = dalDeliveryService.findAllBranch();
         return branches;
     }
 }

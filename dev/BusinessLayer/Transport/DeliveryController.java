@@ -8,6 +8,7 @@ import DataLayer.HR_T_DAL.DalService.DalDeliveryService;
 import UtilSuper.EnterWeightInterface;
 import UtilSuper.EnterOverWeightInterface;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -53,7 +54,7 @@ public class DeliveryController {
         this.logisticCenterController = lcC;
     }
 
-    private LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> getSuppliersAndProducts(LinkedHashMap<String, LinkedHashMap<String, Integer>> suppliersString) {
+    private LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> getSuppliersAndProducts(LinkedHashMap<String, LinkedHashMap<String, Integer>> suppliersString) throws SQLException {
         LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> suppliers = new LinkedHashMap<>();
         for (String supplierAddress : suppliersString.keySet()) {
             Supplier supplier = this.supplierController.getSupplier(supplierAddress);
@@ -288,7 +289,7 @@ public class DeliveryController {
      *
      * @param deliveryID the delivery id to unload products from
      */
-    public void unloadProducts(int deliveryID, int weight, String supplierAddress) {
+    public void unloadProducts(int deliveryID, int weight, String supplierAddress) throws SQLException {
         LinkedHashMap<String, Supplier> suppliers = supplierController.getAllSuppliers();
         double currWeight = deliveries.get(deliveryID).getTruckWeight();
         int maxWeight = logisticCenterController.getAllTrucks().get(deliveries.get(deliveryID).getTruckNumber()).getMaxWeight();
@@ -401,7 +402,7 @@ public class DeliveryController {
         }
     }
 
-    public File getLoadedProducts(int deliveryID, String address) {
+    public File getLoadedProducts(int deliveryID, String address) throws SQLException {
         LinkedHashMap<String, Supplier> suppliers = supplierController.getAllSuppliers();
         return deliveries.get(deliveryID).getUnHandledSuppliers().get(suppliers.get(address));
     }

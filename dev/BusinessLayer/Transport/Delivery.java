@@ -46,6 +46,9 @@ public class Delivery {
     }
 
     public void addHandledSupplier(Supplier supplier, File f) {
+        for(Product p : f.getProducts().keySet()){
+            dalDeliveryService.insertHandledSupplier(id,supplier.getAddress(),p.getName(),);
+        }
         handledSuppliers.put(supplier, f);
     }
 
