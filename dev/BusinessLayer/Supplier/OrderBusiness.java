@@ -42,8 +42,7 @@ public class OrderBusiness {
         this.contactNumber = contactNumber;
         this.products = products;
         this.daysToSupplied = daysToSupplied;
-        this.orderDTO = new OrderDTO(orderNum, supplierNum, contactName, contactNumber, orderDate.toString(), supplierAddress, destinationAddress);
-
+        this.orderDTO = new OrderDTO(orderNum, supplierNum, contactName, contactNumber, orderDate.toString(), supplierAddress, destinationAddress, orderSupplied, daysTodeliver, constantDay);
     }
 
     public int getOrderNum() {
@@ -85,7 +84,7 @@ public class OrderBusiness {
             clonedProducts.add(product.clone());
         return new OrderBusiness(
                 newOrderNum, supplierName, Util_Supplier_Stock.getCurrDay(), supplierAddress, destinationAddress,
-                supplierNum,contactName,contactNumber,clonedProducts,daysToSupplied
+                supplierNum,contactName,contactNumber,clonedProducts,daysToSupplied, true, -1, -1
         );
     }
     public String getSupplierName() {
@@ -111,6 +110,15 @@ public class OrderBusiness {
     public String getContactNumber() {
         return contactNumber;
     }
+
+    public OrderDTO getOrderDTO() {
+        return orderDTO;
+    }
+
+    public void setOrderDTO(OrderDTO orderDTO) {
+        this.orderDTO = orderDTO;
+    }
+
     public void setOrderNum(int orderNum) {
         this.orderNum = orderNum;
     }

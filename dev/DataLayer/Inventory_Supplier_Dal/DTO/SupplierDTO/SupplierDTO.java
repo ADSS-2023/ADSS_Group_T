@@ -9,6 +9,30 @@ public class SupplierDTO extends DTO {
     private int bankAccountNum;
     private boolean selfDelivery;
 
+    public int getSupplierNum() {
+        return supplierNum;
+    }
+
+    public String getSupplierName() {
+        return supplierName;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public int getBankAccountNum() {
+        return bankAccountNum;
+    }
+
+    public boolean isSelfDelivery() {
+        return selfDelivery;
+    }
+
+    public int getDaysToDeliver() {
+        return daysToDeliver;
+    }
+
     private int daysToDeliver;
 
     public SupplierDTO(int supplierNum, String supplierName, String address, int bankAccountNum, boolean selfDelivery, int daysToDeliver){

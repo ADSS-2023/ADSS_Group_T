@@ -10,9 +10,47 @@ public class OrderProductDTO extends DTO {
     private int quantity;
     private float initialPrice;
     private float discount;
+
+    private float finalPrice;
     private String productName;
 
-    public OrderProductDTO(int orderID, String manufacturer, String expiryDate, int productNumber, int quantity, float initialPrice, float discount, String productName) {
+    public float getFinalPrice() {
+        return finalPrice;
+    }
+
+    public int getOrderID() {
+        return orderID;
+    }
+
+    public String getManufacturer() {
+        return manufacturer;
+    }
+
+    public String getExpiryDate() {
+        return expiryDate;
+    }
+
+    public int getProductNumber() {
+        return productNumber;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public float getInitialPrice() {
+        return initialPrice;
+    }
+
+    public float getDiscount() {
+        return discount;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public OrderProductDTO(int orderID, String manufacturer, String expiryDate, int productNumber, int quantity, float initialPrice, float discount, float finalPrice, String productName) {
         super("supplier_order_product");
         this.orderID = orderID;
         this.manufacturer = manufacturer;
@@ -22,5 +60,6 @@ public class OrderProductDTO extends DTO {
         this.initialPrice = initialPrice;
         this.discount = discount;
         this.productName = productName;
+        this.finalPrice = finalPrice;
     }
 }
