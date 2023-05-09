@@ -84,8 +84,7 @@ public class OrderBusiness {
             clonedProducts.add(product.clone());
         return new OrderBusiness(
                 newOrderNum, supplierName, Util_Supplier_Stock.getCurrDay(), supplierAddress, destinationAddress,
-                supplierNum,contactName,contactNumber,clonedProducts,daysToSupplied, true, -1, -1
-        );
+                supplierNum,contactName,contactNumber,clonedProducts,daysToSupplied, true, -1, -1);
     }
     public String getSupplierName() {
         return supplierName;
