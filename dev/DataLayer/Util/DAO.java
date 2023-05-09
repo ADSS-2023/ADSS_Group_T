@@ -133,5 +133,12 @@ public class DAO {
         }
         statement.executeUpdate();
     }
+    public void deleteAll(Connection connection, String tableName) throws SQLException {
+        String sql = "DELETE FROM " + tableName;
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.executeUpdate();
+    }
+
+
 }
 

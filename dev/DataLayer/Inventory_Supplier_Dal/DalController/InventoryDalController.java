@@ -35,4 +35,8 @@ public class InventoryDalController{
     public void update(DTO old_dto , DTO new_dto) throws SQLException {
         generic_DAO.update(connection , old_dto , new_dto);
     }
+
+    public DAO getDAO() {
+        return generic_DAO;
+    }
 }

@@ -48,9 +48,7 @@ class ItemTest {
             assertEquals(inventory.get_item_by_id(2).get_name() + " new minimal amount:7" , afterUpdate);
         }
         catch (Exception e){
-
         }
-
     }
 
     @Test
