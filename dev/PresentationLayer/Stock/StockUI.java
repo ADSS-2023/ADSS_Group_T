@@ -13,8 +13,11 @@ import java.util.Scanner;
 import java.util.function.Supplier;
 
 public class StockUI {
-    public static ServiceFactory sf = new ServiceFactory();
+    private ServiceFactory sf;
     private PreviousCallBack previousCallBack;
+    public StockUI(ServiceFactory sf){
+        this.sf = sf;
+    }
     public void printOptions(){
         System.out.println("\u001B[32m1.See categories\u001B[0m");
         System.out.println("\u001B[32m2.Produce inventory report\u001B[0m");
@@ -264,9 +267,7 @@ public class StockUI {
             products.put(id,amount);
             isActive = choice==1;
         }
-        System.out.println("Is it an urgent order?\n1.yes 2.no");
-        int choice = scanner.nextInt();
-        sf.manageOrderService.createRegularOrder(products,choice ==1);
+        sf.manageOrderService.createRegularOrder(products);
     }
 
     private  void edit_create_orders() {
@@ -303,7 +304,7 @@ public class StockUI {
         sf.manageOrderService.editRegularOrder(id , cur_day , amount);
     }
 
-    private void moveToNextDay() {
+    public void moveToNextDay() {
         sf.manageOrderService.nextDay();
     }
 

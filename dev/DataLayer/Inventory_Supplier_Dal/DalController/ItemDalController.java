@@ -11,12 +11,14 @@ public class ItemDalController {
     private ItemPerOrderDAO item_per_order_DAO;
     private DAO generic_DAO;
     private Connection connection;
+
     public ItemDalController(Connection connection){
         item_DAO = new ItemDAO();
         item_per_order_DAO = new ItemPerOrderDAO();
         generic_DAO = new DAO();
         this.connection = connection;
     }
+
     public void insert(DTO new_dto) throws SQLException {
         generic_DAO.insert(connection, new_dto);
     }
