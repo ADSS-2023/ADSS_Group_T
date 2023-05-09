@@ -127,6 +127,14 @@ public class Delivery {
         return fileCounter;
     }
 
+    public int addProductToLogisticCenterFromFile(Product p, int amount, int fileCounter) {
+        if (fromLogisticsCenterFile == null)
+            fromLogisticsCenterFile = new File(fileCounter++);
+        dalDeliveryService.in
+        fromLogisticsCenterFile.addProduct(p, amount);
+        return fileCounter;
+    }
+
     public int getShippingArea() {
         return shippingArea;
     }
