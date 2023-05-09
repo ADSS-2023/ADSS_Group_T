@@ -4,6 +4,7 @@ import BusinessLayer.Stock.Util.Util;
 import BusinessLayer.Supplier_Stock.ItemToOrder;
 import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.CategoryDTO;
 import DataLayer.Inventory_Supplier_Dal.DalController.InventoryDalController;
+import DataLayer.Inventory_Supplier_Dal.DalController.ItemDalController;
 import DataLayer.Util.DTO;
 
 import java.time.DayOfWeek;
@@ -22,6 +23,7 @@ public class Inventory {
     protected List<Item> shortage_list;
     protected Damaged damaged;
     protected InventoryDalController inv_dal_controller;
+    private ItemDalController itemDalController;
 
     public Inventory(){
         categories = new LinkedList<>();
@@ -34,7 +36,9 @@ public class Inventory {
     public void setInventoryDalController(InventoryDalController inv){
         this.inv_dal_controller = inv;
     }
-
+    public void setItemDalController(ItemDalController itemDalController){
+        this.itemDalController = itemDalController;
+    }
     public InventoryDalController getInv_dal_controller(){
         return inv_dal_controller;
     }
@@ -158,15 +162,15 @@ public class Inventory {
      * in order to test the system.
      */
     public void setUp() throws Exception {
-        Item click = new Item(4 , "Click" , 5 , "Elite",  15);
+        Item click = new Item(4 , "Click" , 5 , "Elite",  15,itemDalController);
         set_item_call_back(click);
-        Item milk_3 = new Item(0 , "3% milk" , 5 , "IDO LTD",  3.5);
+        Item milk_3 = new Item(0 , "3% milk" , 5 , "IDO LTD",  3.5,itemDalController);
         set_item_call_back(milk_3);
-        Item milk_1_5=new Item(1 , "1.5% milk" , 2 , "IDO LTD",  3.5);
+        Item milk_1_5=new Item(1 , "1.5% milk" , 2 , "IDO LTD",  3.5,itemDalController);
         set_item_call_back(milk_1_5);
-        Item yellow_cheese = new Item(2,"yellow cheese",5,"Emeck",10);
+        Item yellow_cheese = new Item(2,"yellow cheese",5,"Emeck",10,itemDalController);
         set_item_call_back(yellow_cheese);
-        Item beef_sausage = new Item(3,"Beef Sausage",3,"Zogloveck",25);
+        Item beef_sausage = new Item(3,"Beef Sausage",3,"Zogloveck",25,itemDalController);
         set_item_call_back(beef_sausage);
         shortage_list.add(click);
         categories.add(new Category("Milk-product", "0"));
@@ -234,7 +238,7 @@ public class Inventory {
      * @param original_price
      */
     public void add_item(String categories_index,int item_id, String name, int min_amount, String manufacturer_name, double original_price) throws Exception {
-        Item i = new Item(item_id,name,min_amount,manufacturer_name,original_price);
+        Item i = new Item(item_id,name,min_amount,manufacturer_name,original_price,itemDalController);
         set_item_call_back(i);
         if(items.containsKey(item_id)) {
             throw new Exception("Item id already exists");
