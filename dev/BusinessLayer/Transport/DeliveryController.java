@@ -240,11 +240,21 @@ public class DeliveryController {
         return deliveriesWithoutDriveries;
     }
 
-    public ArrayList<Delivery> sortDeliveriesByTruckWeight(ArrayList<Delivery> deliveries) {
+    public ArrayList<Delivery> sortDeliveriesByTruckWeight(ArrayList<Delivery> deliveries)throws Exception {
         deliveries.sort(new Comparator<Delivery>() {
             public int compare(Delivery d1, Delivery d2) {
-                Truck t1 = logisticCenterController.getTruck(d1.getTruckNumber());
-                Truck t2 = logisticCenterController.getTruck(d2.getTruckNumber());
+                Truck t1 = null;
+                try {
+                    t1 = logisticCenterController.getTruck(d1.getTruckNumber());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                Truck t2 = null;
+                try {
+                    t2 = logisticCenterController.getTruck(d2.getTruckNumber());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
                 return t1.compareTo(t2);
             }
         });
