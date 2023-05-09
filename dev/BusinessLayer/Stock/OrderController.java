@@ -220,10 +220,30 @@ public class OrderController {
         String to_return = "";
         for(int i = 0; i < 7 ;i++){
             to_return +=
-                    String.format("---------%s---------\n%s",
+                    String.format("---------%s---------\nRegular orders:\n\t%s\nSpecial orders:\n\t%s",
             Util_Supplier_Stock.getCurrDay().plusDays(i).getDayOfWeek().toString()
-            ,presentItemsByDay(Util_Supplier_Stock.getCurrDay().plusDays(i).getDayOfWeek()));
+            ,presentItemsByDay(Util_Supplier_Stock.getCurrDay().plusDays(i).getDayOfWeek())
+            ,show_special_orders(Util_Supplier_Stock.getCurrDay().plusDays(i).getDayOfWeek()));
         }
         return to_return;
+    }
+    private String show_special_orders(DayOfWeek cur_day){
+        String toReturn = "";
+        List<ItemToOrder> special_orders = order_service.getSpecialOrder(cur_day);
+        Map<String , Integer> map_of_amount = new HashMap(); // list that sums all the items from a specific one
+        if (special_orders.isEmpty())
+            return "No items to present\n";
+        for(ItemToOrder item : special_orders) {
+            String item_key = item.getProductName() +" "+ item.getManufacturer();
+            if(map_of_amount.containsKey(item_key))
+                map_of_amount.put(item_key , map_of_amount.get(item_key) + item.getQuantity());
+            else
+                map_of_amount.put(item_key, item.getQuantity());
+        }
+        for (Map.Entry<String, Integer> entry : map_of_amount.entrySet()) {
+            toReturn+=String.format("Item id: %s, item name and manufacturer name: %s, amount: %s\n"
+                    ,inventory.name_to_id.get(entry.getKey()),entry.getKey(),entry.getValue());
+        }
+        return toReturn;
     }
 }
