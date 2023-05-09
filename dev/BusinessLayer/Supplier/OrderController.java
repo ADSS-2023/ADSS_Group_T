@@ -4,6 +4,7 @@ import BusinessLayer.Supplier.Suppliers.SupplierBusiness;
 import BusinessLayer.Supplier_Stock.ItemToOrder;
 import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.OrderProductDTO;
 import DataLayer.Inventory_Supplier_Dal.DalController.OrderDalController;
+import BusinessLayer.Supplier_Stock.Util_Supplier_Stock;
 import ServiceLayer.Stock.ManageOrderService;
 
 
@@ -109,11 +110,11 @@ public class OrderController {
            }
 
            //create order from products in the send and send to delivery if needed
-           OrderBusiness order = new OrderBusiness(orderCounter++, supplier.getName(), LocalDate.now(), supplier.getAddress(),
+           OrderBusiness order = new OrderBusiness(orderCounter++, supplier.getName(), Util_Supplier_Stock.getCurrDay(), supplier.getAddress(),
                    "SuperLi", supplier.getSupplierNum(), contactName, contactNum, products, daysToSupplied);
            if (isRegular){//save Regular order
                int deliveryDay = supplier.findEarliestSupplyDay();
-               LocalDate today = LocalDate.now();
+               LocalDate today = Util_Supplier_Stock.getCurrDay();
                LocalDate futureDay = today.plusDays(deliveryDay);
                DayOfWeek orderDay = DayOfWeek.valueOf(futureDay.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ENGLISH));
                if(!dayToConstantOrders.containsKey(orderDay))
@@ -166,7 +167,7 @@ public class OrderController {
 
     public void executeTodayOrders(){
         List<ItemToOrder> items = new ArrayList<>();
-        List<OrderBusiness> ordersForToday = dayToConstantOrders.get(LocalDate.now().getDayOfWeek());
+        List<OrderBusiness> ordersForToday = dayToConstantOrders.get(Util_Supplier_Stock.getCurrDay().getDayOfWeek());
         for(OrderBusiness order:ordersForToday){
             for(OrderProduct product:order.getProducts())
                 items.add(new ItemToOrder(product.getProductName(), product.getManufacturer(), product.getQuantity(),
@@ -199,7 +200,7 @@ public class OrderController {
         List<ItemToOrder> itemsList = new LinkedList<>();
 
         //find the exact number of the days following the current day
-        LocalDate today = LocalDate.now();
+        LocalDate today = Util_Supplier_Stock.getCurrDay();
         int todayValue = today.getDayOfWeek().getValue();
         int daysToAdd = 7;
         int dayValue = day.getValue();

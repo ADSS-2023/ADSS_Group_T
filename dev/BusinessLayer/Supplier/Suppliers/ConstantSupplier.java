@@ -1,9 +1,7 @@
 package BusinessLayer.Supplier.Suppliers;
 
 import BusinessLayer.Supplier.Util.PaymentTerms;
-import DataLayer.Inventory_Supplier_Dal.DalController.SupplierDalController;
 
-import java.sql.SQLException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -20,7 +18,7 @@ public class ConstantSupplier extends SupplierBusiness {
 
     @Override
     public int findEarliestSupplyDay() {
-        LocalDate today = LocalDate.now();
+        LocalDate today = Util_Supplier_Stock.getCurrDay();
         int todayValue = today.getDayOfWeek().getValue();
         int daysToAdd = 7;
         for (DayOfWeek weekDay : constDeliveryDays) {

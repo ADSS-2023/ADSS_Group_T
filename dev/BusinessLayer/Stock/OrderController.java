@@ -23,7 +23,7 @@ public class OrderController {
      * This method send an order to suppliers which will be supplied each week in a permanent day.
      * @param items_quantity a map that maps item id to the desired amount
      */
-    public void createRegularOrder(Map<Integer, Integer> items_quantity,boolean isUrgent) throws Exception {
+    public void createRegularOrder(Map<Integer, Integer> items_quantity) throws Exception {
         LinkedList<ItemToOrder> list_to_order = new LinkedList<>();
         for (Map.Entry<Integer, Integer> entry : items_quantity.entrySet()) {
             Integer item_id = entry.getKey();

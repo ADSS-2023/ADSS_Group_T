@@ -145,6 +145,8 @@ public class Inventory {
      * in order to test the system.
      */
     public void setUp() {
+        Item click = new Item(4 , "Click" , 5 , "Elite",  15);
+        set_item_call_back(click);
         Item milk_3 = new Item(0 , "3% milk" , 5 , "IDO LTD",  3.5);
         set_item_call_back(milk_3);
         Item milk_1_5=new Item(1 , "1.5% milk" , 2 , "IDO LTD",  3.5);
@@ -156,9 +158,13 @@ public class Inventory {
         categories.add(new Category("Milk-product", "0"));
         categories.get(0).add_product(new Category("Cheese" , "0"));
         categories.get(0).add_product(new Category("bottle milk" , "1"));
+        categories.get(0).add_product(new Category("Chocolate" , "2"));
         categories.get(0).getCategories_list().get(0).add_product(yellow_cheese);
         categories.get(0).getCategories_list().get(1).add_product(milk_3);
         categories.get(0).getCategories_list().get(1).add_product(milk_1_5);
+        categories.get(0).getCategories_list().get(2).add_product(click);
+        items.put(4,click);
+        name_to_id.put("Click Elite",4);
         items.put(2,yellow_cheese);
         name_to_id.put("yellow cheese Emeck",2);
         items.put(0,milk_3);

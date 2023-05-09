@@ -2,9 +2,6 @@ package ServiceLayer.Supplier_Stock;
 
 import BusinessLayer.Supplier.OrderController;
 import BusinessLayer.Supplier.SupplierController;
-import DataLayer.Inventory_Supplier_Dal.DalController.OrderDalController;
-import DataLayer.Inventory_Supplier_Dal.DalController.SupplierDalController;
-import DataLayer.Util.DAO;
 import ServiceLayer.Stock.*;
 import ServiceLayer.Supplier.OrderService;
 import ServiceLayer.Supplier.SupplierService;
@@ -14,6 +11,7 @@ import java.sql.DriverManager;
 import java.util.Collections;
 
 public class ServiceFactory {
+    private Util_Supplier_Stock uss;
     public SupplierController sc;
     public OrderController oc;
     public SupplierService supplierService;
@@ -31,7 +29,7 @@ public class ServiceFactory {
     public Connection connection;
 
     public ServiceFactory(){
-        this.connection = makeCon();
+
         this.inventoryService = new InventoryService();
         this.categoryService = new CategoryService(inventoryService.get_inventory());
         this.damagedService = new DamagedService(inventoryService.get_inventory());
@@ -62,5 +60,14 @@ public class ServiceFactory {
             System.out.println(e.getMessage());
         }
         return null;
+    }
+    public String nextDay(){
+        try{
+            uss.nextDay();
+            return "Action succeeded";
+        }
+        catch (Exception e){
+            return e.getMessage();
+        }
     }
 }

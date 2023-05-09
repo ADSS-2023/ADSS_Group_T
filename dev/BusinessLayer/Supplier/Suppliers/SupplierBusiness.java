@@ -12,6 +12,9 @@ import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.SupplierContactDTO;
 import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.SupplierDTO;
 import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.SupplierDiscountDTO;
 import DataLayer.Inventory_Supplier_Dal.DalController.SupplierDalController;
+import BusinessLayer.Supplier.Supplier_Util.Discounts;
+import BusinessLayer.Supplier.Supplier_Util.PaymentTerms;
+import BusinessLayer.Supplier_Stock.Util_Supplier_Stock;
 
 import java.sql.SQLException;
 import java.util.*;
@@ -77,14 +80,14 @@ public abstract class  SupplierBusiness {
     public void addProduct(int productNum, String productName, String manufacturer, int price, int maxAmount, LocalDate expiryDate) throws Exception {
         if (getProduct(productName,manufacturer) != null)
             throw new Exception("product already exists.");
-        else if(expiryDate.isBefore(LocalDate.now()))
+        else if(expiryDate.isBefore(Util_Supplier_Stock.getCurrDay()))
             throw new Exception("expiry date has passed.");
         else
             products.put(productNum, new SupplierProductBusiness( supplierNum,productName,productNum, manufacturer, price, maxAmount, expiryDate));
     }
 
     public void editProduct(String productName, String manufacturer, int price, int maxAmount, LocalDate expiredDate) throws Exception {
-        if(expiredDate.isBefore(LocalDate.now()))
+        if(expiredDate.isBefore(Util_Supplier_Stock.getCurrDay()))
             throw new Exception("expiry date has passed.");
         SupplierProductBusiness sp = getProduct(productName,manufacturer);
         if (sp != null)
