@@ -310,8 +310,7 @@ public class OrderController {
      * @param day
      * @throws Exception
      */
-    // go over all orders of the day and find out how much to add to one of the suppliers
-    //loop to find out what is the number of the requested product
+
     //go over all the order products and  modify to the max quantity can be supplied
     //update order product and all order
     public void editRegularItem(ItemToOrder item, DayOfWeek day) throws Exception {
