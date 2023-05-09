@@ -99,7 +99,8 @@ public class OrderController {
             }
             found = false;
         }
-        this.createSpecialOrder(item_to_order_map , true);
+        if(!item_to_order_map.isEmpty())
+            this.createSpecialOrder(item_to_order_map , true);
         return "";
     }
 
