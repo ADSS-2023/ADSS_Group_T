@@ -54,17 +54,17 @@ public class Delivery {
     }
   
     public File getToLogisticsCenterFile() {
-        return ToLogisticsCenterFile;
+        return toLogisticsCenterFile;
     }
 
     public File getFromLogisticsCenterFile() {
-        return FromLogisticsCenterFile;
+        return fromLogisticsCenterFile;
     }
 
     public void addHandledSupplier(Supplier supplier, File f) throws SQLException {
         LinkedHashMap<Product,Integer> products = f.getProducts();
         for(Product p : products.keySet()){
-            dalDeliveryService.insertHandledSupplier(id,supplier.getAddress(),p.getName(),products.get(p));
+            dalDeliveryService.insertHandledSite(id,supplier.getAddress(),p.getName(),products.get(p));
         }
         handledSuppliers.put(supplier, f);
     }
@@ -112,33 +112,37 @@ public class Delivery {
 
     /**
      * add branch to the branches map
-     *
      * @param branch
      * @param fileID
      */
-    public void addBranch(Branch branch, int fileID) {
+    public void addBranch(Branch branch, int fileID) throws SQLException {
         File f = new File(fileID);
         unHandledBranches.put(branch, f);
+        dalDeliveryService.updateCounter("fileCounter",fileID);
     }
 
     /**
      * add products in required amount to the supplier file for this delivery
-     *
      * @param supplier
      * @param p        - the product to add
      * @param amount
      */
-    public int addProductToSupplier(Supplier supplier, Product p, int amount, int fileCounter) {
-        if (!unHandledSuppliers.containsKey(supplier))
+    public int addProductToSupplier(Supplier supplier, Product p, int amount, int fileCounter) throws SQLException {
+        if (!unHandledSuppliers.containsKey(supplier)) {
             unHandledSuppliers.put(supplier, new File(fileCounter++));
+            dalDeliveryService.updateCounter("fileCounter",fileCounter);
+            dalDeliveryService.insertUnHandledSite(id,supplier.getAddress(),p.getName(),amount);
+        }
+        else
+            dalDeliveryService.updateUnHandledSite(id,supplier.getAddress(),p.getName(),amount);
         unHandledSuppliers.get(supplier).addProduct(p, amount);
         return fileCounter;
     }
 
-    public int addProductToLogisticCenterFromFile(Product p, int amount, int fileCounter) {
+    public int addProductToLogisticCenterFromFile(String logisticCenterAddress,Product p, int amount, int fileCounter) throws SQLException {
         if (fromLogisticsCenterFile == null)
             fromLogisticsCenterFile = new File(fileCounter++);
-        dalDeliveryService.in
+        dalDeliveryService.insertUnHandledSite(id,logisticCenterAddress,p.getName(),amount);
         fromLogisticsCenterFile.addProduct(p, amount);
         return fileCounter;
     }

@@ -99,6 +99,21 @@ public class DalDeliveryService {
         dao.delete(dto);
     }
 
+    public void updateCounter(String counter, int newCounter) throws SQLException {
+        dao.update(new CounterDTO(counter,Integer.toString(newCounter - 1)),new CounterDTO(counter,Integer.toString(newCounter)));
+    }
+
+    public void updateUnHandledSite(int deliveryId, String siteAddress, String productName, int newAmount) throws SQLException {
+        LinkedHashMap<String,Object> pk = new LinkedHashMap<>();
+        pk.put("deliveryId",deliveryId);
+        pk.put("siteAddress",siteAddress);
+        pk.put("productName",productName);
+        DeliveryUnHandledSitesDTO dto = findDeliveryUnHandledSites(pk);
+        int oldAmount = dto.getAmount();
+        dao.update(new DeliveryUnHandledSitesDTO(deliveryId,siteAddress,productName,oldAmount),
+                new DeliveryUnHandledSitesDTO(deliveryId,siteAddress,productName,newAmount));
+    }
+
     public Supplier findSupplier(String supplierAddress) throws SQLException {
         SiteDTO dto = dao.find(supplierAddress,"SiteAddress","Site",SiteDTO.class);
         if(dto == null)
@@ -133,6 +148,10 @@ public class DalDeliveryService {
         if(dto == null)
             throw new RuntimeException("there is no delivery with id: " + deliveryId);
         return new Delivery(dto,this);
+    }
+
+    public DeliveryUnHandledSitesDTO findDeliveryUnHandledSites(LinkedHashMap<String,Object> pk) throws SQLException {
+        return dao.find(pk,"DeliveryUnHandledSites",DeliveryUnHandledSitesDTO.class);
     }
     public LinkedHashMap<String, Supplier> findAllSupplier() throws SQLException {
         ArrayList<SiteDTO> suppliersDTOs =  siteDAO.findAllSite("Supplier");

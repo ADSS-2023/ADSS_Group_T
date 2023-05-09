@@ -172,7 +172,8 @@ public class DeliveryController {
                                 d.addBranch(branch, filesCounter++);
                                 shiftController.addStoreKeeperRequirement(requiredDate, branch.getAddress());
                             }
-                            this.filesCounter = d.addProductToLogisticCenterFromFile(product, products.get(product), filesCounter);
+                            this.filesCounter = d.addProductToLogisticCenterFromFile(logisticCenterController.getLogisticCenter().getAddress()
+                                    ,product, products.get(product), filesCounter);
                             //TODO update fileCounter in DB
                             products.remove(product);
                         }
@@ -201,7 +202,8 @@ public class DeliveryController {
                 for (Product product : new LinkedHashSet<>(products.keySet())) {
                     if (product.getCoolingLevel() == coolingLevel) {
                         //TODO update fileCounter in DB
-                        this.filesCounter = delivery.addProductToLogisticCenterFromFile(product, products.get(product), filesCounter);
+                        this.filesCounter = delivery.addProductToLogisticCenterFromFile(logisticCenterController.getLogisticCenter().getAddress(),
+                                product, products.get(product), filesCounter);
                         products.remove(product);
                     }
                 }
