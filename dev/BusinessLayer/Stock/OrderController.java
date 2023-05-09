@@ -38,7 +38,9 @@ public class OrderController {
             list_to_order.addLast(new ItemToOrder(inventory.get_item_by_id(item_id).get_name(),
                     inventory.get_item_by_id(item_id).manufacturer_name, quantity, null, -1,-1));
         }
-        order_service.createRegularOrder(list_to_order);
+        if(!order_service.createRegularOrder(list_to_order)){
+            throw new Exception("\u001B[31mOrder cannot be supplied\u001B[0m");
+        }
     }
 
     /**
@@ -59,7 +61,9 @@ public class OrderController {
             special_orders_track.put(item_id,quantity);
 
         }
-        order_service.createSpecialOrder(list_to_order,isUrgent);
+        if (!order_service.createSpecialOrder(list_to_order,isUrgent))
+            throw new Exception("\u001B[31mOrder cannot be supplied\u001B[0m");
+
     }
 
     /**
