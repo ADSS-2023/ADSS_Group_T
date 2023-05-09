@@ -38,21 +38,21 @@ public class SupplierController {
         }
     }
 
-    /**
-     * add a product to the supplier
-     *
-     * @param address - the address of the supplier
-     * @param product - the product to add
-     * @return true if the product added successfully, and false otherwise
-     */
-    public boolean addProductToSupplier(String address, String productName, int coolingLevel) {
-        Supplier supplier = getSupplier(address);
-        if (supplier == null) {
-            throw new IllegalArgumentException("no such address");
-        }
-        supplier.addProduct(productName, coolingLevel);
-        return true;
-    }
+//    /**
+//     * add a product to the supplier
+//     *
+//     * @param address - the address of the supplier
+//     * @param product - the product to add
+//     * @return true if the product added successfully, and false otherwise
+//     */
+//    public boolean addProductToSupplier(String address, String productName, int coolingLevel) {
+//        Supplier supplier = getSupplier(address);
+//        if (supplier == null) {
+//            throw new IllegalArgumentException("no such address");
+//        }
+//        supplier.addProduct(productName, coolingLevel);
+//        return true;
+//    }
 
     public LinkedHashMap<String, Supplier> getAllSuppliers() {
         try {
@@ -80,12 +80,12 @@ public class SupplierController {
             return suppliers.get(supplierAddress);
     }
 
-    public String getSupplierProducts(String supplier) {
-
-        if (!suppliers.containsKey(supplier))
+    public String getSupplierProducts(String supplierAddress) {
+        Supplier supplier = getSupplier(supplierAddress);
+        if (supplier == null)
             throw new IllegalArgumentException("no such supp");
         else
-            return suppliers.get(supplier).getAllProducts().toString();
+            return supplier.getAllProducts().toString();
     }
 
     /**
@@ -96,15 +96,12 @@ public class SupplierController {
      * @throws IllegalArgumentException if the supplier does not exist
      */
     public void addProductsToSupplier(String supplierAddress, LinkedHashMap<String, Integer> productMap1) {
-
-        if (!suppliers.containsKey(supplierAddress))
+        Supplier supplier = getSupplier(supplierAddress);
+        if(supplier == null)
             throw new IllegalArgumentException("no such supp");
-        else {
-            Supplier supplier = suppliers.get(supplierAddress);
-            for (String productName : productMap1.keySet()) {
-                Integer coolingLevel = productMap1.get(productName);
-                supplier.addProduct(productName, coolingLevel);
-            }
+        for (String productName : productMap1.keySet()) {
+            Integer coolingLevel = productMap1.get(productName);
+            supplier.addProduct(productName, coolingLevel);
         }
     }
 }
