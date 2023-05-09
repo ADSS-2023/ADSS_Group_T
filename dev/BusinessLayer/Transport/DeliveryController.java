@@ -7,6 +7,7 @@ import BusinessLayer.HR.ShiftController;
 import DataLayer.HR_T_DAL.DalService.DalDeliveryService;
 import UtilSuper.EnterWeightInterface;
 import UtilSuper.EnterOverWeightInterface;
+import UtilSuper.Time;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -82,8 +83,8 @@ public class DeliveryController {
      */
     public LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> orderDelivery(String destinationString, LinkedHashMap<String, LinkedHashMap<String, Integer>> suppliersString,
                                                                                   String requiredDateString) throws Exception {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate requiredDate = LocalDate.parse(requiredDateString, formatter);
+
+        LocalDate requiredDate = Time.stringToDate(requiredDateString);
         boolean isDestinationIsLogisticCenter = destinationString.equals(logisticCenterController.getAddress());
         boolean isSupplierIsLogisticCenter = suppliersString.containsKey(logisticCenterController.getAddress());
         if(isDestinationIsLogisticCenter && isSupplierIsLogisticCenter)
