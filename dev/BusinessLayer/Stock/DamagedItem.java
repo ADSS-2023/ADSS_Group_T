@@ -24,11 +24,10 @@ public class DamagedItem {
         this.damaged_item_DTO = new DamagedItemDTO(item.item_id , amount , description);
     }
 
-    public DamagedItem(DamagedItemDTO dto,Item item,InventoryDalController inventoryDalController){
+    public DamagedItem(DamagedItemDTO dto,Item item){
         this.item =  item;
         this.amount = dto.getAmount();
         this.description = dto.getDescription();
-        this.inventoryDalController = inventoryDalController;
         this.damaged_item_DTO = dto;
     }
     /**
