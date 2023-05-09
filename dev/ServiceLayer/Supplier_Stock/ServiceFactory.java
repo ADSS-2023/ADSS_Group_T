@@ -60,8 +60,8 @@ public class ServiceFactory {
         this.orderService = new OrderService(this.oc, this.sc);
         uss = new Util_Supplier_Stock();
         connection = makeCon();
-        this.manageOrderService.setOrderController(this.inventoryService.get_inventory(), this.orderService,inventoryDalController);
         inventoryDalController = new InventoryDalController(connection);
+        this.manageOrderService.setOrderController(this.inventoryService.get_inventory(), this.orderService,inventoryDalController);
         this.inventoryService.get_inventory().setInventoryDalController(inventoryDalController);
         inventoryService.get_inventory().setItemDalController(new ItemDalController(connection));
 
