@@ -105,6 +105,13 @@ public class DalDeliveryService {
         dao.update(new CounterDTO(counter,Integer.toString(newCounter - 1)),new CounterDTO(counter,Integer.toString(newCounter)));
     }
 
+    public void updateDeliveryDriver(Delivery delivery,int newDriverId) throws SQLException {
+        dao.update(new DeliveryDTO(delivery.getId(),delivery.getDate().toString(),delivery.getDepartureTime().toString(),
+                delivery.getTruckWeight(), delivery.getSource().getAddress(),delivery.getDriverID(),delivery.getTruckNumber(),delivery.getShippingArea()),
+                new DeliveryDTO(delivery.getId(),delivery.getDate().toString(),delivery.getDepartureTime().toString(),
+                delivery.getTruckWeight(), delivery.getSource().getAddress(),newDriverId,delivery.getTruckNumber(),delivery.getShippingArea()));
+    }
+
     public void updateUnHandledSite(int deliveryId, String siteAddress, String productName, int newAmount) throws SQLException {
         LinkedHashMap<String,Object> pk = new LinkedHashMap<>();
         pk.put("deliveryId",deliveryId);

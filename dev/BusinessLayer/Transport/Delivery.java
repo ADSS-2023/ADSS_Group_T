@@ -248,6 +248,7 @@ public class Delivery {
 
     public void setDriver(Driver driver) {
         this.driverID = driver.getId();
+        dalDeliveryService.
     }
 
     public void addLogisticCenterDestination(int fileCounter) throws SQLException {

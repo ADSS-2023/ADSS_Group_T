@@ -326,21 +326,22 @@ public class DeliveryController {
         LocalDate tomorrow = this.currDate.plusDays(1);
         ArrayList<Driver> driversTomorrow = sortDriversByLicenseLevel(driverController.getDriversByDate(tomorrow));
 
-        ArrayList<Delivery> deliveriesTomorrow = sortDeliveriesByTruckWeight(date2deliveries.get(tomorrow));
-        ArrayList<Delivery> deliveriesWithoutDriveries = new ArrayList<>();
+        ArrayList<Delivery> deliveriesTomorrow = sortDeliveriesByTruckWeight(getDeliveriesByDate(tomorrow));
+        ArrayList<Delivery> deliveriesWithoutDrivers = new ArrayList<>();
         for (Delivery delivery : deliveriesTomorrow) {
             Truck truck = logisticCenterController.getTruck(delivery.getTruckNumber());
             for (Driver driver : driversTomorrow) {
-                if (driver.getLicenseLevel().compareTo(truck.getLicenseType()) >= 0) {
-                    if (driver.getCoolingLevel().equals(truck.getCoolingLevel())) {
+                if (driver.getLicenseLevel().ordinal()>= truck.getLicenseType().ordinal()) {
+                    if (driver.getCoolingLevel().ordinal() >= truck.getCoolingLevel().ordinal()) {
+                        dalDeliveryService.updateDeliveryDriver(delivery,driver.getId());
                         delivery.setDriver(driver);
                         break;
                     }
                 }
             }
-            deliveriesWithoutDriveries.add(delivery);
+            deliveriesWithoutDrivers.add(delivery);
         }
-        return deliveriesWithoutDriveries;
+        return deliveriesWithoutDrivers;
     }
 
     public ArrayList<Delivery> sortDeliveriesByTruckWeight(ArrayList<Delivery> deliveries)throws Exception {
