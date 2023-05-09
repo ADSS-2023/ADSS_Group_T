@@ -55,7 +55,28 @@ public Driver lazyLoadDriver (int id) throws SQLException {
         }
         return driverSubmission;
     }
-    public void assignDriver(LocalDate date, int id) throws SQLException {
+
+    public String getRequirementsByDate(LocalDate date) {
+        if (!driversRequirements.containsKey(date)) {
+            return "No requirements found for " + date.toString();
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("Requirements for " + date.toString() + ":\n");
+        sb.append("----------------------------------\n");
+
+        ArrayList<Pair<Driver.LicenseType, Driver.CoolingLevel>> requirements = driversRequirements.get(date);
+        for (int i = 0; i < requirements.size(); i++) {
+            sb.append((i + 1) + ". License type: " + requirements.get(i).getFirst().toString() + ", Cooling level: " + requirements.get(i).getSecond().toString() + "\n");
+        }
+
+        return sb.toString();
+    }
+
+
+
+
+    public void assignDriver(LocalDate date, int id, int numRequirement) throws SQLException {
         // get the driver with the given id
         Driver driver = lazyLoadDriver(id);
         if (driver == null)
@@ -71,6 +92,8 @@ public Driver lazyLoadDriver (int id) throws SQLException {
         if (driverSubmissionToAssign.get(driver).booleanValue()) {
             throw new IllegalArgumentException("Driver is already assigned to a shift on this day.");
         }
+
+        ArrayList<Pair<Driver.LicenseType, Driver.CoolingLevel>> requirementsForDate;
 
         // Requirement : A driver cannot work more than six times a week.
         LocalDate startOfWeek = date.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
@@ -92,45 +115,89 @@ public Driver lazyLoadDriver (int id) throws SQLException {
             throw new IllegalArgumentException("Driver has already worked six shifts this week");
         }
 
+        //Check that it meets the requirements
+        Pair<Driver.LicenseType, Driver.CoolingLevel> requirement = driversRequirements.get(date).get(numRequirement+1);
+        if ( !isDriverMeetingTheRequirements(driver, requirement))
+            throw new IllegalArgumentException("Driver is not meeting with the requierements");
         // mark the driver as assigned for the given date
         driverSubmissionToAssign.replace(driver, false, true);
         dalDriverService.assignDriver(id, date);
+
+        driversRequirements.remove(driversRequirements.get(date).get(numRequirement+1));
+    }
+
+    public boolean isDriverMeetingTheRequirements(Driver driver, Pair<Driver.LicenseType, Driver.CoolingLevel> requirement) {
+        if (requirement == null )
+            throw new IllegalArgumentException("No such requeirement exist");
+        if (driver == null)
+            throw new IllegalArgumentException("No such driver");
+        return driver.getLicenseLevel().ordinal() >= requirement.getFirst().ordinal() && driver.getCoolingLevel().ordinal() >= requirement.getSecond().ordinal();
+    }
+
+
+    public HashMap<Driver, Boolean> lazyLoadAllDriverSubmitionByDate(LocalDate date) throws SQLException {
+        HashMap<Driver, Boolean> allDriversInDate = dalDriverService.findAllSubmissionByDate(date);
+        date2driversSubmission.replace(date, allDriversInDate);
+        return  allDriversInDate;
+    }
+
+    public ArrayList<Pair<Driver.LicenseType, Driver.CoolingLevel>> lazyLoadAllRequierementsForDate(LocalDate date) throws SQLException {
+        ArrayList<Pair<Driver.LicenseType, Driver.CoolingLevel>> requirementsForDate = dalDriverService.findAllRequirementsByDate(date);
+        driversRequirements.replace(date, requirementsForDate);
+        return  requirementsForDate;
     }
 
 
 
-
-    public void assignAllDriver(LocalDate date) throws SQLException {
-        HashMap<Driver, Boolean> driversForDate = date2driversSubmission.get(date);
-        for (Driver driver: driversForDate.keySet()) {
-                this.assignDriver(date,driver.getId());
+    public int getMinRequirementsLicenseLevelByDate(LocalDate date) {
+        ArrayList<Pair<Driver.LicenseType, Driver.CoolingLevel>> requirements = driversRequirements.get(date);
+        int minLicenseLevel = Integer.MAX_VALUE;
+        for (Pair<Driver.LicenseType, Driver.CoolingLevel> requirement : requirements) {
+            int licenseLevel = requirement.getFirst().ordinal();
+            if (licenseLevel < minLicenseLevel) {
+                minLicenseLevel = licenseLevel;
+            }
         }
+        return minLicenseLevel;
     }
 
-
-    public boolean submitShift(LocalDate date, int id) {
-        if (!drivers.containsKey(id)) {
-            throw new IllegalArgumentException("Driver with id " + id + " does not exist.");
+    public int getMinRequirementsCoolingLevelByDate(LocalDate date) {
+        ArrayList<Pair<Driver.LicenseType, Driver.CoolingLevel>> requirements = driversRequirements.get(date);
+        int minCoolingLevel = Integer.MAX_VALUE;
+        for (Pair<Driver.LicenseType, Driver.CoolingLevel> requirement : requirements) {
+            int coolingLevel = requirement.getSecond().ordinal();
+            if (coolingLevel < minCoolingLevel) {
+                minCoolingLevel = coolingLevel;
+            }
         }
-//        if (!drivers.get(id).isLegalDate(date)) {
-//            throw new IllegalArgumentException("The driver cannot work on " + date);
-//        }
+        return minCoolingLevel;
+    }
+
+    public String submitShift(LocalDate date, int id, CoolingLevel coolingLevel, LicenseType licenseType) {
 
         if (date2driversSubmission.containsKey(date) && date2driversSubmission.get(date).containsKey(drivers.get(id))) {
             throw new IllegalArgumentException("Driver with id " + id + " has already submitted for " + date);
+        }
+        // Check if the driver has the required license type
+        if (drivers.get(id).getLicenseLevel().ordinal() >= getMinRequirementsLicenseLevelByDate(date)) {
+            throw new IllegalArgumentException("Driver with id " + id + " does not have the required license type.");
+        }
+
+        // Check if the driver has the required cooling level
+        if (drivers.get(id).getCoolingLevel().ordinal() >= getMinRequirementsCoolingLevelByDate(date)) {
+            throw new IllegalArgumentException("Driver with id " + id + " does not have the required cooling level.");
+        }
+
+        if (!drivers.containsKey(id)) {
+            throw new IllegalArgumentException("Driver with id " + id + " does not exist.");
         }
 
         if (!date2driversSubmission.containsKey(date)) {
             date2driversSubmission.put(date, new HashMap<>());
         }
         date2driversSubmission.get(date).put(drivers.get(id), false);
-        return true;
+        return "Driver with id " + id + " submit successfully to " + date.toString();
     }
-
-
-
-
-
 
 
     // TODO- make submit Shift to driver and assign shift
