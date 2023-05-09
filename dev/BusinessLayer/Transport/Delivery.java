@@ -127,10 +127,10 @@ public class Delivery {
         return fileCounter;
     }
 
-    public int addProductToLogisticCenterFromFile(Product p, int amount, int fileCounter) {
+    public int addProductToLogisticCenterFromFile(String logisticCenterAddress,Product p, int amount, int fileCounter) throws SQLException {
         if (fromLogisticsCenterFile == null)
             fromLogisticsCenterFile = new File(fileCounter++);
-        dalDeliveryService.in
+        dalDeliveryService.insertUnHandledSite(id,logisticCenterAddress,p.getName(),amount);
         fromLogisticsCenterFile.addProduct(p, amount);
         return fileCounter;
     }
