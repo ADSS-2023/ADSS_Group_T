@@ -1,10 +1,10 @@
 package BusinessLayer.Supplier;
 
+import BusinessLayer.Supplier.Supplier_Util.PaymentTerms;
 import BusinessLayer.Supplier.Suppliers.ConstantSupplier;
 import BusinessLayer.Supplier.Suppliers.OccasionalSupplier;
 import BusinessLayer.Supplier.Suppliers.SupplierBusiness;
 import BusinessLayer.Supplier_Stock.ItemToOrder;
-import BusinessLayer.Supplier.Util.PaymentTerms;
 import DataLayer.Inventory_Supplier_Dal.DalController.SupplierDalController;
 
 import java.sql.Connection;

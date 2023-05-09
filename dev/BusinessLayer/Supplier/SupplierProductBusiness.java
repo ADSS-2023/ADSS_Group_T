@@ -2,11 +2,13 @@ package BusinessLayer.Supplier;
 import BusinessLayer.Supplier.Discounts.Discount;
 import BusinessLayer.Supplier.Discounts.PercentDiscount;
 import BusinessLayer.Supplier.Discounts.NumberDiscount;
+import DataLayer.Inventory_Supplier_Dal.DAO.SupplierDAO.ProductDiscountDAO;
 import DataLayer.Inventory_Supplier_Dal.DAO.SupplierDAO.SupplierProductDAO;
 import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.ProductDiscountDTO;
 import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.SupplierProductDTO;
 import DataLayer.Inventory_Supplier_Dal.DalController.SupplierDalController;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -61,8 +63,13 @@ public class SupplierProductBusiness {
         if(!isDiscountValid(productAmount, newDiscount, isPercentage))
             throw new Exception("Discount details are not valid");
         for (Discount dis : quantitiesAgreement) {
-                if (dis.isPercentage() == isPercentage && dis.getAmount() == productAmount)
+                if (dis.isPercentage() == isPercentage && dis.getAmount() == productAmount) {
                     dis.editDiscount(productAmount, newDiscount);
+                    ProductDiscountDTO newDTO = new ProductDiscountDTO(supplierNum, productAmount, newDiscount, isPercentage, productNum);
+                    supplierDalController.update(dis.getDiscountDTO(), newDTO);
+                    dis.setDiscountDTO(newDTO);
+                }
+
             }
     }
 
@@ -86,7 +93,9 @@ public class SupplierProductBusiness {
             if(dis.isPercentage() == isPercentage && dis.getAmount() == productAmount && dis.getDiscount() == discount)
                 curr = dis;
         }
+        supplierDalController.delete(curr.getDiscountDTO());
         quantitiesAgreement.remove(curr);
+
     }
 
     public boolean hasEnoughQuantity(int quantity){
@@ -138,13 +147,16 @@ public class SupplierProductBusiness {
         return supplierNum;
     }
 
-    public void editProduct(int supplierNum, String productName, String manufacturer, float price, int maxAmount, LocalDate expiryDate) {
+    public void editProduct(int supplierNum, String productName, String manufacturer, float price, int maxAmount, LocalDate expiryDate) throws SQLException {
         this.supplierNum = supplierNum;
         this.name = productName;
         this.manufacturer = manufacturer;
         this.price = price;
         this.maxAmount = maxAmount;
         this.expiryDate = expiryDate;
+        SupplierProductDTO newDTO = new SupplierProductDTO(supplierNum,productNum, name, manufacturer, price, maxAmount, expiryDate.toString());
+        supplierDalController.update(supplierProductDTO, newDTO);
+        supplierProductDTO = newDTO;
     }
 
     @Override

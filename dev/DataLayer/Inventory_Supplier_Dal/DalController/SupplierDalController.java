@@ -18,14 +18,14 @@ public class SupplierDalController {
 
     private Connection connection;
 
-    public SupplierDalController(Connection connection, DAO dao) {
+    public SupplierDalController(Connection connection) {
         this.supplierDAO = new SupplierDAO();
         this.supplierProductDAO = new SupplierProductDAO();
         this.supplierContactDAO = new SupplierContactDAO();
         this.supplierDiscountDAO = new SupplierDiscountDAO();
         this.productDiscountDAO = new ProductDiscountDAO();
         this.connection = connection;
-        this.dao = dao;
+        this.dao = new DAO();
     }
 
     public void insert(DTO dto) throws SQLException {
@@ -38,7 +38,4 @@ public class SupplierDalController {
     public void delete(DTO dto) throws SQLException {
         dao.delete(connection, dto);
     }
-
-
-
 }

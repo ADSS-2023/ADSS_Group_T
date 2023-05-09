@@ -3,9 +3,11 @@ package BusinessLayer.Supplier.Discounts;
 import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.DiscountDTO;
 import DataLayer.Inventory_Supplier_Dal.DalController.SupplierDalController;
 
+import java.sql.SQLException;
+
 public class NumberDiscount extends Discount{
     //in this class discount per product presented in shekels
-    public NumberDiscount(int amount, float discount, boolean isPercentage, SupplierDalController supplierDalController, DiscountDTO dto) {
+    public NumberDiscount(int amount, float discount, boolean isPercentage, SupplierDalController supplierDalController, DiscountDTO dto) throws SQLException {
         super(amount, discount,isPercentage, supplierDalController, dto);
         this.discountDTO = dto;
     }

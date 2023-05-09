@@ -9,12 +9,15 @@ public class SupplierDTO extends DTO {
     private int bankAccountNum;
     private boolean selfDelivery;
 
-    public SupplierDTO(int supplierNum, String supplierName, String address, int bankAccountNum, boolean selfDelivery){
+    private int daysToDeliver;
+
+    public SupplierDTO(int supplierNum, String supplierName, String address, int bankAccountNum, boolean selfDelivery, int daysToDeliver){
         super("supplier_supplier");
         this.supplierNum = supplierNum;
         this.supplierName = supplierName;
         this.address = address;
         this.bankAccountNum = bankAccountNum;
         this.selfDelivery = selfDelivery;
+        this.daysToDeliver = daysToDeliver;
     }
 }

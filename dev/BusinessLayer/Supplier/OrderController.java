@@ -100,12 +100,11 @@ public class OrderController {
 
            //calculate supplier general discounts and final prices
            float finalTotalPrice = supplier.getPriceAfterTotalDiscount(totalProductsNum,totalorderPrice);
-           int orderID = orderCounter++;
            for (OrderProduct product : products){
                float discountPerProducts = (product.getFinalPrice()/totalorderPrice)*(totalorderPrice-finalTotalPrice);
                product.setDiscount(discountPerProducts+product.getDiscount());
                product.setFinalPrice(product.getFinalPrice()-discountPerProducts);
-               product.setOrderProductDTO(new OrderProductDTO(orderID, product.getManufacturer(), product.getExpiryDate().toString(), product.getProductNumber(), product.getQuantity(), product.getInitialPrice(), product.getDiscount(), product.getProductName()));
+               product.setOrderProductDTO(new OrderProductDTO(orderCounter, product.getManufacturer(), product.getExpiryDate().toString(), product.getProductNumber(), product.getQuantity(), product.getInitialPrice(), product.getDiscount(), product.getProductName()));
            }
            int daysToSupplied = -1;
            if(!isRegular){
@@ -159,7 +158,7 @@ public class OrderController {
             float initialPrice = product.getPrice()* quantity;
             float discount = initialPrice - product.getPriceByQuantity(quantity);
             float finalPrice = initialPrice-discount;
-            OrderProduct orderProduct = new OrderProduct(product.getName(),productNumber,quantity,initialPrice,discount,finalPrice, product.getManufacturer(),product.getExpiryDate());
+            OrderProduct orderProduct = new OrderProduct(product.getName(),productNumber,quantity,initialPrice,discount,finalPrice, product.getManufacturer(),product.getExpiryDate(), new OrderProductDTO(orderCounter, product.getManufacturer(), product.getExpiryDate().toString(), productNumber, quantity, initialPrice, discount, product.getName()));
            //update the suppliers shopping list
             if(!shoppingLists.containsKey(supplierNum))
                 shoppingLists.put(supplierNum,new LinkedList());

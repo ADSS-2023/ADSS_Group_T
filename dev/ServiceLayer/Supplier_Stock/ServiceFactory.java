@@ -2,6 +2,10 @@ package ServiceLayer.Supplier_Stock;
 
 import BusinessLayer.Supplier.OrderController;
 import BusinessLayer.Supplier.SupplierController;
+import BusinessLayer.Supplier_Stock.Util_Supplier_Stock;
+import DataLayer.Inventory_Supplier_Dal.DalController.OrderDalController;
+import DataLayer.Inventory_Supplier_Dal.DalController.SupplierDalController;
+import DataLayer.Util.DAO;
 import ServiceLayer.Stock.*;
 import ServiceLayer.Supplier.OrderService;
 import ServiceLayer.Supplier.SupplierService;
@@ -35,9 +39,8 @@ public class ServiceFactory {
         this.damagedService = new DamagedService(inventoryService.get_inventory());
         this.itemService = new ItemService(inventoryService.get_inventory());
         this.manageOrderService = new ManageOrderService();
-        DAO dao = new DAO();
-        this.supplierDalController = new SupplierDalController(connection, dao);
-        this.orderDalController = new OrderDalController(connection, dao);
+        this.supplierDalController = new SupplierDalController(connection);
+        this.orderDalController = new OrderDalController(connection);
         this.sc = new SupplierController(connection, supplierDalController);
         this.oc = new OrderController(sc,manageOrderService, connection, orderDalController);
         this.supplierService = new SupplierService(sc,oc);

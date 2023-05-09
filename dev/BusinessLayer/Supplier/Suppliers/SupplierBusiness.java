@@ -4,8 +4,8 @@ import BusinessLayer.Supplier.Discounts.Discount;
 import BusinessLayer.Supplier.Discounts.PercentDiscount;
 import BusinessLayer.Supplier.Discounts.NumberDiscount;
 import BusinessLayer.Supplier.SupplierProductBusiness;
-import BusinessLayer.Supplier.Util.Discounts;
-import BusinessLayer.Supplier.Util.PaymentTerms;
+import BusinessLayer.Supplier.Supplier_Util.Discounts;
+import BusinessLayer.Supplier.Supplier_Util.PaymentTerms;
 import DataLayer.Inventory_Supplier_Dal.DAO.SupplierDAO.SupplierDAO;
 import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.ProductDiscountDTO;
 import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.SupplierContactDTO;
@@ -33,11 +33,11 @@ public abstract class  SupplierBusiness {
 
     private List<Discount> discountPerTotalQuantity;
 
-    private List<Discount> discountPerTotalPrice;
+    protected List<Discount> discountPerTotalPrice;
 
-    private SupplierDTO supplierDTO;
+    protected SupplierDTO supplierDTO;
 
-    private List<SupplierContactDTO> contactDTOS;
+    protected List<SupplierContactDTO> contactDTOS;
 
     private SupplierDalController supplierDalController;
 
@@ -53,7 +53,6 @@ public abstract class  SupplierBusiness {
         this.discountPerTotalPrice = new ArrayList<>();
         this.paymentTerms=paymentTerms;
         this.supplierDalController = supplierDalController;
-        this.supplierDTO = new SupplierDTO(supplierNum, supplierName, address, bankAccountNum, selfDelivery);
         supplierDalController.insert(supplierDTO);
         for (Map.Entry<String, String> entry : contacts.entrySet()) {
             SupplierContactDTO supplierContactDTO = new SupplierContactDTO(supplierNum, entry.getKey(), entry.getValue());

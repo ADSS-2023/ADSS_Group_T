@@ -1,6 +1,8 @@
 package BusinessLayer.Supplier;
 
 import BusinessLayer.Supplier_Stock.Util_Supplier_Stock;
+import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.OrderDTO;
+import DataLayer.Inventory_Supplier_Dal.DalController.OrderDalController;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
