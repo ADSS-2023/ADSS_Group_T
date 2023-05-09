@@ -243,6 +243,7 @@ public class Inventory {
      */
     public void add_item(String categories_index,int item_id, String name, int min_amount, String manufacturer_name, double original_price) throws Exception {
         Item i = new Item(item_id,name,min_amount,manufacturer_name,original_price,itemDalController);
+        i.setCategoryIndex(categories_index);
         set_item_call_back(i);
         if(items.containsKey(item_id)) {
             throw new Exception("Item id already exists");
@@ -339,4 +340,7 @@ public class Inventory {
      */
     public void nextDay(DayOfWeek tomorrow_day) {
     }
+    /*public void loadData(){
+        inv_dal_controller.
+    }*/
 }

@@ -10,6 +10,8 @@ import java.sql.Connection;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class InventoryDalController{
     private CategoryDAO category_DAO;
@@ -34,5 +36,8 @@ public class InventoryDalController{
 
     public void update(DTO old_dto , DTO new_dto) throws SQLException {
         generic_DAO.update(connection , old_dto , new_dto);
+    }
+    public <T extends DTO> T find(LinkedHashMap<String,Object> pk, String tableName, Class<T> dtoClass, Connection connection) throws SQLException {
+        return generic_DAO.find(pk,tableName,dtoClass,connection);
     }
 }

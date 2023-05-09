@@ -8,6 +8,7 @@ public class ItemDTO extends DTO {
     private int minAmount;
     private String manufacturerName;
     private double originalPrice;
+    private String categoriesIndex;
 
 
     public ItemDTO(int itemId, String name, int minAmount, String manufacturerName, double originalPrice) {
@@ -45,5 +46,9 @@ public class ItemDTO extends DTO {
 
     public void setMinAmount(int minAmount) {
         this.minAmount = minAmount;
+    }
+
+    public void setCategoriesIndex(String categoriesIndex) {
+        this.categoriesIndex = categoriesIndex;
     }
 }

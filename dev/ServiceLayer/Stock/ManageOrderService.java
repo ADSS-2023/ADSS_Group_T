@@ -140,6 +140,7 @@ public class ManageOrderService {
 
     public void setOrderController(Inventory inv, OrderService orderService, InventoryDalController inventoryDalController) {
         this.orderController = new OrderController(inv,orderService,inventoryDalController);
+        orderController.setInventoryDalController(inventoryDalController);
     }
 
     public String show_all_orders() {
