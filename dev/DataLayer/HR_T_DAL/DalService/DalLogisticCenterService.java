@@ -73,11 +73,5 @@ public class DalLogisticCenterService {
             productsInStock.put(new Product(productDTO), logisticCenterStockDTO.getAmount());
         }
         return productsInStock;
-
-        LinkedHashMap<Integer, Truck> trucks = new LinkedHashMap<>();
-        for(TruckDTO truckDTO : truckDTOS){
-            trucks.put(truckDTO.getLicenseNumber(),new Truck(truckDTO));
-        }
-        return  trucks;
     }
 }
