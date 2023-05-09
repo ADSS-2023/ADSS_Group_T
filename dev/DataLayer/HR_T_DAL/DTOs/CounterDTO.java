@@ -7,6 +7,7 @@ public class CounterDTO extends DTO {
 
 
     public CounterDTO(String counter, String count){
+        super("Counter");
       this.counter = counter;
       this.count = count;
     }

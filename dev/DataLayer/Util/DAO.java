@@ -238,5 +238,11 @@ public class DAO {
 
         return results;
     }
+    public void deleteTableData(DTO dto) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement("DELETE FROM " + dto.getTableName())) {
+            statement.executeUpdate();
+        }
+    }
+
 }
 

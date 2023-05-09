@@ -18,17 +18,22 @@ public class Data_init {
 
     }
     public static void initBasicData(DAO dao) throws SQLException {
+
+
+
         SiteDTO logisticCenter = new SiteDTO("logistic center address","0000000000","logistic center contact",0,0,0,"logistic center");
+        dao.deleteTableData(logisticCenter);
         dao.insert(logisticCenter);
 
         CounterDTO dateCounter = new CounterDTO("date counter", LocalDate.now().toString());
+        dao.deleteTableData(dateCounter);
         dao.insert(dateCounter);
 
         CounterDTO fileCounter = new CounterDTO("file counter","0");
         dao.insert(fileCounter);
 
-        CounterDTO deliveryCounter = new CounterDTO("file counter","0");
-        dao.insert(fileCounter);
+        CounterDTO deliveryCounter = new CounterDTO("delivery counter","0");
+        dao.insert(deliveryCounter);
 
 
 
