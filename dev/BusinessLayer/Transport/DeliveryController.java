@@ -4,6 +4,7 @@ import BusinessLayer.HR.Driver;
 import BusinessLayer.HR.Driver.CoolingLevel;
 import BusinessLayer.HR.DriverController;
 import BusinessLayer.HR.ShiftController;
+import DataLayer.HR_T_DAL.DTOs.DeliveryDTO;
 import DataLayer.HR_T_DAL.DalService.DalDeliveryService;
 import UtilSuper.EnterWeightInterface;
 import UtilSuper.EnterOverWeightInterface;
@@ -341,10 +342,10 @@ public class DeliveryController {
     }
 
 
-    public Delivery getDelivery(int id) {
+    public Delivery getDelivery(int id) throws SQLException {
         if(deliveries.containsKey(id))
             return deliveries.get(id);
-        dalDeliveryService.find
+        return dalDeliveryService.findDelivery(id);
     }
 
 
