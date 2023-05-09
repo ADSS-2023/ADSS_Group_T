@@ -7,10 +7,12 @@ import BusinessLayer.HR.User.UserType;
 import DataLayer.HR_T_DAL.DAOs.DriverDAO;
 import DataLayer.HR_T_DAL.DTOs.DriverDTO;
 import DataLayer.HR_T_DAL.DTOs.UserDTO;
+import UtilSuper.Pair;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -31,6 +33,21 @@ public class DalDriverService {
 
     // TODO - israel
     public HashMap<Driver, Boolean> findSubmissionByIdAndDate(int driverId, LocalDate date) throws SQLException { // the boolean is if assigned or not
+        return null;
+    }
+
+    // TODO - israel
+    public HashMap<Driver, Boolean>  findAllSubmissionByDate(LocalDate date) throws SQLException { // the boolean is if assigned or not
+        return null;
+    }
+
+    // TODO - israel
+    public ArrayList<Pair<Driver.LicenseType, Driver.CoolingLevel>>  findAllRequirementsByDate(LocalDate date) throws SQLException { // the boolean is if assigned or not
+        return null;
+    }
+
+    // TODO - israel
+    public ArrayList<Pair<Driver.LicenseType, Driver.CoolingLevel>> findRequirementsByDate(LocalDate date) throws SQLException { // the boolean is if assigned or not
         return null;
     }
 
