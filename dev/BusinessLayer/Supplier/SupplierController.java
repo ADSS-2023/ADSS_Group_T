@@ -5,6 +5,7 @@ import BusinessLayer.Supplier.Suppliers.ConstantSupplier;
 import BusinessLayer.Supplier.Suppliers.OccasionalSupplier;
 import BusinessLayer.Supplier.Suppliers.SupplierBusiness;
 import BusinessLayer.Supplier_Stock.ItemToOrder;
+import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.SupplierDTO;
 import DataLayer.Inventory_Supplier_Dal.DalController.SupplierDalController;
 
 import java.sql.Connection;
@@ -30,6 +31,9 @@ public class SupplierController {
         else{
             suppliers.put(supplierNum, new ConstantSupplier(name, address, supplierNum, bankAccountNum, contacts, constDeliveryDays, selfDelivery, paymentTerms, supplierDalController));
         }
+
+        supplierDalController.findAll("supplier", SupplierDTO.class);
+
     }
 
     public void deleteSupplier(int supplierNum) throws Exception {

@@ -80,9 +80,11 @@ public class SupplierProductBusiness {
         if(!isDiscountValid(productAmount, discount, isPercentage))
             throw new Exception("Discount details are not valid");
             if (isPercentage)
-                quantitiesAgreement.add(new PercentDiscount(productAmount, discount, true, supplierDalController, new ProductDiscountDTO(supplierNum, productAmount, discount, isPercentage, productNum)));
+                quantitiesAgreement.add(new PercentDiscount(productAmount, discount, true, supplierDalController,
+                        new ProductDiscountDTO(supplierNum, productAmount, discount, isPercentage, productNum)));
             else
-                quantitiesAgreement.add(new NumberDiscount(productAmount, discount, false, supplierDalController, new ProductDiscountDTO(supplierNum, productAmount, discount, isPercentage, productNum)));
+                quantitiesAgreement.add(new NumberDiscount(productAmount, discount, false, supplierDalController,
+                        new ProductDiscountDTO(supplierNum, productAmount, discount, isPercentage, productNum)));
 
     }
 

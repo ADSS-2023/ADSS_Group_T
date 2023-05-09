@@ -110,7 +110,7 @@ public abstract class  SupplierBusiness {
 
     }
 
-    public void deleteContacts() throws SQLException {
+    public void deleteContacts () throws SQLException {
         for (SupplierContactDTO contactDTO : contactDTOS)  {
             supplierDalController.delete(contactDTO);
         }
@@ -121,6 +121,7 @@ public abstract class  SupplierBusiness {
         if(getSupplierProduct(productNum) == null)
             throw new Exception("product doesn't exist.");
         getSupplierProduct(productNum).editProductDiscount(productAmount, discount, isPercentage);
+
     }
 
     public void addProductDiscount(int productNum, int productAmount, int discount, boolean isPercentage) throws Exception {
@@ -147,9 +148,11 @@ public abstract class  SupplierBusiness {
         switch(discountEnum){
             case DISCOUNT_BY_TOTAL_PRICE :
                 if(isPercentage)
-                     discountPerTotalPrice.add(new PercentDiscount(amount,discount,true, supplierDalController, new SupplierDiscountDTO(supplierNum, amount, discount, isPercentage, true)));
+                     discountPerTotalPrice.add(new PercentDiscount(amount,discount,true, supplierDalController,
+                             new SupplierDiscountDTO(supplierNum, amount, discount, isPercentage, true)));
                 else
-                    discountPerTotalPrice.add(new NumberDiscount(amount,discount,false, supplierDalController, new SupplierDiscountDTO(supplierNum, amount, discount, isPercentage, true)));
+                    discountPerTotalPrice.add(new NumberDiscount(amount,discount,false, supplierDalController,
+                            new SupplierDiscountDTO(supplierNum, amount, discount, isPercentage, true)));
                 break;
             case DISCOUNT_BY_TOTAL_QUANTITY:
                 if(isPercentage)

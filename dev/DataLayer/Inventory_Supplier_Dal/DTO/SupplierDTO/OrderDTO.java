@@ -2,6 +2,9 @@ package DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO;
 
 import DataLayer.Util.DTO;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 public class OrderDTO extends DTO {
     private int orderNum;
     private int supplierNum;
@@ -21,4 +24,6 @@ public class OrderDTO extends DTO {
         this.supplierAddress = supplierAddress;
         this.destinationAddress = destinationAddress;
     }
+
+
 }

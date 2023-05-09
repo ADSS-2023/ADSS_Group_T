@@ -6,6 +6,7 @@ import DataLayer.Util.DTO;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class SupplierDalController {
 
@@ -38,4 +39,9 @@ public class SupplierDalController {
     public void delete(DTO dto) throws SQLException {
         dao.delete(connection, dto);
     }
+
+    public <T extends DTO> ArrayList<T> findAll  (String tableName,Class<T> DTOName) throws SQLException {
+        return dao.findAll(tableName,DTOName,connection);
+    }
+
 }

@@ -1,10 +1,22 @@
 package DataLayer.Util;
 
 
+import javax.xml.crypto.dsig.keyinfo.KeyValue;
 import java.lang.reflect.Field;
+
+import java.util.*;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.List;
+
 public class DAO {
     /**
      * This function gets a dto type, and insert the dto into the suitable table.
@@ -129,6 +141,95 @@ public class DAO {
             index++;
         }
         statement.executeUpdate();
+    }
+
+    public <T extends DTO> T find(LinkedHashMap<String,Object> pk, String tableName, Class<T> dtoClass,Connection connection) throws SQLException {
+        T result = null;
+        String sql = "SELECT * FROM " + tableName + " WHERE ";
+        ArrayList<String> pkNames = new ArrayList<>(pk.keySet());
+        for(int i = 0; i< pkNames.size() - 1;i++)
+            sql = sql + pkNames.get(i) + " = " + pk.get(pkNames.get(i)) + " and " ;
+        sql = sql + pkNames.get(pkNames.size()-1) + " = " + pk.get(pkNames.get(pkNames.size()-1));
+
+
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                result = dtoClass.getDeclaredConstructor().newInstance();
+                result.setTableName(tableName);
+
+                ResultSetMetaData metaData = resultSet.getMetaData();
+                int columnCount = metaData.getColumnCount();
+
+                for (int i = 1; i <= columnCount; i++) {
+                    String columnName = metaData.getColumnName(i);
+                    Object value = resultSet.getObject(i);
+                    Field field = result.getClass().getDeclaredField(columnName);
+                    field.setAccessible(true);
+                    field.set(result, value);
+                }
+            }
+        } catch (ReflectiveOperationException e) {
+            throw new SQLException("Error creating DTO instance", e);
+        }
+
+        return result;
+    }
+
+    public <T extends DTO> ArrayList<T> findAllOfCondition(String tableName, String conditionKey,Object conditionValue,Class<T> classDTo,Connection connection) throws SQLException {
+        ArrayList<T> results = new ArrayList<>();
+        String sql = "SELECT * FROM "+tableName+" where "+conditionKey+ " = " +conditionValue.toString();
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            ResultSet resultSet = statement.executeQuery();
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            int columnCount = metaData.getColumnCount();
+            while (resultSet.next()) {
+                T dto = classDTo.getDeclaredConstructor().newInstance();
+                dto.setTableName(tableName);
+                for (int i = 1; i <= columnCount; i++) {
+                    String columnName = metaData.getColumnName(i);
+                    Object value = resultSet.getObject(i);
+                    Field field = dto.getClass().getDeclaredField(columnName);
+                    field.setAccessible(true);
+                    field.set(dto, value);
+                }
+                results.add(dto);
+            }
+        } catch (ReflectiveOperationException e) {
+            throw new SQLException("Error creating DTO instance", e);
+        }
+        return results;
+    }
+
+    public <T extends DTO> ArrayList<T> findAll(String tableName, Class<T> dtoClass,Connection connection) throws SQLException {
+        ArrayList<T> results = new ArrayList<>();
+        String sql = "SELECT * FROM " + tableName;
+
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            ResultSet resultSet = statement.executeQuery();
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            int columnCount = metaData.getColumnCount();
+
+            while (resultSet.next()) {
+                T dto = dtoClass.getDeclaredConstructor().newInstance();
+                dto.setTableName(tableName);
+
+                for (int i = 1; i <= columnCount; i++) {
+                    String columnName = metaData.getColumnName(i);
+                    Object value = resultSet.getObject(i);
+                    Field field = dto.getClass().getDeclaredField(columnName);
+                    field.setAccessible(true);
+                    field.set(dto, value);
+                }
+
+                results.add(dto);
+            }
+        } catch (ReflectiveOperationException e) {
+            throw new SQLException("Error creating DTO instance", e);
+        }
+
+        return results;
     }
 }
 
