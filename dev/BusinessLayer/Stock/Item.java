@@ -1,6 +1,7 @@
 package BusinessLayer.Stock;
 
 
+import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.CategoryDTO;
 import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.ItemDTO;
 import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.ItemPerOrderDTO;
 import DataLayer.Inventory_Supplier_Dal.DalController.ItemDalController;
@@ -91,6 +92,12 @@ public class Item implements ProductCategoryManagement {
     public void add_item(String index, Item item) {
         //do nothing
     }
+
+    @Override
+    public void add_product(CategoryDTO categoryDTO, String next_index) {
+
+    }
+
     /**
      * This function return the minimum amount of the current item.
      * @return

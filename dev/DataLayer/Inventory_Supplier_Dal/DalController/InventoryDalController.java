@@ -10,6 +10,7 @@ import java.sql.Connection;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
@@ -43,5 +44,11 @@ public class InventoryDalController{
     }
     public <T extends DTO> T find(LinkedHashMap<String,Object> pk, String tableName, Class<T> dtoClass, Connection connection) throws SQLException {
         return generic_DAO.find(pk,tableName,dtoClass,connection);
+    }
+    public <T extends DTO> ArrayList<T> findAll(String tableName, Class<T> dtoClass) throws SQLException {
+        return generic_DAO.findAll(tableName,dtoClass,connection);
+    }
+    public <T extends DTO> ArrayList<T> findAllCategories(String tableName, Class<T> dtoClass) throws SQLException {
+        return category_DAO.findAll(tableName,dtoClass,connection);
     }
 }
