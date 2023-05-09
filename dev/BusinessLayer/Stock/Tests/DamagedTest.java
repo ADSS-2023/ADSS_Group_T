@@ -38,7 +38,6 @@ public class DamagedTest {
         try {
             int before_amount = inventory.get_item_by_id(1).amount_store();
             damagedService.report_damaged_item( 1, 120,3, "Damaged during transit");
-
             assertEquals(inventory.get_item_by_id(1).amount_store(), before_amount - 3);
         }
         catch (Exception e){
