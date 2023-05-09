@@ -26,8 +26,9 @@ public class Damaged {
      * @param description
      */
     public String addDamagedItem(Item item ,int order_id, int amount , String description) throws Exception {
-        damagedItems.add(new DamagedItem(item , amount , description));
-        //send invdalCon
+        DamagedItem new_damaged_item = new DamagedItem(item , amount , description);
+        damagedItems.add(new_damaged_item);
+        this.inventoryDalController.insert(new_damaged_item.getDto());
         return item.reduce(order_id,amount);
     }
 
