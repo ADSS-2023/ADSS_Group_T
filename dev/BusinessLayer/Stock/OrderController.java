@@ -220,7 +220,7 @@ public class OrderController {
         String to_return = "";
         for(int i = 0; i < 7 ;i++){
             to_return +=
-                    String.format("---------%s---------\n%s\n%s",
+                    String.format("---------%s---------\nRegular orders:\n\t%s\nSpecial orders:\n\t%s",
             Util_Supplier_Stock.getCurrDay().plusDays(i).getDayOfWeek().toString()
             ,presentItemsByDay(Util_Supplier_Stock.getCurrDay().plusDays(i).getDayOfWeek())
             ,show_special_orders(Util_Supplier_Stock.getCurrDay().plusDays(i).getDayOfWeek()));
@@ -231,6 +231,8 @@ public class OrderController {
         String toReturn = "";
         List<ItemToOrder> special_orders = order_service.getSpecialOrder(cur_day);
         Map<String , Integer> map_of_amount = new HashMap(); // list that sums all the items from a specific one
+        if (special_orders.isEmpty())
+            return "No items to present\n";
         for(ItemToOrder item : special_orders) {
             String item_key = item.getProductName() +" "+ item.getManufacturer();
             if(map_of_amount.containsKey(item_key))
