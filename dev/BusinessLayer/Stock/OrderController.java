@@ -25,11 +25,12 @@ public class OrderController {
     private Map<Integer,Integer> special_orders_track;
     private InventoryDalController inventoryDalController;
 
-    public OrderController(Inventory inventory, OrderService orderService) {
+    public OrderController(Inventory inventory, OrderService orderService,InventoryDalController inventoryDalController) {
         this.inventory = inventory;
         this.order_service = orderService;
         items_to_place = new LinkedList<>();
         special_orders_track = new HashMap<>();
+        this.inventoryDalController = inventoryDalController;
     }
 
     public void setInventoryDalController(InventoryDalController inv){

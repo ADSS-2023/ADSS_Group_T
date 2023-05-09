@@ -161,7 +161,7 @@ public class Category implements ProductCategoryManagement{
             Category new_category = new Category(name," ",inv_dal_controller);
             categories_list.add(new_category);
             new_category.categoryDTO.setFatherCategoryIndex(this.categoryDTO.getIndex());
-            new_category.categoryDTO.setIndex(categoryDTO.getIndex() +"."+ categories_list.size());
+            new_category.categoryDTO.setIndex(categoryDTO.getIndex() +"."+ (categories_list.size()-1));
             inv_dal_controller.insert(new_category.getDto());
         }
         else {

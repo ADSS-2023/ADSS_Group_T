@@ -3,6 +3,7 @@ package ServiceLayer.Stock;
 import BusinessLayer.Stock.Inventory;
 import BusinessLayer.Stock.OrderController;
 import BusinessLayer.Supplier_Stock.ItemToOrder;
+import DataLayer.Inventory_Supplier_Dal.DalController.InventoryDalController;
 import ServiceLayer.Supplier.OrderService;
 
 import java.sql.SQLException;
@@ -137,8 +138,8 @@ public class ManageOrderService {
         }
     }
 
-    public void setOrderController(Inventory inv,OrderService orderService) {
-        this.orderController = new OrderController(inv,orderService);
+    public void setOrderController(Inventory inv, OrderService orderService, InventoryDalController inventoryDalController) {
+        this.orderController = new OrderController(inv,orderService,inventoryDalController);
     }
 
     public String show_all_orders() {
