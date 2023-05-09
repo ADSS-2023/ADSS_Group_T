@@ -5,6 +5,7 @@ import ServiceLayer.Stock.CategoryService;
 import ServiceLayer.Stock.DamagedService;
 import ServiceLayer.Stock.InventoryService;
 import ServiceLayer.Stock.ItemService;
+import ServiceLayer.Supplier_Stock.ServiceFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
