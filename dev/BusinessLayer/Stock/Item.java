@@ -1,8 +1,11 @@
 package BusinessLayer.Stock;
 
 import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.ItemDTO;
+import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.ItemPerOrderDTO;
+import DataLayer.Inventory_Supplier_Dal.DalController.ItemDalController;
 import DataLayer.Util.DTO;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -23,6 +26,8 @@ public class Item implements ProductCategoryManagement {
     private OnAlertCallBack onAlertCallBack;
     protected ItemDTO item_dto;
 
+    private ItemDalController itemDalController;
+
     /**
      * Item constructor
      * @param item_id
@@ -32,7 +37,7 @@ public class Item implements ProductCategoryManagement {
      * @param original_price
      */
     public Item(int item_id, String name, int min_amount,
-                String manufacturer_name, double original_price) {
+                String manufacturer_name, double original_price,ItemDalController itemDalController) throws SQLException {
         this.item_id = item_id;
         this.name = name;
         this.min_amount = min_amount;
@@ -41,6 +46,8 @@ public class Item implements ProductCategoryManagement {
         items = new Hashtable<>();
         discount_list = new LinkedList<>();
         this.item_dto = new ItemDTO(item_id, name, min_amount, manufacturer_name, original_price);
+        this.itemDalController = itemDalController;
+        itemDalController.insert(item_dto);
     }
 
 
@@ -88,10 +95,13 @@ public class Item implements ProductCategoryManagement {
      * @param min_amount
      * @return
      */
-    public String setMin_amount(int min_amount) {
+    public String setMin_amount(int min_amount) throws SQLException {
         String returnString = "";
         if (current_amount() < min_amount)
             returnString = alert() + "\n";
+        ItemDTO temp = item_dto.clone();
+        item_dto.setMinAmount(min_amount);
+        itemDalController.update(temp,item_dto);
         this.min_amount = min_amount;
         returnString += name+" new minimal amount:"+min_amount;
         return returnString;
@@ -207,8 +217,9 @@ public class Item implements ProductCategoryManagement {
      * @param location
      * @param validity
      */
-    public String recive_order(int orderId,int amount_warehouse,int amount_store,double cost_price,String location, LocalDate validity){
+    public String recive_order(int orderId,int amount_warehouse,int amount_store,double cost_price,String location, LocalDate validity) throws SQLException {
         items.put(orderId,new ItemPerOrder(orderId,amount_warehouse,amount_store,cost_price,location, validity));
+        itemDalController.insert(new ItemPerOrderDTO(amount_warehouse,amount_store,cost_price,location,validity.toString(),orderId,this.item_id));
         if (current_amount()<=min_amount)
             return alert();
         return "";
