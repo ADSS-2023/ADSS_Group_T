@@ -473,6 +473,8 @@ public class DeliveryController {
     }
 
     private void loadData(){
+
+
         ArrayList<DateToDeliveryDTO> dateToDeliveryDTOs = dalDeliveryService.findAllDateToDeliveries();
         for (DateToDeliveryDTO dateToDeliveryDTO: dateToDeliveryDTOs){
             addDeliveryToDate(dateToDeliveryDTO.getShiftDate(),new Delivery(dateToDeliveryDTO),false);
