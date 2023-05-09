@@ -1,5 +1,6 @@
 package BusinessLayer.Transport;
 
+import DataLayer.HR_T_DAL.DAOs.LogisticDAO;
 import DataLayer.HR_T_DAL.DalService.DalLogisticCenterService;
 
 import java.sql.SQLException;
@@ -14,11 +15,16 @@ public class LogisticCenter extends Site {
     private DalLogisticCenterService dalLogisticCenterService;
 
     public LogisticCenter(DalLogisticCenterService dalLogisticCenterService) {
-        super("Main address", "0000000000", "logictic center manager", 0, 0);
+        super("logistic center address", "0000000000", "logictic center manager", 0, 0);
         this.dalLogisticCenterService = dalLogisticCenterService;
         this.trucks = new LinkedHashMap<>();
         this.productsInStock = new LinkedHashMap<>();
     }
+
+
+
+
+
 
 
     public boolean addTruck(int licenseNumber, String model, int weight, int maxWeight, int coolingLevel) throws Exception {
