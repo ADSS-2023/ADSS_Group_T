@@ -1,14 +1,19 @@
 package BusinessLayer.Supplier;
 
+import BusinessLayer.Supplier_Stock.Util_Supplier_Stock;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.LinkedList;
 import java.util.List;
 
 
 public class OrderBusiness {
 
-    private final int orderNum;
+
+    private int orderNum;
     private String supplierName;
-    private LocalDateTime orderDate;
+    private LocalDate orderDate;
     private String supplierAddress;
     private String destinationAddress;
     private int supplierNum;
@@ -16,7 +21,21 @@ public class OrderBusiness {
     private String contactNumber;
     private int daysToSupplied;
     private List<OrderProduct> products ;
-
+    public OrderBusiness(int orderNum, String supplierName, LocalDate  orderDate,
+                         String supplierAddress, String destinationAddress
+            , int supplierNum, String contactName, String contactNumber,
+                         List<OrderProduct> products, int daysToSupplied) {
+        this.orderNum = orderNum;
+        this.supplierName = supplierName;
+        this.orderDate = orderDate;
+        this.supplierAddress = supplierAddress;
+        this.destinationAddress = destinationAddress;
+        this.supplierNum = supplierNum;
+        this.contactName = contactName;
+        this.contactNumber = contactNumber;
+        this.products = products;
+        this.daysToSupplied = daysToSupplied;
+    }
 
     public int getOrderNum() {
         return orderNum;
@@ -51,19 +70,40 @@ public class OrderBusiness {
         return daysToSupplied;
     }
 
-    public OrderBusiness(int orderNum, String supplierName, LocalDateTime  orderDate,
-                         String supplierAddress, String destinationAddress
-            , int supplierNum, String contactName, String contactNumber,
-                         List<OrderProduct> products, int daysToSupplied) {
-        this.orderNum = orderNum;
-        this.supplierName = supplierName;
-        this.orderDate = orderDate;
-        this.supplierAddress = supplierAddress;
-        this.destinationAddress = destinationAddress;
-        this.supplierNum = supplierNum;
-        this.contactName = contactName;
-        this.contactNumber = contactNumber;
-        this.products = products;
-        this.daysToSupplied = daysToSupplied;
+    public OrderBusiness clone(int newOrderNum){
+        List<OrderProduct> clonedProducts = new LinkedList<>();
+        for (OrderProduct product:products)
+            clonedProducts.add(product.clone());
+        return new OrderBusiness(
+                newOrderNum, supplierName, Util_Supplier_Stock.getCurrDay(), supplierAddress, destinationAddress,
+                supplierNum,contactName,contactNumber,clonedProducts,daysToSupplied
+        );
     }
+    public String getSupplierName() {
+        return supplierName;
+    }
+
+    public LocalDate getOrderDate() {
+        return orderDate;
+    }
+
+    public String getSupplierAddress() {
+        return supplierAddress;
+    }
+
+    public String getDestinationAddress() {
+        return destinationAddress;
+    }
+
+    public String getContactName() {
+        return contactName;
+    }
+
+    public String getContactNumber() {
+        return contactNumber;
+    }
+    public void setOrderNum(int orderNum) {
+        this.orderNum = orderNum;
+    }
+
 }

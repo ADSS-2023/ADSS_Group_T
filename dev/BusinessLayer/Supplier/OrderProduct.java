@@ -14,7 +14,7 @@ public class OrderProduct {
 
 
 
-    public OrderProduct(String productName, int productNumber, int quantity, float initialPrice, float discount, float finalPrice) {
+    public OrderProduct(String productName, int productNumber, int quantity, float initialPrice, float discount, float finalPrice, String manufacturer, LocalDate expiryDate) {
         this.productName = productName;
         this.manufacturer = manufacturer;
         this.expiryDate = expiryDate;

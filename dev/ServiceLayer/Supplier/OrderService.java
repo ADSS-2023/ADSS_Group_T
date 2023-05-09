@@ -17,8 +17,16 @@ public class OrderService {
          this.oc = oc;
          this.sc=sc;
         }
-
-    public boolean createRegularOrder(List<ItemToOrder> items) throws Exception {
+    public boolean nextDay(){
+        try {
+            oc.executeTodayOrders();
+            return true;
+        }
+        catch (Exception e){
+            return false;
+        }
+    }
+    public boolean createRegularOrder(List<ItemToOrder> items) {
         try {
             if (items.size() == 0)
                 return false;
@@ -30,7 +38,7 @@ public class OrderService {
         }
     }
 
-    public boolean createSpecialOrder(List<ItemToOrder> items, boolean isUrgent) throws Exception {
+    public boolean createSpecialOrder(List<ItemToOrder> items, boolean isUrgent)  {
         try {
             if (items.size() == 0)
                 return false;
@@ -46,10 +54,7 @@ public class OrderService {
         try {
             if(day==null)
                 return false;
-            if(item.getQuantity()==0)
-                oc.removeRegularItem(item,day);
-            else
-                oc.editRegularItem(item, day);
+            oc.editRegularItem(item, day);
             return true;
         }
         catch (Exception e){
@@ -57,7 +62,7 @@ public class OrderService {
         }
     }
 
-    public List<ItemToOrder> getRegularOrder(DayOfWeek day) throws Exception {
+    public List<ItemToOrder> getRegularOrder(DayOfWeek day)  {
         try {
             return oc.getRegularOrder(day);
         }
@@ -66,7 +71,7 @@ public class OrderService {
         }
     }
 
-    public List<ItemToOrder> getSpecialOrder(DayOfWeek day) throws Exception {
+    public List<ItemToOrder> getSpecialOrder(DayOfWeek day)  {
         try {
             if(day==null)
                 return null;

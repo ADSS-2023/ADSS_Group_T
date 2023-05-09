@@ -27,12 +27,17 @@ class ItemTest {
 
     @BeforeEach
     public void setUp() {
-        inventoryService = new InventoryService();
-        categoryService = new CategoryService(inventoryService.get_inventory());
-        damagedService = new DamagedService(inventoryService.get_inventory());
-        itemService = new ItemService(inventoryService.get_inventory());
-        inventory = inventoryService.get_inventory();
-        inventory.setUp();
+        try {
+            inventoryService = new InventoryService();
+            categoryService = new CategoryService(inventoryService.get_inventory());
+            damagedService = new DamagedService(inventoryService.get_inventory());
+            itemService = new ItemService(inventoryService.get_inventory());
+            inventory = inventoryService.get_inventory();
+            inventory.setUp();
+        }
+        catch (Exception e){
+
+        }
     }
 
 

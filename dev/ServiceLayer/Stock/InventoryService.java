@@ -83,7 +83,13 @@ public class InventoryService {
      * This function calls to set up the system with a data
      */
     public void setUp() {
-      inventory.setUp();
+        try {
+            inventory.setUp();
+        }
+        catch (Exception e){
+
+        }
+
     }
 
 

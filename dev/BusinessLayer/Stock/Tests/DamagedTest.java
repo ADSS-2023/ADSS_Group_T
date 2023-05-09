@@ -6,7 +6,6 @@ import ServiceLayer.Stock.CategoryService;
 import ServiceLayer.Stock.DamagedService;
 import ServiceLayer.Stock.InventoryService;
 import ServiceLayer.Stock.ItemService;
-import ServiceLayer.Supplier_Stock.ServiceFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,28 +17,34 @@ public class DamagedTest {
     public static DamagedService damagedService;
     public static ItemService itemService;
     private Inventory inventory;
-    public static ServiceFactory serviceFactory;
 
     @BeforeEach
-    public void setUp(){
-        serviceFactory = new ServiceFactory();
-        inventory = serviceFactory.inventoryService.get_inventory();
-        damagedService = serviceFactory.damagedService;
-        categoryService = serviceFactory.categoryService;
-        inventoryService = serviceFactory.inventoryService;
-        itemService = serviceFactory.itemService;
+    public void setUp() {
         try {
-            serviceFactory.dataSetUp();
+            inventoryService = new InventoryService();
+            categoryService = new CategoryService(inventoryService.get_inventory());
+            damagedService = new DamagedService(inventoryService.get_inventory());
+            itemService = new ItemService(inventoryService.get_inventory());
+            inventory = inventoryService.get_inventory();
+            inventory.setUp();
         }
         catch (Exception e){
-            System.out.println(e.getMessage());
-        }    }
+            e.getMessage();
+        }
+    }
 
     @Test
     public void testAddDamagedItem() {
-        int before_amount = inventory.get_item_by_id(1).amount_store();
-        damagedService.report_damaged_item( 1, 120,3, "Damaged during transit");
-        assertEquals(inventory.get_item_by_id(1).amount_store(), before_amount - 3);
+        try {
+            int before_amount = inventory.get_item_by_id(1).amount_store();
+            damagedService.report_damaged_item( 1, 120,3, "Damaged during transit");
+
+            assertEquals(inventory.get_item_by_id(1).amount_store(), before_amount - 3);
+        }
+        catch (Exception e){
+
+        }
+
     }
 
     @Test

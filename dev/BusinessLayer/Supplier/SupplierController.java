@@ -4,7 +4,7 @@ import BusinessLayer.Supplier.Suppliers.ConstantSupplier;
 import BusinessLayer.Supplier.Suppliers.OccasionalSupplier;
 import BusinessLayer.Supplier.Suppliers.SupplierBusiness;
 import BusinessLayer.Supplier_Stock.ItemToOrder;
-import BusinessLayer.Supplier.Util.PaymentTerms;
+import BusinessLayer.Supplier.Supplier_Util.PaymentTerms;
 
 import java.time.DayOfWeek;
 import java.util.*;
@@ -46,7 +46,6 @@ public class SupplierController {
         }
         //edit here - make the list to contain suppliers that can supply full quantity required only
         //if those are not exists - split the order of the item between the possible suppliers
-
 
         Collections.sort(suppliersList, (sp1, sp2) -> {
             int sp1daysOfDelivery =sp1.findEarliestSupplyDay();
@@ -219,50 +218,3 @@ public class SupplierController {
     public HashMap<Integer, SupplierBusiness> getSuppliers(){return suppliers;}
 
 }
-
-
-
-//    public HashMap<SupplierProductBusiness, Integer> findSuppliersProduct(ItemToOrder item) throws Exception {
-//        int quantity = item.getQuantity();
-//        float minPrice = Integer.MAX_VALUE;
-//        SupplierBusiness sb = null;
-//        HashMap<SupplierProductBusiness, Integer> suppliersPerProduct = new HashMap<>();
-//        if(suppliers.isEmpty())
-//            throw new Exception("There are not supplier exists at all.");
-//        //this loop finds the cheapest supplier that supplies the product within its quantity
-//        for (Map.Entry<Integer, SupplierBusiness> entry : suppliers.entrySet()) {
-//            SupplierProductBusiness sp = entry.getValue().getProduct(item.getProductName(), item.getManufacturer());
-//            if(sp != null && sp.hasEnoughQuantity(quantity) && (sp.getPriceByQuantity(quantity)) < minPrice){
-//                minPrice = sp.getPriceByQuantity(quantity);
-//                sb = entry.getValue();
-//            }
-//        }
-//        if(sb != null) // if theres a supplier that can supply the product completely
-//            suppliersPerProduct.put(sb.getProduct(item.getProductName(),item.getManufacturer()), quantity);
-//
-//
-
-
-
-
-    /*List<Integer> suppliersIncluded = new ArrayList<>();
-    boolean over = false;
-            while (quantity > 0 && !over) {
-                    sb = null;
-                    float MinPrice = Integer.MAX_VALUE;
-                    for (Map.Entry<Integer, SupplierBusiness> entry : suppliers.entrySet()) {
-        float currentPrice = (entry.getValue().getProduct(item.getProductName(),item.getManufacturer()).getPriceByQuantity(quantity))/Math.min(entry.getValue().getProduct(item.getProductName(), item.getManufacturer()).getMaxAmount(), quantity);
-        if (currentPrice < MinPrice && !suppliersIncluded.contains(entry.getKey())) {
-        if(sb.equals(entry.getValue()))
-        over = true;
-        MinPrice = currentPrice;
-        sb = entry.getValue();
-        }
-        }
-        if(sb != null) {
-        suppliersIncluded.add(sb.getSupplierNum());
-        SupplierProductBusiness sp = sb.getProduct(item.getProductName(),item.getManufacturer());
-        quantity = (quantity - Math.min(quantity,sp.getMaxAmount()));
-        suppliersPerProduct.put(sp,Math.min(quantity,sp.getMaxAmount()));
-        }
-        }*/
