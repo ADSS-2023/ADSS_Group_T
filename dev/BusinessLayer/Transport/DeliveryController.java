@@ -406,20 +406,21 @@ public class DeliveryController {
      */
     public void unloadProducts(int deliveryID, int weight, String supplierAddress) throws Exception {
         LinkedHashMap<String, Supplier> suppliers = supplierController.getAllSuppliers();
-        double currWeight = deliveries.get(deliveryID).getTruckWeight();
-        int maxWeight = logisticCenterController.getAllTrucks().get(deliveries.get(deliveryID).getTruckNumber()).getMaxWeight();
+        double currWeight = getDelivery(deliveryID).getTruckWeight();
+        int maxWeight = logisticCenterController.getTruck(getDelivery(deliveryID).getTruckNumber()).getMaxWeight();
         double unloadFactor = (currWeight + weight - maxWeight) / weight;
         File loadedProducts = new File(filesCounter++);
-        for (Product p : deliveries.get(deliveryID).getUnHandledSuppliers().get(suppliers.get(supplierAddress)).getProducts().keySet()) {
-            int amount = deliveries.get(deliveryID).getUnHandledSuppliers().get(suppliers.get(supplierAddress)).getProducts().get(p);
+        dalDeliveryService.updateCounter("fileCounter",filesCounter);
+        for (Product p : getDelivery(deliveryID).getUnHandledSuppliers().get(suppliers.get(supplierAddress)).getProducts().keySet()) {
+            int amount = getDelivery(deliveryID).getUnHandledSuppliers().get(suppliers.get(supplierAddress)).getProducts().get(p);
             int unloadAmount = (int) Math.ceil(amount * unloadFactor);
             loadedProducts.addProduct(p, amount - unloadAmount);
-            deliveries.get(deliveryID).getUnHandledSuppliers().get(suppliers.get(supplierAddress)).getProducts().replace(p, unloadAmount);
+            getDelivery(deliveryID).getUnHandledSuppliers().get(suppliers.get(supplierAddress)).getProducts().replace(p, unloadAmount);
         }
-        deliveries.get(deliveryID).addHandledSupplier(suppliers.get(supplierAddress), loadedProducts);
+        getDelivery(deliveryID).addHandledSupplier(suppliers.get(supplierAddress), loadedProducts);
         HashMap<Product, Integer> copyOfSupplierFileProducts = new HashMap<>(loadedProducts.getProducts());
-        filesCounter = deliveries.get(deliveryID).supplierHandled(suppliers.get(supplierAddress), filesCounter, copyOfSupplierFileProducts);
-        deliveries.get(deliveryID).setTruckWeight(maxWeight);
+        filesCounter = getDelivery(deliveryID).supplierHandled(suppliers.get(supplierAddress), filesCounter, copyOfSupplierFileProducts);
+        getDelivery(deliveryID).setTruckWeight(maxWeight);
     }
 
     /**
@@ -646,7 +647,7 @@ public class DeliveryController {
 //        }
 
     }
-    private boolean isDeliveryFromLC(Delivery delivery){return delivery.getUnHandledSuppliers()==null;}
+    private boolean isDeliveryFromLC(Delivery delivery) throws SQLException {return delivery.getUnHandledSuppliers()==null;}
     private boolean isDeliveryToLC(Delivery delivery){return delivery.getHandledBranches()==null;}
 
     private ArrayList<Delivery> getDeliveriesByDate(LocalDate date) throws SQLException {

@@ -40,13 +40,13 @@ public class DalDeliveryService {
        dao.insert(dto);
     }
 
-    public void insertUnHandledSite(int deliveryId, String siteAddress, String productName, int amount) throws SQLException {
-        DeliveryHandledSitesDTO dto = new DeliveryHandledSitesDTO(deliveryId,siteAddress,productName,amount);
+    public void insertUnHandledSite(int deliveryId, String siteAddress, String productName, int fileId, int amount) throws SQLException {
+        DeliveryHandledSitesDTO dto = new DeliveryHandledSitesDTO(deliveryId,siteAddress,productName,fileId,amount);
         dao.insert(dto);
     }
 
-    public void insertHandledSite(int deliveryId, String siteAddress, String productName, int amount) throws SQLException {
-        DeliveryHandledSitesDTO dto = new DeliveryHandledSitesDTO(deliveryId,siteAddress,productName,amount);
+    public void insertHandledSite(int deliveryId, String siteAddress, String productName, int fileId, int amount) throws SQLException {
+        DeliveryHandledSitesDTO dto = new DeliveryHandledSitesDTO(deliveryId,siteAddress,productName,fileId,amount);
         dao.insert(dto);
     }
 
@@ -81,13 +81,13 @@ public class DalDeliveryService {
         dao.insert(dto);
     }
 
-    public void deleteUnHandledBranch(int deliveryId, String siteAddress, String productName, int amount) throws SQLException {
-        DeliveryHandledSitesDTO dto = new DeliveryHandledSitesDTO(deliveryId,siteAddress,productName,amount);
+    public void deleteUnHandledBranch(int deliveryId, String siteAddress, String productName, int fileId, int amount) throws SQLException {
+        DeliveryHandledSitesDTO dto = new DeliveryHandledSitesDTO(deliveryId,siteAddress,productName,fileId,amount);
         dao.delete(dto);
     }
 
-    public void deleteHandledBranch(int deliveryId, String siteAddress, String productName, int amount) throws SQLException {
-        DeliveryHandledSitesDTO dto = new DeliveryHandledSitesDTO(deliveryId,siteAddress,productName,amount);
+    public void deleteHandledBranch(int deliveryId, String siteAddress, String productName, int fileId,int amount) throws SQLException {
+        DeliveryHandledSitesDTO dto = new DeliveryHandledSitesDTO(deliveryId,siteAddress,productName,fileId,amount);
         dao.delete(dto);
     }
 
@@ -119,15 +119,15 @@ public class DalDeliveryService {
                         delivery.getTruckWeight(), delivery.getSource().getAddress(),delivery.getDriverID(),newTruckLicenseNumber,delivery.getShippingArea()));
     }
 
-    public void updateUnHandledSite(int deliveryId, String siteAddress, String productName, int newAmount) throws SQLException {
+    public void updateUnHandledSite(int deliveryId, String siteAddress, String productName, int fileId, int newAmount) throws SQLException {
         LinkedHashMap<String,Object> pk = new LinkedHashMap<>();
         pk.put("deliveryId",deliveryId);
         pk.put("siteAddress",siteAddress);
         pk.put("productName",productName);
         DeliveryUnHandledSitesDTO dto = findDeliveryUnHandledSites(pk);
         int oldAmount = dto.getAmount();
-        dao.update(new DeliveryUnHandledSitesDTO(deliveryId,siteAddress,productName,oldAmount),
-            new DeliveryUnHandledSitesDTO(deliveryId,siteAddress,productName,newAmount));
+        dao.update(new DeliveryUnHandledSitesDTO(deliveryId,siteAddress,productName, fileId,oldAmount),
+            new DeliveryUnHandledSitesDTO(deliveryId,siteAddress,productName, fileId, newAmount));
     }
 
     public Supplier findSupplier(String supplierAddress) throws SQLException {
@@ -208,8 +208,13 @@ public class DalDeliveryService {
         return deliveryDAO.findAllDeliveriesByDate(date);
     }
 
-    public List<DateToTruckDTO> findAllTrucksByDate(String date) throws SQLException {
+    public ArrayList<DateToTruckDTO> findAllTrucksByDate(String date) throws SQLException {
         return deliveryDAO.findAllTrucksByDate(date);
+    }
+
+    public LinkedHashMap<Supplier, File> findAllUnHandledSuppliersForDelivery(int deliveryId) throws SQLException {
+        ArrayList<DeliveryUnHandledSitesDTO> dtos = deliveryDAO.findAllUnHandledSuppliersForDelivery(deliveryId);
+        //TODO implement
     }
 
     public CounterDTO findTime() throws SQLException {

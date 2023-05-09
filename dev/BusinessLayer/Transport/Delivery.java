@@ -2,6 +2,7 @@ package BusinessLayer.Transport;
 
 import BusinessLayer.HR.Driver;
 import DataLayer.HR_T_DAL.DTOs.DeliveryDTO;
+import DataLayer.HR_T_DAL.DTOs.DeliveryUnHandledSitesDTO;
 import DataLayer.HR_T_DAL.DalService.DalDeliveryService;
 import UtilSuper.Time;
 
@@ -16,7 +17,7 @@ public class Delivery {
     private final int id;
     private final LocalDate date;
     private final LocalTime departureTime;
-    private final LinkedHashMap<Supplier, File> unHandledSuppliers;
+    private LinkedHashMap<Supplier, File> unHandledSuppliers;
     private final LinkedHashMap<Supplier, File> handledSuppliers;
     private final LinkedHashMap<Branch, File> unHandledBranches;
     private final LinkedHashMap<Branch, File> handledBranches;
@@ -131,10 +132,10 @@ public class Delivery {
         if (!unHandledSuppliers.containsKey(supplier)) {
             unHandledSuppliers.put(supplier, new File(fileCounter++));
             dalDeliveryService.updateCounter("fileCounter",fileCounter);
-            dalDeliveryService.insertUnHandledSite(id,supplier.getAddress(),p.getName(),amount);
+            dalDeliveryService.insertUnHandledSite(id,supplier.getAddress(),p.getName(),fileCounter - 1,amount);
         }
         else
-            dalDeliveryService.updateUnHandledSite(id,supplier.getAddress(),p.getName(),amount);
+            dalDeliveryService.updateUnHandledSite(id,supplier.getAddress(),p.getName(), unHandledSuppliers.get(supplier).getId() ,amount);
         unHandledSuppliers.get(supplier).addProduct(p, amount);
         return fileCounter;
     }
@@ -176,7 +177,8 @@ public class Delivery {
         return handledSuppliers;
     }
 
-    public LinkedHashMap<Supplier, File> getUnHandledSuppliers() {
+    public LinkedHashMap<Supplier, File> getUnHandledSuppliers() throws SQLException {
+        unHandledSuppliers = dalDeliveryService.findAllUnHandledSuppliersForDelivery(id);
         return unHandledSuppliers;
     }
 

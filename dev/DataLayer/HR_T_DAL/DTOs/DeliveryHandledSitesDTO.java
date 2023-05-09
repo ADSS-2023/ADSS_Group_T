@@ -7,14 +7,20 @@ public class DeliveryHandledSitesDTO extends DTO {
     private int deliveryId;
     private String siteAddress;
     private String productName;
+    private int fileId;
     private int amount;
 
-    public DeliveryHandledSitesDTO(int deliveryId, String siteAddress, String productName, int amount) {
+    public DeliveryHandledSitesDTO(int deliveryId, String siteAddress, String productName, int fileId, int amount) {
         super("DeliveryHandledSites");
         this.deliveryId = deliveryId;
         this.siteAddress = siteAddress;
         this.productName = productName;
+        this.fileId = fileId;
         this.amount = amount;
+    }
+
+    public int getFileId() {
+        return fileId;
     }
 
     public int getDeliveryId() {
