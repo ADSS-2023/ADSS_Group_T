@@ -164,8 +164,10 @@ public class OrderController {
                 items.add(new ItemToOrder(product.getProductName(), product.getManufacturer(), product.getQuantity(),
                         product.getExpiryDate(), order.getOrderNum(), product.getFinalPrice()));
             }
-            OrderBusiness clonedOrder =  order.clone(orderCounter++);
-            orders.add(clonedOrder);
+            if(!order.getProducts().isEmpty()) {
+                OrderBusiness clonedOrder = order.clone(orderCounter++);
+                orders.add(clonedOrder);
+            }
         }
         List<OrderBusiness> ordersToDelete =  new LinkedList<>();
         for(OrderBusiness order:ordersNotSupplied){
@@ -174,8 +176,10 @@ public class OrderController {
                     items.add(new ItemToOrder(product.getProductName(), product.getManufacturer(), product.getQuantity(),
                             product.getExpiryDate(), order.getOrderNum(), product.getFinalPrice() / product.getQuantity()));
                 }
+                if(!order.getProducts().isEmpty()) {
                     orders.add(order);
-                    ordersToDelete.add(order);
+                }
+                ordersToDelete.add(order);
             }
             else
                 order.setDaysToSupplied(order.getDaysToSupplied() - 1);
@@ -257,6 +261,7 @@ public class OrderController {
                                 SupplierProductBusiness spProduct = sc.getSupplier(supplierNum).getSupplierProduct(productName, manufacturer);
                                 if (product.getQuantity() > spProduct.getMaxAmount())
                                     removeRegularItem(productName, manufacturer, supplierNum, days);
+                                    //supplier does not have enough of the product's quantity
                                 else
                                     updateRegularItem(product, productName, manufacturer, supplierNum);
                             }

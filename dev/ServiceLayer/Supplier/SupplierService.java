@@ -115,12 +115,11 @@ public class SupplierService {
 
     public String deleteProduct(int supplierNum, int productNum){
         try {
-            sc.getSupplier(supplierNum).deleteProduct(productNum);
             if(sc.getSupplier(supplierNum) instanceof ConstantSupplier){
                 SupplierProductBusiness sProduct = sc.getSupplier(supplierNum).getProduct(productNum);
                 oc.removeRegularItem(sProduct.getName(), sProduct.getManufacturer(), supplierNum, ((ConstantSupplier) sc.getSupplier(supplierNum)).getConstDeliveryDays());
             }
-            LocalDate.now().getDayOfWeek();
+            sc.getSupplier(supplierNum).deleteProduct(productNum);
             return "Product deleted successfully";
         }
         catch (Exception e){
