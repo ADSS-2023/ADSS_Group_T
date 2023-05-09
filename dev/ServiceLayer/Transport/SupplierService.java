@@ -37,7 +37,8 @@ public class SupplierService {
 
     public String addSupplier(String supplierAddress, String telNumber, String contactName, int x, int y) {
         try {
-            return supplierController.addSupplier(supplierAddress, telNumber, contactName, x, y)+" ";
+            supplierController.addSupplier(supplierAddress, telNumber, contactName, x, y);
+            return "Supplier added";
         } catch (Exception ex) {
             return ex.toString();
         }

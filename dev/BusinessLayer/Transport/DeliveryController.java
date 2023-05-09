@@ -4,7 +4,7 @@ import BusinessLayer.HR.Driver;
 import BusinessLayer.HR.Driver.CoolingLevel;
 import BusinessLayer.HR.DriverController;
 import BusinessLayer.HR.ShiftController;
-import DataLayer.HR_T_DAL.DTOs.DeliveryDTO;
+import DataLayer.HR_T_DAL.DTOs.DateToDeliveryDTO;
 import DataLayer.HR_T_DAL.DalService.DalDeliveryService;
 import UtilSuper.EnterWeightInterface;
 import UtilSuper.EnterOverWeightInterface;
@@ -13,7 +13,6 @@ import UtilSuper.Time;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 
@@ -39,17 +38,21 @@ public class DeliveryController {
 
     public DeliveryController(LogisticCenterController logisticCenterController, SupplierController supplierController,
                               BranchController branchController, DriverController driverController,
-                              ShiftController shiftController, DalDeliveryService dalDeliveryService) {
+                              ShiftController shiftController, DalDeliveryService dalDeliveryService) throws Exception {
         this.deliveries = new LinkedHashMap<>();
         this.date2trucks = new LinkedHashMap<>();
         this.date2deliveries = new LinkedHashMap<>();
-        this.currDate = LocalDate.of(2023, 1, 1);
+        this.currDate = Time.stringToLocalDate(dalDeliveryService.findTime().getTime());
         this.branchController = branchController;
         this.driverController = driverController;
         this.supplierController = supplierController;
         this.logisticCenterController = logisticCenterController;
         this.shiftController = shiftController;
         this.dalDeliveryService = dalDeliveryService;
+
+        loadData();
+
+
     }
 
     public void initLogisticCenterController(LogisticCenterController lcC) {
@@ -85,7 +88,7 @@ public class DeliveryController {
     public LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> orderDelivery(String destinationString, LinkedHashMap<String, LinkedHashMap<String, Integer>> suppliersString,
                                                                                   String requiredDateString) throws Exception {
 
-        LocalDate requiredDate = Time.stringToDate(requiredDateString);
+        LocalDate requiredDate = Time.stringToLocalDate(requiredDateString);
         boolean isDestinationIsLogisticCenter = destinationString.equals(logisticCenterController.getAddress());
         boolean isSupplierIsLogisticCenter = suppliersString.containsKey(logisticCenterController.getAddress());
         if(isDestinationIsLogisticCenter && isSupplierIsLogisticCenter)
@@ -437,6 +440,7 @@ public class DeliveryController {
         return deliveriesThatReScheduleDelivery;
     }
 
+
     private ArrayList<Delivery> checkStoreKeeperForTomorrow() throws Exception {
         LocalDate tomorrow = this.currDate.plusDays(1);
         ArrayList<String> branchWithoutStoreKeeper = shiftController.getBranchesWithoutStoreKeeper(tomorrow);
@@ -457,12 +461,22 @@ public class DeliveryController {
         return deliveriesWithoutStoreKeeper;
     }
 
+
+
+
     public Collection<Delivery> getAllDeliveries() {
         return deliveries.values();
     }
 
     public LocalDate getCurrDate() {
         return this.currDate;
+    }
+
+    private void loadData(){
+        ArrayList<DateToDeliveryDTO> dateToDeliveryDTOs = dalDeliveryService.findAllDateToDeliveries();
+        for (DateToDeliveryDTO dateToDeliveryDTO: dateToDeliveryDTOs){
+            addDeliveryToDate(dateToDeliveryDTO.getShiftDate(),new Delivery(dateToDeliveryDTO),false);
+        }
     }
 }
 

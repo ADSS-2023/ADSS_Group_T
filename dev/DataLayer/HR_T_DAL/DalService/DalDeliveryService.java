@@ -7,6 +7,7 @@ import DataLayer.Util.DAO;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
@@ -178,4 +179,11 @@ public class DalDeliveryService {
     }
 
 
+    public TimeDTO findTime() throws SQLException {
+        return dao.findAll(TimeDTO.getTableNameStatic(), TimeDTO.class).get(0);
+    }
+
+    public ArrayList<DateToDeliveryDTO> findAllDateToDeliveries() {
+        return dao.findAll(DateToDeliveryDTO.getTableName(),DateToDeliveryDTO.class)
+    }
 }
