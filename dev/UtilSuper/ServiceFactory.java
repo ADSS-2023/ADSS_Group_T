@@ -44,15 +44,15 @@ public class ServiceFactory {
 
         String testDBUrl = "jdbc:sqlite:dev/DataLayer/HR_Transport_DB .db";
         connection = DriverManager.getConnection(testDBUrl);
-
-        dalDeliveryService = new DalDeliveryService(connection);
+        dalLogisticCenterService = new DalLogisticCenterService(connection);
+        dalDeliveryService = new DalDeliveryService(connection,dalLogisticCenterService);
 
         shiftController = new ShiftController();
         shiftService = new ShiftService(shiftController);
         employeeController = new EmployeeController();
         employeeService = new EmployeeService(employeeController);
 
-        this.dalLogisticCenterService = new DalLogisticCenterService(connection);
+
         logisticCenterController = new LogisticCenterController(dalLogisticCenterService);
         logisticCenterService = new LogisticCenterService(logisticCenterController);
 

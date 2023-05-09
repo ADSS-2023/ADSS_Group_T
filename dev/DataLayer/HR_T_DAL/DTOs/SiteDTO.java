@@ -23,6 +23,9 @@ public class SiteDTO extends DTO {
         this.type = type;
     }
 
+    public SiteDTO() {
+    }
+
     public String getType() {
         return type;
     }

@@ -2,6 +2,7 @@ package DataLayer.HR_T_DAL.DalService;
 
 import BusinessLayer.Transport.*;
 import DataLayer.HR_T_DAL.DAOs.DeliveryDAO;
+import DataLayer.HR_T_DAL.DAOs.SiteDAO;
 import DataLayer.HR_T_DAL.DTOs.*;
 import DataLayer.Util.DAO;
 
@@ -16,6 +17,8 @@ public class DalDeliveryService {
 
     private DalLogisticCenterService dalLogisticCenterService;
     private DeliveryDAO deliveryDAO;
+
+    private SiteDAO siteDAO;
     private DAO dao;
 
     public DalDeliveryService(Connection connection,DalLogisticCenterService dalLogisticCenterService) {
@@ -23,6 +26,7 @@ public class DalDeliveryService {
         this.dalLogisticCenterService = dalLogisticCenterService;
         this.deliveryDAO = new DeliveryDAO(connection);
         this.dao = new DAO(connection);
+        this.siteDAO = new SiteDAO(connection);
     }
 
     public void insertDelivery(Delivery delivery) throws SQLException {
@@ -150,8 +154,7 @@ public class DalDeliveryService {
         return new Delivery(dto,this);
     }
     public LinkedHashMap<String, Supplier> findAllSupplier() throws SQLException {
-        //TODO : change call to find all
-        ArrayList<SiteDTO> suppliersDTOs =  dao.findAll("Site", SiteDTO.class);
+        ArrayList<SiteDTO> suppliersDTOs =  siteDAO.findAllSite("Supplier");
         LinkedHashMap<String, Supplier> suppliers = new LinkedHashMap<>();
         for(SiteDTO s : suppliersDTOs){
             suppliers.put(s.getSiteAddress(),new Supplier(s,this));
@@ -169,7 +172,7 @@ public class DalDeliveryService {
     }
 
     public LinkedHashMap<String, Branch> findAllBranch() throws SQLException {
-        ArrayList<SiteDTO> branchesDTOs =  dao.findAll("Branch", SiteDTO.class);
+        ArrayList<SiteDTO> branchesDTOs =  siteDAO.findAllSite("Branch");
         LinkedHashMap<String, Branch> branches = new LinkedHashMap<>();
         for(SiteDTO b : branchesDTOs){
             branches.put(b.getSiteAddress(),new Branch(b));
