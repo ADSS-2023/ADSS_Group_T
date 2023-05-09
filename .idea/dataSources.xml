@@ -8,5 +8,17 @@
       <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/dev/DataLayer/HR_Transport_DB .db</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="HR_Transport_DB" uuid="1e4e5567-1176-4817-bef6-4ec3031a43af">
+      <driver-ref>sqlite.xerial</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/dev/DataLayer/Util/HR_Transport_DB.db</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+      <libraries>
+        <library>
+          <url>file://$APPLICATION_CONFIG_DIR$/jdbc-drivers/Xerial SQLiteJDBC/3.40.1/sqlite-jdbc-3.40.1.jar</url>
+        </library>
+      </libraries>
+    </data-source>
   </component>
 </project>
