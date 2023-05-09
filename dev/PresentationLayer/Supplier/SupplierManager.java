@@ -25,7 +25,7 @@ public class SupplierManager {
         contactsSupplier1.put("yossi", "052284621");
         serviceFactory.supplierService.addSupplier("Sapak1", "Shoham 43, Tel Aviv",
                 5018475, 1199922,-1, contactsSupplier1,
-                List.of(new DayOfWeek[]{DayOfWeek.SUNDAY,DayOfWeek.MONDAY}), true, PaymentTerms.SHOTEF_PLUS_30);
+                List.of(new DayOfWeek[]{DayOfWeek.MONDAY}), true, PaymentTerms.SHOTEF_PLUS_30);
 
         HashMap<String, String> contactsSupplier2 = new HashMap<>();
         contactsSupplier2.put("menash", "18726312");
@@ -75,12 +75,15 @@ public class SupplierManager {
 
         ItemToOrder item1  = new ItemToOrder("Bamba","Osem",550,Util_Supplier_Stock.getCurrDay().plusMonths(1),-1,-1);
         ItemToOrder item2  = new ItemToOrder("Ketchup","Heinz",50,Util_Supplier_Stock.getCurrDay().plusMonths(1),-1,-1);
-        ItemToOrder item3  = new ItemToOrder("Click","Elite",175,Util_Supplier_Stock.getCurrDay().plusMonths(1),-1,-1);
+        //ItemToOrder item3  = new ItemToOrder("Click","Elite",175,Util_Supplier_Stock.getCurrDay().plusMonths(1),-1,-1);
         List<ItemToOrder> itemsList = new LinkedList<>();
-        itemsList.add(item1);
-        itemsList.add(item2);
-        itemsList.add(item3);
-        System.out.println(serviceFactory.orderService.createSpecialOrder(itemsList,false));
+        //itemsList.add(item1);
+       // itemsList.add(item2);
+       // itemsList.add(item3);
+        //System.out.println(serviceFactory.orderService.createSpecialOrder(itemsList,false));
+        ItemToOrder item4  = new ItemToOrder("Click","Elite",2,Util_Supplier_Stock.getCurrDay().plusMonths(1),-1,-1);
+        itemsList.add((item4));
+        serviceFactory.orderService.createRegularOrder(itemsList);
     }
 
     public void start() {
@@ -88,6 +91,7 @@ public class SupplierManager {
         boolean over = false;
         while(!over) {
             System.out.println("--------------------------");
+            System.out.println("Today is :" + Util_Supplier_Stock.getCurrDay());
             System.out.println("Hello!\n" + "Please select your choice:");
             System.out.println("1.Add supplier.");
             System.out.println("2.Delete supplier.");
@@ -107,9 +111,7 @@ public class SupplierManager {
             System.out.println("16.Show all discounts of a certain product's supplier.");
             System.out.println("17.Show all general discounts of a certain supplier.");
             System.out.println("18.Go back to main menu.");
-            System.out.println("19.Set up System.");
-            System.out.println("20.Exit System.");
-            int choice = getInteger(scanner, "Please select an integer between 1 to 20.", 1, 20);
+            int choice = getInteger(scanner, "Please select an integer between 1 to 18.", 1, 18);
             switch (choice) {
                 case 1:
                     addSupplier();
@@ -165,17 +167,12 @@ public class SupplierManager {
                 case 18:
                     goBack();
                     break;
-                case 19:
-                    setUpData();
-                    break;
-                case 20:
-                    over = true;
-                    break;
             }
         }
     }
 
     public void nextDay() {
+        System.out.println("we moved s day. now its:"+ Util_Supplier_Stock.getCurrDay());
         serviceFactory.orderService.nextDay();
     }
 

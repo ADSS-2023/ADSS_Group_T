@@ -9,19 +9,28 @@ import java.util.Scanner;
 public class UI_General {
     public static void run(StockUI stockUI,SupplierManager supplierManager,ServiceFactory sf){
         Scanner scanner = new Scanner(System.in);
-        System.out.println("What would like to do?\n" +
-                "1.Enter suppliers system\n2.Enter Inventory system\n3.Skip day");
-        int action = scanner.nextInt();
-        scanner.nextLine();
-        switch (action){
-            case 1:
-                supplierManager.start();
-            case 2:
-                stockUI.run();
-            case 3:
-                stockUI.moveToNextDay();
-                sf.nextDay();
-                supplierManager.nextDay();
+        boolean isActive = true;
+        while (isActive) {
+            System.out.println("What would like to do?\n" +
+                    "1.Enter suppliers system\n2.Enter Inventory system\n3.Skip day\n4.Exit");
+            int action = scanner.nextInt();
+            scanner.nextLine();
+            switch (action) {
+                case 1:
+                    supplierManager.start();
+                    break;
+                case 2:
+                    stockUI.run();
+                    break;
+                case 3:
+                    stockUI.moveToNextDay();
+                    sf.nextDay();
+                    supplierManager.nextDay();
+                    break;
+                case 4:
+                    isActive = false;
+                    break;
+            }
         }
     }
 
@@ -43,5 +52,4 @@ public class UI_General {
         }
         run(stockUI,supplierManager,sf);
     }
-
 }

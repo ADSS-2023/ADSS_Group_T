@@ -29,9 +29,10 @@ public class StockUI {
         System.out.println("\u001B[32m8.Receive a new order (receive new supply of exists item)\u001B[0m");
         System.out.println("\u001B[32m9.Produce shortage report\u001B[0m");
         System.out.println("\u001B[32m10.Add new category\u001B[0m");
-        System.out.println("\u001B[32m11.Skip day\u001B[0m");
+        System.out.println("\u001B[32m11.Move item to store\u001B[0m");
         System.out.println("\u001B[32m12.Orders menu\u001B[0m");
         System.out.println("\u001B[32m13.Back to start menu\u001B[0m");
+
     }
 
     public  String presentCategories(){
@@ -188,7 +189,7 @@ public class StockUI {
                 addCategory();
                 break;
             case "11":
-                moveToNextDay();
+                move_items_to_store();
                 break;
             case "12":
                 edit_create_orders();
@@ -339,5 +340,14 @@ public class StockUI {
     }
     private void goBack(){
         previousCallBack.goBack();
+    }
+    private void move_items_to_store(){
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Insert item id");
+        int id = scanner.nextInt();
+        System.out.println(sf.itemService.present_item_amount(id));
+        System.out.println("Insert amount to move");
+        int amount = scanner.nextInt();
+        sf.itemService.move_items_to_store(id,amount);
     }
 }

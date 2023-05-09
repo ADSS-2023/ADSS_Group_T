@@ -35,6 +35,12 @@ public class OrderProduct {
         this.orderProductDTO = orderProductDTO;
     }
 
+    public OrderProduct clone(){
+        return new OrderProduct(
+                productName, productNumber, quantity, initialPrice, discount, finalPrice,
+                manufacturer, expiryDate);
+    }
+
     public LocalDate getExpiryDate() {
         return expiryDate;
     }

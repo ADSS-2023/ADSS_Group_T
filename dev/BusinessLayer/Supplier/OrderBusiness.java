@@ -1,16 +1,17 @@
 package BusinessLayer.Supplier;
 
-import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.OrderDTO;
-import DataLayer.Inventory_Supplier_Dal.DalController.OrderDalController;
+import BusinessLayer.Supplier_Stock.Util_Supplier_Stock;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.LinkedList;
 import java.util.List;
 
 
 public class OrderBusiness {
 
-    private final int orderNum;
+
+    private int orderNum;
     private String supplierName;
     private LocalDate orderDate;
     private String supplierAddress;
@@ -74,4 +75,41 @@ public class OrderBusiness {
     public int getDaysToSupplied() {
         return daysToSupplied;
     }
+
+    public OrderBusiness clone(int newOrderNum){
+        List<OrderProduct> clonedProducts = new LinkedList<>();
+        for (OrderProduct product:products)
+            clonedProducts.add(product.clone());
+        return new OrderBusiness(
+                newOrderNum, supplierName, Util_Supplier_Stock.getCurrDay(), supplierAddress, destinationAddress,
+                supplierNum,contactName,contactNumber,clonedProducts,daysToSupplied
+        );
+    }
+    public String getSupplierName() {
+        return supplierName;
+    }
+
+    public LocalDate getOrderDate() {
+        return orderDate;
+    }
+
+    public String getSupplierAddress() {
+        return supplierAddress;
+    }
+
+    public String getDestinationAddress() {
+        return destinationAddress;
+    }
+
+    public String getContactName() {
+        return contactName;
+    }
+
+    public String getContactNumber() {
+        return contactNumber;
+    }
+    public void setOrderNum(int orderNum) {
+        this.orderNum = orderNum;
+    }
+
 }
