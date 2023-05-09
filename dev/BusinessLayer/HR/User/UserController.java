@@ -4,6 +4,7 @@ import BusinessLayer.HR.DriverController;
 import BusinessLayer.HR.Employee;
 import BusinessLayer.HR.EmployeeController;
 import BusinessLayer.HR.Driver;
+import DataLayer.HR_T_DAL.DalService.DalUserService;
 
 import java.util.HashMap;
 
@@ -15,6 +16,7 @@ public class UserController {
     private User Hr;
     private DriverController driverController;
     private TransportManager transportManager;
+    private DalUserService dalUserService;
 
 
     public UserController(EmployeeController employeeController, TransportManager transportManager, DriverController driverController, int HRid) {
@@ -22,52 +24,45 @@ public class UserController {
     }
 
     //TODO-init the user controller
-    public void initUserController(EmployeeController employeeController, TransportManager transportManager, DriverController driverController, User Hr) {
+    public void initUserController(EmployeeController employeeController, TransportManager transportManager, DriverController driverController, User Hr, DalUserService dalUserService) {
         this.Hr = Hr;
-        this.employeeController =employeeController;
+        this.employeeController = employeeController;
         this.driverController = driverController;
         this.transportManager = transportManager;
+        this.dalUserService = dalUserService;
     }
 
-    public User login (int id, String password) throws Exception{
-
-
-        if (Hr.getId() == id){
+    public UserType login(int id, String password) throws Exception {
+        String userType;
+        if (Hr.getId() == id) {
             if (Hr.getPassword().equals(password))
-                return Hr;
+                return Hr.userType;
             else
                 throw new IllegalArgumentException("wrong password");
         }
 
-        if (transportManager.getId() == id){
+        if (transportManager.getId() == id) {
             if (transportManager.getPassword().equals(password))
-                return transportManager;
+                return transportManager.userType;
             else
                 throw new IllegalArgumentException("wrong password");
-            }
-
-        else {
-            HashMap<Integer, Employee> employeesMapper =  employeeController.getEmployeesMapper();
-            for (Employee employee : employeesMapper.values()) {
-                if (employee.getId() == id) {
-                    if (employee.getPassword().equals(password)) {
-                        return employee;
-                    } else {
-                        throw new IllegalArgumentException("Wrong password");
-                    }
-                }
-            }
-            HashMap<Integer, Driver> drivers =  driverController.getDrivers();
-            for (Driver driver : drivers.values()) {
-                if (driver.getId() == id) {
-                    if (driver.getPassword().equals(password)) {
-                        return driver;
-                    } else {
-                        throw new IllegalArgumentException("Wrong password");
-                    }
-                }
-            }
+        } else {
+            User user = dalUserService.findUserById(id);
+            if (user == null)
+                throw new NoSuchFieldException("User Don't exist.");
+            if (user.password != password)
+                throw new IllegalArgumentException("Wrong password");
+            return user.userType;
         }
-        throw new NoSuchFieldException("User Don't exist.");
     }
 }
+
+
+
+
+
+
+
+
+
+

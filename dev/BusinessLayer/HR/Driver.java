@@ -9,11 +9,9 @@ import java.util.List;
 
 public class Driver extends User {
     private final CoolingLevel coolingLevel;
-    private int id;
-    private String name;
     private LicenseType licenseType;
     //    private Map<LocalDate, boolean > submittedShifts; // TODO- impliment:  submit shift, assignShift and assignAll
-    private List<LocalDate> restrictions; // TODo- is neccessary?
+
 
     public Driver(int id, String employeeName, String bankAccount, List<PositionType> qualifiedPositions, String description, int salary, LocalDate joiningDay, String password, UserType userType, LicenseType licenseType, CoolingLevel coolingLevel) {
         super(id, employeeName, bankAccount, description, salary, joiningDay, password, userType);
@@ -21,11 +19,6 @@ public class Driver extends User {
         this.coolingLevel = coolingLevel;
         // restrictions = new ArrayList<>();
     }
-
-
-//    public boolean isLegalDate(LocalDate date) {
-//        return !restrictions.contains(date);
-//    }
 
 
     public CoolingLevel getCoolingLevel() {

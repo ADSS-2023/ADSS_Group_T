@@ -8,7 +8,9 @@ import BusinessLayer.HR.Driver.CoolingLevel;
 import BusinessLayer.HR.Driver.LicenseType;
 
 import java.sql.SQLException;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
 public class DriverController {
@@ -24,38 +26,86 @@ public class DriverController {
         drivers = new LinkedHashMap<Integer, Driver>();
     }
 
-//    public String areRequirementsFulfilled(LocalDate date) {
-//        int requiredDrivers = driversRequirements.getOrDefault(date, 0);
-//        int assignedDrivers = 0;
-//        if (date2driversSubmission.containsKey(date)) {
-//            for (Boolean isAssigned : date2driversSubmission.get(date).values()) {
-//                if (isAssigned) {
-//                    assignedDrivers++;
-//                }
-//            }
-//        }
-//        if (assignedDrivers < requiredDrivers) {
-//            return "There are not enough drivers assigned for the date " + date + ". Required: " + requiredDrivers + ", Assigned: " + assignedDrivers;
-//        } else {
-//            return "All driver requirements are fulfilled for the date " + date + ". Required: " + requiredDrivers + ", Assigned: " + assignedDrivers;
-//        }
-//    }
 
-
-
-    public void assignDriver(LocalDate date, int id) {
-        if(this.date2driversSubmission.get(date).containsKey(drivers.get(id)))
-            this.date2driversSubmission.get(date).replace(drivers.get(id),false,true);
+    // TODO - do not forge to init
+    public void initDriverController(DalDriverService dalDriverService) {
+        this.dalDriverService = dalDriverService;
     }
 
-    public void assignAllDriver(LocalDate date) {
+
+public Driver lazyLoadDriver (int id) throws SQLException {
+    Driver driver = drivers.get(id);
+    if (driver == null){
+        driver = dalDriverService.findDriverById(id);
+        if (driver != null)
+            drivers.put(id, driver);
+    }
+    return  driver;
+}
+
+    public HashMap<Driver, Boolean> lazyLoadDriverSubmition(LocalDate date, int id) throws SQLException {
+        // get the submission status for the given date and driver
+        HashMap<Driver, Boolean> driverSubmission = date2driversSubmission.get(date);
+        if (driverSubmission == null) {
+            driverSubmission = dalDriverService.findSubmissionByIdAndDate(id, date);
+            if (driverSubmission != null)
+                date2driversSubmission.put(date, driverSubmission);
+            else
+                throw new IllegalArgumentException("Driver has not submitted availability for this date");
+        }
+        return driverSubmission;
+    }
+    public void assignDriver(LocalDate date, int id) throws SQLException {
+        // get the driver with the given id
+        Driver driver = lazyLoadDriver(id);
+        if (driver == null)
+            throw new IllegalArgumentException("Invalid driver id");
+
+
+        // get the submission status for the given date and driver
+        HashMap<Driver, Boolean> driverSubmissionToAssign = lazyLoadDriverSubmition(date, id);
+
+        if (driverSubmissionToAssign.get(driver) == null) {
+            throw new IllegalArgumentException("Driver has not submitted availability for this date");
+        }
+        if (driverSubmissionToAssign.get(driver).booleanValue()) {
+            throw new IllegalArgumentException("Driver is already assigned to a shift on this day.");
+        }
+
+        // Requirement : A driver cannot work more than six times a week.
+        LocalDate startOfWeek = date.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+        LocalDate endOfWeek = startOfWeek.with(TemporalAdjusters.next(DayOfWeek.SATURDAY));
+        for (int i = 0; i <= 6; i++) {
+            lazyLoadDriverSubmition(startOfWeek.plusDays(i), id);
+        }
+        int numShiftsThisWeek = 0;
+        for (LocalDate d = startOfWeek; !d.isAfter(endOfWeek); d = d.plusDays(1)) {
+            if (d.equals(date)) {
+                continue;  // skip the current date
+            }
+            HashMap<Driver, Boolean> submissions = lazyLoadDriverSubmition(d, id);
+            if (submissions != null && submissions.get(driver) != null && submissions.get(driver)) {
+                numShiftsThisWeek++;
+            }
+        }
+        if (numShiftsThisWeek >= 6) {
+            throw new IllegalArgumentException("Driver has already worked six shifts this week");
+        }
+
+        // mark the driver as assigned for the given date
+        driverSubmissionToAssign.replace(driver, false, true);
+        dalDriverService.assignDriver(id, date);
+    }
+
+
+
+
+    public void assignAllDriver(LocalDate date) throws SQLException {
         HashMap<Driver, Boolean> driversForDate = date2driversSubmission.get(date);
         for (Driver driver: driversForDate.keySet()) {
                 this.assignDriver(date,driver.getId());
         }
     }
-
-
 
 
     public boolean submitShift(LocalDate date, int id) {
