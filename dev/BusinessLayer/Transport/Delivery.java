@@ -219,8 +219,9 @@ public class Delivery {
         return this.truckNumber;
     }
 
-    public void setTruckNumber(int truckNumber) {
+    public void setTruckNumber(int truckNumber) throws SQLException {
         this.truckNumber = truckNumber;
+        dalDeliveryService.updateDeliveryTruck(this,truckNumber);
     }
 
     /**
@@ -246,9 +247,9 @@ public class Delivery {
     }
 
 
-    public void setDriver(Driver driver) {
+    public void setDriver(Driver driver) throws SQLException {
         this.driverID = driver.getId();
-        dalDeliveryService.
+        dalDeliveryService.updateDeliveryDriver(this,driverID);
     }
 
     public void addLogisticCenterDestination(int fileCounter) throws SQLException {

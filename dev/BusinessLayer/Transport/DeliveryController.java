@@ -333,7 +333,6 @@ public class DeliveryController {
             for (Driver driver : driversTomorrow) {
                 if (driver.getLicenseLevel().ordinal()>= truck.getLicenseType().ordinal()) {
                     if (driver.getCoolingLevel().ordinal() >= truck.getCoolingLevel().ordinal()) {
-                        dalDeliveryService.updateDeliveryDriver(delivery,driver.getId());
                         delivery.setDriver(driver);
                         break;
                     }
@@ -383,18 +382,17 @@ public class DeliveryController {
      * @return true if the truck was replaced, false otherwise(there is no available truck)
      */
     public boolean replaceTruck(int deliveryID) throws Exception {
-
-        Truck t = logisticCenterController.getAllTrucks().get(deliveries.get(deliveryID).getTruckNumber());
-        LocalDate date = deliveries.get(deliveryID).getDate();
+        Truck t = logisticCenterController.getTruck(getDelivery(deliveryID).getTruckNumber());
+        LocalDate date = getDelivery(deliveryID).getDate();
         for (int licenseNumber : logisticCenterController.getAllTrucks().keySet()) {
-            Truck optionalTruck = logisticCenterController.getAllTrucks().get(licenseNumber);
-            if ((optionalTruck.getMaxWeight() >= deliveries.get(deliveryID).getTruckWeight()) &&
-                    !date2trucks.get(date).contains(optionalTruck) &&
+            Truck optionalTruck = logisticCenterController.getTruck(licenseNumber);
+            if ((optionalTruck.getMaxWeight() >= getDelivery(deliveryID).getTruckWeight()) &&
+                    !specificTruckInDate(date,optionalTruck)  &&
                     optionalTruck.getCoolingLevel() == t.getCoolingLevel() &&
                     optionalTruck.getLicenseType().ordinal() >= t.getLicenseType().ordinal()) {
-                deliveries.get(deliveryID).setTruckNumber(optionalTruck.getLicenseNumber());
-                date2trucks.get(date).remove(t);
-                date2trucks.get(date).add(logisticCenterController.getAllTrucks().get(licenseNumber));
+                getDelivery(deliveryID).setTruckNumber(optionalTruck.getLicenseNumber());
+                removeTruckFromDate(date,t);
+                addTruckToDate(date,logisticCenterController.getTruck(licenseNumber),true);
                 return true;
             }
         }
@@ -672,6 +670,11 @@ public class DeliveryController {
         pk.put("truckId",truck.getLicenseNumber());
         DateToTruckDTO dto = dalDeliveryService.findSpecificTruckInDate(pk);
         return date2trucks.containsKey(date) || dto != null;
+    }
+
+    private void removeTruckFromDate(LocalDate date,Truck t) throws SQLException {
+        dalDeliveryService.deleteDateToTruck(date.toString(),t.getLicenseNumber());
+        date2trucks.get(date).remove(t);
     }
 }
 
