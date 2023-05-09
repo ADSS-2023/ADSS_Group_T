@@ -376,6 +376,47 @@ public class DeliveryController {
 
 
     public void executeDelivery(Delivery delivery) throws Exception {
+        if (isDeliveryFromLC(delivery))
+            executeDeliveryFromLC(delivery);
+        else if (isDeliveryToLC(delivery))
+            executeDeliveryToLC(delivery);
+        else
+            executeDeliveryRegular(delivery);
+    }
+
+    private void executeDeliveryFromLC(Delivery delivery) throws Exception {
+        int productsWeight = enterWeightInterface.enterWeightFunction(logisticCenterController.getAddress(), delivery.getId());
+        int currentWeight = delivery.getTruckWeight();
+        int maxWeight = logisticCenterController.getAllTrucks().get(delivery.getTruckNumber()).getMaxWeight();
+        if (maxWeight < currentWeight + productsWeight) {
+            overWeightAction(delivery.getId(), overweightAction.EnterOverweightAction(delivery.getId()), logisticCenterController.getAddress(), productsWeight);
+        }
+        logisticCenterController.removeFileFromStock(delivery.getFromLogisticsCenterFile());
+        delivery.setTruckWeight(currentWeight + productsWeight);
+    }
+
+
+    private void executeDeliveryToLC(Delivery delivery) throws Exception {
+        ArrayList<Supplier> suppliersTmp = new ArrayList<>(delivery.getUnHandledSuppliers().keySet());
+        for (Supplier supplier : suppliersTmp) {
+            int productsWeight = enterWeightInterface.enterWeightFunction(supplier.getAddress(), delivery.getId());
+            int currentWeight = delivery.getTruckWeight();
+            int maxWeight = logisticCenterController.getAllTrucks().get(delivery.getTruckNumber()).getMaxWeight();
+            if (maxWeight < currentWeight + productsWeight) {
+                overWeightAction(delivery.getId(), overweightAction.EnterOverweightAction(delivery.getId()), supplier.getAddress(), productsWeight);
+                if (delivery.getTruckWeight() == logisticCenterController.getAllTrucks().get(delivery.getTruckNumber()).getMaxWeight())
+                    break;
+            } else {
+                delivery.setTruckWeight(currentWeight + productsWeight);
+                File f = delivery.getUnHandledSuppliers().get(supplier);
+                delivery.getHandledSuppliers().put(supplier, f);
+                delivery.getUnHandledSuppliers().remove(supplier);
+            }
+        }
+        reScheduleDelivery(delivery.getUnHandledSuppliers(), delivery.getUnHandledBranches());
+    }
+
+    private void executeDeliveryRegular(Delivery delivery) throws Exception {
         ArrayList<Supplier> suppliersTmp = new ArrayList<>(delivery.getUnHandledSuppliers().keySet());
         for (Supplier supplier : suppliersTmp) {
             int productsWeight = enterWeightInterface.enterWeightFunction(supplier.getAddress(), delivery.getId());
@@ -482,6 +523,8 @@ public class DeliveryController {
 //        }
 
     }
+    private boolean isDeliveryFromLC(Delivery delivery){return delivery.getUnHandledSuppliers()==null;}
+    private boolean isDeliveryToLC(Delivery delivery){return delivery.getHandledBranches()==null;}
 }
 
 
