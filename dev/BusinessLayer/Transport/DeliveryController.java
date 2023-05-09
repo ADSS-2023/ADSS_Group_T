@@ -218,7 +218,7 @@ public class DeliveryController {
         return null;
     }
 
-    private ArrayList<Delivery> scheduleDriversForTomorrow() {
+    private ArrayList<Delivery> scheduleDriversForTomorrow() throws Exception {
         LocalDate tomorrow = this.currDate.plusDays(1);
         ArrayList<Driver> driversTomorrow = sortDriversByLicenseLevel(driverController.getDriversByDate(tomorrow));
 

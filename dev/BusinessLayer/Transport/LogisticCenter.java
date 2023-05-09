@@ -1,6 +1,7 @@
 package BusinessLayer.Transport;
 
 import DataLayer.HR_T_DAL.DAOs.LogisticDAO;
+import DataLayer.HR_T_DAL.DTOs.SiteDTO;
 import DataLayer.HR_T_DAL.DalService.DalLogisticCenterService;
 
 import java.sql.SQLException;
@@ -20,12 +21,12 @@ public class LogisticCenter extends Site {
         this.trucks = new LinkedHashMap<>();
         this.productsInStock = new LinkedHashMap<>();
     }
-
-
-
-
-
-
+    public LogisticCenter(SiteDTO siteDTO, DalLogisticCenterService dalLogisticCenterService){
+        super(siteDTO.getSiteAddress(),siteDTO.getTelNumber(),siteDTO.getContactName(),siteDTO.getX(),siteDTO.getY());
+        this.dalLogisticCenterService = dalLogisticCenterService;
+        this.trucks = new LinkedHashMap<>();
+        this.productsInStock = new LinkedHashMap<>();
+    }
 
     public boolean addTruck(int licenseNumber, String model, int weight, int maxWeight, int coolingLevel) throws Exception {
         if (trucks.containsKey(licenseNumber))
@@ -96,12 +97,14 @@ public class LogisticCenter extends Site {
         return trucks;
     }
 
-    public String processSupplierWeight(String supplier, int weight) {
-        // Process the supplier weight
-        return "OK";
-    }
-
-    public Truck getTruck(int licenseNumber) {
+    public Truck getTruck(int licenseNumber) throws Exception {
+        if(!trucks.containsKey(licenseNumber)) {
+            Truck truck = dalLogisticCenterService.findTruck(licenseNumber);
+            if (truck == null)
+                throw new Exception("no truck in the system");
+            else
+                trucks.put(licenseNumber,truck);
+        }
         return trucks.get(licenseNumber);
     }
 }

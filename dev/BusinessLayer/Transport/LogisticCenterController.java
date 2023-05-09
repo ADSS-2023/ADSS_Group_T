@@ -1,5 +1,6 @@
 package BusinessLayer.Transport;
 
+import DataLayer.HR_T_DAL.DTOs.SiteDTO;
 import DataLayer.HR_T_DAL.DalService.DalLogisticCenterService;
 
 import java.sql.SQLException;
@@ -12,8 +13,9 @@ public class LogisticCenterController {
     private final LogisticCenter logisticCenter;
 
 
-    public LogisticCenterController(DalLogisticCenterService dalLogisticCenterService) {
-        this.logisticCenter = new LogisticCenter(dalLogisticCenterService);
+    public LogisticCenterController(DalLogisticCenterService dalLogisticCenterService) throws Exception {
+        SiteDTO siteDTO = dalLogisticCenterService.findLogisticCenter();
+        this.logisticCenter = new LogisticCenter(siteDTO,dalLogisticCenterService);
     }
 
     /**
@@ -58,7 +60,7 @@ public class LogisticCenterController {
         return logisticCenter.getAllTrucks();
     }
 
-    public Truck getTruck(int licenseNumber) {
+    public Truck getTruck(int licenseNumber) throws Exception {
         return logisticCenter.getTruck(licenseNumber);
     }
 

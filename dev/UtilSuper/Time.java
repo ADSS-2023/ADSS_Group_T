@@ -1,16 +1,22 @@
 package UtilSuper;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 public class Time {
-    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private static Time currDate = new Time(); // Singleton instance
 
     private Time() {} // private constructor to prevent instantiation
 
     public static LocalDate stringToDate(String string){
         return LocalDate.parse(string, formatter);
+    }
+
+    public static LocalTime stringToTime(String string){
+        return LocalTime.parse(string, formatter);
     }
 
     public static void setCurrDate(LocalDate date) {
