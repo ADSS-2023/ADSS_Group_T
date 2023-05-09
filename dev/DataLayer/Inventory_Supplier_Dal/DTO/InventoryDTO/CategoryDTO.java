@@ -16,6 +16,10 @@ public class CategoryDTO extends DataLayer.Util.DTO{
         return index_item;
     }
 
+    public void setFatherCategoryIndex(String father_category_index){
+        this.father_category_index = father_category_index;
+    }
+
     public String getFatherCategoryIndex() {
         return father_category_index;
     }
