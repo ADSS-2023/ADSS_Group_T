@@ -32,7 +32,6 @@ public class MainPresentation {
             this.serviceFactory = new ServiceFactory();
         }
         catch (Exception exception){
-
         }
         this.shiftService = serviceFactory.getShiftService();
         this.employeeService = serviceFactory.getEmployeeService();
@@ -44,7 +43,6 @@ public class MainPresentation {
         transportManagerPresentation = new TransportManagerPresentation(logisticCenterService,deliveryService,supplierService,branchService);
         serviceFactory.callbackEnterWeight(this.transportManagerPresentation::enterWeightFunction);
         serviceFactory.callbackEnterOverWeight(this.transportManagerPresentation::enterOverWeightAction);
-
     }
 
 

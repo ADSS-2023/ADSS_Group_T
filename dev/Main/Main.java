@@ -1,5 +1,7 @@
 package Main;
 
+import PresentationLayer.MainPresentation;
+
 public class Main {
 
     public static void main(String[] args) throws InterruptedException {
@@ -7,8 +9,8 @@ public class Main {
 
 
 
-//       MainPresentation mainPresentation = new MainPresentation();
-//       mainPresentation.start();
+       MainPresentation mainPresentation = new MainPresentation();
+       mainPresentation.start();
     }
 
 

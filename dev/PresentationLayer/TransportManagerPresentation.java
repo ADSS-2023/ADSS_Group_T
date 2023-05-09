@@ -40,7 +40,7 @@ public class TransportManagerPresentation {
             System.out.println("6. Show logistic center products");
             System.out.println("7. show all Deliveries");
             System.out.println("8. add new products to supplier");
-            System.out.println("9. ");
+            System.out.println("9. show map");
             System.out.println("10. Logout");
             int choice = scanner.nextInt();
             scanner.nextLine(); // Consume the newline character
@@ -53,8 +53,7 @@ public class TransportManagerPresentation {
                 case 6 -> showProductsInStock();
                 case 7 -> showAllDeliveries();
                 case 8 -> addNewSupplierProducts();
-                case 9 -> {}
-                case 10 -> {return;}
+                case 9 -> {return;}
                 default -> System.out.println("Invalid choice. Please try again.");
             }
         }
@@ -81,6 +80,7 @@ public class TransportManagerPresentation {
         LinkedHashMap<String, LinkedHashMap<String, Integer>> suppliersAndProducts = enterSuppliersAndProducts(deliveryService);
         String date = enterDeliveryDate(scanner);
         System.out.println(deliveryService.orderDelivery(destination, suppliersAndProducts, date));
+
     }
 
     // option 3
@@ -99,7 +99,7 @@ public class TransportManagerPresentation {
         System.out.println("Please enter the truck's maximum weight:");
         int maxWeight = scanner.nextInt();
         int coolingIndex = enterCoolingLevel();
-        logisticCenterService.addTruck(licenseNumber, model, weight, maxWeight, coolingIndex);
+        System.out.println(logisticCenterService.addTruck(licenseNumber, model, weight, maxWeight, coolingIndex));
     }
 
     // option 4
@@ -119,7 +119,7 @@ public class TransportManagerPresentation {
         int x = scanner.nextInt();
         System.out.print("Enter supplier Y coordinate: ");
         int y = scanner.nextInt();
-        supplierService.addSupplier(address, telNumber, contactName, x, y);
+        System.out.println(supplierService.addSupplier(address, telNumber, contactName, x, y));
     }
 
     // option 5
@@ -149,7 +149,7 @@ public class TransportManagerPresentation {
 
     //option 7
     private void showAllDeliveries() {
-        System.out.println(this.deliveryService.showAllDeliveries());
+        System.out.println(deliveryService.showAllDeliveries());
     }
 
     //option 8
@@ -182,8 +182,7 @@ public class TransportManagerPresentation {
             }
             products.put(productName, coolingLevel);
         }
-
-        supplierService.addProducts(supplier, products);
+        System.out.println(supplierService.addProducts(supplier, products));
     }
 
     //enter Data from keyboard
