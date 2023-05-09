@@ -277,4 +277,9 @@ public class Item implements ProductCategoryManagement {
 
         }
     }
+
+
+    public void setCategoryIndex(String categoriesIndex) {
+        item_dto.setCategoriesIndex(categoriesIndex);
+    }
 }
