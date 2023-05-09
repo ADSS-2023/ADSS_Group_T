@@ -4,6 +4,7 @@ import BusinessLayer.HR.Driver;
 import BusinessLayer.HR.Driver.CoolingLevel;
 import BusinessLayer.HR.DriverController;
 import BusinessLayer.HR.ShiftController;
+import DataLayer.HR_T_DAL.DTOs.DateToTruckDTO;
 import DataLayer.HR_T_DAL.DTOs.DeliveryDTO;
 import DataLayer.HR_T_DAL.DTOs.ProductDTO;
 import DataLayer.HR_T_DAL.DTOs.DateToDeliveryDTO;
@@ -272,13 +273,8 @@ public class DeliveryController {
     public Truck scheduleTruck(LocalDate date, CoolingLevel coolingLevel) throws Exception {
         if (logisticCenterController.getAllTrucks() != null) {
             for (Truck truck : logisticCenterController.getAllTrucks().values()) {
-                if (date2trucks.containsKey(date) &&
-                        !date2trucks.get(date).contains(truck) && truck.getCoolingLevel() == coolingLevel) {
-                    date2trucks.get(date).add(truck);
-                    return truck;
-                } else if (!date2trucks.containsKey(date) && truck.getCoolingLevel() == coolingLevel) {
-                    date2trucks.put(date, new ArrayList<>());
-                    date2trucks.get(date).add(truck);
+                if (!specificTruckInDate(date,truck) && truck.getCoolingLevel() == coolingLevel) {
+                    addTruckToDate(date,truck,true);
                     return truck;
                 }
             }
@@ -636,6 +632,14 @@ public class DeliveryController {
         date2deliveries.get(requiredDate).add(delivery);
     }
 
+    private void addTruckToDate(LocalDate requiredDate, Truck truck,boolean saveToData) throws SQLException {
+        if (!date2trucks.containsKey(requiredDate))
+            date2trucks.put(requiredDate, new ArrayList<>());
+        if(saveToData)
+            dalDeliveryService.insertDateToTruck(requiredDate.toString(),truck.getLicenseNumber());
+        date2trucks.get(requiredDate).add(truck);
+    }
+
     private void loadData(){
 
 //        ArrayList<DateToDeliveryDTO> dateToDeliveryDTOs = dalDeliveryService.findAllDateToDeliveries();
@@ -660,6 +664,14 @@ public class DeliveryController {
 
     private boolean deliveryInDate(LocalDate date) throws SQLException {
         return date2deliveries.containsKey(date) || dalDeliveryService.findAllDeliveriesByDate(date.toString()) != null;
+    }
+
+    private boolean specificTruckInDate(LocalDate date,Truck truck) throws SQLException {
+        LinkedHashMap<String,Object> pk = new LinkedHashMap<>();
+        pk.put("shiftDate",date);
+        pk.put("truckId",truck.getLicenseNumber());
+        DateToTruckDTO dto = dalDeliveryService.findSpecificTruckInDate(pk);
+        return date2trucks.containsKey(date) || dto != null;
     }
 }
 

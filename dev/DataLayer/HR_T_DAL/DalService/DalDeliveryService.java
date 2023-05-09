@@ -7,6 +7,7 @@ import DataLayer.HR_T_DAL.DTOs.*;
 import DataLayer.Util.DAO;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -70,8 +71,8 @@ public class DalDeliveryService {
         dao.insert(dto);
     }
 
-    public void insertDateToTruck(String shiftDate, int truckId) throws SQLException {
-        DateToTruckDTO dto = new DateToTruckDTO(shiftDate, truckId);
+    public void insertDateToTruck(String shiftDate, int truckLicenseNumber) throws SQLException {
+        DateToTruckDTO dto = new DateToTruckDTO(shiftDate, truckLicenseNumber);
         dao.insert(dto);
     }
 
@@ -154,6 +155,10 @@ public class DalDeliveryService {
     public DeliveryUnHandledSitesDTO findDeliveryUnHandledSites(LinkedHashMap<String,Object> pk) throws SQLException {
         return dao.find(pk,"DeliveryUnHandledSites",DeliveryUnHandledSitesDTO.class);
     }
+
+    public DateToTruckDTO findSpecificTruckInDate(LinkedHashMap<String,Object> pk) throws SQLException {
+        return dao.find(pk,"DateToTruck",DateToTruckDTO.class);
+    }
     public LinkedHashMap<String, Supplier> findAllSupplier() throws SQLException {
         ArrayList<SiteDTO> suppliersDTOs =  siteDAO.findAllSite("Supplier");
         LinkedHashMap<String, Supplier> suppliers = new LinkedHashMap<>();
@@ -187,6 +192,10 @@ public class DalDeliveryService {
 
     public List<DateToDeliveryDTO> findAllDeliveriesByDate(String date) throws SQLException {
         return deliveryDAO.findAllDeliveriesByDate(date);
+    }
+
+    public List<DateToTruckDTO> findAllTrucksByDate(String date) throws SQLException {
+        return deliveryDAO.findAllTrucksByDate(date);
     }
 
     public CounterDTO findTime() throws SQLException {

@@ -2,6 +2,7 @@ package DataLayer.HR_T_DAL.DAOs;
 
 import BusinessLayer.Transport.Delivery;
 import DataLayer.HR_T_DAL.DTOs.DateToDeliveryDTO;
+import DataLayer.HR_T_DAL.DTOs.DateToTruckDTO;
 import DataLayer.HR_T_DAL.DTOs.DeliveryDTO;
 import DataLayer.HR_T_DAL.DTOs.SiteDTO;
 import DataLayer.Util.DAO;
@@ -37,6 +38,31 @@ public class DeliveryDAO extends DAO {
             while (resultSet.next()) {
                 DateToDeliveryDTO dto = (DateToDeliveryDTO.class).getDeclaredConstructor().newInstance();
                 dto.setTableName("DateToDelivery");
+                for (int i = 1; i <= columnCount; i++) {
+                    String columnName = metaData.getColumnName(i);
+                    Object value = resultSet.getObject(i);
+                    Field field = dto.getClass().getDeclaredField(columnName);
+                    field.setAccessible(true);
+                    field.set(dto, value);
+                }
+                results.add(dto);
+            }
+        } catch (ReflectiveOperationException e) {
+            throw new SQLException("Error creating DTO instance", e);
+        }
+        return results;
+    }
+
+    public List<DateToTruckDTO> findAllTrucksByDate(String date) throws SQLException {
+        ArrayList<DateToTruckDTO> results = new ArrayList<>();
+        String sql = "SELECT * FROM DateToTruck where shiftDate = " + date;
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            ResultSet resultSet = statement.executeQuery();
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            int columnCount = metaData.getColumnCount();
+            while (resultSet.next()) {
+                DateToTruckDTO dto = (DateToTruckDTO.class).getDeclaredConstructor().newInstance();
+                dto.setTableName("DateToTruck");
                 for (int i = 1; i <= columnCount; i++) {
                     String columnName = metaData.getColumnName(i);
                     Object value = resultSet.getObject(i);
