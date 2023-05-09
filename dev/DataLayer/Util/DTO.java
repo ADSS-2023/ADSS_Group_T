@@ -14,7 +14,7 @@ public abstract class DTO {
     public DTO() {
     }
 
-    public String getTableName() {
+    public  String getTableName() {
         return tableName;
     }
 

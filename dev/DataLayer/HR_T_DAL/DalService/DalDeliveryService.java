@@ -8,6 +8,7 @@ import DataLayer.Util.DAO;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
@@ -181,4 +182,20 @@ public class DalDeliveryService {
     }
 
 
+
+
+    public ArrayList<DateToDeliveryDTO> findAllDateToDeliveries() throws SQLException {
+        return dao.findAll(DateToDeliveryDTO.getTableNameStatic(),DateToDeliveryDTO.class);
+    }
+
+    public CounterDTO findTime() throws SQLException {
+        return dao.find("dateCounter",CounterDTO.getPKStatic(),CounterDTO.getTableNameStatic(), CounterDTO.class);
+    }
+
+    public CounterDTO findFilesCounter() throws SQLException {
+        return dao.find("fileCounter",CounterDTO.getPKStatic(),CounterDTO.getTableNameStatic(), CounterDTO.class);
+    }
+    public CounterDTO findDeliveryCounter() throws SQLException {
+        return dao.find("dekiveryCounter",CounterDTO.getPKStatic(),CounterDTO.getTableNameStatic(), CounterDTO.class);
+    }
 }

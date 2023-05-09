@@ -1,32 +1,32 @@
 package UtilSuper;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 public class Time {
 
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    private static Time currDate = new Time(); // Singleton instance
-
-    private Time() {} // private constructor to prevent instantiation
-
-    public static LocalDate stringToDate(String string){
-        return LocalDate.parse(string, formatter);
+    public static LocalDateTime stringToLocalDateTime(String s){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return LocalDateTime.parse(s, formatter);
+    }
+    public static LocalDate stringToLocalDate(String s){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return LocalDate.parse(s, formatter);
+    }
+    public static LocalTime stringToLocalTime(String s){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+        return LocalTime.parse(s, formatter);
     }
 
-    public static LocalTime stringToTime(String string){
-        return LocalTime.parse(string, formatter);
-    }
 
-    public static void setCurrDate(LocalDate date) {
-        currDate = new Time(); // create a new instance to prevent mutation of singleton instance
-        currDate.date = date;
+    public static String localDateTimeToString(LocalDateTime dateTime){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return dateTime.format(formatter);
     }
-
-    public static LocalDate getCurrDate() {
-        return currDate.date;
+    public static String localDateToString(LocalDate date){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return date.format(formatter);
     }
-
-    private LocalDate date;
 }
