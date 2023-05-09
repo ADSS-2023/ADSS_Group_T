@@ -5,6 +5,7 @@ import ServiceLayer.Stock.*;
 import ServiceLayer.Supplier.OrderService;
 import ServiceLayer.Supplier_Stock.ServiceFactory;
 
+import java.sql.SQLException;
 import java.time.DayOfWeek;
 
 import java.util.HashMap;
@@ -339,7 +340,7 @@ public class StockUI {
         }
     }
 
-    public void loadData() {
+    public void loadData()  {
         sf.inventoryService.setUp();
         sf.manageOrderService.set_up();
     }

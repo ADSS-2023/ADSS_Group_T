@@ -3,7 +3,12 @@ package BusinessLayer.Stock;
 import BusinessLayer.Stock.Util.Util;
 import BusinessLayer.Supplier_Stock.ItemToOrder;
 import BusinessLayer.Supplier_Stock.Util_Supplier_Stock;
+import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.ItemOrderdDTO;
+import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.ItemToOrderDTO;
+import DataLayer.Inventory_Supplier_Dal.DalController.InventoryDalController;
 import ServiceLayer.Supplier.OrderService;
+
+import java.sql.SQLException;
 import java.time.DayOfWeek;
 
 import java.util.*;
@@ -18,12 +23,17 @@ public class OrderController {
      * buy yet to be received.
      */
     private Map<Integer,Integer> special_orders_track;
+    private InventoryDalController inventoryDalController;
 
     public OrderController(Inventory inventory, OrderService orderService) {
         this.inventory = inventory;
         this.order_service = orderService;
         items_to_place = new LinkedList<>();
         special_orders_track = new HashMap<>();
+    }
+
+    public void setInventoryDalController(InventoryDalController inv){
+        inventoryDalController = inv;
     }
 
     /**
@@ -58,6 +68,7 @@ public class OrderController {
             if(special_orders_track.containsKey(item_id)){
                 quantity += special_orders_track.get(item_id);
             }
+            inventoryDalController.insert(new ItemOrderdDTO("inventory_item_ordered",item_id,quantity));
             special_orders_track.put(item_id,quantity);
 
         }
@@ -127,7 +138,12 @@ public class OrderController {
      * receive new order that arrived to the store
      * @param newOrder order id,item
      */
-    public void receiveOrders(List<ItemToOrder> newOrder){
+    public void receiveOrders(List<ItemToOrder> newOrder) throws SQLException {
+        for (ItemToOrder ito:newOrder) {
+            inventoryDalController.insert(new ItemToOrderDTO(
+                    "inventory_waiting_list",ito.getProductName(),ito.getManufacturer(),
+                    ito.getQuantity(),ito.getExpiryDate().toString(),ito.getCostPrice(),ito.getOrderId()));
+        }
         items_to_place.addAll(newOrder);
         handle_special_order_track(newOrder);
     }
@@ -136,15 +152,19 @@ public class OrderController {
      * Gets the new arrivals, and check the special order track to see if update is needed
      * @param newOrder
      */
-    private void handle_special_order_track(List<ItemToOrder> newOrder){
+    private void handle_special_order_track(List<ItemToOrder> newOrder) throws SQLException {
         for (ItemToOrder itemToOrder : newOrder){
             int item_id = inventory.itemToOrder_to_item(itemToOrder).item_id;
             if(special_orders_track.containsKey(item_id)){
                 int amount = special_orders_track.get(item_id);
-                if(itemToOrder.getQuantity()>= amount)
+                if(itemToOrder.getQuantity()>= amount) {
+                    inventoryDalController.delete(new ItemOrderdDTO("inventory_item_ordered", item_id, itemToOrder.getQuantity()));
                     special_orders_track.remove(item_id);
+                }
                 else {
                     amount -= itemToOrder.getQuantity();
+                    inventoryDalController.update(new ItemOrderdDTO("inventory_item_ordered", item_id, itemToOrder.getQuantity()),
+                            new ItemOrderdDTO("inventory_item_ordered", item_id, amount));
                     special_orders_track.put(item_id,amount);
                 }
             }
@@ -160,6 +180,9 @@ public class OrderController {
         if(index > items_to_place.size())
             throw new Exception("Illegal index");
         ItemToOrder tempItem = items_to_place.get(index-1);
+        inventoryDalController.delete(new ItemToOrderDTO(
+                "inventory_waiting_list",tempItem.getProductName(),tempItem.getManufacturer(),
+                tempItem.getQuantity(),tempItem.getExpiryDate().toString(),tempItem.getCostPrice(),tempItem.getOrderId()));
         inventory.itemToOrder_to_item(tempItem).recive_order(
                 tempItem.getOrderId(),
                 (int)Math.floor(tempItem.getQuantity()/2),
@@ -215,7 +238,7 @@ public class OrderController {
     /**
      * Set up function to test place items functionality
      */
-    public void set_up_waiting_items(){
+    public void set_up_waiting_items() throws SQLException {
         ItemToOrder milk_3 = new ItemToOrder("3% milk","IDO LTD",40, Util.stringToDate("2023-05-10"),12,1.2);
         ItemToOrder beef_sausage = new ItemToOrder("Beef Sausage","Zogloveck",15,Util.stringToDate("2023-10-01"),1005,10.05);
         receiveOrders(Arrays.asList(milk_3,beef_sausage));
