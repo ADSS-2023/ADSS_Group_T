@@ -146,6 +146,7 @@ public class DAO {
         T result = null;
         String sql = "SELECT * FROM " + tableName + " WHERE " + pkName + " = ?";
 
+
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setObject(1, pkVal);
             ResultSet resultSet = statement.executeQuery();
