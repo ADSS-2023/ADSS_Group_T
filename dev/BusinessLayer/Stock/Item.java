@@ -1,5 +1,6 @@
 package BusinessLayer.Stock;
 
+
 import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.ItemDTO;
 import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.ItemPerOrderDTO;
 import DataLayer.Inventory_Supplier_Dal.DalController.ItemDalController;
@@ -25,8 +26,7 @@ public class Item implements ProductCategoryManagement {
     protected List<Discount> discount_list;
     private OnAlertCallBack onAlertCallBack;
     protected ItemDTO item_dto;
-
-    private ItemDalController itemDalController;
+    protected ItemDalController itemDalController;
 
     /**
      * Item constructor

@@ -23,7 +23,7 @@ public class Inventory {
     protected List<Item> shortage_list;
     protected Damaged damaged;
     protected InventoryDalController inv_dal_controller;
-    private ItemDalController itemDalController;
+    protected ItemDalController itemDalController;
     private int discount_counter;
 
     public Inventory(){
@@ -38,6 +38,7 @@ public class Inventory {
     public void setInventoryDalController(InventoryDalController inv){
         this.inv_dal_controller = inv;
     }
+
     public void setItemDalController(ItemDalController itemDalController){
         this.itemDalController = itemDalController;
     }
