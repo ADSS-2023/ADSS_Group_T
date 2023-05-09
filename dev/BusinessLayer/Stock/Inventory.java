@@ -176,10 +176,10 @@ public class Inventory {
         Item beef_sausage = new Item(3,"Beef Sausage",3,"Zogloveck",25,itemDalController);
         set_item_call_back(beef_sausage);
         shortage_list.add(click);
-        categories.add(new Category("Milk-product", "0"));
-        categories.get(0).add_product(new Category("Cheese" , "0"));
-        categories.get(0).add_product(new Category("bottle milk" , "1"));
-        categories.get(0).add_product(new Category("Chocolate" , "2"));
+        categories.add(new Category("Milk-product", "0",inv_dal_controller));
+        categories.get(0).add_product(new Category("Cheese" , "0",inv_dal_controller));
+        categories.get(0).add_product(new Category("bottle milk" , "1",inv_dal_controller));
+        categories.get(0).add_product(new Category("Chocolate" , "2",inv_dal_controller));
         categories.get(0).getCategories_list().get(0).add_product(yellow_cheese);
         categories.get(0).getCategories_list().get(1).add_product(milk_3);
         categories.get(0).getCategories_list().get(1).add_product(milk_1_5);
@@ -197,10 +197,10 @@ public class Inventory {
         milk_3.recive_order(155,20,20,2.15,"ile 5 shelf 10",Util.stringToDate("2023-05-20"));
         milk_1_5.recive_order(120,10,10,2.55,"ile 5 shelf 11",Util.stringToDate("2023-05-23"));
         beef_sausage.recive_order(345,5,15,12.25,"ile 6 shelf 2",Util.stringToDate("2023-10-20"));
-        categories.add(new Category("Meat-product", "1"));
-        categories.get(1).add_product(new Category("chicken" , "0"));
-        categories.get(1).add_product(new Category("beef" , "1"));
-        categories.get(1).categories_list.get(0).add_product(new Category("KRAAI'IM" , "0"));
+        categories.add(new Category("Meat-product", "1",inv_dal_controller));
+        categories.get(1).add_product(new Category("chicken" , "0",inv_dal_controller));
+        categories.get(1).add_product(new Category("beef" , "1",inv_dal_controller));
+        categories.get(1).categories_list.get(0).add_product(new Category("KRAAI'IM" , "0",inv_dal_controller));
         categories.get(1).getCategories_list().get(1).add_product(beef_sausage);
         items.put(3,beef_sausage);
         name_to_id.put("Beef Sausage Zogloveck",3);
@@ -255,22 +255,17 @@ public class Inventory {
     }
 
     public void add_category(String categories_index, String name) throws Exception {
-        CategoryDTO curDTO;
         if (categories_index == "") {
-            Category new_category = new Category(name, "" + categories.size());
+            Category new_category = new Category(name, "" + categories.size() , inv_dal_controller);
             categories.add(new_category);
-            curDTO = new_category.getDto();
+            inv_dal_controller.insert(new_category.getDto());
         }
         else {
             int current_index = Integer.parseInt(Util.extractFirstNumber(categories_index));
             String next_index = Util.extractNextIndex(categories_index);
             Category cur_category = categories.get(current_index);
             cur_category.add_product(next_index,name);
-            int index = cur_category.getCategories_list().size()-1;
-            curDTO = (CategoryDTO) cur_category.categories_list.get(index).getDto();
         }
-        curDTO.setIndex(curDTO.getIndex() + categories_index);
-        inv_dal_controller.insert(curDTO);
     }
 
     /**

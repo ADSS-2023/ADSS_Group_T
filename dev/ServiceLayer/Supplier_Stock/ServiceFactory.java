@@ -43,12 +43,11 @@ public class ServiceFactory {
     public DamagedService damagedService;
     public ItemService itemService;
     public ManageOrderService manageOrderService;
-    public Util_Supplier_Stock uss;
     public InventoryDalController inventoryDalController;
     public Connection connection;
+    public Util_Supplier_Stock uss;
 
     public ServiceFactory() {
-        this.inventoryService = new InventoryService();
         this.categoryService = new CategoryService(this.inventoryService.get_inventory());
         this.damagedService = new DamagedService(this.inventoryService.get_inventory());
         this.itemService = new ItemService(this.inventoryService.get_inventory());
@@ -59,7 +58,6 @@ public class ServiceFactory {
         this.orderService = new OrderService(this.oc, this.sc);
         uss = new Util_Supplier_Stock();
         DAO dao = new DAO();
-        connection = makeCon();
         this.manageOrderService.setOrderController(this.inventoryService.get_inventory(), this.orderService);
         this.inventoryDalController = new InventoryDalController(connection, dao);
         this.inventoryService.get_inventory().setInventoryDalController(this.inventoryDalController);
@@ -67,7 +65,7 @@ public class ServiceFactory {
 
     private Connection makeCon() {
         try {
-            String dbFile = "./dev/DataLayer/stock_supplier_db.db";
+            String dbFile = "C:/liran/Program/SMSRT4/ADSS/ADSS_Group_T/dev/DataLayer/stock_supplier_db.db";
             String url = "jdbc:sqlite:" + dbFile;
             Class.forName("org.sqlite.JDBC");
             return DriverManager.getConnection(url);

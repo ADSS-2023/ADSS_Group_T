@@ -22,12 +22,13 @@ public class Category implements ProductCategoryManagement{
     protected InventoryDalController inv_dal_controller;
 
 
-    public Category(String name,String index) {
+    public Category(String name,String index,InventoryDalController inv_dal_controller) {
         this.name = name;
         this.index = index; // need to change it to be 0.1.1...
         categories_list = new LinkedList<>();
         discount_list = new LinkedList<>();
         categoryDTO = new CategoryDTO(index , name , "");
+        this.inv_dal_controller = inv_dal_controller;
     }
 
     /**
@@ -149,16 +150,18 @@ public class Category implements ProductCategoryManagement{
     @Override
     public void add_product(String index, String name) throws Exception {
         if (index == "") {
-            Category new_category = new Category(name, "" + categories_list.size());
+            Category new_category = new Category(name," ",inv_dal_controller);
             categories_list.add(new_category);
-            new_category.getDto().setFatherIndex(this.index);
-//            inv_dal_controller.insert(curDto);
+            new_category.categoryDTO.setFatherCategoryIndex(this.categoryDTO.getIndex());
+            new_category.categoryDTO.setIndex(categoryDTO.getIndex() +"."+ categories_list.size());
+            inv_dal_controller.insert(new_category.getDto());
         }
         else {
             int current_index = Integer.parseInt(Util.extractFirstNumber(index));
             String next_index = Util.extractNextIndex(index);
             categories_list.get(current_index).add_product(next_index,name);
         }
+
     }
 
 //    public Category getCategoryByIndex(String index) throws Exception {
