@@ -1,5 +1,6 @@
 package BusinessLayer.Stock;
 
+import BusinessLayer.Stock.Util.Util;
 import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.DiscountDTO;
 import DataLayer.Util.DTO;
 
@@ -29,6 +30,11 @@ public class Discount {
         this.discount_dto = new DiscountDTO(index,start_date.toString(),end_date.toString(),percentage,index_product);
     }
 
+    public Discount(DiscountDTO dto){
+        this.start_date = Util.stringToDate(dto.getStartDate());
+        this.end_date = Util.stringToDate(dto.getEndDate());
+        this.percentage = dto.getPercentage();
+    }
     /**
      * This is a boolean function that let know if this specific discount is relevant or not.
      * @return

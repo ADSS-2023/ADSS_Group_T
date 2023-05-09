@@ -24,6 +24,12 @@ public class DamagedItem {
         this.damaged_item_DTO = new DamagedItemDTO(item.item_id , amount , description);
     }
 
+    public DamagedItem(DamagedItemDTO dto,Item item){
+        this.item =  item;
+        this.amount = dto.getAmount();
+        this.description = dto.getDescription();
+        this.damaged_item_DTO = dto;
+    }
     /**
      * This function update the amount of the specific damaged item.
      *

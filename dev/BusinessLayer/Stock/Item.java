@@ -49,7 +49,17 @@ public class Item implements ProductCategoryManagement {
         this.itemDalController = itemDalController;
         itemDalController.insert(item_dto);
     }
-
+    public Item(ItemDTO dto,ItemDalController itemDalController){
+        this.item_id = dto.getItemId();
+        this.name = dto.getName();
+        this.min_amount = dto.getMinAmount();
+        this.manufacturer_name = dto.getManufacturerName();
+        this.original_price = dto.getOriginalPrice();
+        items = new Hashtable<>();
+        discount_list = new LinkedList<>();
+        this.item_dto = dto;
+        this.itemDalController = itemDalController;
+    }
 
     /**
      * This function return the id of the current item.
