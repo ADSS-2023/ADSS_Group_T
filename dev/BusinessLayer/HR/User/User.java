@@ -4,15 +4,15 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 public  class  User {
-    private int id;
-    private String employeeName;
-    private String bankAccount;
+    protected int id;
+    protected String employeeName;
+    protected String bankAccount;
 
-    private String description;
-    private int salary;
-    private LocalDate joiningDay;
-    private String password;
-    private UserType userType;
+    protected String description;
+    protected int salary;
+    protected LocalDate joiningDay;
+    protected String password;
+    protected UserType userType;
 
     public User(int id, String employeeName, String bankAccount,  String description, int salary, LocalDate joiningDay, String password, UserType userType) {
         this.id = id;

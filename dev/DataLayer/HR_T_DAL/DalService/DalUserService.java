@@ -20,11 +20,25 @@ public class DalUserService {
         this.userDAO = new UserDAO(connection);
     }
 
+    // TODO - israel
+    public Employee findUserById(int employeeId) throws SQLException {
+        return null;
+    }
+    // TODO - israel
+    public Employee deleteUser(int employeeId) throws SQLException {
+        return null;
+    }
+
+    // TODO - israel
     public void addUserFromDriver (UserDTO userDTO) throws SQLException {
         userDAO.insert(userDTO);
     }
+
+    // TODO - israel
     public void addNewEmployee(Employee employee) throws SQLException {
         UserDTO userDTO = new UserDTO(employee);
         userDAO.insert(userDTO);
     }
+
+
 }
