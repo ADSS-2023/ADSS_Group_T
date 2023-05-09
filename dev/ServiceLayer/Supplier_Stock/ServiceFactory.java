@@ -66,7 +66,7 @@ public class ServiceFactory {
 
     private Connection makeCon() {
         try {
-            String dbFile = "C:/liran/Program/SMSRT4/ADSS/ADSS_Group_T/dev/DataLayer/stock_supplier_db.db";
+            String dbFile = "./dev/DataLayer/stock_supplier_db.db";
             String url = "jdbc:sqlite:" + dbFile;
             Class.forName("org.sqlite.JDBC");
             return DriverManager.getConnection(url);
