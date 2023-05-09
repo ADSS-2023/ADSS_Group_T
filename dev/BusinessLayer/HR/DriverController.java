@@ -100,7 +100,7 @@ public Driver lazyLoadDriver (int id) throws SQLException {
 
 
 
-    public void assignAllDriver(LocalDate date) {
+    public void assignAllDriver(LocalDate date) throws SQLException {
         HashMap<Driver, Boolean> driversForDate = date2driversSubmission.get(date);
         for (Driver driver: driversForDate.keySet()) {
                 this.assignDriver(date,driver.getId());
