@@ -15,8 +15,11 @@ import ServiceLayer.UserService;
 import org.junit.Before;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class ServiceFactory {
     private ShiftController shiftController;
@@ -38,14 +41,20 @@ public class ServiceFactory {
     private DalDeliveryService dalDeliveryService;
 
 
+
     private DriverController driverController;
 
     public ServiceFactory() throws Exception {
 
         String testDBUrl = "jdbc:sqlite:dev/DataLayer/HR_Transport_DB.db";
         connection = DriverManager.getConnection(testDBUrl);
+
+
+
+
         dalLogisticCenterService = new DalLogisticCenterService(connection);
         dalDeliveryService = new DalDeliveryService(connection,dalLogisticCenterService);
+
 
         shiftController = new ShiftController();
         shiftService = new ShiftService(shiftController);
@@ -55,6 +64,7 @@ public class ServiceFactory {
 
         logisticCenterController = new LogisticCenterController(dalLogisticCenterService);
         logisticCenterService = new LogisticCenterService(logisticCenterController);
+        dalDeliveryService = new DalDeliveryService(connection,dalLogisticCenterService);
 
         //TODO //userController = new UserController();
         userService = new UserService(userController);
@@ -64,6 +74,7 @@ public class ServiceFactory {
         supplierService = new SupplierService(supplierController);
         deliveryController = new DeliveryController(logisticCenterController,supplierController,branchController,driverController,shiftController,dalDeliveryService);
         deliveryService = new DeliveryService(deliveryController);
+
     }
     public void callbackEnterWeight(EnterWeightInterface enterWeightInterface){
         deliveryService.setEnterWeightInterface(enterWeightInterface);
