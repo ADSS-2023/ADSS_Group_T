@@ -31,6 +31,13 @@ public class DamagedItem {
         }
     }
 
+    public DamagedItem(DamagedItemDTO dto,Item item,InventoryDalController inventoryDalController){
+        this.item =  item;
+        this.amount = dto.getAmount();
+        this.description = dto.getDescription();
+        this.inventoryDalController = inventoryDalController;
+        this.damaged_item_DTO = dto;
+    }
     /**
      * This function update the amount of the specific damaged item.
      *

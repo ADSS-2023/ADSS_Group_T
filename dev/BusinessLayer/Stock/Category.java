@@ -31,6 +31,14 @@ public class Category implements ProductCategoryManagement{
         this.inv_dal_controller = inv_dal_controller;
     }
 
+    public Category(CategoryDTO dto,InventoryDalController inv_dal_controller){
+        this.name = dto.getName();
+        this.index = dto.getFatherCategoryIndex(); // need to change it to be 0.1.1...
+        categories_list = new LinkedList<>();
+        discount_list = new LinkedList<>();
+        categoryDTO = dto;
+        this.inv_dal_controller = inv_dal_controller;
+    }
     /**
      *  This function called from CategoryService when there is a requirement to produce
      *  an inventory report.
