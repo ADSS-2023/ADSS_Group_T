@@ -18,11 +18,24 @@ public class SupplierController {
     // without products
     public boolean addSupplier(String supplierAddress, String telNumber, String contactName, int x, int y) {
         if (suppliers.containsKey(supplierAddress)) {
-            throw new IllegalArgumentException("supplayer address is taken");
+            throw new IllegalArgumentException("supplier address is taken");
         }
-        Supplier supplier = new Supplier(supplierAddress, telNumber, contactName, x, y);
-        suppliers.put(supplier.getAddress(), supplier);
-        return true;
+        else{
+            try {
+                if(dalDeliveryService.findSupplier(supplierAddress) != null)
+                    throw new IllegalArgumentException("supplier address is taken");
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        Supplier supplier = new Supplier(supplierAddress, telNumber, contactName, x, y, dalDeliveryService);
+        try {
+            dalDeliveryService.insertSupplier(supplier);
+            suppliers.put(supplier.getAddress(), supplier);
+            return true;
+        } catch (SQLException e) {
+            return false;
+        }
     }
 
     /**
@@ -33,7 +46,7 @@ public class SupplierController {
      * @return true if the product added successfully, and false otherwise
      */
     public boolean addProductToSupplier(String address, String productName, int coolingLevel) {
-        Supplier supplier = suppliers.get(address);
+        Supplier supplier = getSupplier(address);
         if (supplier == null) {
             throw new IllegalArgumentException("no such address");
         }
@@ -42,12 +55,10 @@ public class SupplierController {
     }
 
     public LinkedHashMap<String, Supplier> getAllSuppliers() {
-        if(suppliers.isEmpty()){
-            try {
-                suppliers = dalDeliveryService.findAllSupplier();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
+        try {
+            suppliers = dalDeliveryService.findAllSupplier();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
         return suppliers;
     }
@@ -61,7 +72,7 @@ public class SupplierController {
                 throw new RuntimeException(e);
             }
             if(s == null)
-                throw new IllegalArgumentException("no such supp");
+                return null;
             suppliers.put(supplierAddress,s);
             return s;
         }

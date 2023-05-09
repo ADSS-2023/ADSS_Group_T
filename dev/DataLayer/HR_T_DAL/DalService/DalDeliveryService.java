@@ -59,9 +59,9 @@ public class DalDeliveryService {
         dao.insert(dto);
     }
 
-    public void insertBranch(Supplier supplier) throws SQLException {
-        BranchDTO dto = new BranchDTO(supplier.getAddress(),supplier.getTelNumber(),
-                supplier.getContactName(),supplier.getLocation().getX(),supplier.getLocation().getY(),supplier.getShippingArea());
+    public void insertBranch(Branch branch) throws SQLException {
+        BranchDTO dto = new BranchDTO(branch.getAddress(),branch.getTelNumber(),
+                branch.getContactName(),branch.getLocation().getX(),branch.getLocation().getY(),branch.getShippingArea());
         dao.insert(dto);
     }
 
@@ -76,6 +76,11 @@ public class DalDeliveryService {
 
     public void insertDateToTruck(String shiftDate, int truckId) throws SQLException {
         DateToTruckDTO dto = new DateToTruckDTO(shiftDate, truckId);
+        dao.insert(dto);
+    }
+
+    public void insertSupplierToProducts(String supplierAddress, String productName) throws SQLException {
+        SupplierToProductsDTO dto = new SupplierToProductsDTO(supplierAddress, productName);
         dao.insert(dto);
     }
 
@@ -111,19 +116,42 @@ public class DalDeliveryService {
 
     public Supplier findSupplier(String supplierAddress) throws SQLException {
         SupplierDTO dto = dao.find(supplierAddress,"supplierAddress","Supplier",SupplierDTO.class);
-        return new Supplier(dto);
+        return new Supplier(dto,this);
     }
 
+    public Branch findBranch(String branchAddress) throws SQLException {
+        BranchDTO dto = dao.find(branchAddress,"branchAddress","Branch",BranchDTO.class);
+        return new Branch(dto);
+    }
+
+    public Product findProduct(String productName) throws SQLException {
+        ProductDTO dto = dao.find(productName,"productName","Product",ProductDTO.class);
+        return new Product(dto);
+    }
     public LinkedHashMap<String, Supplier> findAllSupplier() throws SQLException {
         ArrayList<SupplierDTO> suppliersDTOs =  dao.findAll("Supplier", SupplierDTO.class);
         LinkedHashMap<String, Supplier> suppliers = new LinkedHashMap<>();
         for(SupplierDTO s : suppliersDTOs){
-            suppliers.put(s.getSupplierAddress(),new Supplier(s));
+            suppliers.put(s.getSupplierAddress(),new Supplier(s,this));
         }
-        return  suppliers;
+        return suppliers;
     }
-    public Branch findBranch(String branchAddress) throws SQLException {
-        BranchDTO dto = dao.find(branchAddress,"branchAddress","Branch",BranchDTO.class);
-        return new Branch(dto);
+
+    public LinkedHashMap<String, Product> findAllProducts() throws SQLException {
+        ArrayList<ProductDTO> ProductDTOs =  dao.findAll("Product", ProductDTO.class);
+        LinkedHashMap<String, Product> products = new LinkedHashMap<>();
+        for(ProductDTO p : ProductDTOs){
+            products.put(p.getProductName(),new Product(p));
+        }
+        return products;
+    }
+
+    public LinkedHashMap<String, Branch> findAllBranch() throws SQLException {
+        ArrayList<BranchDTO> branchesDTOs =  dao.findAll("Branch", BranchDTO.class);
+        LinkedHashMap<String, Branch> branches = new LinkedHashMap<>();
+        for(BranchDTO b : branchesDTOs){
+            branches.put(b.getBranchAddress(),new Branch(b));
+        }
+        return branches;
     }
 }
