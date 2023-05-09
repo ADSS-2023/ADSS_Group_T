@@ -3,6 +3,7 @@ package BusinessLayer.Stock;
 import BusinessLayer.Stock.Util.Util;
 import BusinessLayer.Supplier_Stock.ItemToOrder;
 import BusinessLayer.Supplier_Stock.Util_Supplier_Stock;
+import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.ItemOrderdDTO;
 import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.ItemToOrderDTO;
 import DataLayer.Inventory_Supplier_Dal.DalController.InventoryDalController;
 import ServiceLayer.Supplier.OrderService;
@@ -67,6 +68,7 @@ public class OrderController {
             if(special_orders_track.containsKey(item_id)){
                 quantity += special_orders_track.get(item_id);
             }
+            inventoryDalController.insert(new ItemOrderdDTO("inventory_item_ordered",item_id,quantity));
             special_orders_track.put(item_id,quantity);
 
         }
@@ -150,15 +152,19 @@ public class OrderController {
      * Gets the new arrivals, and check the special order track to see if update is needed
      * @param newOrder
      */
-    private void handle_special_order_track(List<ItemToOrder> newOrder){
+    private void handle_special_order_track(List<ItemToOrder> newOrder) throws SQLException {
         for (ItemToOrder itemToOrder : newOrder){
             int item_id = inventory.itemToOrder_to_item(itemToOrder).item_id;
             if(special_orders_track.containsKey(item_id)){
                 int amount = special_orders_track.get(item_id);
-                if(itemToOrder.getQuantity()>= amount)
+                if(itemToOrder.getQuantity()>= amount) {
+                    inventoryDalController.delete(new ItemOrderdDTO("inventory_item_ordered", item_id, itemToOrder.getQuantity()));
                     special_orders_track.remove(item_id);
+                }
                 else {
                     amount -= itemToOrder.getQuantity();
+                    inventoryDalController.update(new ItemOrderdDTO("inventory_item_ordered", item_id, itemToOrder.getQuantity()),
+                            new ItemOrderdDTO("inventory_item_ordered", item_id, amount));
                     special_orders_track.put(item_id,amount);
                 }
             }
@@ -232,7 +238,7 @@ public class OrderController {
     /**
      * Set up function to test place items functionality
      */
-    public void set_up_waiting_items(){
+    public void set_up_waiting_items() throws SQLException {
         ItemToOrder milk_3 = new ItemToOrder("3% milk","IDO LTD",40, Util.stringToDate("2023-05-10"),12,1.2);
         ItemToOrder beef_sausage = new ItemToOrder("Beef Sausage","Zogloveck",15,Util.stringToDate("2023-10-01"),1005,10.05);
         receiveOrders(Arrays.asList(milk_3,beef_sausage));
