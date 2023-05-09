@@ -21,4 +21,6 @@ public abstract class DTO {
     public void setTableName(String tableName) {
         this.tableName = tableName;
     }
+
+
 }

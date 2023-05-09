@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 
 public class LogisticCenterController {
 
+
     private final LogisticCenter logisticCenter;
 
 
@@ -34,7 +35,7 @@ public class LogisticCenterController {
         return logisticCenter.loadProductsFromStock(requestedSupply);
     }
 
-    public LinkedHashMap<Product, Integer> getProductsInStock() {
+    public LinkedHashMap<Product, Integer> getProductsInStock() throws Exception {
         return logisticCenter.getProductsInStock();
     }
 
@@ -53,7 +54,7 @@ public class LogisticCenterController {
         return logisticCenter.addTruck(licenseNumber, model, weight, maxWeight, coolingLevel);
     }
 
-    public LinkedHashMap<Integer, Truck> getAllTrucks() {
+    public LinkedHashMap<Integer, Truck> getAllTrucks() throws Exception {
         return logisticCenter.getAllTrucks();
     }
 

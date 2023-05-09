@@ -2,6 +2,7 @@ package BusinessLayer.Transport;
 
 import BusinessLayer.HR.Driver.CoolingLevel;
 import BusinessLayer.HR.Driver.LicenseType;
+import DataLayer.HR_T_DAL.DTOs.TruckDTO;
 
 public class Truck {
     private final int licenseNumber;
@@ -18,6 +19,15 @@ public class Truck {
         this.maxWeight = maxWeight;
         this.licenseType = LicenseType.getByWeight(weight);
         this.coolingLevel = CoolingLevel.get(coolingLevel);
+    }
+
+    public Truck(TruckDTO truckDTO){
+        this.licenseNumber = truckDTO.getLicenseNumber();
+        this.model = truckDTO.getModel();
+        this.weight  =truckDTO.getWeight();
+        this.maxWeight = truckDTO.getMaxWeight();
+        this.coolingLevel = CoolingLevel.valueOf(truckDTO.getCoolingLevel());
+        this.licenseType = LicenseType.getByWeight(this.weight);
     }
 
     public int getLicenseNumber() {
