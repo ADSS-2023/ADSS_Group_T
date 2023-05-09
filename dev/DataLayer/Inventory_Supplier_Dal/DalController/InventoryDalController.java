@@ -18,9 +18,9 @@ public class InventoryDalController{
     private DAO generic_DAO;
     private Connection connection;
 
-    public InventoryDalController(Connection connection, DAO dao){
+    public InventoryDalController(Connection connection){
         category_DAO = new CategoryDAO();
-        generic_DAO = dao;
+        generic_DAO = new DAO();
         this.connection = connection;
     }
 

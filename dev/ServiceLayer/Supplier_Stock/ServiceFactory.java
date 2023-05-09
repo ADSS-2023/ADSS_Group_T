@@ -9,6 +9,7 @@ import BusinessLayer.Supplier.OrderController;
 import BusinessLayer.Supplier.SupplierController;
 import BusinessLayer.Supplier_Stock.Util_Supplier_Stock;
 import DataLayer.Inventory_Supplier_Dal.DalController.InventoryDalController;
+import DataLayer.Inventory_Supplier_Dal.DalController.ItemDalController;
 import DataLayer.Util.DAO;
 import ServiceLayer.Stock.CategoryService;
 import ServiceLayer.Stock.DamagedService;
@@ -58,15 +59,17 @@ public class ServiceFactory {
         this.supplierService = new SupplierService(this.sc, this.oc);
         this.orderService = new OrderService(this.oc, this.sc);
         uss = new Util_Supplier_Stock();
-        DAO dao = new DAO();
-        this.manageOrderService.setOrderController(this.inventoryService.get_inventory(), this.orderService);
-        this.inventoryDalController = new InventoryDalController(connection, dao);
-        this.inventoryService.get_inventory().setInventoryDalController(this.inventoryDalController);
+        connection = makeCon();
+        this.manageOrderService.setOrderController(this.inventoryService.get_inventory(), this.orderService,inventoryDalController);
+        inventoryDalController = new InventoryDalController(connection);
+        this.inventoryService.get_inventory().setInventoryDalController(inventoryDalController);
+        inventoryService.get_inventory().setItemDalController(new ItemDalController(connection));
+
     }
 
     private Connection makeCon() {
         try {
-            String dbFile = "C:/liran/Program/SMSRT4/ADSS/ADSS_Group_T/dev/DataLayer/stock_supplier_db.db";
+            String dbFile = "./dev/DataLayer/stock_supplier_db.db";
             String url = "jdbc:sqlite:" + dbFile;
             Class.forName("org.sqlite.JDBC");
             return DriverManager.getConnection(url);
@@ -85,8 +88,8 @@ public class ServiceFactory {
         this.supplierService = new SupplierService(this.sc, this.oc);
         this.orderService = new OrderService(this.oc, this.sc);
         DAO dao = new DAO();
-        this.manageOrderService.setOrderController(this.inventoryService.get_inventory(), this.orderService);
-        this.inventoryDalController = new InventoryDalController(this.connection, dao);
+        this.manageOrderService.setOrderController(this.inventoryService.get_inventory(), this.orderService,inventoryDalController);
+        this.inventoryDalController = new InventoryDalController(this.connection);
         this.inventoryService.get_inventory().setInventoryDalController(this.inventoryDalController);
     }
 
