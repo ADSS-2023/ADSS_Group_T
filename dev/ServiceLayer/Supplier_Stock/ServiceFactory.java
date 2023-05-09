@@ -48,6 +48,7 @@ public class ServiceFactory {
     public Util_Supplier_Stock uss;
 
     public ServiceFactory() {
+        this.inventoryService = new InventoryService();
         this.categoryService = new CategoryService(this.inventoryService.get_inventory());
         this.damagedService = new DamagedService(this.inventoryService.get_inventory());
         this.itemService = new ItemService(this.inventoryService.get_inventory());

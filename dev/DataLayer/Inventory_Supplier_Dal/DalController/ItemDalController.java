@@ -2,7 +2,6 @@ package DataLayer.Inventory_Supplier_Dal.DalController;
 
 import DataLayer.Util.DAO;
 import DataLayer.Util.DTO;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 
