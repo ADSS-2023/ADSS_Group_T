@@ -13,11 +13,17 @@ public class OrderController {
     private Inventory inventory;
     private OrderService order_service;
     private List<ItemToOrder> items_to_place;
+    /**
+     * A map that holds <id -- amount> for items that have been ordered in a former special order,
+     * buy yet to be received.
+     */
+    private Map<Integer,Integer> special_orders_track;
 
     public OrderController(Inventory inventory, OrderService orderService) {
         this.inventory = inventory;
         this.order_service = orderService;
         items_to_place = new LinkedList<>();
+        special_orders_track = new HashMap<>();
     }
 
     /**
@@ -47,6 +53,11 @@ public class OrderController {
             Integer quantity = entry.getValue();
             list_to_order.addLast(new ItemToOrder(inventory.get_item_by_id(item_id).get_name(),
                     inventory.get_item_by_id(item_id).manufacturer_name, quantity, null, -1,-1));
+            if(special_orders_track.containsKey(item_id)){
+                quantity += special_orders_track.get(item_id);
+            }
+            special_orders_track.put(item_id,quantity);
+
         }
         order_service.createSpecialOrder(list_to_order,isUrgent);
     }
@@ -62,7 +73,6 @@ public class OrderController {
         List<Item> cur_shortage_list = inventory.getShortageList();
         List<ItemToOrder> curDay_list1 = order_service.getRegularOrder(curDay);
         List<ItemToOrder> curDay_list2 = order_service.getSpecialOrder(curDay);
-        //figure out what should do here - if connect the 2 lists .
         List<ItemToOrder> curDay_list = new LinkedList<>();
         curDay_list.addAll(curDay_list1);
         curDay_list.addAll(curDay_list2);
@@ -71,6 +81,8 @@ public class OrderController {
         for (Item item : cur_shortage_list) {
             //calculate how many need to order
             int amount_to_order = (item.min_amount - item.current_amount())- amountOfReceivedItem(curDay_list , item.manufacturer_name , item.name);
+            if(special_orders_track.containsKey(item.item_id))
+                amount_to_order -=special_orders_track.get(item.item_id);
             if(amount_to_order > 0) {
                 for (ItemToOrder item_to_order : curDay_list1) {
                     if(!found) {
@@ -112,6 +124,26 @@ public class OrderController {
      */
     public void receiveOrders(List<ItemToOrder> newOrder){
         items_to_place.addAll(newOrder);
+        handle_special_order_track(newOrder);
+    }
+
+    /**
+     * Gets the new arrivals, and check the special order track to see if update is needed
+     * @param newOrder
+     */
+    private void handle_special_order_track(List<ItemToOrder> newOrder){
+        for (ItemToOrder itemToOrder : newOrder){
+            int item_id = inventory.itemToOrder_to_item(itemToOrder).item_id;
+            if(special_orders_track.containsKey(item_id)){
+                int amount = special_orders_track.get(item_id);
+                if(itemToOrder.getQuantity()>= amount)
+                    special_orders_track.remove(item_id);
+                else {
+                    amount -= itemToOrder.getQuantity();
+                    special_orders_track.put(item_id,amount);
+                }
+            }
+        }
     }
     /**
      * place new arrival in store by index in waiting list
