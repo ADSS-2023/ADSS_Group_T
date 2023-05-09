@@ -3,7 +3,11 @@ package BusinessLayer.Stock;
 import BusinessLayer.Stock.Util.Util;
 import BusinessLayer.Supplier_Stock.ItemToOrder;
 import BusinessLayer.Supplier_Stock.Util_Supplier_Stock;
+import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.ItemToOrderDTO;
+import DataLayer.Inventory_Supplier_Dal.DalController.InventoryDalController;
 import ServiceLayer.Supplier.OrderService;
+
+import java.sql.SQLException;
 import java.time.DayOfWeek;
 
 import java.util.*;
@@ -18,12 +22,17 @@ public class OrderController {
      * buy yet to be received.
      */
     private Map<Integer,Integer> special_orders_track;
+    private InventoryDalController inventoryDalController;
 
     public OrderController(Inventory inventory, OrderService orderService) {
         this.inventory = inventory;
         this.order_service = orderService;
         items_to_place = new LinkedList<>();
         special_orders_track = new HashMap<>();
+    }
+
+    public void setInventoryDalController(InventoryDalController inv){
+        inventoryDalController = inv;
     }
 
     /**
@@ -127,7 +136,12 @@ public class OrderController {
      * receive new order that arrived to the store
      * @param newOrder order id,item
      */
-    public void receiveOrders(List<ItemToOrder> newOrder){
+    public void receiveOrders(List<ItemToOrder> newOrder) throws SQLException {
+        for (ItemToOrder ito:newOrder) {
+            inventoryDalController.insert(new ItemToOrderDTO(
+                    "inventory_waiting_list",ito.getProductName(),ito.getManufacturer(),
+                    ito.getQuantity(),ito.getExpiryDate().toString(),ito.getCostPrice(),ito.getOrderId()));
+        }
         items_to_place.addAll(newOrder);
         handle_special_order_track(newOrder);
     }
@@ -160,6 +174,9 @@ public class OrderController {
         if(index > items_to_place.size())
             throw new Exception("Illegal index");
         ItemToOrder tempItem = items_to_place.get(index-1);
+        inventoryDalController.delete(new ItemToOrderDTO(
+                "inventory_waiting_list",tempItem.getProductName(),tempItem.getManufacturer(),
+                tempItem.getQuantity(),tempItem.getExpiryDate().toString(),tempItem.getCostPrice(),tempItem.getOrderId()));
         inventory.itemToOrder_to_item(tempItem).recive_order(
                 tempItem.getOrderId(),
                 (int)Math.floor(tempItem.getQuantity()/2),

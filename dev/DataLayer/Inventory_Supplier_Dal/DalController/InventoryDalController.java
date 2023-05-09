@@ -1,6 +1,7 @@
 package DataLayer.Inventory_Supplier_Dal.DalController;
 
 import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.CategoryDTO;
+import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.ItemToOrderDTO;
 import DataLayer.Util.DAO;
 import DataLayer.Util.DTO;
 
@@ -21,6 +22,10 @@ public class InventoryDalController{
         category_DAO = new CategoryDAO();
         generic_DAO = dao;
         this.connection = connection;
+    }
+
+    public void delete(DTO dto) throws SQLException {
+        generic_DAO.delete(connection,dto);
     }
 
     public void insert(DTO new_dto) throws SQLException {
