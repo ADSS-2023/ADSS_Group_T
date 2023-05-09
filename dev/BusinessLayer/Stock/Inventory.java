@@ -7,6 +7,7 @@ import DataLayer.Inventory_Supplier_Dal.DalController.InventoryDalController;
 import DataLayer.Inventory_Supplier_Dal.DalController.ItemDalController;
 import DataLayer.Util.DTO;
 
+import java.sql.SQLException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.*;
@@ -282,6 +283,19 @@ public class Inventory {
             cur_category.add_product(next_index,name);
         }
     }
+    public void add_category(CategoryDTO categoryDTO) throws Exception {
+        if (!categoryDTO.getIndex().contains(".")) {
+            Category new_category = new Category(categoryDTO , inv_dal_controller);
+            categories.add(new_category);
+            inv_dal_controller.insert(new_category.getDto());
+        }
+        else {
+            int current_index = Integer.parseInt(Util.extractFirstNumber(categoryDTO.getIndex()));
+            String next_index = Util.extractNextIndex(categoryDTO.getIndex());
+            Category cur_category = categories.get(current_index);
+            cur_category.add_product(categoryDTO,next_index);
+        }
+    }
 
     /**
      * Receive a new order for a specific item
@@ -353,7 +367,10 @@ public class Inventory {
      */
     public void nextDay(DayOfWeek tomorrow_day) {
     }
-    /*public void loadData(){
-        inv_dal_controller.
-    }*/
+    public void loadData() throws Exception {
+        List<CategoryDTO> categoryDTOList = inv_dal_controller.findAllCategories("inventory_categories",CategoryDTO.class);
+        for (CategoryDTO categoryDTO : categoryDTOList){
+            add_category(categoryDTO);
+        }
+    }
 }

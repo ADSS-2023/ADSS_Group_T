@@ -1,8 +1,7 @@
 package BusinessLayer.Stock;
 
+import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.CategoryDTO;
 import DataLayer.Util.DTO;
-
-import java.util.List;
 
 /*
     This class bind Item and Category under the same
@@ -21,4 +20,6 @@ public interface ProductCategoryManagement {
     String get_name();
     DTO getDto();
     void add_item(String index,Item item) throws Exception;
+
+    void add_product(CategoryDTO categoryDTO, String next_index);
 }
