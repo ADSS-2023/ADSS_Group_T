@@ -8,6 +8,7 @@ import java.sql.SQLException;
 public class OrderDTO extends DTO {
     private int orderNum;
     private int supplierNum;
+    private String supplierName;
     private String contactName;
     private String contactNumber;
     private String orderDate;
@@ -17,7 +18,8 @@ public class OrderDTO extends DTO {
     private int daysToDeliver;
     private int constantDay;
 
-    public OrderDTO(int orderNum, int supplierNum, String contactName, String contactNumber, String orderDate, String supplierAddress, String destinationAddress, boolean orderSupplied, int daysToDeliver, int constantDay) {
+    public OrderDTO(int orderNum, int supplierNum, String contactName, String contactNumber, String orderDate,
+                    String supplierAddress, String destinationAddress, boolean orderSupplied, int daysToDeliver, int constantDay) {
         super("supplier_order");
         this.orderNum = orderNum;
         this.supplierNum = supplierNum;

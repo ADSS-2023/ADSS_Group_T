@@ -4,6 +4,7 @@ import BusinessLayer.Supplier.Suppliers.SupplierBusiness;
 import BusinessLayer.Supplier_Stock.ItemToOrder;
 import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.OrderDTO;
 import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.OrderProductDTO;
+import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.SupplierProductDTO;
 import DataLayer.Inventory_Supplier_Dal.DalController.OrderDalController;
 import BusinessLayer.Supplier_Stock.Util_Supplier_Stock;
 import ServiceLayer.Stock.ManageOrderService;
@@ -135,6 +136,34 @@ public class OrderController {
            }
        }
         shoppingLists = new HashMap<>();
+    }
+
+    public void loadOrders() throws Exception {
+        List<OrderDTO> ordersList = orderDalController.findAll("supplier_orders",OrderDTO.class);
+        List<OrderProduct> orderProducts=null;
+        for (OrderDTO orderDTO : ordersList ) {
+            orderProducts = loadOrderProducts(orderDTO.getOrderNum());
+            OrderBusiness order = new OrderBusiness(orderDTO, orderProducts,sc.getSupplier(orderDTO.getSupplierNum()).getName());
+            if(orderDTO.isOrderSupplied())
+                orders.add(order);
+            else if(orderDTO.getConstantDay()==-1){
+                ordersNotSupplied.add(order);
+                else{
+                    //add to constant list
+                }
+
+            }
+
+        }
+    }
+    public List<OrderProduct> loadOrderProducts(int orderId) throws SQLException {
+        List<OrderProduct> orderProducts = new LinkedList<>();
+        List<OrderProductDTO> orderProductDTOS= orderDalController.findAllOfCondition(
+                "supplier_order_products","orderId", orderId, OrderProductDTO.class);
+        for (OrderProductDTO orderProductDTO : orderProductDTOS ) {
+            orderProducts.add(new OrderProduct(orderProductDTO));
+        }
+        return orderProducts;
     }
 
 

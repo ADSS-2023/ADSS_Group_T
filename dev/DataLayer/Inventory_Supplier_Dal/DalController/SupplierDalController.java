@@ -44,4 +44,8 @@ public class SupplierDalController {
         return dao.findAll(tableName,DTOName,connection);
     }
 
+    public <T extends DTO> ArrayList<T> findAllOfCondition  (String tableName,String conditionKey,Object conditionValue ,Class<T> DTOName) throws SQLException {
+        return dao.findAllOfCondition(tableName, conditionKey,conditionValue ,DTOName,connection);
+    }
+
 }

@@ -11,6 +11,7 @@ import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.SupplierDTO;
 import DataLayer.Inventory_Supplier_Dal.DalController.SupplierDalController;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.time.DayOfWeek;
 import java.util.*;
 
@@ -24,8 +25,8 @@ public class SupplierController {
         this.supplierDalController = supplierDalController;
     }
 
-    public void loadSuppliers(){
-        List<SupplierDTO> supplierDTOS = supplierDalController.findAll("supplier_supplier");
+    public void loadSuppliers() throws SQLException {
+        List<SupplierDTO> supplierDTOS = supplierDalController.findAll("supplier_supplier",SupplierDTO.class);
         for (SupplierDTO supplierDTO : supplierDTOS) {
             List<SupplierContactDTO> supplierContactDTOS = loadSupplierContacts(supplierDTOS);
             addSupplier(supplierDTO.getSupplierName(), supplierDTO.getAddress(), supplierDTO.getSupplierNum(), supplierDTO.getBankAccountNum(), );
@@ -33,7 +34,8 @@ public class SupplierController {
     }
 
     public List<SupplierContactDTO> loadSupplierContacts(int supplierNum){
-        return supplierDalController.findAllOfCondition("supplier_supplier_contact", "supplierNum", supplierNum, SupplierContactDTO.class);
+        //return supplierDalController.findAllOfCondition("supplier_supplier_contact", "supplierNum", supplierNum, SupplierContactDTO.class);
+        return null;
     }
 
     public void addSupplier(String name, String address, int supplierNum, int bankAccountNum, HashMap<String, String> contacts, List<DayOfWeek> constDeliveryDays, boolean selfDelivery, PaymentTerms paymentTerms, int daysToDeliver) throws Exception {

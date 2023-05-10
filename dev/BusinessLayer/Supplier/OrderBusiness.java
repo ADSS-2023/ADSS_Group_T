@@ -2,6 +2,7 @@ package BusinessLayer.Supplier;
 
 import BusinessLayer.Supplier_Stock.Util_Supplier_Stock;
 import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.OrderDTO;
+import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.OrderProductDTO;
 import DataLayer.Inventory_Supplier_Dal.DalController.OrderDalController;
 
 import java.time.LocalDate;
@@ -9,9 +10,7 @@ import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 
-
 public class OrderBusiness {
-
 
     private int orderNum;
     private String supplierName;
@@ -31,7 +30,8 @@ public class OrderBusiness {
     public OrderBusiness(int orderNum, String supplierName, LocalDate  orderDate,
                          String supplierAddress, String destinationAddress
             , int supplierNum, String contactName, String contactNumber,
-                         List<OrderProduct> products, int daysToSupplied) {
+                         List<OrderProduct> products, int daysToSupplied,
+                         boolean orderSupplied, int daysTodeliver, int constantDay){
         this.orderNum = orderNum;
         this.supplierName = supplierName;
         this.orderDate = orderDate;
@@ -43,6 +43,19 @@ public class OrderBusiness {
         this.products = products;
         this.daysToSupplied = daysToSupplied;
         this.orderDTO = new OrderDTO(orderNum, supplierNum, contactName, contactNumber, orderDate.toString(), supplierAddress, destinationAddress, orderSupplied, daysTodeliver, constantDay);
+    }
+    public OrderBusiness (OrderDTO orderDTO, List<OrderProduct> orderProduct,String supplierName){
+        this.orderNum = orderDTO.getOrderNum();
+        this.supplierName = supplierName;
+        this.supplierAddress = orderDTO.getSupplierAddress();
+        this.destinationAddress = orderDTO.getDestinationAddress();
+        this.supplierNum = orderDTO.getSupplierNum();
+        this.contactName = orderDTO.getContactName();
+        this.contactNumber = orderDTO.getContactNumber();
+        this.products = orderProduct;
+        this.daysToSupplied = orderDTO.getDaysToDeliver();
+        this.orderDTO = new OrderDTO(orderNum, supplierNum, contactName, contactNumber, orderDate.toString(), supplierAddress, destinationAddress, orderSupplied, daysTodeliver, constantDay);
+
     }
 
     public int getOrderNum() {
