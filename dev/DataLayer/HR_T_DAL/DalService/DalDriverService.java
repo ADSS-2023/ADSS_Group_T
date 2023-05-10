@@ -89,11 +89,9 @@ public class DalDriverService {
 
     // TODO - israel
     public void addSubmissionForDriver(int driverId, LocalDate date) throws SQLException { // the boolean is if assigned or not
-
     }
 
     public void addSRequirement( LocalDate date, String licenseType, String coolingLevel, int amount ) throws SQLException { // the boolean is if assigned or not
-
     }
 
 

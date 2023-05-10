@@ -37,8 +37,6 @@ public class ShiftController {
        this.dalEmployeeService = dalEmployeeService;
     }
 
-
-
     public void SkipDay(LocalDate date) throws SQLException {
         // Retrieve all shifts for the given date and group them by branch
         LinkedHashMap<String, HashMap<LocalDate, ArrayList<Shift>>> shiftsByDateInAllBranch = dalShiftService.findAllShifsByDate(date);
