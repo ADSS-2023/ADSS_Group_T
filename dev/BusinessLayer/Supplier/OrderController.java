@@ -126,12 +126,12 @@ public class OrderController {
                // Get the last day of the week
                DayOfWeek lastDay = orderDay.plus(diff);
                OrderBusiness order = new OrderBusiness(orderCounter++, supplier.getName(), Util_Supplier_Stock.getCurrDay(), supplier.getAddress(),
-                       "SuperLi", supplier.getSupplierNum(), contactName, contactNum, products, daysToSupplied, false, -1,lastDay.name());
+                       "SuperLi", supplier.getSupplierNum(), contactName, contactNum, products, daysToSupplied, false, -1,lastDay.name(),orderDalController);
                dayToConstantOrders.get(orderDay).add(order);
            }
            else{
                OrderBusiness order = new OrderBusiness(orderCounter++, supplier.getName(), Util_Supplier_Stock.getCurrDay(), supplier.getAddress(),
-                       "SuperLi", supplier.getSupplierNum(), contactName, contactNum, products, daysToSupplied, false, daysToSupplied, null);
+                       "SuperLi", supplier.getSupplierNum(), contactName, contactNum, products, daysToSupplied, false, daysToSupplied, null,orderDalController);
                ordersNotSupplied.add(order);
            }
        }
@@ -146,7 +146,7 @@ public class OrderController {
             if(orderDTO.getOrderNum()>maxId)
                 maxId=orderDTO.getOrderNum();
             orderProducts = loadOrderProducts(orderDTO.getOrderNum());
-            OrderBusiness order = new OrderBusiness(orderDTO, orderProducts,sc.getSupplier(orderDTO.getSupplierNum()).getName());
+            OrderBusiness order = new OrderBusiness(orderDTO, orderProducts,sc.getSupplier(orderDTO.getSupplierNum()).getName(),orderDalController);
             if(orderDTO.isOrderSupplied()) // if the order already supplied
                 orders.add(order);
             else if(orderDTO.getDaysToDeliver()!=-1) //if the order is special order

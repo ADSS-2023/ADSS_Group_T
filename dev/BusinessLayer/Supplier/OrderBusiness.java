@@ -33,7 +33,8 @@ public class OrderBusiness {
                          String supplierAddress, String destinationAddress
             , int supplierNum, String contactName, String contactNumber,
                          List<OrderProduct> products, int daysToSupplied,
-                         boolean orderSupplied, int daysTodeliver, String constantDay){
+                         boolean orderSupplied, int daysTodeliver, String constantDay,
+                            OrderDalController orderDalController){
         this.orderNum = orderNum;
         this.supplierName = supplierName;
         this.orderDate = orderDate;
@@ -44,10 +45,11 @@ public class OrderBusiness {
         this.contactNumber = contactNumber;
         this.products = products;
         this.daysToSupplied = daysToSupplied;
+        this.orderDalController=orderDalController;
         this.orderDTO = new OrderDTO(orderNum, supplierNum, contactName, contactNumber, orderDate.toString(),
                 supplierAddress, destinationAddress, orderSupplied, daysTodeliver, constantDay);
     }
-    public OrderBusiness (OrderDTO orderDTO, List<OrderProduct> orderProduct,String supplierName){
+    public OrderBusiness (OrderDTO orderDTO, List<OrderProduct> orderProduct,String supplierName, OrderDalController orderDalController ){
         this.orderNum = orderDTO.getOrderNum();
         this.supplierName = supplierName;
         this.supplierAddress = orderDTO.getSupplierAddress();
@@ -57,6 +59,7 @@ public class OrderBusiness {
         this.contactNumber = orderDTO.getContactNumber();
         this.products = orderProduct;
         this.daysToSupplied = orderDTO.getDaysToDeliver();
+        this.orderDalController=orderDalController;
         this.orderDTO = orderDTO;
 
     }
@@ -100,7 +103,7 @@ public class OrderBusiness {
             clonedProducts.add(product.clone());
         return new OrderBusiness(
                 newOrderNum, supplierName, Util_Supplier_Stock.getCurrDay(), supplierAddress, destinationAddress,
-                supplierNum,contactName,contactNumber,clonedProducts,daysToSupplied, true, -1, null);
+                supplierNum,contactName,contactNumber,clonedProducts,daysToSupplied, true, -1, null,orderDalController);
     }
     public String getSupplierName() {
         return supplierName;
