@@ -40,8 +40,6 @@ public class DalUserService {
     public void addUserFromDriver (UserDTO userDTO) throws SQLException {
         userDAO.insert(userDTO);
     }
-
-    // TODO - israel
     public void addNewEmployee(Employee employee) throws SQLException {
         UserDTO userDTO = new UserDTO(employee);
         userDAO.insert(userDTO);

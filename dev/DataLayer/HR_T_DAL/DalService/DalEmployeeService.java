@@ -6,9 +6,7 @@ import DataLayer.HR_T_DAL.DAOs.ConstraintDao;
 import DataLayer.HR_T_DAL.DAOs.EmployeeDAO;
 import DataLayer.HR_T_DAL.DAOs.QualificationDAO;
 import DataLayer.HR_T_DAL.DAOs.UserDAO;
-import DataLayer.HR_T_DAL.DTOs.ConstraintDTO;
-import DataLayer.HR_T_DAL.DTOs.QualifiedPositionDTO;
-import DataLayer.HR_T_DAL.DTOs.SubmittedShiftDTO;
+import DataLayer.HR_T_DAL.DTOs.*;
 import DataLayer.Util.DAO;
 
 import java.sql.Connection;
@@ -29,12 +27,13 @@ public class DalEmployeeService {
 
     private DalUserService dalUserService;
 
-    public DalEmployeeService(Connection connection) {
+    public DalEmployeeService(Connection connection,DalUserService dalUserService) {
         this.connection = connection;
         this.employeeDAO = new EmployeeDAO(connection);
         this.constraintDao = new ConstraintDao(connection);
         this.dao = new DAO(connection);
         this.qualificationDAO = new QualificationDAO(connection);
+        this.dalUserService = dalUserService;
     }
 
     public void addConstraint(int employeeId, String branchAdress, LocalDate date, boolean shiftType,String positionType) throws SQLException {
@@ -81,9 +80,13 @@ public class DalEmployeeService {
         return null;
     }
 
+
     public Employee findEmployeeById(int employeeId) throws SQLException {
-        Employee employee = new Employee(dalUserService.findUserDTOById(employeeId));
-        if(employee != null) return employee;
+       UserDTO userDTO = dalUserService.findUserDTOById(employeeId);
+       if (userDTO != null){
+           Employee employee = new Employee(userDTO);
+           return employee;
+       }
         else return null;
     }
 

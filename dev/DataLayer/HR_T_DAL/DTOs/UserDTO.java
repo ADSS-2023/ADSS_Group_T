@@ -47,6 +47,8 @@ public class UserDTO extends DTO {
         this.password = employee.getPassword();
     }
 
+    public UserDTO(){}
+
     public int getId() {
         return id;
     }

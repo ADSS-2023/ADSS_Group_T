@@ -14,13 +14,14 @@ public class EmployeeController {
     private HashMap<Integer,Employee> employeesMapper;
     public ShiftController shiftController;
     public DalEmployeeService dalEmployeeService;
-
     public DalUserService dalUserService;
 
 
 
-    public EmployeeController(){
+    public EmployeeController(DalEmployeeService dalEmployeeService , DalUserService dalUserService){
         employeesMapper = new HashMap<Integer,Employee>();
+        this.dalEmployeeService = dalEmployeeService;
+        this.dalUserService = dalUserService;
     }
     public void addNewEmployee(int id, String employeeName, String bankAccount, String description, int salary, LocalDate joiningDay, String password, UserType userType) throws Exception {
         // Check if the ID already exists
@@ -50,14 +51,16 @@ public class EmployeeController {
     public void addQualification(int id,  String position) throws SQLException {
         Employee employee = employeesMapper.get(id);
         if (employee == null){
-            employee = dalEmployeeService.findEmployeeById(id);
-            if(employee != null)
+            Employee employee2 = dalEmployeeService.findEmployeeById(id);
+            if(employee2 != null){
                 employeesMapper.put(id, employee);
+            }
         }
 
         if (employee == null)
             throw new IllegalArgumentException("there is no such employee with this id");
         employee.addQualification(position);
+        dalEmployeeService.addQualification(id,position);
     }
 
     public HashMap<Integer, Employee> getEmployeesMapper(){
