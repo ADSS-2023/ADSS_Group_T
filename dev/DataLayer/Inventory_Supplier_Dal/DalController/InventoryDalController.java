@@ -46,8 +46,8 @@ public class InventoryDalController{
     public DAO getDAO() {
         return generic_DAO;
     }
-    public <T extends DTO> T find(LinkedHashMap<String,Object> pk, String tableName, Class<T> dtoClass, Connection connection) throws SQLException {
-        return generic_DAO.find(pk,tableName,dtoClass,connection);
+    public <T extends DTO> T find(Object pk,String pkName, String tableName, Class<T> dtoClass) throws SQLException {
+        return generic_DAO.find(pk,pkName,tableName,dtoClass,connection);
     }
     public <T extends DTO> ArrayList<T> findAll(String tableName, Class<T> dtoClass) throws SQLException {
         return generic_DAO.findAll(tableName,dtoClass,connection);

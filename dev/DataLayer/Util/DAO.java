@@ -167,7 +167,36 @@ public class DAO {
 
         return result;
     }
+    public <T extends DTO> T find(Object pkVal, String pkName, String tableName, Class<T> dtoClass,Connection connection) throws SQLException {
+        T result = null;
+        String sql = "SELECT * FROM " + tableName + " WHERE " + pkName + " = ?";
 
+
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setObject(1, pkVal);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                result = dtoClass.getDeclaredConstructor().newInstance();
+                result.setTableName(tableName);
+
+                ResultSetMetaData metaData = resultSet.getMetaData();
+                int columnCount = metaData.getColumnCount();
+
+                for (int i = 1; i <= columnCount; i++) {
+                    String columnName = metaData.getColumnName(i);
+                    Object value = resultSet.getObject(i);
+                    Field field = result.getClass().getDeclaredField(columnName);
+                    field.setAccessible(true);
+                    field.set(result, value);
+                }
+            }
+        } catch (ReflectiveOperationException e) {
+            throw new SQLException("Error creating DTO instance", e);
+        }
+
+        return result;
+    }
     public <T extends DTO> ArrayList<T> findAllOfCondition(String tableName, String conditionKey,Object conditionValue,Class<T> classDTo,Connection connection) throws SQLException {
         ArrayList<T> results = new ArrayList<>();
         String sql = "SELECT * FROM "+tableName+" where "+conditionKey+ " = " +conditionValue.toString();

@@ -140,11 +140,11 @@ public class Inventory {
         Discount new_discount = new Discount(discount_counter , start_date , end_date , percentageAmount , index);
         categories.get(current_index).setDiscount(next_index , new_discount);
         inv_dal_controller.insert(new_discount.getDto());
-        discount_counter++;
+        inv_dal_controller.update(new DiscountCounterDTO(discount_counter),new DiscountCounterDTO(++discount_counter));
     }
 
     public void set_discount(DiscountDTO discount) throws Exception {
-        int current_index = Integer.parseInt(Util.extractFirstNumber("."+discount.getIndex_product()));
+        int current_index = Integer.parseInt(Util.extractFirstNumber(discount.getIndex_product()));
         String next_index = Util.extractNextIndex("."+discount.getIndex_product());
         Discount new_discount = new Discount(discount);
         categories.get(current_index).setDiscount(next_index , new_discount);
@@ -341,6 +341,8 @@ public class Inventory {
     public void nextDay(DayOfWeek tomorrow_day) {
     }
     public void loadData() throws Exception {
+        DiscountCounterDTO discountCounterDTO = inv_dal_controller.find("discountCounter","name","inventory_constants", DiscountCounterDTO.class);
+        discount_counter = discountCounterDTO.getCount();
         List<CategoryDTO> categoryDTOList = inv_dal_controller.findAllCategories("inventory_categories",CategoryDTO.class);
         for (CategoryDTO categoryDTO : categoryDTOList){
             add_category(categoryDTO);
