@@ -2,6 +2,7 @@ package PresentationLayer;
 
 import ServiceLayer.HR.EmployeeService;
 import ServiceLayer.HR.ShiftService;
+import UtilSuper.Time;
 
 import java.util.HashMap;
 import java.util.Scanner;
@@ -24,55 +25,93 @@ public class HRManagerPresentation {
         while (true) {
             System.out.println("------ main window -------");
             System.out.println("Please choose an option:");
+            System.out.println(
+                                " \n 1.add new Employee" +
+                                " \n 2.notification" +
+                                " \n 3.add employee qualification " +
+                                " \n 4.show shift status" +
+                                " \n 5.add new driver" +
+                                " \n 6.update employee" +
+                                " \n 7.update driver" +
+                                " \n 8.manage assign Employee for shift" +
+                                " \n 9.submit shift for employee" +
+                                " \n 10.submit shift for driver" +
+                                " \n 11.add shift requirements" +
+                                " \n 12.exit ");
             int choice = scanner.nextInt();
             scanner.nextLine(); // Consume the newline character
             switch (choice) {
-                case 1 -> {}
-                case 2 -> {}
-                case 3 -> {}
-                case 4 -> {}
-                case 5 -> {}
-                case 6 -> {}
-                case 7 -> {return;}//exit
+                case 1 -> {addNewEmployee();}
+                case 2 -> {notification();}
+                case 3 -> {addQualification();}
+                case 4 -> {ShowShiftStatus1();}
+                case 5 -> {addNewDriver();}
+                case 6 -> {updateEmployeeDetails1();}
+                case 7 -> {updateDriverDetails1();}
+                case 8 -> {}
+                case 9 -> {assignEmployeeForShift1();}
+                case 10 -> {assignEmployeeForShift1();}
+                case 11 -> {addShiftRequirements1();}
+                case 12 -> {return;}//exit
                 default -> System.out.println("Invalid choice. Please try again.");
             }
         }
     }
 
-    public String addShiftRequirements(String branch, HashMap<String, Integer> howMany, String date, String shiftType){return null;}
+    private void notification() {
+    }
 
+    private void assignEmployeeForShift1() {
 
+    }
 
+    private void addShiftRequirements1() {
+    }
 
+    private void updateDriverDetails1() {
+    }
 
-        public String ShowShiftStatus(String branch, String date, String shiftType) {return null;}
+    private void updateEmployeeDetails1() {
 
-        public String assignEmployeeForShift(String branch, int ans_id, String ans_date, String ans_type, String position){return null;}
+    }
 
-        public String assignAll(String branch, String ans_date, String ans_type){return null;}
+    private void ShowShiftStatus1() {
+    }
 
+    private void addQualification() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Please enter the employee details:");
+        System.out.println("Please enter the employee ID:");
+        int employeeId = scanner.nextInt();
+        scanner.nextLine();
+        System.out.println("Please enter the employee new Qualification from those options:" +
+                "\n"+"cashier, storekeeper, security, cleaning, orderly, general_worker, shiftManager");
+        String quali = scanner.nextLine();
+        employeeService.addQualification(employeeId,quali);
+    }
 
-
-
-        public String addRestrictionToEmployee(int id, String branchId, String date, String type){return null;}
-
-        public String addNewEmployee(int id, String employeeName, String bankAccount, String description, int salary, String joiningDay, String password){return null;}
-
-        public String addNewDriver(int id, String employeeName, String bankAccount, String description, int salary, String joiningDay, String password, String licenseType, int coolingLevel){return null;}
-
-        public String updateEmployeeDetails(int id, String employeeName, String bankAccount, String description, int salary, String joiningDay, String password){return null;}
-
-        public String updateDriverDetails(String bankAccount, String description, int salary, String password, String licenseType, int coolingLevel){return null;}
-
-        public String addQualification(int id, String quali){return null;}
-
-
-
-
-
+    private void addNewEmployee() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Please enter the employee details:");
+        System.out.println("Please enter the employee ID:");
+        int employeeId = scanner.nextInt();
+        scanner.nextLine();
+        System.out.println("Please enter the employee name:");
+        String employeeName = scanner.nextLine();
+        System.out.println("Please enter the employee bank account:");
+        String employeebank = scanner.nextLine();
+        System.out.println("Please enter the employee description:");
+        String description = scanner.nextLine();
+        System.out.println("Please enter the employee joining day:");
+        String joiningDay = scanner.nextLine();
+        System.out.println("Please enter the employee password:");
+        String password = scanner.nextLine();
+        System.out.println("Please enter the employee salary:");
+        int salary = scanner.nextInt();
+        employeeService.addNewEmployee(employeeId,employeeName,employeebank,description,salary, Time.stringToLocalDate(joiningDay),password);
+    }
 
     // option 3
-
     /**
      * add new driver to the system
      */
@@ -80,31 +119,26 @@ public class HRManagerPresentation {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter the driver details:");
         System.out.println("Please enter the driver ID:");
-        int driverId = scanner.nextInt();
+        int id = scanner.nextInt();
         scanner.nextLine();
         System.out.println("Please enter the driver name:");
-        String driverName = scanner.nextLine();
-        int licenseIndex = getLicendeType();
-        int coolingIndex = getCoolingLevel();
-        //TODO //System.out.println(employeeService.addDriver(driverId,driverName,licenseIndex,coolingIndex));
+        String Name = scanner.nextLine();
+        System.out.println("Please enter the driver bank account:");
+        String bank = scanner.nextLine();
+        System.out.println("Please enter the driver description:");
+        String description = scanner.nextLine();
+        System.out.println("Please enter the driver joining day:");
+        String joiningDay = scanner.nextLine();
+        System.out.println("Please enter the driver password:");
+        String password = scanner.nextLine();
+        System.out.println("Please enter the driver salary:");
+        int salary = scanner.nextInt();
+        scanner.nextLine();
+        System.out.println("Please enter the driver cooling level by number: (1)=non (2)=fridge (3)=freezer");
+        int coolinglevel = scanner.nextInt();
+        scanner.nextLine();
+        System.out.println("Please enter the driver license type : C1 , C , E " );
+        String licenseType = scanner.nextLine();
+        employeeService.addNewDriver(id,Name,bank,description,salary,joiningDay,password,licenseType,coolinglevel);
     }
-
-    private int getCoolingLevel(){
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Please choose the supplier cooling level:");
-        System.out.println("1. Non");
-        System.out.println("2. Fridge");
-        System.out.println("3. Freezer");
-        return scanner.nextInt();
-    }
-    private int getLicendeType() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Please choose the driver license type:");
-        System.out.println("1. C1");
-        System.out.println("2. C");
-        System.out.println("3. E");
-        int licenseIndex = scanner.nextInt();
-        return licenseIndex;
-    }
-
 }
