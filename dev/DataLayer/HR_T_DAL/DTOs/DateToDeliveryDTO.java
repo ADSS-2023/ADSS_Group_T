@@ -21,6 +21,10 @@ public class DateToDeliveryDTO extends DTO {
         this.shiftDate = shiftDate;
         this.deliveryId = deliveryId;
     }
+
+    public DateToDeliveryDTO() {
+    }
+
     public static String getTableNameStatic(){
         return "DateToDelivery";
     }

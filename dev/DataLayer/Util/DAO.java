@@ -181,7 +181,6 @@ public class DAO {
             sql = sql + pkNames.get(i) + " = " + pk.get(pkNames.get(i)) + " and " ;
         sql = sql + pkNames.get(pkNames.size()-1) + " = " + pk.get(pkNames.get(pkNames.size()-1));
 
-
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
 
