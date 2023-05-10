@@ -68,7 +68,7 @@ public class Employee extends User {
         // Add the new constraint to the submitted shift
         else {
             Constraint cons = new Constraint(branch, id, date, shiftType);
-            dalEmployeeService.addConstraint(id, branch, date, shiftType);
+            dalEmployeeService.addConstraint(id, branch, date, shiftType,null);
             submittedShifts.put(date, cons);
             dalEmployeeService.addSubmittesdShift(branch, date, shiftType, id);
         }
@@ -162,11 +162,11 @@ public class Employee extends User {
     }
 
     public ArrayList<String> getQualifiedPositions() throws SQLException {
-        return dalEmployeeService.findQualificationsBtId(id);
+        return dalEmployeeService.findQualificationsById(id);
     }
 
     public Map<LocalDate,Constraint> getSubmittedShifts() throws SQLException {
-        submittedShifts = dalEmployeeService.findSubmittedShiftsByid(id);
+        submittedShifts = dalEmployeeService.findSubmittedShiftsById(id);
         return submittedShifts;
     }
 

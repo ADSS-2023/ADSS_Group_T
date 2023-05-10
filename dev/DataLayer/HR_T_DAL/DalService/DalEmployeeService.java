@@ -4,6 +4,7 @@ import BusinessLayer.HR.Constraint;
 import BusinessLayer.HR.Employee;
 import DataLayer.HR_T_DAL.DAOs.ConstraintDao;
 import DataLayer.HR_T_DAL.DAOs.EmployeeDAO;
+import DataLayer.HR_T_DAL.DAOs.QualificationDAO;
 import DataLayer.HR_T_DAL.DAOs.UserDAO;
 import DataLayer.HR_T_DAL.DTOs.ConstraintDTO;
 import DataLayer.HR_T_DAL.DTOs.QualifiedPositionDTO;
@@ -22,6 +23,7 @@ public class DalEmployeeService {
     private ConstraintDao constraintDao;
     private Connection connection;
 
+    private QualificationDAO qualificationDAO;
     private DAO dao;
 
     private DalUserService dalUserService;
@@ -29,14 +31,17 @@ public class DalEmployeeService {
     public DalEmployeeService(Connection connection) {
         this.connection = connection;
         this.employeeDAO = new EmployeeDAO(connection);
+        this.constraintDao = new ConstraintDao(connection);
+        this.dao = new DAO(connection);
+        this.qualificationDAO = new QualificationDAO(connection);
     }
 
-    public void addConstraint(int employeeId, String branchAdress, LocalDate date, boolean shiftType) throws SQLException {
+    public void addConstraint(int employeeId, String branchAdress, LocalDate date, boolean shiftType,String positionType) throws SQLException {
         String s ="evening";
         if (shiftType)
             s="morning";
-        ConstraintDTO constraintDTO = new ConstraintDTO(employeeId,branchAdress,date.toString(),s);
-        constraintDao.insert(constraintDTO);
+        ConstraintDTO constraintDTO = new ConstraintDTO(employeeId,branchAdress,date.toString(),s ,positionType);
+        dao.insert(constraintDTO);
     }
     public void addSubmittesdShift(String branchAdress,  LocalDate date, boolean shiftType,  int employeeId ) throws SQLException {
         String s ="evening";
@@ -46,10 +51,10 @@ public class DalEmployeeService {
         dao.insert(submittedShiftDTO);
     }
 
-    // TODO - israel
     public Constraint findConstraintByIdAndDate(int employeeId,   LocalDate date) throws SQLException {
-        return null;
-
+        ConstraintDTO constraintDTO = constraintDao.findConstraintByIdAndDate(employeeId,date.toString());
+        Constraint constraint = new Constraint(constraintDTO);
+        return constraint;
     }
 
     // TODO - israel
@@ -62,20 +67,18 @@ public class DalEmployeeService {
         dao.insert(qualifiedPositionDTO);
     }
 
-    // TODO - israel
-    public ArrayList<String> findQualificationsBtId(int employeeId) throws SQLException {
-        return null;
+    public ArrayList<String> findQualificationsById(int employeeId) throws SQLException {
+        return qualificationDAO.findQualificationsById(employeeId);
     }
 
-    // TODO - israel
-    public Map<LocalDate,Constraint> findSubmittedShiftsByid(int employeeId) throws SQLException {
+    public Map<LocalDate,Constraint> findSubmittedShiftsById(int employeeId) throws SQLException {
         return null;
     }
 
     public Employee findEmployeeById(int employeeId) throws SQLException {
-        Employee employee = new Employee(UserDAO)
-         ;
-        return null;
+        Employee employee = new Employee(dalUserService.findUserDTOById(employeeId));
+        if(employee != null) return employee;
+        else return null;
     }
 
 }

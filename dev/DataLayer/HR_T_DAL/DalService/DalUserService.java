@@ -25,6 +25,11 @@ public class DalUserService {
         User user = new User(userDTO);
         return user;
     }
+    public UserDTO findUserDTOById(int userId) throws SQLException {
+        UserDTO userDTO = userDAO.find(userId,"id","User",UserDTO.class);
+        return userDTO;
+    }
+
 
 //    public void deleteUser(int userId) throws SQLException {
 //        UserDTO userDTO = new UserDTO();
