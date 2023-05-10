@@ -12,9 +12,10 @@ public class ItemPerOrderDTO extends DTO {
     private double costPrice;
     private int amountStore;
     private int amountWarehouse;
+    private String arrivedDate;
 
 
-    public ItemPerOrderDTO(int amountWarehouse, int amountStore, double costPrice, String location, String validity, int orderId , int itemId) {
+    public ItemPerOrderDTO(int amountWarehouse, int amountStore, double costPrice, String location, String validity, int orderId , int itemId,String arrivedDate) {
         super("inventory_item_per_order");
         this.amountWarehouse = amountWarehouse;
         this.amountStore = amountStore;
@@ -23,6 +24,7 @@ public class ItemPerOrderDTO extends DTO {
         this.validity = validity;
         this.orderId = orderId;
         this.itemId = itemId;
+        this.arrivedDate = arrivedDate;
     }
     public ItemPerOrderDTO(){
         super("inventory_item_per_order");
@@ -51,7 +53,7 @@ public class ItemPerOrderDTO extends DTO {
     }
 
     public ItemPerOrderDTO clone () {return new ItemPerOrderDTO(amountWarehouse , amountStore , costPrice
-            ,location , validity, orderId , itemId);}
+            ,location , validity, orderId , itemId,arrivedDate);}
 
 
     public void setItemId(int itemId){
@@ -73,4 +75,7 @@ public class ItemPerOrderDTO extends DTO {
         this.amountWarehouse = new_amount;
     }
 
+    public String getArrivedDate() {
+        return arrivedDate;
+    }
 }
