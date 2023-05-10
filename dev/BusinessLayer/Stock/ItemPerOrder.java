@@ -1,5 +1,6 @@
 package BusinessLayer.Stock;
 
+import BusinessLayer.Stock.Util.Util;
 import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.ItemDTO;
 import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.ItemPerOrderDTO;
 import DataLayer.Inventory_Supplier_Dal.DalController.ItemDalController;
@@ -41,6 +42,13 @@ public class ItemPerOrder {
                             ,orderId,0);
     }
 
+    ItemPerOrder(ItemPerOrderDTO itemPerOrderDTO){
+        this.amount_warehouse = itemPerOrderDTO.getAmountWarehouse();
+        this.amount_store = itemPerOrderDTO.getAmountStore();
+        this.cost_price = itemPerOrderDTO.getCostPrice();
+        this.location = itemPerOrderDTO.getLocation();
+        this.validity = Util.stringToDate(itemPerOrderDTO.getValidity());
+    }
     /**
      * This function return the amount of this item from a specific order at the warehouse.
      * @return
@@ -116,5 +124,9 @@ public class ItemPerOrder {
 
     public ItemPerOrderDTO getDto() {
         return this.item_per_order_dto;
+    }
+
+    public int getOrderId() {
+        return orderId;
     }
 }

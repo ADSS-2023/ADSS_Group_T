@@ -19,7 +19,9 @@ public class DiscountDTO extends DTO {
         this.percentage = percentage;
         this.index_product = index_product;
     }
-
+    public DiscountDTO(){
+        super("inventory_discount");
+    }
     public String getStartDate() {
         return start_date;
     }
@@ -37,4 +39,7 @@ public class DiscountDTO extends DTO {
         return percentage;
     }
 
+    public String getIndex_product() {
+        return index_product;
+    }
 }

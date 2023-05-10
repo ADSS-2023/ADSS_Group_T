@@ -24,7 +24,9 @@ public class ItemPerOrderDTO extends DTO {
         this.orderId = orderId;
         this.itemId = itemId;
     }
-
+    public ItemPerOrderDTO(){
+        super("inventory_item_per_order");
+    }
     public int getItemId() {
         return itemId;
     }

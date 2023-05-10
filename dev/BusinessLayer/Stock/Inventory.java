@@ -2,8 +2,7 @@ package BusinessLayer.Stock;
 
 import BusinessLayer.Stock.Util.Util;
 import BusinessLayer.Supplier_Stock.ItemToOrder;
-import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.CategoryDTO;
-import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.ItemDTO;
+import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.*;
 import DataLayer.Inventory_Supplier_Dal.DalController.InventoryDalController;
 import DataLayer.Inventory_Supplier_Dal.DalController.ItemDalController;
 import DataLayer.Util.DTO;
@@ -143,6 +142,12 @@ public class Inventory {
         discount_counter++;
     }
 
+    public void set_discount(DiscountDTO discount) throws Exception {
+        int current_index = Integer.parseInt(Util.extractFirstNumber("."+discount.getIndex_product()));
+        String next_index = Util.extractNextIndex("."+discount.getIndex_product());
+        Discount new_discount = new Discount(discount);
+        categories.get(current_index).setDiscount(next_index , new_discount);
+    }
     /**
      * This function receives a list of indexes that represent categories,
      * and produce an inventory report for all of those categories.
@@ -382,6 +387,27 @@ public class Inventory {
             Item i = new Item(itemDTO,itemDalController);
             add_item(itemDTO.getCategoriesIndex(),i);
         }
+        loadItemPerOrder();
     }
+    public void loadItemPerOrder() throws Exception{
+        List<ItemPerOrderDTO> itemPerOrder = itemDalController.findAll("inventory_item_per_order", ItemPerOrderDTO.class);
+        for (ItemPerOrderDTO itemPerOrderDto:itemPerOrder) {
+            items.get(itemPerOrderDto.getItemId()).recive_order(new ItemPerOrder(itemPerOrderDto));
+        }
+        loadDicounts();
 
+    }
+    public void loadDicounts() throws Exception{
+        List<DiscountDTO> discountDTOList = inv_dal_controller.findAll("inventory_discount", DiscountDTO.class);
+        for (DiscountDTO discountDTO : discountDTOList){
+            set_discount(discountDTO);
+        }
+        loadDamagedItems();
+    }
+    public void loadDamagedItems() throws Exception{
+        List<DamagedItemDTO> damagedItemDTOS = itemDalController.findAll("inventory_damaged_items", DamagedItemDTO.class);
+        for (DamagedItemDTO i:damagedItemDTOS) {
+            damaged.addDamagedItem(items.get(i.getItem_id()),i);
+        }
+    }
 }
