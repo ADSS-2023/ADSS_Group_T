@@ -80,6 +80,7 @@ public class DalEmployeeService {
         return null;
     }
 
+
     public Employee findEmployeeById(int employeeId) throws SQLException {
        UserDTO userDTO = dalUserService.findUserDTOById(employeeId);
        if (userDTO != null){
