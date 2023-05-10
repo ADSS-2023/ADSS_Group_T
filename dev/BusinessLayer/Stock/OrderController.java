@@ -262,7 +262,7 @@ public class OrderController {
      */
     public void set_up_waiting_items() throws SQLException {
         ItemToOrder milk_3 = new ItemToOrder("3% milk","IDO LTD",40, Util.stringToDate("2023-05-10"),12,1.2);
-        ItemToOrder beef_sausage = new ItemToOrder("Beef Sausage","Zogloveck",15,Util.stringToDate("2023-10-01"),1005,10.05);
+        ItemToOrder beef_sausage = new ItemToOrder("Beef Sausage","Zogloveck",16,Util.stringToDate("2023-10-01"),1005,10.05);
         receiveOrders(Arrays.asList(milk_3,beef_sausage));
     }
 
@@ -277,6 +277,7 @@ public class OrderController {
         }
         return to_return;
     }
+
     private String show_special_orders(DayOfWeek cur_day){
         String toReturn = "";
         List<ItemToOrder> special_orders = order_service.getSpecialOrder(cur_day);
@@ -295,5 +296,9 @@ public class OrderController {
                     ,inventory.name_to_id.get(entry.getKey()),entry.getKey(),entry.getValue());
         }
         return toReturn;
+    }
+
+    public List<ItemToOrder> getItems_to_place(){
+        return items_to_place;
     }
 }
