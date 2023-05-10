@@ -141,19 +141,22 @@ public class OrderController {
     public void loadOrders() throws Exception {
         List<OrderDTO> ordersList = orderDalController.findAll("supplier_orders",OrderDTO.class);
         List<OrderProduct> orderProducts=null;
+        int maxId = 0;
         for (OrderDTO orderDTO : ordersList ) {
+            if(orderDTO.getOrderNum()>maxId)
+                maxId=orderDTO.getOrderNum();
             orderProducts = loadOrderProducts(orderDTO.getOrderNum());
             OrderBusiness order = new OrderBusiness(orderDTO, orderProducts,sc.getSupplier(orderDTO.getSupplierNum()).getName());
-            if(orderDTO.isOrderSupplied())
+            if(orderDTO.isOrderSupplied()) // if the order already supplied
                 orders.add(order);
-            else if(orderDTO.getConstantDay()==-1){
+            else if(orderDTO.getDaysToDeliver()!=-1) //if the order is special order
                 ordersNotSupplied.add(order);
-                else{
-                    //add to constant list
+                else{ // if the orderis a regular order
+                    DayOfWeek dayOfWeek = DayOfWeek.valueOf(orderDTO.getConstantDay().toUpperCase());
+                    dayToConstantOrders.get(dayOfWeek).add(order);
                 }
-
             }
-
+        orderCounter= ++maxId;
         }
     }
     public List<OrderProduct> loadOrderProducts(int orderId) throws SQLException {

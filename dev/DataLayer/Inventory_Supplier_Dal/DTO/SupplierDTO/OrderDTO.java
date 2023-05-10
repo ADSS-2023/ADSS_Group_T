@@ -16,10 +16,10 @@ public class OrderDTO extends DTO {
     private String destinationAddress;
     private boolean orderSupplied;
     private int daysToDeliver;
-    private int constantDay;
+    private String constantDay;
 
     public OrderDTO(int orderNum, int supplierNum, String contactName, String contactNumber, String orderDate,
-                    String supplierAddress, String destinationAddress, boolean orderSupplied, int daysToDeliver, int constantDay) {
+                    String supplierAddress, String destinationAddress, boolean orderSupplied, int daysToDeliver, String constantDay) {
         super("supplier_order");
         this.orderNum = orderNum;
         this.supplierNum = supplierNum;
@@ -69,7 +69,7 @@ public class OrderDTO extends DTO {
         return daysToDeliver;
     }
 
-    public int getConstantDay() {
+    public String getConstantDay() {
         return constantDay;
     }
 
