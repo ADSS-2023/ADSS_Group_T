@@ -84,7 +84,7 @@ public class InventoryService {
      */
     public void setUp() {
         try {
-            inventory.loadData();
+           inventory.loadData();
         }
         catch (Exception e){
             System.out.println(e.getMessage());
