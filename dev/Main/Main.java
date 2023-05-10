@@ -2,9 +2,11 @@ package Main;
 
 import PresentationLayer.MainPresentation;
 
+import java.sql.SQLException;
+
 public class Main {
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws Exception {
 
 
 

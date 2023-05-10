@@ -114,4 +114,14 @@ public class TransportJsonConvert {
     }
 
 
+    public static String convertCollectionToString(Collection<String> strings) {
+        StringBuilder sb = new StringBuilder();
+        for (String str : strings) {
+            sb.append(str).append("\n");
+        }
+        return sb.toString();
+    }
+
+
+
 }

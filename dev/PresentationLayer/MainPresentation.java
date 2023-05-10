@@ -1,5 +1,6 @@
 package PresentationLayer;
 
+import DataLayer.HR_T_DAL.DB_init.Data_init;
 import Initialization.*;
 import ServiceLayer.HR.EmployeeService;
 import ServiceLayer.HR.ShiftService;
@@ -7,6 +8,7 @@ import ServiceLayer.Transport.*;
 import ServiceLayer.UserService;
 import UtilSuper.ServiceFactory;
 
+import java.sql.SQLException;
 import java.util.Scanner;
 
 public class MainPresentation {
@@ -48,7 +50,7 @@ public class MainPresentation {
     }
 
 
-    public void start() {
+    public void start() throws SQLException {
         Scanner scanner = new Scanner(System.in);
         System.out.println("------ START -------");
         System.out.println("Please choose an option:");
@@ -59,11 +61,12 @@ public class MainPresentation {
         if (choice == 1)
             loginWindow();
         if (choice == 2) {
+            Data_init.initOldData(this.serviceFactory.getDAO());
             //HR_Initialization.init_data(shiftService,employeeService);
-            LogisticCenter_init.init(logisticCenterService);
-            Branch_init.init(branchService);
-            Suppliers_init.init(supplierService);
-            Delivery_init.init(deliveryService);
+//            LogisticCenter_init.init(logisticCenterService);
+//            Branch_init.init(branchService);
+//            Suppliers_init.init(supplierService);
+//            Delivery_init.init(deliveryService);
             loginWindow();
         }
     }

@@ -26,6 +26,10 @@ public class SiteDTO extends DTO {
     public SiteDTO() {
     }
 
+    public static String getTableNameStatic() {
+        return "Site";
+    }
+
     public String getType() {
         return type;
     }

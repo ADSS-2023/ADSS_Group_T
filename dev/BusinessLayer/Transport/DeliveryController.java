@@ -50,9 +50,11 @@ public class DeliveryController {
         this.dalDeliveryService = dalDeliveryService;
 
         //Load Data:
-        this.currDate = Time.stringToLocalDate(dalDeliveryService.findTime().getCounter());
-        this.filesCounter = Integer.parseInt(dalDeliveryService.findFilesCounter().getCounter());
-        this.deliveryCounter = Integer.parseInt(dalDeliveryService.findDeliveryCounter().getCounter());
+        this.currDate = LocalDate.now();
+        this.currDate = Time.stringToLocalDate(dalDeliveryService.findTime().getCount());
+
+        this.filesCounter = Integer.parseInt(dalDeliveryService.findFilesCounter().getCount());
+        this.deliveryCounter = Integer.parseInt(dalDeliveryService.findDeliveryCounter().getCount());
         loadData();
 
 

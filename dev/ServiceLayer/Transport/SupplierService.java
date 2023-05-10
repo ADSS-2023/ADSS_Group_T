@@ -6,9 +6,11 @@ import java.util.LinkedHashMap;
 
 public class SupplierService {
     private final SupplierController supplierController;
+    private TransportJsonConvert transportJsonConvert;
 
     public SupplierService(SupplierController supplierController) {
         this.supplierController = supplierController;
+        this.transportJsonConvert = new TransportJsonConvert();
     }
 
     public String getSupplierProducts(String supplier) {
@@ -29,7 +31,7 @@ public class SupplierService {
 
     public String getAllSuppliers() {
         try {
-            return supplierController.getAllSuppliers().toString();
+            return  TransportJsonConvert.convertCollectionToString(supplierController.getAllSuppliers().keySet());
         } catch (Exception ex) {
             return ex.toString();
         }
