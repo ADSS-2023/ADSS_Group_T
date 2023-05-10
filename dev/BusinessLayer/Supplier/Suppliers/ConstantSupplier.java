@@ -22,13 +22,13 @@ public class ConstantSupplier extends SupplierBusiness {
     private List<DayOfWeek> constDeliveryDays;
     public ConstantSupplier(String supplierName, String address, int supplierNum, int bankAccountNum, HashMap<String, String> contacts, List<DayOfWeek> constDeliveryDays, boolean selfDelivery, PaymentTerms paymentTerms, SupplierDalController supplierDalController) throws SQLException, SQLException {
         super(supplierName, address, supplierNum, bankAccountNum, contacts, selfDelivery, paymentTerms, supplierDalController);
-        this.supplierDTO = new SupplierDTO(supplierNum, supplierName, address, bankAccountNum, selfDelivery, -1, paymentTerms.toString());
+        this.supplierDTO = new SupplierDTO(supplierNum, supplierName, address, bankAccountNum, String.valueOf(selfDelivery), -1, paymentTerms.toString());
         supplierDalController.insert(supplierDTO);
         this.constDeliveryDays =constDeliveryDays;
     }
 
     public ConstantSupplier(SupplierDTO supplierDTO, HashMap<String, String> contacts, HashMap<Integer, SupplierProductBusiness> products, List<DayOfWeek> days, SupplierDalController supplierDalController, List<Discount> discountPerTotalQuantity, List<Discount> discountPerTotalPrice) throws SQLException {
-        super(supplierDTO.getSupplierName(), supplierDTO.getAddress(), supplierDTO.getSupplierNum(), supplierDTO.getBankAccountNum(), contacts, supplierDTO.isSelfDelivery(), SupplierController.stringToPaymentTerms(supplierDTO.getPaymentTerms()), supplierDalController);
+        super(supplierDTO.getSupplierName(), supplierDTO.getAddress(), supplierDTO.getSupplierNum(), supplierDTO.getBankAccountNum(), contacts, Boolean.parseBoolean(supplierDTO.isSelfDelivery()), SupplierController.stringToPaymentTerms(supplierDTO.getPaymentTerms()), supplierDalController);
         setProducts(products);
         this.constDeliveryDays = days;
         this.supplierDTO = supplierDTO;

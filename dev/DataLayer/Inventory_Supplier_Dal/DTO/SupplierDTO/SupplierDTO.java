@@ -7,7 +7,7 @@ public class SupplierDTO extends DTO {
     private String supplierName;
     private String address;
     private int bankAccountNum;
-    private boolean selfDelivery;
+    private String selfDelivery;
     private String paymentTerms;
 
     public String getPaymentTerms() {
@@ -30,7 +30,7 @@ public class SupplierDTO extends DTO {
         return bankAccountNum;
     }
 
-    public boolean isSelfDelivery() {
+    public String isSelfDelivery() {
         return selfDelivery;
     }
 
@@ -40,7 +40,7 @@ public class SupplierDTO extends DTO {
 
     private int daysToDeliver;
 
-    public SupplierDTO(int supplierNum, String supplierName, String address, int bankAccountNum, boolean selfDelivery, int daysToDeliver, String paymentTerms){
+    public SupplierDTO(int supplierNum, String supplierName, String address, int bankAccountNum, String selfDelivery, int daysToDeliver, String paymentTerms){
         super("supplier_supplier");
         this.supplierNum = supplierNum;
         this.supplierName = supplierName;

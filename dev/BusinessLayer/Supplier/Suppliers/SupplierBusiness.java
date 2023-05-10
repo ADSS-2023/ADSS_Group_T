@@ -39,6 +39,7 @@ public abstract class  SupplierBusiness {
     protected SupplierDalController supplierDalController;
 
     public SupplierBusiness(String supplierName, String address, int supplierNum,int bankAccountNum, HashMap<String, String> contacts, boolean selfDelivery,PaymentTerms paymentTerms, SupplierDalController supplierDalController) throws SQLException {
+        contactDTOS = new LinkedList<>();
         this.supplierName = supplierName;
         this.address = address;
         this.supplierNum = supplierNum;

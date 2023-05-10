@@ -24,13 +24,13 @@ public class OccasionalSupplier extends SupplierBusiness {
 
     public OccasionalSupplier(String supplierName, String address, int supplierNum, int bankAccountNum, HashMap<String, String> contacts, int daysToDeliver, boolean selfDelivery, PaymentTerms paymentTerms, SupplierDalController supplierDalController) throws SQLException {
         super(supplierName, address, supplierNum, bankAccountNum, contacts, selfDelivery, paymentTerms, supplierDalController);
-        this.supplierDTO = new SupplierDTO(supplierNum, supplierName, address, bankAccountNum, selfDelivery, daysToDeliver, paymentTerms.toString());
+        this.supplierDTO = new SupplierDTO(supplierNum, supplierName, address, bankAccountNum, String.valueOf(selfDelivery), daysToDeliver, paymentTerms.toString());
         supplierDalController.insert(supplierDTO);
         this.daysToDeliver=daysToDeliver;
     }
 
     public OccasionalSupplier(SupplierDTO supplierDTO, HashMap<String, String> contacts, HashMap<Integer, SupplierProductBusiness> products, int daysToDeliver, SupplierDalController supplierDalController, List<Discount> discountPerTotalQuantity, List<Discount> discountPerTotalPrice) throws SQLException {
-        super(supplierDTO.getSupplierName(), supplierDTO.getAddress(), supplierDTO.getSupplierNum(), supplierDTO.getBankAccountNum(), contacts, supplierDTO.isSelfDelivery(), SupplierController.stringToPaymentTerms(supplierDTO.getPaymentTerms()), supplierDalController);
+        super(supplierDTO.getSupplierName(), supplierDTO.getAddress(), supplierDTO.getSupplierNum(), supplierDTO.getBankAccountNum(), contacts, Boolean.parseBoolean(supplierDTO.isSelfDelivery()), SupplierController.stringToPaymentTerms(supplierDTO.getPaymentTerms()), supplierDalController);
         setProducts(products);
         this.daysToDeliver = daysToDeliver;
         this.supplierDTO = supplierDTO;

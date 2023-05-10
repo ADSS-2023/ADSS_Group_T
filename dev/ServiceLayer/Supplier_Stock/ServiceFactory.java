@@ -99,18 +99,18 @@ public class ServiceFactory {
     }
     */
 
-    public void dataSetUp() throws Exception {
-        //need to clean the data manually!
-        inventoryService.get_inventory().add_category("", "milk-product");
-        itemService.addItem(".0",3, "Milky", 3, "Liran LTD", 2.0);
-        this.oc = new OrderController(this.sc, this.manageOrderService);
-        this.supplierService = new SupplierService(this.sc, this.oc);
-        this.orderService = new OrderService(this.oc, this.sc);
-        DAO dao = new DAO();
-        this.manageOrderService.setOrderController(this.inventoryService.get_inventory(), this.orderService,inventoryDalController);
-        this.inventoryDalController = new InventoryDalController(this.connection);
-        this.inventoryService.get_inventory().setInventoryDalController(this.inventoryDalController);
-    }
+//    public void dataSetUp() throws Exception {
+//        //need to clean the data manually!
+//        inventoryService.get_inventory().add_category("", "milk-product");
+//        itemService.addItem(".0",3, "Milky", 3, "Liran LTD", 2.0);
+//        this.oc = new OrderController(this.sc, this.manageOrderService);
+//        this.supplierService = new SupplierService(this.sc, this.oc);
+//        this.orderService = new OrderService(this.oc, this.sc);
+//        DAO dao = new DAO();
+//        this.manageOrderService.setOrderController(this.inventoryService.get_inventory(), this.orderService,inventoryDalController);
+//        this.inventoryDalController = new InventoryDalController(this.connection);
+//        this.inventoryService.get_inventory().setInventoryDalController(this.inventoryDalController);
+//    }
 
 
     public String nextDay() {
