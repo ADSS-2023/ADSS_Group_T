@@ -70,6 +70,7 @@ class InventoryTest {
             //double afterCost = inventoryService.get_inventory().get_item_by_id(2).get_price();
             //checks if one of the items from the specific categories gets the discount.
             //assertEquals(preCost * 0.9, afterCost);
+
         }
         catch (Exception e){
             System.out.println(e.getMessage());
