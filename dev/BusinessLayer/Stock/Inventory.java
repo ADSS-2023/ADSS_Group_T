@@ -376,4 +376,8 @@ public class Inventory {
             damaged.addDamagedItem(items.get(i.getItem_id()),i);
         }
     }
+
+    public ItemDalController getItemDalController() {
+        return itemDalController;
+    }
 }

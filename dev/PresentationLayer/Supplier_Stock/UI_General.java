@@ -50,6 +50,9 @@ public class UI_General {
             stockUI.loadData();
             supplierManager.setUpData();
         }
+        else if(action == 2){
+            stockUI.deleteData();
+        }
         run(stockUI,supplierManager,sf);
     }
 }

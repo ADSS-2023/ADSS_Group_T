@@ -32,5 +32,9 @@ public class ItemDalController {
     public <T extends DTO> List<T> findAll(String tableName, Class<T> dtoClass) throws SQLException {
         return generic_DAO.findAll(tableName,dtoClass,connection);
     }
+
+    public void setConnection(Connection connection) {
+        this.connection = connection;
+    }
 }
 
