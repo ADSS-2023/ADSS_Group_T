@@ -42,15 +42,26 @@ public class OrderController {
      * @param items_quantity a map that maps item id to the desired amount
      */
     public void createRegularOrder(Map<Integer, Integer> items_quantity) throws Exception {
+        LinkedList<ItemOrderdDTO> insert_items = new LinkedList<>();
         LinkedList<ItemToOrder> list_to_order = new LinkedList<>();
         for (Map.Entry<Integer, Integer> entry : items_quantity.entrySet()) {
             Integer item_id = entry.getKey();
             Integer quantity = entry.getValue();
-            list_to_order.addLast(new ItemToOrder(inventory.get_item_by_id(item_id).get_name(),
-                    inventory.get_item_by_id(item_id).manufacturer_name, quantity, null, -1,-1));
+            ItemToOrder new_item = new ItemToOrder(inventory.get_item_by_id(item_id).get_name(),
+                    inventory.get_item_by_id(item_id).manufacturer_name, quantity, null, -1,-1);
+            list_to_order.addLast(new_item);
+            ItemOrderdDTO item_dto = new ItemOrderdDTO("inventory_item_ordered",item_id,quantity);
+            insert_items.add(item_dto);
         }
+
         if(!order_service.createRegularOrder(list_to_order)){
             throw new Exception("\u001B[31mOrder cannot be supplied\u001B[0m");
+        }
+        else{
+            // only if success!
+            for (ItemOrderdDTO item_dto :  insert_items) {
+                inventoryDalController.insert(item_dto);
+            }
         }
     }
 
@@ -60,6 +71,7 @@ public class OrderController {
      * @param isUrgent boolean flag to indicate whether the order priority is arrival.
      */
     public void createSpecialOrder(Map<Integer, Integer> items_quantity,boolean isUrgent) throws Exception {
+        LinkedList<ItemOrderdDTO> insert_items = new LinkedList<>();
         LinkedList<ItemToOrder> list_to_order = new LinkedList<>();
         for (Map.Entry<Integer, Integer> entry : items_quantity.entrySet()) {
             Integer item_id = entry.getKey();
@@ -69,12 +81,20 @@ public class OrderController {
             if(special_orders_track.containsKey(item_id)){
                 quantity += special_orders_track.get(item_id);
             }
-            inventoryDalController.insert(new ItemOrderdDTO("inventory_item_ordered",item_id,quantity));
+            ItemOrderdDTO item_dto = new ItemOrderdDTO("inventory_item_ordered",item_id,quantity);
+            insert_items.add(item_dto);
             special_orders_track.put(item_id,quantity);
 
         }
-        if (!order_service.createSpecialOrder(list_to_order,isUrgent))
+        if (!order_service.createSpecialOrder(list_to_order,isUrgent)) {
             throw new Exception("\u001B[31mOrder cannot be supplied\u001B[0m");
+        }
+        else{
+            // only if success!
+            for (ItemOrderdDTO item_dto :  insert_items) {
+                inventoryDalController.insert(item_dto);
+            }
+        }
 
     }
 
@@ -141,6 +161,7 @@ public class OrderController {
      */
     public void receiveOrders(List<ItemToOrder> newOrder) throws SQLException {
         for (ItemToOrder ito:newOrder) {
+            //int num = this.inventory.name_to_id.get(ito.getProductName() + ito.getProductName());
             inventoryDalController.insert(new ItemToOrderDTO(
                     "inventory_waiting_list",ito.getProductName(),ito.getManufacturer(),
                     ito.getQuantity(),ito.getExpiryDate().toString(),ito.getCostPrice(),ito.getOrderId()));

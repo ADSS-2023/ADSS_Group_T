@@ -38,7 +38,7 @@ public class Item implements ProductCategoryManagement {
      * @param original_price
      */
     public Item(int item_id, String name, int min_amount,
-                String manufacturer_name, double original_price,ItemDalController itemDalController) throws SQLException {
+                String manufacturer_name, double original_price,ItemDalController itemDalController, String category_index) throws SQLException {
         this.item_id = item_id;
         this.name = name;
         this.min_amount = min_amount;
@@ -46,7 +46,7 @@ public class Item implements ProductCategoryManagement {
         this.original_price = original_price;
         items = new Hashtable<>();
         discount_list = new LinkedList<>();
-        this.item_dto = new ItemDTO(item_id, name, min_amount, manufacturer_name, original_price);
+        this.item_dto = new ItemDTO(item_id, name, min_amount, manufacturer_name, original_price, category_index);
         this.itemDalController = itemDalController;
         itemDalController.insert(item_dto);
     }
@@ -296,8 +296,4 @@ public class Item implements ProductCategoryManagement {
         }
     }
 
-
-    public void setCategoryIndex(String categoriesIndex) {
-        item_dto.setCategoriesIndex(categoriesIndex);
-    }
 }

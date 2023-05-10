@@ -167,45 +167,58 @@ public class Inventory {
      * in order to test the system.
      */
     public void setUp() throws Exception {
-        Item click = new Item(4 , "Click" , 5 , "Elite",  15,itemDalController);
-        set_item_call_back(click);
-        Item milk_3 = new Item(0 , "3% milk" , 5 , "IDO LTD",  3.5,itemDalController);
-        set_item_call_back(milk_3);
-        Item milk_1_5=new Item(1 , "1.5% milk" , 2 , "IDO LTD",  3.5,itemDalController);
-        set_item_call_back(milk_1_5);
-        Item yellow_cheese = new Item(2,"yellow cheese",5,"Emeck",10,itemDalController);
-        set_item_call_back(yellow_cheese);
-        Item beef_sausage = new Item(3,"Beef Sausage",3,"Zogloveck",25,itemDalController);
-        set_item_call_back(beef_sausage);
-        shortage_list.add(click);
-        categories.add(new Category("Milk-product", "0",inv_dal_controller));
-        categories.get(0).add_product(new Category("Cheese" , "0",inv_dal_controller));
-        categories.get(0).add_product(new Category("bottle milk" , "1",inv_dal_controller));
-        categories.get(0).add_product(new Category("Chocolate" , "2",inv_dal_controller));
-        categories.get(0).getCategories_list().get(0).add_product(yellow_cheese);
-        categories.get(0).getCategories_list().get(1).add_product(milk_3);
-        categories.get(0).getCategories_list().get(1).add_product(milk_1_5);
-        categories.get(0).getCategories_list().get(2).add_product(click);
-        items.put(4,click);
-        name_to_id.put("Click Elite",4);
-        items.put(2,yellow_cheese);
-        name_to_id.put("yellow cheese Emeck",2);
-        items.put(0,milk_3);
-        name_to_id.put("3% milk IDO LTD",0);
-        items.put(1,milk_1_5);
-        name_to_id.put("1.5% milk IDO LTD",1);
+        this.add_category("","Milk-product");
+        this.add_category(".0","Cheese");
+        this.add_category(".0","bottle milk");
+        this.add_category(".0","chocolate");
+        this.add_category("" , "beef");
+        this.add_item(".0.0",2,"yellow cheese",5,"Emeck",10.2);
+        this.add_item(".0.1", 0,"3% milk" , 5 , "IDO LTD",  3.5);
+        this.add_item(".0.1",1 , "1.5% milk" , 2 , "IDO LTD",  3.5);
+        this.add_item(".0.2" , 4, "Click" , 5 , "Elite",  15);
+        receive_order(20,2,6,"ile 2 shelf 3",Util.stringToDate("2023-10-25"),5.3);
+        receive_order(155,4,20,"ile 5 shelf 10",Util.stringToDate("2023-05-20"),2.15);
+        this.add_item(".1" , 5  , "Beef Sausage",
+                15,"Zogloveck",10.05);
+//        Item click = new Item(4 , "Click" , 5 , "Elite",  15,itemDalController);
+//        set_item_call_back(click);
+        //Item milk_3 = new Item(0 , "3% milk" , 5 , "IDO LTD",  3.5,itemDalController);
+//        set_item_call_back(milk_3);
+//        Item milk_1_5=new Item(1 , "1.5% milk" , 2 , "IDO LTD",  3.5,itemDalController);
+//        set_item_call_back(milk_1_5);
+        //Item yellow_cheese = new Item(2,"yellow cheese",5,"Emeck",10,itemDalController);
+        //set_item_call_back(yellow_cheese);
+//        Item beef_sausage = new Item(3,"Beef Sausage",3,"Zogloveck",25,itemDalController);
+//        set_item_call_back(beef_sausage);
+//        shortage_list.add(click);
+//        categories.add(new Category("Milk-product", "0",inv_dal_controller));
+//        categories.get(0).add_product(new Category("Cheese" , "0",inv_dal_controller));
+//        categories.get(0).add_product(new Category("bottle milk" , "1",inv_dal_controller));
+//        categories.get(0).add_product(new Category("Chocolate" , "2",inv_dal_controller));
+//        categories.get(0).getCategories_list().get(0).add_product(yellow_cheese);
+//        categories.get(0).getCategories_list().get(1).add_product(milk_3);
+//        categories.get(0).getCategories_list().get(1).add_product(milk_1_5);
+//        categories.get(0).getCategories_list().get(2).add_product(click);
+//        items.put(4,click);
+//        name_to_id.put("Click Elite",4);
+//        items.put(2,yellow_cheese);
+//        name_to_id.put("yellow cheese Emeck",2);
+//        items.put(0,milk_3);
+//        name_to_id.put("3% milk IDO LTD",0);
+//        items.put(1,milk_1_5);
+//        name_to_id.put("1.5% milk IDO LTD",1);
+//
+//        receive_order(20,yellow_cheese.item_id,6,"ile 2 shelf 3",Util.stringToDate("2023-10-25"),5.3);
+//        milk_3.recive_order(155,20,20,2.15,"ile 5 shelf 10",Util.stringToDate("2023-05-20"));
+//        milk_1_5.recive_order(120,10,10,2.55,"ile 5 shelf 11",Util.stringToDate("2023-05-23"));
+//        beef_sausage.recive_order(345,5,15,12.25,"ile 6 shelf 2",Util.stringToDate("2023-10-20"));
+//        categories.add(new Category("Meat-product", "1",inv_dal_controller));
+//        categories.get(1).add_product(new Category("chicken" , "0",inv_dal_controller));
 
-        receive_order(20,yellow_cheese.item_id,6,"ile 2 shelf 3",Util.stringToDate("2023-10-25"),5.3);
-        milk_3.recive_order(155,20,20,2.15,"ile 5 shelf 10",Util.stringToDate("2023-05-20"));
-        milk_1_5.recive_order(120,10,10,2.55,"ile 5 shelf 11",Util.stringToDate("2023-05-23"));
-        beef_sausage.recive_order(345,5,15,12.25,"ile 6 shelf 2",Util.stringToDate("2023-10-20"));
-        categories.add(new Category("Meat-product", "1",inv_dal_controller));
-        categories.get(1).add_product(new Category("chicken" , "0",inv_dal_controller));
-        categories.get(1).add_product(new Category("beef" , "1",inv_dal_controller));
-        categories.get(1).categories_list.get(0).add_product(new Category("KRAAI'IM" , "0",inv_dal_controller));
-        categories.get(1).getCategories_list().get(1).add_product(beef_sausage);
-        items.put(3,beef_sausage);
-        name_to_id.put("Beef Sausage Zogloveck",3);
+//        categories.get(1).categories_list.get(0).add_product(new Category("KRAAI'IM" , "0",inv_dal_controller));
+//        categories.get(1).getCategories_list().get(1).add_product(beef_sausage);
+//        items.put(3,beef_sausage);
+//        name_to_id.put("Beef Sausage Zogloveck",3);
     }
 
     /**
@@ -243,8 +256,7 @@ public class Inventory {
      * @param original_price
      */
     public void add_item(String categories_index,int item_id, String name, int min_amount, String manufacturer_name, double original_price) throws Exception {
-        Item i = new Item(item_id,name,min_amount,manufacturer_name,original_price,itemDalController);
-        i.setCategoryIndex(categories_index);
+        Item i = new Item(item_id,name,min_amount,manufacturer_name,original_price,itemDalController, categories_index);
         set_item_call_back(i);
         if(items.containsKey(item_id)) {
             throw new Exception("Item id already exists");

@@ -189,7 +189,7 @@ public class StockUI {
                 addCategory();
                 break;
             case "11":
-                moveToNextDay();
+                move_items_to_store();
                 break;
             case "12":
                 edit_create_orders();
