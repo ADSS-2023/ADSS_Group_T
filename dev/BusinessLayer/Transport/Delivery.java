@@ -148,10 +148,18 @@ public class Delivery {
         pk.put("productName",product.getName());
         DeliveryUnHandledSitesDTO dto = dalDeliveryService.findDeliveryUnHandledSites(pk);
         if(dto.getAmount() == amount)
-            dalDeliveryService.deleteUnHandledBranch(getId(), branch.getAddress(), product.getName(), dto.getFileId(),amount);
+            dalDeliveryService.deleteUnHandledSite(getId(), branch.getAddress(), product.getName(), dto.getFileId(),amount);
         else
             dalDeliveryService.updateUnHandledSite(id, branch.getAddress(), product.getName(), dto.getFileId(),dto.getAmount() - amount);
         unHandledBranches.get(branch).removeProduct(product, amount);
+    }
+
+    public void removeUnHandledSupplier(Supplier supplier, File f) throws SQLException {
+        LinkedHashMap<Product,Integer> products = f.getProducts();
+        for(Product p : products.keySet()){
+            dalDeliveryService.deleteUnHandledSite(id,supplier.getAddress(),p.getName(),f.getId(),products.get(p));
+        }
+        getUnHandledSuppliers().remove(supplier);
     }
 
     public int addProductToLogisticCenterFromFile(String logisticCenterAddress,Product p, int amount, int fileCounter) throws SQLException {
