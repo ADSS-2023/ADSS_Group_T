@@ -1,6 +1,7 @@
 package BusinessLayer.Stock;
 
 
+import BusinessLayer.Supplier_Stock.Util_Supplier_Stock;
 import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.CategoryDTO;
 import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.ItemDTO;
 import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.ItemPerOrderDTO;
@@ -240,7 +241,7 @@ public class Item implements ProductCategoryManagement {
      * @param validity
      */
     public String recive_order(int orderId,int amount_warehouse,int amount_store,double cost_price,String location, LocalDate validity) throws SQLException {
-        items.put(orderId,new ItemPerOrder(orderId,amount_warehouse,amount_store,cost_price,location, validity));
+        items.put(orderId,new ItemPerOrder(orderId,amount_warehouse,amount_store,cost_price,location, validity, Util_Supplier_Stock.getCurrDay()));
         ItemPerOrderDTO new_dto = items.get(orderId).getDto();
         new_dto.setItemId(item_id);
         itemDalController.insert(new_dto);
