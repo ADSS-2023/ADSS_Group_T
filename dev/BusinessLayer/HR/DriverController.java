@@ -6,6 +6,7 @@ import BusinessLayer.HR.User.PositionType;
 import BusinessLayer.HR.User.UserType;
 import BusinessLayer.HR.Driver.CoolingLevel;
 import BusinessLayer.HR.Driver.LicenseType;
+import UtilSuper.Time;
 
 import java.sql.SQLException;
 import java.time.DayOfWeek;
@@ -248,18 +249,40 @@ public Driver lazyLoadDriver (int id) throws SQLException {
      * @return true if the driver added successfully , and false otherwise
      */
     public boolean addDriver(int id, String employeeName, String bankAccount, List<PositionType> qualifiedPositions,
-                             String description, int salary, LocalDate joiningDay, String password, UserType userType,
-                             Driver.LicenseType licenseType, Driver.CoolingLevel coolingLevel) throws SQLException {
+                             String description, int salary, String joiningDay, String password, UserType userType,
+                             String licenseType, int coolingLevel) throws SQLException {
         Driver driver = lazyLoadDriver(id);
         if (driver != null)
             throw new IllegalArgumentException("Driver already exists.");
         else {
             driver = new Driver(id, employeeName, bankAccount, qualifiedPositions, description, salary,
-                    joiningDay, password, userType, licenseType, coolingLevel);
+                    Time.stringToLocalDate(joiningDay), password, userType, getByString(licenseType), get(coolingLevel));
             dalDriverService.addDriver(driver);
             this.drivers.put(id, driver);
         }
         return true;
+    }
+
+    public static LicenseType getByString (String licenseType ) {
+        if (licenseType.equals("C1"))
+            return LicenseType.C1;
+        if (licenseType.equals("C"))
+            return LicenseType.C;
+        if (licenseType.equals("E"))
+            return LicenseType.E;
+        else
+            return LicenseType.C1;
+    }
+
+    public static CoolingLevel get(int coolingLevel) {
+        if (coolingLevel == 1)
+            return CoolingLevel.non;
+        if (coolingLevel == 2)
+            return CoolingLevel.fridge;
+        if (coolingLevel == 3)
+            return CoolingLevel.freezer;
+        else
+            return CoolingLevel.non;
     }
 
 

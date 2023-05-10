@@ -3,12 +3,16 @@ package UtilSuper;
 import BusinessLayer.HR.DriverController;
 import BusinessLayer.HR.EmployeeController;
 import BusinessLayer.HR.ShiftController;
+import BusinessLayer.HR.User.User;
+import BusinessLayer.HR.User.UserType;
 import BusinessLayer.Transport.*;
 import BusinessLayer.HR.User.UserController;
 import DataLayer.HR_T_DAL.DAOs.TruckDAO;
 import DataLayer.HR_T_DAL.DB_init.Data_init;
+import DataLayer.HR_T_DAL.DB_init.Data_init_HR;
 import DataLayer.HR_T_DAL.DalService.DalDeliveryService;
 import DataLayer.HR_T_DAL.DalService.DalLogisticCenterService;
+import DataLayer.HR_T_DAL.DalService.DalUserService;
 import DataLayer.Util.DAO;
 import ServiceLayer.HR.EmployeeService;
 import ServiceLayer.HR.ShiftService;
@@ -54,6 +58,7 @@ public class ServiceFactory {
 
         this.dao = new DAO(connection);
         Data_init.initBasicData(dao);
+        Data_init_HR.initBasicData(dao);
 
 
 
@@ -65,14 +70,18 @@ public class ServiceFactory {
         shiftController = new ShiftController();
         shiftService = new ShiftService(shiftController);
         employeeController = new EmployeeController();
-        employeeService = new EmployeeService(employeeController);
+        driverController = new DriverController();
+        employeeService = new EmployeeService(employeeController,driverController);
 
 
         logisticCenterController = new LogisticCenterController(dalLogisticCenterService);
         logisticCenterService = new LogisticCenterService(logisticCenterController);
         dalDeliveryService = new DalDeliveryService(connection,dalLogisticCenterService);
 
-        //TODO //userController = new UserController();
+        //TODO //
+        User HRuser = new User(1,"HRManeger","123456","cool",1000,null,"1", UserType.HRManager);
+        User TRuser = new User(2,"TrManeger","123456","cool",1000,null,"2", UserType.TransportManager);
+        userController = new UserController(employeeController,TRuser,driverController,HRuser);
         userService = new UserService(userController);
         branchController = new BranchController(dalDeliveryService);
         branchService = new BranchService(branchController);

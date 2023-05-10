@@ -14,22 +14,19 @@ public class UserController {
     //private HRManager hrManager;
 
     private User Hr;
+
+    private User Tr;
     private DriverController driverController;
     private TransportManager transportManager;
     private DalUserService dalUserService;
 
 
-    public UserController(EmployeeController employeeController, TransportManager transportManager, DriverController driverController, int HRid) {
-
-    }
-
     //TODO-init the user controller
-    public void initUserController(EmployeeController employeeController, TransportManager transportManager, DriverController driverController, User Hr, DalUserService dalUserService) {
+    public UserController(EmployeeController employeeController,User Tr ,DriverController driverController, User Hr) {
         this.Hr = Hr;
+        this.Tr = Tr;
         this.employeeController = employeeController;
         this.driverController = driverController;
-        this.transportManager = transportManager;
-        this.dalUserService = dalUserService;
     }
 
     public UserType login(int id, String password) throws Exception {
@@ -38,20 +35,19 @@ public class UserController {
             if (Hr.getPassword().equals(password))
                 return Hr.userType;
             else
-                throw new IllegalArgumentException("wrong password");
+                throw new IllegalArgumentException("error");
         }
-
-        if (transportManager.getId() == id) {
-            if (transportManager.getPassword().equals(password))
-                return transportManager.userType;
+        if (Tr.getId() == id) {
+            if (Tr.getPassword().equals(password))
+                return Tr.userType;
             else
-                throw new IllegalArgumentException("wrong password");
+                throw new IllegalArgumentException("error");
         } else {
             User user = dalUserService.findUserById(id);
             if (user == null)
-                throw new NoSuchFieldException("User Don't exist.");
+                throw new NoSuchFieldException("error");
             if (user.password != password)
-                throw new IllegalArgumentException("Wrong password");
+                throw new IllegalArgumentException("error");
             return user.userType;
         }
     }

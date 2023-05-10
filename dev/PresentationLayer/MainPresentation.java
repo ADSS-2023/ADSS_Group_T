@@ -101,6 +101,8 @@ public class MainPresentation {
             switch (result) {
                 case "employee": employeePresentation.start();
                 case "delivery manager": transportManagerPresentation.start();
+                case "HRManager" : hrManagerPresentation.start();
+                case "driver" :
                 default:
             }
         }
