@@ -78,11 +78,22 @@ public class DeliveryService {
     }
 
     public String getCurrDate() {
-        return this.deliveryController.getCurrDate().toString();
+        try {
+            return this.deliveryController.getCurrDate().toString();
+        }
+        catch (Exception exception){
+            return exception.toString();
+        }
     }
 
     public String showAllDeliveries() {
-        return transportJsonConvert.deliveryListToString(this.deliveryController.getAllDeliveries());
+        try {
+            return transportJsonConvert.deliveryListToString(this.deliveryController.getAllDeliveries());
+        }
+        catch (Exception exception){
+            return exception.toString();
+        }
+
     }
 
 }

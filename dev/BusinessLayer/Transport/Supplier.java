@@ -28,6 +28,7 @@ public class Supplier extends Site {
             throw new IllegalArgumentException("product already exist");
         dalDeliveryService.insertSupplierToProducts(address,productName);
         Product product = new Product(productName, productCoolingLevel);
+        dalDeliveryService.insertProduct(product);
         products.put(productName, product);
     }
 

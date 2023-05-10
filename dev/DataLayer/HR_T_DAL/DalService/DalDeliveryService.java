@@ -157,7 +157,7 @@ public class DalDeliveryService {
     public Product findProduct(String productName) throws SQLException {
         ProductDTO dto = dao.find(productName,"productName","Product",ProductDTO.class);
         if(dto == null)
-            throw new RuntimeException("there is no product with name: " + productName);
+            return null;
         return new Product(dto);
     }
 

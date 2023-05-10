@@ -18,7 +18,7 @@ public class Data_init {
     }
     public static void initBasicData(DAO dao) throws SQLException {
 
-
+        dao.deleteAllDataFromDatabase();
         SiteDTO logisticCenter = new SiteDTO("logistic center address","0000000000","logistic center contact",0,0,0,"logistic center");
         dao.deleteTableDataWithDTO(logisticCenter);
         dao.insert(logisticCenter);
@@ -72,6 +72,7 @@ public class Data_init {
         dao.insert(new TruckDTO(1007, "t7", 160000, 32000, Driver.LicenseType.intToLicenseType(10000), Driver.CoolingLevel.intToCoolinglevel(1)));
         dao.insert(new TruckDTO(1008, "t8", 18000, 36000, Driver.LicenseType.intToLicenseType(11000), Driver.CoolingLevel.intToCoolinglevel(2)));
         dao.insert(new TruckDTO(1009, "t9", 20000, 40000, Driver.LicenseType.intToLicenseType(12000), Driver.CoolingLevel.intToCoolinglevel(3)));
+
 
     }
 
