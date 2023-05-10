@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 public class TruckDAOTest {
 
-    private final String testDBUrl = "jdbc:sqlite:dev/DataLayer/HR_Transport_DB .db";
+    private final String testDBUrl = "jdbc:sqlite:dev/DataLayer/HR_Transport_DB.db";
 
     private TruckDAO dao;
     Connection conn;

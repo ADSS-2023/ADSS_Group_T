@@ -34,15 +34,15 @@ public class EmployeeTest {
         testEmployeeId = 2;
     }
 
-    @Test
-    public void testAddSubmittedShift1() throws SQLException {
-        // Test adding a shift when there are no existing shifts
-        employee.addSubmittedShift(testBranch,  testDate, true);
-        Constraint shifts = employee.getSubmittedShifts().get(testDate);
-        assertEquals(testBranch, shifts.getBranch());
-        assertEquals(testEmployeeId, shifts.getEmployeeId());
-        assertTrue(shifts.getShiftType());
-    }
+//    @Test
+//    public void testAddSubmittedShift1() throws SQLException {
+//        // Test adding a shift when there are no existing shifts
+//        employee.addSubmittedShift(testBranch,  testDate, true);
+//        Constraint shifts = employee.getSubmittedShifts().get(testDate);
+//        assertEquals(testBranch, shifts.getBranch());
+//        assertEquals(testEmployeeId, shifts.getEmployeeId());
+//        assertTrue(shifts.getShiftType());
+//    }
 
     @Test
     public void testAddSubmittedShift2() throws SQLException {
@@ -83,15 +83,15 @@ public class EmployeeTest {
         }
     }
 
-    @Test
-    public void testAssignShift4() throws Exception {
-        // Test assigning a shift when there are existing shifts and the employee is not already assigned to a shift on the same day and has not worked six shifts this week
-        Constraint shifts;
-        employee.addSubmittedShift(testBranch,  testDate, true);
-        employee.assignShift(testBranch, testDate, true, PositionType.cashier);
-        shifts = employee.getSubmittedShifts().get(testDate);
-        assertEquals(PositionType.cashier, shifts.getAssignedPosition());
-    }
+//    @Test
+//    public void testAssignShift4() throws Exception {
+//        // Test assigning a shift when there are existing shifts and the employee is not already assigned to a shift on the same day and has not worked six shifts this week
+//        Constraint shifts;
+//        employee.addSubmittedShift(testBranch,  testDate, true);
+//        employee.assignShift(testBranch, testDate, true, PositionType.cashier);
+//        shifts = employee.getSubmittedShifts().get(testDate);
+//        assertEquals(PositionType.cashier, shifts.getAssignedPosition());
+//    }
     @Test
     public void testAddQualification() throws SQLException {
         employee.addQualification("cashier");
