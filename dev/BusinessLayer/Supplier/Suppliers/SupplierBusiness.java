@@ -18,15 +18,15 @@ import java.util.*;
 import java.time.LocalDate;
 
 public abstract class  SupplierBusiness {
-    private String supplierName;
-    private String address;
-    private int supplierNum;
-    private int bankAccountNum;
-    private HashMap<String, String> contacts;
-    private boolean selfDelivery;
-    private PaymentTerms paymentTerms;
+    protected String supplierName;
+    protected String address;
+    protected int supplierNum;
+    protected int bankAccountNum;
+    protected HashMap<String, String> contacts;
+    protected boolean selfDelivery;
+    protected PaymentTerms paymentTerms;
 
-    private HashMap<Integer, SupplierProductBusiness> products;
+    protected HashMap<Integer, SupplierProductBusiness> products;
 
     protected List<Discount> discountPerTotalQuantity;
 
@@ -56,6 +56,17 @@ public abstract class  SupplierBusiness {
             supplierDalController.insert(supplierContactDTO);
             contactDTOS.add(supplierContactDTO);
         }
+    }
+
+    public  void editSupplier(String supplierName, String address, int bankAccountNum, boolean selfDelivery,PaymentTerms paymentTerms) throws SQLException {
+        this.supplierName = supplierName;
+        this.address = address;
+        this.bankAccountNum = bankAccountNum;
+        this.selfDelivery = selfDelivery;
+        this.paymentTerms=paymentTerms;
+        SupplierDTO newSupplierDTO = new SupplierDTO(supplierNum, supplierName, address, bankAccountNum, String.valueOf(selfDelivery), this.supplierDTO.getDaysToDeliver(), paymentTerms.toString());
+        supplierDalController.update(this.supplierDTO, newSupplierDTO);
+        this.supplierDTO = newSupplierDTO;
     }
 
     public SupplierProductBusiness getProduct(String productName, String manufacturer) {
@@ -122,7 +133,6 @@ public abstract class  SupplierBusiness {
         if(getSupplierProduct(productNum) == null)
             throw new Exception("product doesn't exist.");
         getSupplierProduct(productNum).editProductDiscount(productAmount, discount, isPercentage);
-
     }
 
     public void addProductDiscount(int productNum, int productAmount, int discount, boolean isPercentage) throws Exception {
@@ -239,15 +249,6 @@ public abstract class  SupplierBusiness {
                return true;
         }
         return false;
-    }
-
-    public void editSupplier(String supplierName, String address, int bankAccountNum, boolean selfDelivery,PaymentTerms paymentTerms){
-        this.supplierName = supplierName;
-        this.address = address;
-        this.bankAccountNum = bankAccountNum;
-        this.selfDelivery = selfDelivery;
-        this.paymentTerms=paymentTerms;
-
     }
 
     //this function gets products number in the order, and old total price and returns new price
