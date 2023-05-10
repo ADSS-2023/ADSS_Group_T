@@ -143,6 +143,12 @@ public class DAO {
         statement.executeUpdate();
     }
 
+    public void deleteAll(Connection connection, String tableName) throws SQLException {
+        String sql = "DELETE FROM " + tableName;
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.executeUpdate();
+    }
+
     public <T extends DTO> T find(LinkedHashMap<String,Object> pk, String tableName, Class<T> dtoClass,Connection connection) throws SQLException {
         T result = null;
         String sql = "SELECT * FROM " + tableName + " WHERE ";
