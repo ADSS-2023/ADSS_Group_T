@@ -126,12 +126,12 @@ public class OrderController {
                // Get the last day of the week
                DayOfWeek lastDay = orderDay.plus(diff);
                OrderBusiness order = new OrderBusiness(orderCounter++, supplier.getName(), Util_Supplier_Stock.getCurrDay(), supplier.getAddress(),
-                       "SuperLi", supplier.getSupplierNum(), contactName, contactNum, products, daysToSupplied, false, -1,lastDay.getValue());
+                       "SuperLi", supplier.getSupplierNum(), contactName, contactNum, products, daysToSupplied, false, -1,lastDay.name());
                dayToConstantOrders.get(orderDay).add(order);
            }
            else{
                OrderBusiness order = new OrderBusiness(orderCounter++, supplier.getName(), Util_Supplier_Stock.getCurrDay(), supplier.getAddress(),
-                       "SuperLi", supplier.getSupplierNum(), contactName, contactNum, products, daysToSupplied, false, daysToSupplied, -1);
+                       "SuperLi", supplier.getSupplierNum(), contactName, contactNum, products, daysToSupplied, false, daysToSupplied, null);
                ordersNotSupplied.add(order);
            }
        }
@@ -157,7 +157,6 @@ public class OrderController {
                 }
             }
         orderCounter= ++maxId;
-        }
     }
     public List<OrderProduct> loadOrderProducts(int orderId) throws SQLException {
         List<OrderProduct> orderProducts = new LinkedList<>();
@@ -232,7 +231,7 @@ public class OrderController {
                 if(!order.getProducts().isEmpty()) {
                     orders.add(order);
                     OrderDTO oldOrderDTO = order.getOrderDTO();
-                    OrderDTO newOrderDTO = new OrderDTO(oldOrderDTO.getOrderNum(), oldOrderDTO.getSupplierNum(), oldOrderDTO.getContactName(), oldOrderDTO.getContactNumber(), oldOrderDTO.getOrderDate(), oldOrderDTO.getSupplierAddress(), oldOrderDTO.getDestinationAddress(), true, -1, -1);
+                    OrderDTO newOrderDTO = new OrderDTO(oldOrderDTO.getOrderNum(), oldOrderDTO.getSupplierNum(), oldOrderDTO.getContactName(), oldOrderDTO.getContactNumber(), oldOrderDTO.getOrderDate(), oldOrderDTO.getSupplierAddress(), oldOrderDTO.getDestinationAddress(), true, -1, null);
                     orderDalController.update(oldOrderDTO, newOrderDTO);
                     order.setOrderDTO(newOrderDTO);
                 }
@@ -245,7 +244,8 @@ public class OrderController {
             else {
                 order.setDaysToSupplied(order.getDaysToSupplied() - 1);
                 OrderDTO oldOrderDTO = order.getOrderDTO();
-                OrderDTO newOrderDTO = new OrderDTO(oldOrderDTO.getOrderNum(), oldOrderDTO.getSupplierNum(), oldOrderDTO.getContactName(), oldOrderDTO.getContactNumber(), oldOrderDTO.getOrderDate(), oldOrderDTO.getSupplierAddress(), oldOrderDTO.getDestinationAddress(), true, oldOrderDTO.getDaysToDeliver()-1, -1);
+                OrderDTO newOrderDTO = new OrderDTO(oldOrderDTO.getOrderNum(), oldOrderDTO.getSupplierNum(), oldOrderDTO.getContactName(), oldOrderDTO.getContactNumber()
+                        , oldOrderDTO.getOrderDate(), oldOrderDTO.getSupplierAddress(), oldOrderDTO.getDestinationAddress(), true, oldOrderDTO.getDaysToDeliver()-1, null);
                 orderDalController.update(oldOrderDTO, newOrderDTO);
                 order.setOrderDTO(newOrderDTO);
             }

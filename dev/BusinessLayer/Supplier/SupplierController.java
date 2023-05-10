@@ -1,5 +1,8 @@
 package BusinessLayer.Supplier;
 
+import BusinessLayer.Supplier.Discounts.Discount;
+import BusinessLayer.Supplier.Discounts.NumberDiscount;
+import BusinessLayer.Supplier.Discounts.PercentDiscount;
 import BusinessLayer.Supplier.Supplier_Util.PaymentTerms;
 import BusinessLayer.Supplier.Suppliers.ConstantSupplier;
 import BusinessLayer.Supplier.Suppliers.OccasionalSupplier;
