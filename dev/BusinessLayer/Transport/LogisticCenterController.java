@@ -1,5 +1,6 @@
 package BusinessLayer.Transport;
 
+import DataLayer.HR_T_DAL.DTOs.SiteDTO;
 import DataLayer.HR_T_DAL.DalService.DalLogisticCenterService;
 
 import java.sql.SQLException;
@@ -8,11 +9,13 @@ import java.util.LinkedHashMap;
 
 public class LogisticCenterController {
 
+
     private final LogisticCenter logisticCenter;
 
 
-    public LogisticCenterController(DalLogisticCenterService dalLogisticCenterService) {
-        this.logisticCenter = new LogisticCenter(dalLogisticCenterService);
+    public LogisticCenterController(DalLogisticCenterService dalLogisticCenterService) throws Exception {
+        SiteDTO siteDTO = dalLogisticCenterService.findLogisticCenter();
+        this.logisticCenter = new LogisticCenter(siteDTO,dalLogisticCenterService);
     }
 
     /**
@@ -20,8 +23,12 @@ public class LogisticCenterController {
      *
      * @param newSupply - map with the amount for each product required to store
      */
-    public void storeProducts(LinkedHashMap<Product, Integer> newSupply) {
+    public void storeProducts(LinkedHashMap<Product, Integer> newSupply) throws Exception {
         logisticCenter.storeProducts(newSupply);
+    }
+
+    public LogisticCenter getLogisticCenter() {
+        return logisticCenter;
     }
 
     /**
@@ -30,11 +37,15 @@ public class LogisticCenterController {
      * @param requestedSupply - map of the products and amounts required to load
      * @return map of products and amounts that are not available in the logistics center stock
      */
-    public LinkedHashMap<Product, Integer> removeProductsFromStock(LinkedHashMap<Product, Integer> requestedSupply) {
+    public LinkedHashMap<Product, Integer> removeProductsFromStock(LinkedHashMap<Product, Integer> requestedSupply) throws SQLException {
         return logisticCenter.loadProductsFromStock(requestedSupply);
     }
+    public LinkedHashMap<Product, Integer> removeFileFromStock(File file) throws SQLException {
+        return logisticCenter.loadProductsFromStock(file.getProducts());
 
-    public LinkedHashMap<Product, Integer> getProductsInStock() {
+    }
+
+    public LinkedHashMap<Product, Integer> getProductsInStock() throws Exception {
         return logisticCenter.getProductsInStock();
     }
 
@@ -53,21 +64,11 @@ public class LogisticCenterController {
         return logisticCenter.addTruck(licenseNumber, model, weight, maxWeight, coolingLevel);
     }
 
-    /**
-     * remove a truck from the trucks map
-     *
-     * @param licenseNumber of the truck
-     * @return true if the truck removed successfully , false otherwise
-     */
-    public boolean removeTruck(int licenseNumber) throws Exception {
-        return logisticCenter.removeTruck(licenseNumber);
-    }
-
-    public LinkedHashMap<Integer, Truck> getAllTrucks() {
+    public LinkedHashMap<Integer, Truck> getAllTrucks() throws Exception {
         return logisticCenter.getAllTrucks();
     }
 
-    public Truck getTruck(int licenseNumber) {
+    public Truck getTruck(int licenseNumber) throws Exception {
         return logisticCenter.getTruck(licenseNumber);
     }
 

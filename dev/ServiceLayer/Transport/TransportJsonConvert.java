@@ -3,6 +3,7 @@ package ServiceLayer.Transport;
 
 import BusinessLayer.Transport.*;
 
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -12,13 +13,16 @@ public class TransportJsonConvert {
 
     }
 
-    public String deliveryToString(Delivery delivery) {
+    public String deliveryToString(Delivery delivery) throws SQLException {
         StringBuilder sb = new StringBuilder();
         // Append delivery details to the string builder
         sb.append("Delivery ID: ").append(delivery.getId()).append("\n");
         sb.append("Date: ").append(delivery.getDate()).append("\n");
         sb.append("Truck Weight: ").append(delivery.getTruckWeight()).append("\n");
-        sb.append(suppliersAndProductsToString(delivery.getSuppliers()));
+        sb.append("UnHandledSuppliers\n");
+        sb.append(suppliersAndProductsToString(delivery.getUnHandledSuppliers()));
+        sb.append("HandledSuppliers\n");
+        sb.append(suppliersAndProductsToString(delivery.getHandledSuppliers()));
 
 
         //sb.append("Source: ").append(delivery.getSource().getAddress()).append("\n");
@@ -40,13 +44,12 @@ public class TransportJsonConvert {
     }
 
 
-    public String suppliersAndProductsToString(LinkedHashMap<Supplier, File> suppliersAndProductsToString) {
+    public String suppliersAndProductsToString(LinkedHashMap<? extends Site, File> suppliersAndProductsToString) {
         if (suppliersAndProductsToString == null)
-            return "all good";
+            return "all  good! :)";
         StringBuilder sb = new StringBuilder();
-        for (Map.Entry<Supplier, File> entry : suppliersAndProductsToString.entrySet()) {
-            Supplier supplier = entry.getKey();
-            sb.append("Suppliers:").append(supplier.getAddress()).append("\n");
+        for (Map.Entry<? extends Site, File> entry : suppliersAndProductsToString.entrySet()) {
+            sb.append("Suppliers:").append(entry.getKey().getAddress()).append("\n");
             sb.append(fileToString(entry.getValue()));
         }
         return sb.toString();
@@ -60,14 +63,14 @@ public class TransportJsonConvert {
         return sb.toString();
     }
 
-    public LinkedHashMap<Supplier, File> mapToFile(LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> suppliersAndProducts) {
-        LinkedHashMap<Supplier, File> supplierAndFile = new LinkedHashMap<>();
-        for (Map.Entry<Supplier, LinkedHashMap<Product, Integer>> entry : suppliersAndProducts.entrySet()) {
-            Supplier supplier = entry.getKey();
+    public LinkedHashMap<? extends Site, File> mapToFile(LinkedHashMap<? extends Site, LinkedHashMap<Product, Integer>> suppliersAndProducts) {
+        LinkedHashMap<Site, File> supplierAndFile = new LinkedHashMap<>();
+        for (Map.Entry<? extends Site, LinkedHashMap<Product, Integer>> entry : suppliersAndProducts.entrySet()) {
+            Site site = entry.getKey();
             LinkedHashMap<Product, Integer> productAndAmount = entry.getValue();
             File file = new File(-1);
             file.getProducts().putAll(productAndAmount);
-            supplierAndFile.put(supplier, file);
+            supplierAndFile.put(site, file);
         }
         return supplierAndFile;
     }
@@ -106,13 +109,23 @@ public class TransportJsonConvert {
     }
 
 
-    public String deliveryListToString(Collection<Delivery> deliveryList) {
+    public String deliveryListToString(Collection<Delivery> deliveryList) throws SQLException {
         StringBuilder sb = new StringBuilder();
         for (Delivery delivery : deliveryList) {
             sb.append(deliveryToString(delivery)).append("\n\n");
         }
         return sb.toString();
     }
+
+
+    public static String convertCollectionToString(Collection<String> strings) {
+        StringBuilder sb = new StringBuilder();
+        for (String str : strings) {
+            sb.append(str).append("\n");
+        }
+        return sb.toString();
+    }
+
 
 
 }

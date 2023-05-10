@@ -6,9 +6,11 @@ import java.util.LinkedHashMap;
 
 public class SupplierService {
     private final SupplierController supplierController;
+    private TransportJsonConvert transportJsonConvert;
 
     public SupplierService(SupplierController supplierController) {
         this.supplierController = supplierController;
+        this.transportJsonConvert = new TransportJsonConvert();
     }
 
     public String getSupplierProducts(String supplier) {
@@ -29,7 +31,7 @@ public class SupplierService {
 
     public String getAllSuppliers() {
         try {
-            return supplierController.getAllSuppliers().toString();
+            return  TransportJsonConvert.convertCollectionToString(supplierController.getAllSuppliers().keySet());
         } catch (Exception ex) {
             return ex.toString();
         }
@@ -37,7 +39,8 @@ public class SupplierService {
 
     public String addSupplier(String supplierAddress, String telNumber, String contactName, int x, int y) {
         try {
-            return supplierController.addSupplier(supplierAddress, telNumber, contactName, x, y)+" ";
+            supplierController.addSupplier(supplierAddress, telNumber, contactName, x, y);
+            return "Supplier added";
         } catch (Exception ex) {
             return ex.toString();
         }
@@ -46,7 +49,7 @@ public class SupplierService {
     public String addProducts(String supplierAddress, LinkedHashMap<String, Integer> productMap1) {
         try {
             supplierController.addProductsToSupplier(supplierAddress, productMap1);
-            return "true";
+            return "products added";
         } catch (Exception ex) {
             return ex.toString();
         }

@@ -88,6 +88,10 @@ public class Driver extends User {
             else
                 return LicenseType.E;
         }
+
+        public static String intToLicenseType(int weight) {
+           return getByWeight(weight).toString();
+        }
     }
 
     public enum CoolingLevel {
@@ -102,6 +106,11 @@ public class Driver extends User {
                 return CoolingLevel.freezer;
             else
                 return CoolingLevel.non;
+        }
+
+
+        public static String intToCoolinglevel(int i) {
+            return get(i).toString();
         }
     }
 }

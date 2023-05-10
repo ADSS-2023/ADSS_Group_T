@@ -36,15 +36,6 @@ public class DeliveryService {
         }
     }
 
-    public String overWeightAction(int id, int action, String address, int weight) {
-        try {
-            deliveryController.overWeightAction(id, action, address, weight);
-            return "good";
-        } catch (Exception ex) {
-            return ex.toString();
-        }
-    }
-
 
     public String getDeliveryDetail(int deliveryID) {
         try {
@@ -87,10 +78,22 @@ public class DeliveryService {
     }
 
     public String getCurrDate() {
-        return this.deliveryController.getCurrDate().toString();
+        try {
+            return this.deliveryController.getCurrDate().toString();
+        }
+        catch (Exception exception){
+            return exception.toString();
+        }
     }
 
     public String showAllDeliveries() {
-        return transportJsonConvert.deliveryListToString(this.deliveryController.getAllDeliveries());
+        try {
+            return transportJsonConvert.deliveryListToString(this.deliveryController.getAllDeliveries());
+        }
+        catch (Exception exception){
+            return exception.toString();
+        }
+
     }
+
 }

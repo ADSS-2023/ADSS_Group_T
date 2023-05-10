@@ -300,6 +300,23 @@ public Driver lazyLoadDriver (int id) throws SQLException {
 
     }
 
+    //Noam Gilad Write
+    public ArrayList<Driver> getAssignedDrivers() {
+        ArrayList<Driver> assignedDrivers = new ArrayList<>();
+
+        for (LinkedHashMap<Driver, Boolean> driversSubmission : date2driversSubmission.values()) {
+            for (Map.Entry<Driver, Boolean> driverSubmission : driversSubmission.entrySet()) {
+                if (driverSubmission.getValue()) {
+                    assignedDrivers.add(driverSubmission.getKey());
+                }
+            }
+        }
+        return assignedDrivers;
+    }
+
+
+
+
 
 
 }

@@ -6,7 +6,10 @@ import BusinessLayer.HR.ShiftController;
 import BusinessLayer.Transport.*;
 import BusinessLayer.HR.User.UserController;
 import DataLayer.HR_T_DAL.DAOs.TruckDAO;
+import DataLayer.HR_T_DAL.DB_init.Data_init;
+import DataLayer.HR_T_DAL.DalService.DalDeliveryService;
 import DataLayer.HR_T_DAL.DalService.DalLogisticCenterService;
+import DataLayer.Util.DAO;
 import ServiceLayer.HR.EmployeeService;
 import ServiceLayer.HR.ShiftService;
 import ServiceLayer.Transport.*;
@@ -14,8 +17,11 @@ import ServiceLayer.UserService;
 import org.junit.Before;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class ServiceFactory {
     private ShiftController shiftController;
@@ -34,15 +40,26 @@ public class ServiceFactory {
     private SupplierController supplierController;
     private Connection connection;
     private DalLogisticCenterService dalLogisticCenterService;
+    private DalDeliveryService dalDeliveryService;
+    private DAO dao;
+
 
 
     private DriverController driverController;
 
-    public ServiceFactory() throws SQLException {
+    public ServiceFactory() throws Exception {
 
         String testDBUrl = "jdbc:sqlite:dev/DataLayer/HR_Transport_DB.db";
         connection = DriverManager.getConnection(testDBUrl);
 
+        this.dao = new DAO(connection);
+        Data_init.initBasicData(dao);
+
+
+
+
+        dalLogisticCenterService = new DalLogisticCenterService(connection);
+        dalDeliveryService = new DalDeliveryService(connection,dalLogisticCenterService);
 
 
         shiftController = new ShiftController();
@@ -50,19 +67,26 @@ public class ServiceFactory {
         employeeController = new EmployeeController();
         employeeService = new EmployeeService(employeeController);
 
-        this.dalLogisticCenterService = new DalLogisticCenterService(connection);
+
         logisticCenterController = new LogisticCenterController(dalLogisticCenterService);
         logisticCenterService = new LogisticCenterService(logisticCenterController);
+        dalDeliveryService = new DalDeliveryService(connection,dalLogisticCenterService);
 
         //TODO //userController = new UserController();
         userService = new UserService(userController);
-        branchController = new BranchController();
+        branchController = new BranchController(dalDeliveryService);
         branchService = new BranchService(branchController);
-        supplierController = new SupplierController();
+        supplierController = new SupplierController(dalDeliveryService);
         supplierService = new SupplierService(supplierController);
-        deliveryController = new DeliveryController(logisticCenterController,supplierController,branchController,driverController,shiftController);
+        deliveryController = new DeliveryController(logisticCenterController,supplierController,branchController,driverController,shiftController,dalDeliveryService);
         deliveryService = new DeliveryService(deliveryController);
+
     }
+
+    public DAO getDAO() {
+        return this.dao;
+    }
+
     public void callbackEnterWeight(EnterWeightInterface enterWeightInterface){
         deliveryService.setEnterWeightInterface(enterWeightInterface);
     }
