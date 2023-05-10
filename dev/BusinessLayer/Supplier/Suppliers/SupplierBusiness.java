@@ -58,7 +58,8 @@ public abstract class  SupplierBusiness {
         }
     }
 
-    public  void editSupplier(String supplierName, String address, int bankAccountNum, boolean selfDelivery,PaymentTerms paymentTerms) throws SQLException {
+    public SupplierBusiness(SupplierDTO supplierDTO)
+    public void editSupplier(String supplierName, String address, int bankAccountNum, boolean selfDelivery,PaymentTerms paymentTerms) throws SQLException {
         this.supplierName = supplierName;
         this.address = address;
         this.bankAccountNum = bankAccountNum;

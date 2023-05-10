@@ -27,7 +27,7 @@ public class DiscountDTO extends DTO {
         return productNum;
     }
 
-    public String IsTotalAmount() {
+    public String getIsTotalAmount() {
         return isTotalAmount;
     }
 

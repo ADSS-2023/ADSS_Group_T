@@ -44,24 +44,26 @@ public class SupplierController {
             for(SupplierProductDTO supplierProductDTO :  productDTOS){
                 products.put(supplierProductDTO.getSupplierNum(), new SupplierProductBusiness(supplierProductDTO, supplierDalController));
             }
-            List<ProductDiscountDTO> productDiscountDTOS = loadSupplierProductDiscounts(supplierDTO.getSupplierNum());
-            for(ProductDiscountDTO productDiscountDTO : productDiscountDTOS)
-                products.get(productDiscountDTO.getProductNum()).addProductDiscount(productDiscountDTO);
-            List<SupplierDiscountDTO> supplierDiscountDTOS = loadSupplierDiscounts(supplierDTO.getSupplierNum());
+            List<DiscountDTO> productDiscountDTOS = loadDiscounts(supplierDTO.getSupplierNum());
+            for(DiscountDTO productDiscountDTO : productDiscountDTOS)
+                if(!Boolean.parseBoolean(productDiscountDTO.IsSupplierDiscount()))
+                    products.get(productDiscountDTO.getProductNum()).addProductDiscount(productDiscountDTO);
+            List<DiscountDTO> supplierDiscountDTOS = loadDiscounts(supplierDTO.getSupplierNum());
             List<Discount> discountPerTotalQuantity = new ArrayList<>();
             List<Discount> discountPerTotalPrice = new ArrayList<>();
-            for(SupplierDiscountDTO supplierDiscountDTO : supplierDiscountDTOS){
-                if(supplierDiscountDTO.isTotalAmount()){
-                    if(supplierDiscountDTO.isPercentage())
-                        discountPerTotalQuantity.add(new PercentDiscount(supplierDiscountDTO, supplierDalController));
-                    else
-                        discountPerTotalQuantity.add(new NumberDiscount(supplierDiscountDTO, supplierDalController));
-                }
-                else {
-                    if(supplierDiscountDTO.isPercentage())
-                        discountPerTotalPrice.add(new PercentDiscount(supplierDiscountDTO, supplierDalController));
-                    else
-                        discountPerTotalPrice.add(new NumberDiscount(supplierDiscountDTO, supplierDalController));
+            for(DiscountDTO supplierDiscountDTO : supplierDiscountDTOS) {
+                if (Boolean.parseBoolean(supplierDiscountDTO.IsSupplierDiscount())){
+                    if (Boolean.parseBoolean(supplierDiscountDTO.getIsTotalAmount())) {
+                        if (Boolean.parseBoolean(supplierDiscountDTO.isPercentage()))
+                            discountPerTotalQuantity.add(new PercentDiscount(supplierDiscountDTO, supplierDalController));
+                        else
+                            discountPerTotalQuantity.add(new NumberDiscount(supplierDiscountDTO, supplierDalController));
+                    } else {
+                        if (Boolean.parseBoolean(supplierDiscountDTO.isPercentage()))
+                            discountPerTotalPrice.add(new PercentDiscount(supplierDiscountDTO, supplierDalController));
+                        else
+                            discountPerTotalPrice.add(new NumberDiscount(supplierDiscountDTO, supplierDalController));
+                    }
                 }
             }
             if(supplierDTO.getDaysToDeliver() == -1)
@@ -83,13 +85,10 @@ public class SupplierController {
         return supplierDalController.findAllOfCondition("supplier_supplier_product", "supplierNum", supplierNum, SupplierProductDTO.class);
     }
 
-    public List<ProductDiscountDTO> loadSupplierProductDiscounts(int supplierNum) throws SQLException {
-        return supplierDalController.findAllOfCondition("supplier_product_discount", "supplierNum", supplierNum, ProductDiscountDTO.class);
+    public List<DiscountDTO> loadDiscounts(int supplierNum) throws SQLException {
+        return supplierDalController.findAllOfCondition("supplier_discount", "supplierNum", supplierNum, DiscountDTO.class);
     }
 
-    public List<SupplierDiscountDTO> loadSupplierDiscounts(int supplierNum) throws SQLException {
-        return supplierDalController.findAllOfCondition("supplier_supplier_discount", "supplierNum", supplierNum, SupplierDiscountDTO.class);
-    }
 
     public void addSupplier(String name, String address, int supplierNum, int bankAccountNum, HashMap<String, String> contacts, List<DayOfWeek> constDeliveryDays, boolean selfDelivery, PaymentTerms paymentTerms, int daysToDeliver) throws Exception {
         if(isSupplierExists(supplierNum))
