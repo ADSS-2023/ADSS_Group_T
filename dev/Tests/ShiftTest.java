@@ -43,9 +43,9 @@ public class ShiftTest {
 
 
     @Test
-    public void testAddEmployeeRequirements1() {
+    public void testAddEmployeeRequirements1() throws SQLException {
         // Test adding requirements for a new position
-        HashMap<String, Integer> requirements = new HashMap<>();
+        LinkedHashMap<String, Integer> requirements = new LinkedHashMap<>();
         requirements.put("cashier", 2);
         shift.addEmployeeRequirements(requirements);
         HashMap<String, Integer> expectedRequirements = new HashMap<>();
@@ -55,10 +55,10 @@ public class ShiftTest {
 
 
     @Test
-    public void testAddEmployeeRequirements2() {
+    public void testAddEmployeeRequirements2() throws SQLException {
 
         // Test adding requirements for an existing position
-        HashMap<String, Integer> requirements = new HashMap<>();
+        LinkedHashMap<String, Integer> requirements = new LinkedHashMap<>();
         requirements.put("cashier", 1);
         requirements.put("storeKeeper", 2);
         shift.addEmployeeRequirements(requirements);
@@ -69,14 +69,14 @@ public class ShiftTest {
     }
 
     @Test
-    public void testAddEmployeeRequirements3() {
+    public void testAddEmployeeRequirements3() throws SQLException {
         // Test adding requirements for multiple positions
-        HashMap<String, Integer> requirements = new HashMap<>();
-        requirements = new HashMap<>();
+        LinkedHashMap<String, Integer> requirements = new LinkedHashMap<>();
+        requirements = new LinkedHashMap<>();
         requirements.put("cleaner", 1);
         requirements.put("securityGuard", 1);
         shift.addEmployeeRequirements(requirements);
-        HashMap<String, Integer> expectedRequirements = new HashMap<>();
+        HashMap<String, Integer> expectedRequirements = new LinkedHashMap<>();
         expectedRequirements.put("cleaner", 1);
         expectedRequirements.put("securityGuard", 1);
         assertEquals(expectedRequirements, shift.getEmployeeRequirements());
@@ -90,7 +90,7 @@ public class ShiftTest {
         positions.add(PositionType.storekeeper.name());
         String result = shift.submitShiftForEmployee(cashier1, positions);
         assertEquals("Shift submitted successfully", result);
-        HashMap<String, HashMap<Employee, Boolean>> submittedPositions = shift.getSubmittedPositionByEmployees();
+        LinkedHashMap<String, LinkedHashMap<Employee, Boolean>> submittedPositions = shift.getSubmittedPositionByEmployees();
         assertTrue(submittedPositions.containsKey(PositionType.cashier.name()));
         assertTrue(submittedPositions.containsKey(PositionType.storekeeper.name()));
         assertTrue(submittedPositions.get(PositionType.cashier.name()).containsKey(cashier1));
@@ -105,7 +105,7 @@ public class ShiftTest {
 
         @Test
         public void testMakeSureThereIsStorekeeperRequirement() throws Exception {
-            shift.addEmployeeRequirements(new HashMap<>());
+            shift.addEmployeeRequirements(new LinkedHashMap<>());
             shift.makeSureThereIsStorekeeperRequirement();
             HashMap<String, Integer> employeeRequirements = shift.getEmployeeRequirements();
             assertTrue(employeeRequirements.containsKey(PositionType.storekeeper.name()));
@@ -125,7 +125,7 @@ public class ShiftTest {
 
 
         // Test missing storekeepers
-        shift.addEmployeeRequirements(new HashMap<>() {{
+        shift.addEmployeeRequirements(new LinkedHashMap<>() {{
             put(PositionType.storekeeper.name(), 2);
         }});
         shift.submitShiftForEmployee(storeKeeper1, List.of(PositionType.cashier.name()));
@@ -145,7 +145,7 @@ public class ShiftTest {
     public void testAssignEmployeeForShift() throws Exception {
         // Add storekeeper requirement
         shift.makeSureThereIsStorekeeperRequirement();
-        shift.getSubmittedPositionByEmployees().put(PositionType.cashier.name(), new HashMap<Employee, Boolean>());
+        shift.getSubmittedPositionByEmployees().put(PositionType.cashier.name(), new LinkedHashMap<>());
 
         // Test assigning employee to non-existing position
         assertThrows(NoSuchElementException.class, () -> shift.assignEmployeeForShift("invalidPosition", cashier1));

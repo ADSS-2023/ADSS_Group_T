@@ -322,7 +322,9 @@ public class DeliveryController {
      *
      * @return List of the delivery ids that scheduled for the new day and have overweight problem
      */
-    public ArrayList<Delivery> skipDay() throws Exception {
+
+    public ArrayList<Delivery> skipDay() throws SQLException, NoSuchFieldException {
+
         this.currDate = this.currDate.plusDays(1);
         if (!deliveryInDate(currDate))
             return null;
@@ -488,7 +490,10 @@ public class DeliveryController {
     }
 
 
-    public void executeDelivery(Delivery delivery) throws Exception {
+
+    public void executeDelivery(Delivery delivery) throws SQLException, NoSuchFieldException {
+
+ 
         if (isDeliveryFromLC(delivery))
             executeDeliveryFromLC(delivery);
         else if (isDeliveryToLC(delivery))
@@ -551,7 +556,8 @@ public class DeliveryController {
         reScheduleDelivery(delivery.getUnHandledSuppliers(), delivery.getUnHandledBranches());
     }
 
-    private void reScheduleDelivery(LinkedHashMap<Supplier, File> suppliers, LinkedHashMap<Branch, File> branches) throws Exception {
+
+    private void reScheduleDelivery(LinkedHashMap<Supplier, File> suppliers, LinkedHashMap<Branch, File> branches) throws SQLException, NoSuchFieldException {
         boolean found = false;
         LocalDate newDeliveredDate = this.currDate.plusDays(2);
         CoolingLevel coolingLevel = CoolingLevel.non;
@@ -594,6 +600,8 @@ public class DeliveryController {
         deliveriesThatReScheduleDelivery.addAll(scheduleDriversForTomorrow());
         return deliveriesThatReScheduleDelivery;
     }
+
+
 
 
     private ArrayList<Delivery> checkStoreKeeperForTomorrow() throws Exception {

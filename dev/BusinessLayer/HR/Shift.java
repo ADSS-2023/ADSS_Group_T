@@ -1,6 +1,10 @@
 package BusinessLayer.HR;
 import BusinessLayer.HR.User.PositionType;
+import DataLayer.HR_T_DAL.DalService.DalEmployeeService;
+import DataLayer.HR_T_DAL.DalService.DalShiftService;
+import UtilSuper.Pair;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -11,11 +15,11 @@ public class Shift {
     String branch;
     private boolean shiftType;
 
-    private HashMap<String, Integer> employeeRequirements; // HashMap<PositionType, amount> - require employees per shift
+    private LinkedHashMap <String, Integer> employeeRequirements; // HashMap<PositionType, amount> - require employees per shift
 
-    private HashMap<String, HashMap<Employee, Boolean>> submittedPositionByEmployees; // positionType, Empoyee, isAssigned
+    private LinkedHashMap<String, LinkedHashMap<Employee, Boolean>> submittedPositionByEmployees; // positionType, Empoyee, isAssigned
 
-
+    private DalShiftService dalShiftService;
     private int shiftManagerId;
 
 
@@ -29,6 +33,13 @@ public class Shift {
         this.shiftManagerId = -1;
     }
 
+
+    // Todo- init
+    public void initShift(DalShiftService dalShiftService) {
+        this.dalShiftService = dalShiftService;
+    }
+
+
     public boolean getShiftType() {
         return shiftType;
     }
@@ -41,51 +52,55 @@ public class Shift {
         this.shiftManagerId = shiftManagerId;
     }
 
-    public void addEmployeeRequirements(HashMap<String, Integer> requirements) {
+
+
+
+    public void addEmployeeRequirements(LinkedHashMap<String, Integer> requirements) throws SQLException {
         for (Map.Entry<String, Integer> entry : requirements.entrySet()) {
-            String pos = entry.getKey();
             int amount = entry.getValue();
-            if (employeeRequirements.containsKey(pos)) {
-                employeeRequirements.put(pos, employeeRequirements.get(pos) + amount);
-            } else {
-                employeeRequirements.put(pos, amount);
+            String pos = entry.getKey();
+            if (employeeRequirements.containsKey(pos)){
+                amount = amount + employeeRequirements.get(pos);
+                dalShiftService.updateRequierement(branch, date, shiftType, pos, amount);
             }
+            else
+                employeeRequirements.put(pos, amount);
         }
     }
 
+    public void  lazyLoadFindRequiermentsBtDateAndShiftType() throws SQLException {
+        employeeRequirements = dalShiftService.findRequiermentsBtDateAndShiftType(branch, date, shiftType);
+    }
 
-    public String isLegalShift() {
+
+    public void  lazyLoadFindAllSubmissionByDateShiftType() throws SQLException {
+        employeeRequirements = dalShiftService.findAllSubmissionByDateAndShiftType(branch, date, shiftType);
+    }
+
+    public String isLegalShift() throws SQLException {
+        lazyLoadFindRequiermentsBtDateAndShiftType();
         boolean hasManager = false;
         String missing = "";
         // Check if the shift contains a manager
         if (shiftManagerId == -1)
             missing += "Noticed- the shift must have a manager!!!" + "\n";
         // Check if all position requirements are fulfilled
-        for (Map.Entry<String, Integer> entry : employeeRequirements.entrySet()) {
-            String position = entry.getKey();
-            int requiredAmount = entry.getValue();
-            int assignedAmount = 0;
-            HashMap<Employee, Boolean> employeeStatus = submittedPositionByEmployees.get(position);
-            if (employeeStatus != null) {
-                for (Map.Entry<Employee, Boolean> employeeEntry : employeeStatus.entrySet()) {
-                    if (employeeEntry.getValue()) {
-                        assignedAmount++;
-                    }
-                }
+        for (Map.Entry<String, Integer> requirement: employeeRequirements.entrySet()) {
+            String position = requirement.getKey();
+            int requiredAmount = requirement.getValue();
+            if (requiredAmount>0)
+            missing += requiredAmount + " employees are missing in the position of " + position + "\n";
             }
-            if (assignedAmount != requiredAmount && !position.equals(PositionType.shiftManager.name())) {
-                int num = requiredAmount - assignedAmount;
-                missing += num + " employees are missing in the position of " + position + "\n";
-            }
-        }
         if (missing.isEmpty())
             return "All the requierments of the employees in the shift are fullfillled";
         return missing;
     }
 
 
-    // TODO-check it
-    public String showShiftStatus() {
+
+    public String showShiftStatus() throws SQLException {
+        lazyLoadFindRequiermentsBtDateAndShiftType();
+        lazyLoadFindAllSubmissionByDateShiftType();
         String st = "Shift state:\n\n";
         st += String.format("| %-15s | %-8s | %-8s | %-25s | %-25s |\n", "Position", "Assigned", "Required", "Submissions Not Assigned", "Employee IDs Not Assigned");
         st += "|-----------------|----------|----------|-------------------------|-----------------------------|\n";
@@ -94,9 +109,9 @@ public class Shift {
             int required = entry.getValue();
             int assigned = 0;
             List<Employee> assignedEmployees = new ArrayList<>();
-            for (Map.Entry<String, HashMap<Employee, Boolean>> assignment : submittedPositionByEmployees.entrySet()) {
+            for (Map.Entry<String, LinkedHashMap<Employee, Boolean>> assignment : submittedPositionByEmployees.entrySet()) {
                 String assignmentPosition = assignment.getKey();
-                HashMap<Employee, Boolean> employeesToAssign = assignment.getValue();
+                LinkedHashMap<Employee, Boolean> employeesToAssign = assignment.getValue();
                 for (Map.Entry<Employee, Boolean> employeeAssignment : employeesToAssign.entrySet()) {
                     Employee employee = employeeAssignment.getKey();
                     boolean isAssigned = employeeAssignment.getValue();
@@ -134,26 +149,42 @@ public class Shift {
 
 
     public String submitShiftForEmployee(Employee emp, List<String> qualifiedPositions) throws Exception {
+        lazyLoadFindAllSubmissionByDateShiftType();
         for (String pos : qualifiedPositions) {
-            HashMap<Employee, Boolean> employeesByPosition = submittedPositionByEmployees.get(pos);
+            LinkedHashMap<Employee, Boolean> employeesByPosition = submittedPositionByEmployees.get(pos);
             if (employeesByPosition == null) {
                 employeesByPosition = new LinkedHashMap<>();
                 submittedPositionByEmployees.put(pos, employeesByPosition);
+                dalShiftService.addEmployeeToShift(branch, date, shiftType, emp.getId(), pos, false);
             }
-            employeesByPosition.put(emp, false);
+            else if (employeesByPosition.get(emp) == null){
+                employeesByPosition.put(emp, false);
+                dalShiftService.addEmployeeToShift(branch, date, shiftType, emp.getId(), pos, false);
+            }
         }
         return "Shift submitted successfully";
     }
 
 
     public void makeSureThereIsStorekeeperRequirement() throws Exception {
+        lazyLoadFindRequiermentsBtDateAndShiftType();
         if (!employeeRequirements.containsKey(PositionType.storekeeper.name()) || employeeRequirements.get(PositionType.storekeeper.name()) < 1) {
             employeeRequirements.put(PositionType.storekeeper.name(), 1);
+            dalShiftService.addRequierement(branch, date, shiftType, PositionType.storekeeper.name(), 1);
         }
+    }
+
+    public boolean isThereAnyStoreKeeperReuirement() throws Exception {
+        lazyLoadFindRequiermentsBtDateAndShiftType();
+        if (!employeeRequirements.containsKey(PositionType.storekeeper.name()) || employeeRequirements.get(PositionType.storekeeper.name()) < 1)
+            return false;
+        return true;
     }
 
 
     public String assignEmployeeForShift(String pos, Employee employee) throws Exception {
+        lazyLoadFindAllSubmissionByDateShiftType();
+        lazyLoadFindRequiermentsBtDateAndShiftType();
         // Get the map of employees and their assigned status for the given position
         HashMap<Employee, Boolean> employees = submittedPositionByEmployees.get(pos);
         if (! (employees == null)) {
@@ -165,33 +196,49 @@ public class Shift {
             Boolean isAssigned = employees.get(employee);
             if (isAssigned != null && isAssigned) {
                 return "Employee already assigned to this position";
-            } else {
-                // Assign the employee to to his list- make sure that he leagal assignes
+            }
+
+            if (!employeeRequirements.containsKey(PositionType.valueOf(pos)))
+                throw new NoSuchElementException("Invalid position");
+
+            int amount = employeeRequirements.get(pos);
+            if ( amount <1)
+                throw new NoSuchElementException("No such requierment");
+
+            else {
+                // Assign the employee  to his list- make sure that he leagal assignes
                 employee.assignShift(this.branch, this.date, this.shiftType, PositionType.valueOf(pos));
 
                 // Assign the employee to the position by updating their assigned status in the map
                 employees.put(employee, true);
+                dalShiftService.updateEmployeeToShift(date, shiftType, employee.getId(), pos, true);
 
-                // remove the requierements- TODO
-                employees.put(employee, true);
+
+                // remove the requierements
+                deleteRequirement(pos);
                 return employee.getEmployeeName() + " has been assigned to position " + pos + " successfully.";
             }
-        } else {
+        }
+        else {
             // The position doesn't exist in the map, throw an exception
             throw new NoSuchElementException("Invalid position");
         }
     }
 
 
-    public String assignAll() {
+    public String assignAll() throws SQLException {
         StringBuilder result = new StringBuilder();
-
+        lazyLoadFindAllSubmissionByDateShiftType();
+        lazyLoadFindRequiermentsBtDateAndShiftType();
         // Iterate over the position types
         for (String positionType : submittedPositionByEmployees.keySet()) {
             HashMap<Employee, Boolean> employeeMap = submittedPositionByEmployees.get(positionType);
+            if (!employeeRequirements.containsKey(positionType))
+                continue;
             int requirement = employeeRequirements.get(positionType);
+            if (requirement == 0)
+                continue;
             int assignedCount = 0;
-
             // Filter out employees who have already been assigned
             List<Employee> unassignedEmployees = new ArrayList<>();
             for (Employee employee : employeeMap.keySet()) {
@@ -201,11 +248,9 @@ public class Shift {
                     assignedCount++;
                 }
             }
-
             // Assign remaining employees to shifts
-            int remainingCount = requirement - assignedCount;
-            if (remainingCount > 0 && unassignedEmployees.size() > 0) {
-                for (int i = 0; i < remainingCount && i < unassignedEmployees.size(); i++) {
+            if (requirement > 0 && unassignedEmployees.size() > 0) {
+                for (int i = 0; i < requirement && i < unassignedEmployees.size(); i++) {
                     Employee employee = unassignedEmployees.get(i);
                     try {
                         employee.assignShift(this.branch, this.date, this.shiftType, PositionType.valueOf(positionType));
@@ -217,20 +262,35 @@ public class Shift {
                     } catch (Exception exception) {
                         //continue- this employee cannot assign
                     }
-
                 }
             }
-
             result.append(String.format("%d employees assigned for position type %s\n", assignedCount, positionType));
         }
-
         return result.toString();
     }
 
-    // just for tests!!
-    public void setSubmittedPositionByEmployees(HashMap<String, HashMap<Employee, Boolean>> submittedPositionByEmployees) {
-        this.submittedPositionByEmployees = submittedPositionByEmployees;
+    public boolean deleteRequirement(String positionType) throws SQLException {
+        if (employeeRequirements.containsKey(positionType)) {
+            int amount = employeeRequirements.get(positionType);
+            //delete from cache
+            if (amount > 1){
+                employeeRequirements.put(positionType, amount - 1);
+                dalShiftService.updateRequierement(branch, date, shiftType, positionType, amount-1);
+            }
+            else{
+                employeeRequirements.remove(positionType);
+                dalShiftService.deleteRequierement(branch, date, shiftType, positionType);
+            }
+            return true;
+        }
+        else {
+            return false;
+        }
     }
+
+
+    // just for tests!!
+
 
     public HashMap<String, Integer> getEmployeeRequirements() {
         return employeeRequirements;
@@ -243,11 +303,8 @@ public class Shift {
         return shiftType;
     }
 
-    public HashMap<String, Integer> getEmployeesRequirement() {
-        return employeeRequirements;
-    }
-
-    public HashMap<String, HashMap<Employee, Boolean>> getSubmittedPositionByEmployees() {
+    public LinkedHashMap<String, LinkedHashMap<Employee, Boolean>> getSubmittedPositionByEmployees() throws SQLException {
+        lazyLoadFindAllSubmissionByDateShiftType();
         return submittedPositionByEmployees;
     }
     public LocalDate getDate() {
