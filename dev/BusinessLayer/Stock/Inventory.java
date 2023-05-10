@@ -172,8 +172,7 @@ public class Inventory {
         this.add_category(".0","bottle milk");
         this.add_category(".0","chocolate");
         this.add_category("" , "beef");
-
-        this.add_item(".0.0",2,"yellow cheese",5,"Emeck",10);
+        this.add_item(".0.0",2,"yellow cheese",5,"Emeck",10.2);
         this.add_item(".0.1", 0,"3% milk" , 5 , "IDO LTD",  3.5);
         this.add_item(".0.1",1 , "1.5% milk" , 2 , "IDO LTD",  3.5);
         this.add_item(".0.2" , 4, "Click" , 5 , "Elite",  15);
