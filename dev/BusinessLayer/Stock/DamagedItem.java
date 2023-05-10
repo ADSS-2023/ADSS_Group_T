@@ -1,5 +1,9 @@
 package BusinessLayer.Stock;
 
+import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.DamagedItemDTO;
+import DataLayer.Inventory_Supplier_Dal.DalController.InventoryDalController;
+import DataLayer.Util.DTO;
+
 import java.util.Map;
 
 import java.util.Map;
@@ -11,13 +15,21 @@ public class DamagedItem {
     private Item item;
     private int amount;
     private String description;
+    private DamagedItemDTO damaged_item_DTO;
 
     public DamagedItem(Item item, int amount, String description) {
         this.item = item;
         this.amount = amount;
         this.description = description;
+        this.damaged_item_DTO = new DamagedItemDTO(item.item_id , amount , description);
     }
 
+    public DamagedItem(DamagedItemDTO dto,Item item){
+        this.item =  item;
+        this.amount = dto.getAmount();
+        this.description = dto.getDescription();
+        this.damaged_item_DTO = dto;
+    }
     /**
      * This function update the amount of the specific damaged item.
      *
@@ -35,6 +47,10 @@ public class DamagedItem {
      */
     public String produceReport(){
         return "Item name : " + item.get_name() + " , Item ID : " + item.getItem_id() + " , Amount : " + amount + " , Description : " + description;
+    }
+
+    public DTO getDto() {
+        return damaged_item_DTO;
     }
 }
 

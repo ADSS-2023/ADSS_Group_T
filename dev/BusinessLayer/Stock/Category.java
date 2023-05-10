@@ -1,8 +1,12 @@
 package BusinessLayer.Stock;
 
 import BusinessLayer.Stock.Util.Util;
+import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.CategoryDTO;
+import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.ItemDTO;
+import DataLayer.Inventory_Supplier_Dal.DalController.InventoryDalController;
+import DataLayer.Inventory_Supplier_Dal.DalController.ItemDalController;
 
-import java.awt.*;
+import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 /*
@@ -15,14 +19,30 @@ public class Category implements ProductCategoryManagement{
     protected String name;
     protected LinkedList<ProductCategoryManagement> categories_list;
     protected List<Discount> discount_list;
+    protected CategoryDTO categoryDTO;
+    protected InventoryDalController inv_dal_controller;
 
-    public Category(String name,String index) {
+    private ItemDalController itemDalController;
+
+
+    public Category(String name,String index,InventoryDalController inv_dal_controller) {
         this.name = name;
-        this.index = index;
+        this.index = index; // need to change it to be 0.1.1...
         categories_list = new LinkedList<>();
         discount_list = new LinkedList<>();
+        categoryDTO = new CategoryDTO(index , name , "");
+        this.inv_dal_controller = inv_dal_controller;
     }
 
+    public Category(CategoryDTO dto,InventoryDalController inv_dal_controller,ItemDalController itemDalController) throws Exception {
+        this.name = dto.getName();
+        this.index = dto.getFatherCategoryIndex(); // need to change it to be 0.1.1...
+        categories_list = new LinkedList<>();
+        discount_list = new LinkedList<>();
+        categoryDTO = dto;
+        this.inv_dal_controller = inv_dal_controller;
+
+    }
     /**
      *  This function called from CategoryService when there is a requirement to produce
      *  an inventory report.
@@ -45,6 +65,13 @@ public class Category implements ProductCategoryManagement{
             String next_index = Util.extractNextIndex(index);
             return categories_list.get(current_index).produceInventoryReport(next_index);
         }
+    }
+
+    /**
+     *
+     */
+    public CategoryDTO getDto(){
+        return categoryDTO;
     }
 
     /**
@@ -133,15 +160,34 @@ public class Category implements ProductCategoryManagement{
      * @param name
      */
     @Override
-    public void add_product(String index, String name) {
-        if (index == "")
-            categories_list.add(new Category(name,""+categories_list.size()));
+    public void add_product(String index, String name) throws Exception {
+        if (index == "") {
+            Category new_category = new Category(name," ",inv_dal_controller);
+            categories_list.add(new_category);
+            new_category.categoryDTO.setFatherCategoryIndex(this.categoryDTO.getIndex());
+            new_category.categoryDTO.setIndex(categoryDTO.getIndex() +"."+ (categories_list.size()-1));
+            inv_dal_controller.insert(new_category.getDto());
+        }
         else {
             int current_index = Integer.parseInt(Util.extractFirstNumber(index));
             String next_index = Util.extractNextIndex(index);
             categories_list.get(current_index).add_product(next_index,name);
         }
+
     }
+
+//    public Category getCategoryByIndex(String index) throws Exception {
+//        if (index == "") {
+//            return this;
+////            DTO curDto = new_category.getDto();
+////            inv_dal_controller.insert(curDto);
+//        }
+//        else {
+//            int current_index = Integer.parseInt(Util.extractFirstNumber(index));
+//            String next_index = Util.extractNextIndex(index);
+//            categories_list.get(current_index).add_product(next_index,name);
+//        }
+//    }
 
     /**
      * This function returns the name of the current category
@@ -181,6 +227,21 @@ public class Category implements ProductCategoryManagement{
             if (categories_list.size()<=current_index)
                 throw new Exception("Illegal index");
             categories_list.get(current_index).add_item(next_index, i);
+        }
+    }
+
+    @Override
+    public void add_product(CategoryDTO categoryDTO, String next_index) throws Exception {
+        if (next_index == "") {
+            Category new_category = new Category(categoryDTO,inv_dal_controller,itemDalController);
+            categories_list.add(new_category);
+            new_category.categoryDTO.setFatherCategoryIndex(this.categoryDTO.getIndex());
+            new_category.categoryDTO.setIndex(categoryDTO.getIndex() +"."+ (categories_list.size()-1));
+        }
+        else {
+            int current_index = Integer.parseInt(Util.extractFirstNumber("."+categoryDTO.getIndex()));
+            next_index = Util.extractNextIndex(next_index);
+            categories_list.get(current_index).add_product(categoryDTO,next_index);
         }
     }
 }

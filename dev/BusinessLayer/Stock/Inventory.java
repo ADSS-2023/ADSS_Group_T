@@ -2,7 +2,12 @@ package BusinessLayer.Stock;
 
 import BusinessLayer.Stock.Util.Util;
 import BusinessLayer.Supplier_Stock.ItemToOrder;
+import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.*;
+import DataLayer.Inventory_Supplier_Dal.DalController.InventoryDalController;
+import DataLayer.Inventory_Supplier_Dal.DalController.ItemDalController;
+import DataLayer.Util.DTO;
 
+import java.sql.SQLException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.*;
@@ -18,15 +23,30 @@ public class Inventory {
     protected HashMap<String,Integer> name_to_id;
     protected List<Item> shortage_list;
     protected Damaged damaged;
+    protected InventoryDalController inv_dal_controller;
+    protected ItemDalController itemDalController;
+    private int discount_counter;
 
     public Inventory(){
         categories = new LinkedList<>();
         items = new HashMap<>();
         shortage_list = new LinkedList<>();
-        damaged = new Damaged();
+        damaged = new Damaged(null);
         name_to_id = new HashMap<>();
+        discount_counter = 0;
     }
 
+    public void setInventoryDalController(InventoryDalController inv){
+        this.inv_dal_controller = inv;
+        damaged.inventoryDalController = inv;
+    }
+
+    public void setItemDalController(ItemDalController itemDalController){
+        this.itemDalController = itemDalController;
+    }
+    public InventoryDalController getInv_dal_controller(){
+        return inv_dal_controller;
+    }
     /**
      * this function gets an item and set his alert callback
      * to be added to shortage list, when needed.
@@ -117,9 +137,18 @@ public class Inventory {
         LocalDate start_date = Util.stringToDate(start_date_string);
         if (categories.size()<= current_index)
             throw new Exception("Illegal index");
-        categories.get(current_index).setDiscount(next_index , new Discount(start_date , end_date , percentageAmount));
+        Discount new_discount = new Discount(discount_counter , start_date , end_date , percentageAmount , index);
+        categories.get(current_index).setDiscount(next_index , new_discount);
+        inv_dal_controller.insert(new_discount.getDto());
+        inv_dal_controller.update(new DiscountCounterDTO(discount_counter),new DiscountCounterDTO(++discount_counter));
     }
 
+    public void set_discount(DiscountDTO discount) throws Exception {
+        int current_index = Integer.parseInt(Util.extractFirstNumber(discount.getIndex_product()));
+        String next_index = Util.extractNextIndex("."+discount.getIndex_product());
+        Discount new_discount = new Discount(discount);
+        categories.get(current_index).setDiscount(next_index , new_discount);
+    }
     /**
      * This function receives a list of indexes that represent categories,
      * and produce an inventory report for all of those categories.
@@ -145,45 +174,23 @@ public class Inventory {
      * in order to test the system.
      */
     public void setUp() throws Exception {
-        Item click = new Item(4 , "Click" , 5 , "Elite",  15);
-        set_item_call_back(click);
-        Item milk_3 = new Item(0 , "3% milk" , 5 , "IDO LTD",  3.5);
-        set_item_call_back(milk_3);
-        Item milk_1_5=new Item(1 , "1.5% milk" , 2 , "IDO LTD",  3.5);
-        set_item_call_back(milk_1_5);
-        Item yellow_cheese = new Item(2,"yellow cheese",5,"Emeck",10);
-        set_item_call_back(yellow_cheese);
-        Item beef_sausage = new Item(3,"Beef Sausage",3,"Zogloveck",25);
-        set_item_call_back(beef_sausage);
-        shortage_list.add(click);
-        categories.add(new Category("Milk-product", "0"));
-        categories.get(0).add_product(new Category("Cheese" , "0"));
-        categories.get(0).add_product(new Category("bottle milk" , "1"));
-        categories.get(0).add_product(new Category("Chocolate" , "2"));
-        categories.get(0).getCategories_list().get(0).add_product(yellow_cheese);
-        categories.get(0).getCategories_list().get(1).add_product(milk_3);
-        categories.get(0).getCategories_list().get(1).add_product(milk_1_5);
-        categories.get(0).getCategories_list().get(2).add_product(click);
-        items.put(4,click);
-        name_to_id.put("Click Elite",4);
-        items.put(2,yellow_cheese);
-        name_to_id.put("yellow cheese Emeck",2);
-        items.put(0,milk_3);
-        name_to_id.put("3% milk IDO LTD",0);
-        items.put(1,milk_1_5);
-        name_to_id.put("1.5% milk IDO LTD",1);
-
-        receive_order(20,yellow_cheese.item_id,6,"ile 2 shelf 3",Util.stringToDate("2023-10-25"),5.3);
-        milk_3.recive_order(155,20,20,2.15,"ile 5 shelf 10",Util.stringToDate("2023-05-20"));
-        milk_1_5.recive_order(120,10,10,2.55,"ile 5 shelf 11",Util.stringToDate("2023-05-23"));
-        beef_sausage.recive_order(345,5,15,12.25,"ile 6 shelf 2",Util.stringToDate("2023-10-20"));
-        categories.add(new Category("Meat-product", "1"));
-        categories.get(1).add_product(new Category("chicken" , "0"));
-        categories.get(1).add_product(new Category("beef" , "1"));
-        categories.get(1).getCategories_list().get(1).add_product(beef_sausage);
-        items.put(3,beef_sausage);
-        name_to_id.put("Beef Sausage Zogloveck",3);
-
+        this.add_category("","Milk-product");
+        this.add_category(".0","Cheese");
+        this.add_category(".0","bottle milk");
+        this.add_category(".0","chocolate");
+        this.add_category("" , "Meat-product");
+        this.add_category(".1" , "beef");
+        this.add_category(".1" , "chicken");
+        this.add_item(".0.2" , 4, "Click" , 5 , "Elite",  15);
+        this.add_item(".0.0",2,"yellow cheese",5,"Emeck",10.2);
+        this.add_item(".0.1",1 , "1.5% milk" , 2 , "IDO LTD",  3.5);
+        this.add_item(".0.1", 0,"3% milk" , 5 , "IDO LTD",  3.5);
+        this.add_item(".1" , 5  , "Beef Sausage",15,"Zogloveck",10.05);
+        receive_order(155,0,20,"ile 5 shelf 10",Util.stringToDate("2023-05-20"),2.15);
+        receive_order(120,1,10,"ile 5 shelf 11",Util.stringToDate("2023-05-23"),2.55);
+        receive_order(20,2,6,"ile 2 shelf 3",Util.stringToDate("2023-10-25"),5.3);
+        receive_order(155,4,20,"ile 5 shelf 10",Util.stringToDate("2023-05-20"),2.15);
+        receive_order(345,5,15,"ile 6 shelf 2",Util.stringToDate("2023-10-20"),12.25);
     }
 
     /**
@@ -202,7 +209,6 @@ public class Inventory {
             throw new Exception("illegal item id");
         }
     }
-
     /**
      * This function produces the report of the damaged items.
      * @return
@@ -212,36 +218,55 @@ public class Inventory {
         return damaged.produce_damaged_report();
     }
 
-    /**
-     * Add new item to the system
-     * @param categories_index
-     * @param item_id
-     * @param name
-     * @param min_amount
-     * @param manufacturer_name
-     * @param original_price
-     */
     public void add_item(String categories_index,int item_id, String name, int min_amount, String manufacturer_name, double original_price) throws Exception {
-        Item i = new Item(item_id,name,min_amount,manufacturer_name,original_price);
+        Item i = new Item(item_id,name,min_amount,manufacturer_name,original_price,itemDalController, categories_index);
+        add_item(categories_index,i);
+    }
+
+    /**
+     *
+     * @param categories_index
+     * @param i
+     * @throws Exception
+     */
+    public void add_item(String categories_index,Item i) throws Exception {
+
         set_item_call_back(i);
-        if(items.containsKey(item_id)) {
+        if(items.containsKey(i.item_id)) {
             throw new Exception("Item id already exists");
         }
-        items.put(item_id, i);
+        items.put(i.item_id, i);
         int current_index = Integer.parseInt(Util.extractFirstNumber(categories_index));
         String next_index = Util.extractNextIndex(categories_index);
         categories.get(current_index).add_item(next_index, i);
-        shortage_list.add(i);
-        name_to_id.put(name+" "+manufacturer_name,item_id);
+        shortage_list.add(i); // why is it here?
+        name_to_id.put(i.name+" "+i.manufacturer_name,i.item_id);
     }
 
     public void add_category(String categories_index, String name) throws Exception {
-        if (categories_index == "")
-            categories.add(new Category(name,""+categories.size()));
+        if (categories_index == "") {
+            Category new_category = new Category(name, "" + categories.size() , inv_dal_controller);
+            categories.add(new_category);
+            inv_dal_controller.insert(new_category.getDto());
+        }
         else {
             int current_index = Integer.parseInt(Util.extractFirstNumber(categories_index));
             String next_index = Util.extractNextIndex(categories_index);
-            categories.get(current_index).add_product(next_index,name);
+            Category cur_category = categories.get(current_index);
+            cur_category.add_product(next_index,name);
+        }
+    }
+    public void add_category(CategoryDTO categoryDTO) throws Exception {
+        if (!categoryDTO.getIndex().contains(".")) {
+            Category new_category = new Category(categoryDTO , inv_dal_controller,itemDalController);
+            categories.add(new_category);
+
+        }
+        else {
+            int current_index = Integer.parseInt(Util.extractFirstNumber("."+categoryDTO.getIndex()));
+            String next_index = Util.extractNextIndex("."+categoryDTO.getFatherCategoryIndex());
+            Category cur_category = categories.get(current_index);
+            cur_category.add_product(categoryDTO,next_index);
         }
     }
 
@@ -314,5 +339,52 @@ public class Inventory {
      * @param tomorrow_day
      */
     public void nextDay(DayOfWeek tomorrow_day) {
+    }
+    public void loadData() throws Exception {
+        DiscountCounterDTO discountCounterDTO = inv_dal_controller.find("discountCounter","name","inventory_constants", DiscountCounterDTO.class);
+        discount_counter = discountCounterDTO.getCount();
+        List<CategoryDTO> categoryDTOList = inv_dal_controller.findAllCategories("inventory_categories",CategoryDTO.class);
+        for (CategoryDTO categoryDTO : categoryDTOList){
+            add_category(categoryDTO);
+        }
+        loadItems();
+    }
+    public void loadItems() throws Exception {
+        List<ItemDTO> itemDTOList = itemDalController.findAll("inventory_item",ItemDTO.class);
+        for(ItemDTO itemDTO : itemDTOList){
+            Item i = new Item(itemDTO,itemDalController);
+            add_item(itemDTO.getCategoriesIndex(),i);
+        }
+        loadItemPerOrder();
+        //loadWaitingItems();
+        //need to call here to the orderController
+    }
+    public void loadItemPerOrder() throws Exception{
+        List<ItemPerOrderDTO> itemPerOrder = itemDalController.findAll("inventory_item_per_order", ItemPerOrderDTO.class);
+        for (ItemPerOrderDTO itemPerOrderDto:itemPerOrder) {
+            items.get(itemPerOrderDto.getItemId()).recive_order(new ItemPerOrder(itemPerOrderDto));
+        }
+        loadDicounts();
+
+    }
+    public void loadDicounts() throws Exception{
+        List<DiscountDTO> discountDTOList = inv_dal_controller.findAll("inventory_discount", DiscountDTO.class);
+        for (DiscountDTO discountDTO : discountDTOList){
+            set_discount(discountDTO);
+        }
+        loadDamagedItems();
+    }
+    public void loadDamagedItems() throws Exception{
+        List<DamagedItemDTO> damagedItemDTOS = itemDalController.findAll("inventory_damaged_items", DamagedItemDTO.class);
+        for (DamagedItemDTO i:damagedItemDTOS) {
+            damaged.addDamagedItem(items.get(i.getItem_id()),i);
+        }
+    }
+
+
+
+
+    public ItemDalController getItemDalController() {
+        return itemDalController;
     }
 }

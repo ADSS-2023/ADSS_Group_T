@@ -17,6 +17,7 @@ public class OrderService {
          this.oc = oc;
          this.sc=sc;
         }
+
     public boolean nextDay(){
         try {
             oc.executeTodayOrders();
@@ -26,6 +27,7 @@ public class OrderService {
             return false;
         }
     }
+
     public boolean createRegularOrder(List<ItemToOrder> items) {
         try {
             if (items.size() == 0)
@@ -82,7 +84,6 @@ public class OrderService {
         }
     }
 
-
     public List<String> getOrders(){
         List<String>  orders = new LinkedList<>();
         try{//TODO:change implementation to display both types of order.
@@ -98,7 +99,5 @@ public class OrderService {
             return orders;
         }
     }
-
-
 
 }
