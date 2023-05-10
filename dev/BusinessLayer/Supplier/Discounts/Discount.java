@@ -20,7 +20,6 @@ public abstract class Discount {
         this.isPercentage = isPercentage;
         this.supplierDalController = supplierDalController;
         this.discountDTO = dto;
-        supplierDalController.insert(dto);
     }
 
     public Discount(){
