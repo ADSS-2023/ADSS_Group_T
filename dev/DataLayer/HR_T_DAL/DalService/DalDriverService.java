@@ -34,9 +34,9 @@ public class DalDriverService {
     }
 
 
-    public HashMap<Driver, Boolean> findSubmissionByIdAndDate(int driverId, LocalDate date) throws SQLException { // the boolean is if assigned or not
+    public LinkedHashMap<Driver, Boolean> findSubmissionByIdAndDate(int driverId, LocalDate date) throws SQLException { // the boolean is if assigned or not
          Pair result = driverDAO.getDriverAndIfIsAssigned(driverId,date.toString());
-         HashMap<Driver, Boolean> ret = new HashMap<>();
+         LinkedHashMap<Driver, Boolean> ret = new LinkedHashMap<>();
          if(result.getFirst() != null && result.getSecond() != null ) {
              DriverDTO dd = (DriverDTO) result.getFirst();
              Driver driver = new Driver(dd, dalUserService.findUserById(driverId));
