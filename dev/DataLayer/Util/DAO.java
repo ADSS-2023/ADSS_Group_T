@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class DAO {
@@ -172,13 +173,16 @@ public class DAO {
         return result;
     }
 
-    public <T extends DTO> T find(Object pkVal1, String pkName1,Object pkVal2, String pkName2, String tableName, Class<T> dtoClass) throws SQLException {
+    public <T extends DTO> T find(LinkedHashMap<String,Object> pk, String tableName, Class<T> dtoClass) throws SQLException {
         T result = null;
-        String sql = "SELECT * FROM " + tableName + " WHERE " + pkName1 + " = ? and " + pkName2 + " = ?";
+        String sql = "SELECT * FROM " + tableName + " WHERE ";
+        ArrayList<String> pkNames = new ArrayList<>(pk.keySet());
+        for(int i = 0; i< pkNames.size() - 1;i++)
+            sql = sql + pkNames.get(i) + " = " + pk.get(pkNames.get(i)) + " and " ;
+        sql = sql + pkNames.get(pkNames.size()-1) + " = " + pk.get(pkNames.get(pkNames.size()-1));
+
 
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setObject(1, pkVal1);
-            statement.setObject(2, pkVal2);
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {

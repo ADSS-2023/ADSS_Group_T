@@ -20,14 +20,16 @@ public class DalUserService {
         this.userDAO = new UserDAO(connection);
     }
 
-    // TODO - israel
-    public Employee findUserById(int employeeId) throws SQLException {
-        return null;
+    public User findUserById(int userId) throws SQLException {
+        UserDTO userDTO = userDAO.find(userId,"id","User",UserDTO.class);
+        User user = new User(userDTO);
+        return user;
     }
-    // TODO - israel
-    public Employee deleteUser(int employeeId) throws SQLException {
-        return null;
-    }
+
+//    public void deleteUser(int userId) throws SQLException {
+//        UserDTO userDTO = new UserDTO();
+//        userDAO.delete(userDTO);
+//    }
 
     // TODO - israel
     public void addUserFromDriver (UserDTO userDTO) throws SQLException {
