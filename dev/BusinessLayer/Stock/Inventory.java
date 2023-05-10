@@ -3,6 +3,7 @@ package BusinessLayer.Stock;
 import BusinessLayer.Stock.Util.Util;
 import BusinessLayer.Supplier_Stock.ItemToOrder;
 import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.CategoryDTO;
+import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.ItemDTO;
 import DataLayer.Inventory_Supplier_Dal.DalController.InventoryDalController;
 import DataLayer.Inventory_Supplier_Dal.DalController.ItemDalController;
 import DataLayer.Util.DTO;
@@ -212,27 +213,29 @@ public class Inventory {
         return damaged.produce_damaged_report();
     }
 
-    /**
-     * Add new item to the system
-     * @param categories_index
-     * @param item_id
-     * @param name
-     * @param min_amount
-     * @param manufacturer_name
-     * @param original_price
-     */
     public void add_item(String categories_index,int item_id, String name, int min_amount, String manufacturer_name, double original_price) throws Exception {
         Item i = new Item(item_id,name,min_amount,manufacturer_name,original_price,itemDalController, categories_index);
+        add_item(categories_index,i);
+    }
+
+    /**
+     *
+     * @param categories_index
+     * @param i
+     * @throws Exception
+     */
+    public void add_item(String categories_index,Item i) throws Exception {
+
         set_item_call_back(i);
-        if(items.containsKey(item_id)) {
+        if(items.containsKey(i.item_id)) {
             throw new Exception("Item id already exists");
         }
-        items.put(item_id, i);
+        items.put(i.item_id, i);
         int current_index = Integer.parseInt(Util.extractFirstNumber(categories_index));
         String next_index = Util.extractNextIndex(categories_index);
         categories.get(current_index).add_item(next_index, i);
         shortage_list.add(i); // why is it here?
-        name_to_id.put(name+" "+manufacturer_name,item_id);
+        name_to_id.put(i.name+" "+i.manufacturer_name,i.item_id);
     }
 
     public void add_category(String categories_index, String name) throws Exception {
@@ -250,13 +253,13 @@ public class Inventory {
     }
     public void add_category(CategoryDTO categoryDTO) throws Exception {
         if (!categoryDTO.getIndex().contains(".")) {
-            Category new_category = new Category(categoryDTO , inv_dal_controller);
+            Category new_category = new Category(categoryDTO , inv_dal_controller,itemDalController);
             categories.add(new_category);
-            inv_dal_controller.insert(new_category.getDto());
+
         }
         else {
-            int current_index = Integer.parseInt(Util.extractFirstNumber(categoryDTO.getIndex()));
-            String next_index = Util.extractNextIndex(categoryDTO.getIndex());
+            int current_index = Integer.parseInt(Util.extractFirstNumber("."+categoryDTO.getIndex()));
+            String next_index = Util.extractNextIndex("."+categoryDTO.getFatherCategoryIndex());
             Category cur_category = categories.get(current_index);
             cur_category.add_product(categoryDTO,next_index);
         }
@@ -337,5 +340,14 @@ public class Inventory {
         for (CategoryDTO categoryDTO : categoryDTOList){
             add_category(categoryDTO);
         }
+        loadItems();
     }
+    public void loadItems() throws Exception {
+        List<ItemDTO> itemDTOList = itemDalController.findAll("inventory_item",ItemDTO.class);
+        for(ItemDTO itemDTO : itemDTOList){
+            Item i = new Item(itemDTO,itemDalController);
+            add_item(itemDTO.getCategoriesIndex(),i);
+        }
+    }
+
 }
