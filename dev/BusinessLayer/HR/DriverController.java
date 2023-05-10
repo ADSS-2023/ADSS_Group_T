@@ -15,8 +15,8 @@ import java.util.*;
 
 public class DriverController {
     private LinkedHashMap<Integer, Driver> drivers;
-    private LinkedHashMap<LocalDate, ArrayList<Pair<Driver.LicenseType, Driver.CoolingLevel>>> driversRequirements; // date, amount
-    private LinkedHashMap<LocalDate, HashMap<Driver, Boolean>> date2driversSubmission; // date, driver. isAssigned
+    private LinkedHashMap<LocalDate, LinkedHashMap<Pair<Driver.LicenseType, Driver.CoolingLevel> , Integer>> driversRequirements; // date, amount
+    private LinkedHashMap<LocalDate, LinkedHashMap<Driver, Boolean>> date2driversSubmission; // date, driver. isAssigned
 
     private DalDriverService dalDriverService;
 
@@ -43,35 +43,26 @@ public Driver lazyLoadDriver (int id) throws SQLException {
     return  driver;
 }
 
-    public HashMap<Driver, Boolean> lazyLoadDriverSubmition(LocalDate date, int id) throws SQLException {
-        // get the submission status for the given date and driver
-        HashMap<Driver, Boolean> driverSubmission = date2driversSubmission.get(date);
-        if (driverSubmission == null) {
-            driverSubmission = dalDriverService.findSubmissionByIdAndDate(id, date);
-            if (driverSubmission != null)
-                date2driversSubmission.put(date, driverSubmission);
-            else
-                throw new IllegalArgumentException("Driver has not submitted availability for this date");
-        }
-        return driverSubmission;
-    }
 
-    public String getRequirementsByDate(LocalDate date) {
-        if (!driversRequirements.containsKey(date)) {
-            return "No requirements found for " + date.toString();
-        }
+
+    public String getRequirementsByDate(LocalDate date) throws SQLException {
+        LinkedHashMap<Pair<Driver.LicenseType, Driver.CoolingLevel>, Integer> requirements = lazyLoadAllRequierementsForDate(date);
 
         StringBuilder sb = new StringBuilder();
-        sb.append("Requirements for " + date.toString() + ":\n");
+        sb.append("Requirements for ").append(date.toString()).append(":\n");
         sb.append("----------------------------------\n");
-
-        ArrayList<Pair<Driver.LicenseType, Driver.CoolingLevel>> requirements = driversRequirements.get(date);
-        for (int i = 0; i < requirements.size(); i++) {
-            sb.append((i + 1) + ". License type: " + requirements.get(i).getFirst().toString() + ", Cooling level: " + requirements.get(i).getSecond().toString() + "\n");
+        int i = 1;
+        for (Map.Entry<Pair<Driver.LicenseType, Driver.CoolingLevel>, Integer> entry : requirements.entrySet()) {
+            Pair<Driver.LicenseType, Driver.CoolingLevel> requirement = entry.getKey();
+            Integer amount = entry.getValue();
+            sb.append(i++).append(". License type: ").append(requirement.getFirst().toString())
+                    .append(", Cooling level: ").append(requirement.getSecond().toString())
+                    .append(", Amount: ").append(amount).append("\n");
         }
-
         return sb.toString();
     }
+
+
 
 
 
@@ -79,35 +70,29 @@ public Driver lazyLoadDriver (int id) throws SQLException {
     public void assignDriver(LocalDate date, int id, int numRequirement) throws SQLException {
         // get the driver with the given id
         Driver driver = lazyLoadDriver(id);
-        if (driver == null)
+        if (driver == null) {
             throw new IllegalArgumentException("Invalid driver id");
-
+        }
 
         // get the submission status for the given date and driver
-        HashMap<Driver, Boolean> driverSubmissionToAssign = lazyLoadDriverSubmition(date, id);
-
-        if (driverSubmissionToAssign.get(driver) == null) {
+        LinkedHashMap<Driver, Boolean> driverSubmissionToAssign = lazyLoadDriverSubmitionByDateAndId(date, id);
+        if (driverSubmissionToAssign == null || driverSubmissionToAssign.get(driver) == null)
             throw new IllegalArgumentException("Driver has not submitted availability for this date");
-        }
-        if (driverSubmissionToAssign.get(driver).booleanValue()) {
+
+        Boolean submissionStatus = driverSubmissionToAssign.get(driver);
+
+        if (submissionStatus.booleanValue()) {
             throw new IllegalArgumentException("Driver is already assigned to a shift on this day.");
         }
-
-        ArrayList<Pair<Driver.LicenseType, Driver.CoolingLevel>> requirementsForDate;
 
         // Requirement : A driver cannot work more than six times a week.
         LocalDate startOfWeek = date.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
         LocalDate endOfWeek = startOfWeek.with(TemporalAdjusters.next(DayOfWeek.SATURDAY));
-        for (int i = 0; i <= 6; i++) {
-            lazyLoadDriverSubmition(startOfWeek.plusDays(i), id);
-        }
+        LinkedHashMap<LocalDate, LinkedHashMap<Driver, Boolean>> driverSubmissionsInWeek = dalDriverService.findAllDriverSubmissionsBetweenDates(startOfWeek, endOfWeek, id);
         int numShiftsThisWeek = 0;
-        for (LocalDate d = startOfWeek; !d.isAfter(endOfWeek); d = d.plusDays(1)) {
-            if (d.equals(date)) {
-                continue;  // skip the current date
-            }
-            HashMap<Driver, Boolean> submissions = lazyLoadDriverSubmition(d, id);
-            if (submissions != null && submissions.get(driver) != null && submissions.get(driver)) {
+        for (HashMap<Driver, Boolean> driverSubmissions : driverSubmissionsInWeek.values()) {
+            Boolean submission = driverSubmissions.get(driver);
+            if (submission != null && submission) {
                 numShiftsThisWeek++;
             }
         }
@@ -115,16 +100,50 @@ public Driver lazyLoadDriver (int id) throws SQLException {
             throw new IllegalArgumentException("Driver has already worked six shifts this week");
         }
 
-        //Check that it meets the requirements
-        Pair<Driver.LicenseType, Driver.CoolingLevel> requirement = driversRequirements.get(date).get(numRequirement+1);
-        if ( !isDriverMeetingTheRequirements(driver, requirement))
-            throw new IllegalArgumentException("Driver is not meeting with the requierements");
-        // mark the driver as assigned for the given date
-        driverSubmissionToAssign.replace(driver, false, true);
-        dalDriverService.assignDriver(id, date);
+        // Check that it meets the requirements
+        LinkedHashMap<Pair<Driver.LicenseType, Driver.CoolingLevel>, Integer> requirements =  lazyLoadAllRequierementsForDate(date);
+        int i=1;
+        for (Pair<Driver.LicenseType, Driver.CoolingLevel> pair : requirements.keySet()) {
+            if (i == numRequirement) { // check if we've reached the desired index
+                if (!isDriverMeetingTheRequirements(driver, pair))
+                    throw new IllegalArgumentException("Driver is not meeting the requirements");
+                if (requirements.get(date) <= 0)
+                    throw new IllegalArgumentException("there is no such requirements");
+            }
+            else{
+                //deleteRequieremnt
+                deleteRequirement(pair, date);
+                // mark the driver as assigned for the given date
+                driverSubmissionToAssign.put(driver, true);
+                dalDriverService.assignDriver(id, date);
+                }
+            i++;
+            }
+        }
 
-        driversRequirements.remove(driversRequirements.get(date).get(numRequirement+1));
+
+    public boolean deleteRequirement(Pair<Driver.LicenseType, Driver.CoolingLevel> requirement, LocalDate date) throws SQLException {
+        LinkedHashMap<Pair<Driver.LicenseType, Driver.CoolingLevel>, Integer> requirements = driversRequirements.get(date);
+        if (requirements.containsKey(requirement)) {
+            int amount = requirements.get(requirement);
+            //delete from cache
+            if (amount > 1)
+                requirements.put(requirement, amount - 1);
+            else
+                 requirements.remove(requirement);
+
+            //delete from the dalService
+             if (amount == 1)
+                 dalDriverService.deleterequieremnt(date, requirement.getFirst().name(), requirement.getSecond().name());
+             else
+                 dalDriverService.updateAmountOfRequierement(date, requirement.getFirst().name(), requirement.getSecond().name(), amount-1);
+            return true;
+        } else {
+            return false;
+        }
     }
+
+
 
     public boolean isDriverMeetingTheRequirements(Driver driver, Pair<Driver.LicenseType, Driver.CoolingLevel> requirement) {
         if (requirement == null )
@@ -134,26 +153,25 @@ public Driver lazyLoadDriver (int id) throws SQLException {
         return driver.getLicenseLevel().ordinal() >= requirement.getFirst().ordinal() && driver.getCoolingLevel().ordinal() >= requirement.getSecond().ordinal();
     }
 
-
-    public HashMap<Driver, Boolean> lazyLoadAllDriverSubmitionByDate(LocalDate date) throws SQLException {
-        HashMap<Driver, Boolean> allDriversInDate = dalDriverService.findAllSubmissionByDate(date);
-        date2driversSubmission.replace(date, allDriversInDate);
+    public LinkedHashMap<Driver, Boolean> lazyLoadAllDriverSubmitionByDate(LocalDate date) throws SQLException {
+        LinkedHashMap<Driver, Boolean> allDriversInDate = dalDriverService.findAllSubmissionByDate(date);
+        date2driversSubmission.put(date, allDriversInDate);
         return  allDriversInDate;
     }
 
-    public ArrayList<Pair<Driver.LicenseType, Driver.CoolingLevel>> lazyLoadAllRequierementsForDate(LocalDate date) throws SQLException {
-        ArrayList<Pair<Driver.LicenseType, Driver.CoolingLevel>> requirementsForDate = dalDriverService.findAllRequirementsByDate(date);
-        driversRequirements.replace(date, requirementsForDate);
+    public LinkedHashMap<Pair<Driver.LicenseType, Driver.CoolingLevel> , Integer> lazyLoadAllRequierementsForDate(LocalDate date) throws SQLException {
+        LinkedHashMap<Pair<Driver.LicenseType, Driver.CoolingLevel> , Integer> requirementsForDate = dalDriverService.findAllRequirementsByDate(date);
+        driversRequirements.put(date, requirementsForDate);
         return  requirementsForDate;
     }
 
 
 
-    public int getMinRequirementsLicenseLevelByDate(LocalDate date) {
-        ArrayList<Pair<Driver.LicenseType, Driver.CoolingLevel>> requirements = driversRequirements.get(date);
+    public int getMinRequirementsLicenseLevelByDate(LocalDate date) throws SQLException {
+        LinkedHashMap<Pair<Driver.LicenseType, Driver.CoolingLevel>, Integer> requirements = lazyLoadAllRequierementsForDate(date);
         int minLicenseLevel = Integer.MAX_VALUE;
-        for (Pair<Driver.LicenseType, Driver.CoolingLevel> requirement : requirements) {
-            int licenseLevel = requirement.getFirst().ordinal();
+        for (Map.Entry<Pair<Driver.LicenseType, Driver.CoolingLevel>, Integer> entry : requirements.entrySet()) {
+            int licenseLevel = entry.getKey().getFirst().ordinal();
             if (licenseLevel < minLicenseLevel) {
                 minLicenseLevel = licenseLevel;
             }
@@ -161,11 +179,12 @@ public Driver lazyLoadDriver (int id) throws SQLException {
         return minLicenseLevel;
     }
 
-    public int getMinRequirementsCoolingLevelByDate(LocalDate date) {
-        ArrayList<Pair<Driver.LicenseType, Driver.CoolingLevel>> requirements = driversRequirements.get(date);
+
+    public int getMinRequirementsCoolingLevelByDate(LocalDate date) throws SQLException {
+        LinkedHashMap<Pair<Driver.LicenseType, Driver.CoolingLevel>, Integer> requirements = lazyLoadAllRequierementsForDate(date);
         int minCoolingLevel = Integer.MAX_VALUE;
-        for (Pair<Driver.LicenseType, Driver.CoolingLevel> requirement : requirements) {
-            int coolingLevel = requirement.getSecond().ordinal();
+        for (Map.Entry<Pair<Driver.LicenseType, Driver.CoolingLevel>, Integer> entry : requirements.entrySet()) {
+            int coolingLevel = entry.getKey().getSecond().ordinal();
             if (coolingLevel < minCoolingLevel) {
                 minCoolingLevel = coolingLevel;
             }
@@ -173,13 +192,25 @@ public Driver lazyLoadDriver (int id) throws SQLException {
         return minCoolingLevel;
     }
 
-    public String submitShift(LocalDate date, int id, CoolingLevel coolingLevel, LicenseType licenseType) {
 
-        if (date2driversSubmission.containsKey(date) && date2driversSubmission.get(date).containsKey(drivers.get(id))) {
+    public LinkedHashMap<Driver, Boolean> lazyLoadDriverSubmitionByDateAndId(LocalDate date, int id) throws SQLException {
+        LinkedHashMap<Driver, Boolean> driverSubmissionByDate  = dalDriverService.findSubmissionByIdAndDate(id, date);
+        date2driversSubmission.put(date, driverSubmissionByDate);
+        return  driverSubmissionByDate;
+    }
+
+    public String submitShift(LocalDate date, int id, CoolingLevel coolingLevel, LicenseType licenseType) throws SQLException {
+        LinkedHashMap<Driver, Boolean> driverSubmissionByDate = lazyLoadDriverSubmitionByDateAndId(date, id);
+        Driver driver = lazyLoadDriver(id);
+
+        if (driver == null)
+            throw new IllegalArgumentException("Driver with id " + id + " does not exist.");
+
+        if (driverSubmissionByDate != null) {
             throw new IllegalArgumentException("Driver with id " + id + " has already submitted for " + date);
         }
         // Check if the driver has the required license type
-        if (drivers.get(id).getLicenseLevel().ordinal() >= getMinRequirementsLicenseLevelByDate(date)) {
+        if (driver.getLicenseLevel().ordinal() >= getMinRequirementsLicenseLevelByDate(date)) {
             throw new IllegalArgumentException("Driver with id " + id + " does not have the required license type.");
         }
 
@@ -188,19 +219,17 @@ public Driver lazyLoadDriver (int id) throws SQLException {
             throw new IllegalArgumentException("Driver with id " + id + " does not have the required cooling level.");
         }
 
-        if (!drivers.containsKey(id)) {
-            throw new IllegalArgumentException("Driver with id " + id + " does not exist.");
-        }
+
 
         if (!date2driversSubmission.containsKey(date)) {
-            date2driversSubmission.put(date, new HashMap<>());
+            date2driversSubmission.put(date, new LinkedHashMap<>());
         }
-        date2driversSubmission.get(date).put(drivers.get(id), false);
+        date2driversSubmission.get(date).put(driver, false);
+        dalDriverService.addSubmissionForDriver(id, date);
         return "Driver with id " + id + " submit successfully to " + date.toString();
     }
 
 
-    // TODO- make submit Shift to driver and assign shift
 
     /**
      * add a new driver to the drivers map
@@ -221,10 +250,11 @@ public Driver lazyLoadDriver (int id) throws SQLException {
     public boolean addDriver(int id, String employeeName, String bankAccount, List<PositionType> qualifiedPositions,
                              String description, int salary, LocalDate joiningDay, String password, UserType userType,
                              Driver.LicenseType licenseType, Driver.CoolingLevel coolingLevel) throws SQLException {
-        if (drivers.containsKey(id))
+        Driver driver = lazyLoadDriver(id);
+        if (driver != null)
             throw new IllegalArgumentException("Driver already exists.");
         else {
-            Driver driver = new Driver(id, employeeName, bankAccount, qualifiedPositions, description, salary,
+            driver = new Driver(id, employeeName, bankAccount, qualifiedPositions, description, salary,
                     joiningDay, password, userType, licenseType, coolingLevel);
             dalDriverService.addDriver(driver);
             this.drivers.put(id, driver);
@@ -233,39 +263,11 @@ public Driver lazyLoadDriver (int id) throws SQLException {
     }
 
 
-    public LinkedHashMap<Integer, Driver> getAllDrivers() {
-        return this.drivers;
-    }
-    public Driver getDriver(int id){
-        if (!drivers.containsKey(id))
-            throw new IllegalArgumentException("no such driver");
-        else
-            return drivers.get(id);
-    }
 
-    public LinkedHashMap<Integer, Driver> getDrivers() {
-        return drivers;
-    }
-
-
-
-    /**
-     * remove a driver from the drivers map
-     *
-     * @param id - thr id of the driver
-     * @return true if the driver removed successfully , and false otherwise
-     */
-    public  boolean removeDriver(int id) {
-        if (!drivers.containsKey(id))
-            return false;
-        drivers.remove(id);
-        return true;
-    }
-
-    public ArrayList<Driver> getDriversByDate(LocalDate tomorrow) {
+    public ArrayList<Driver> getDriversAssignedByDate(LocalDate tomorrow) throws SQLException {
+        LinkedHashMap<Driver, Boolean> driverStatusMap = lazyLoadAllDriverSubmitionByDate(tomorrow);
         ArrayList<Driver> drivers = new ArrayList<>();
-        if (date2driversSubmission.containsKey(tomorrow)) {
-            HashMap<Driver, Boolean> driverStatusMap = date2driversSubmission.get(tomorrow);
+        if (driverStatusMap != null) {
             for (Map.Entry<Driver, Boolean> entry : driverStatusMap.entrySet()) {
                 Driver driver = entry.getKey();
                 Boolean isAssigned = entry.getValue();
@@ -277,21 +279,28 @@ public Driver lazyLoadDriver (int id) throws SQLException {
         return drivers;
     }
 
-    public void addDirverRequirement(LocalDate requiredDate, Driver.LicenseType licenseType, Driver.CoolingLevel coolingLevel) {
-        Pair<Driver.LicenseType, Driver.CoolingLevel> pair = new Pair(licenseType,coolingLevel);
-        if(this.driversRequirements.containsKey(requiredDate))
-            driversRequirements.get(requiredDate).add(pair);
-        else{
-            ArrayList<Pair<Driver.LicenseType, Driver.CoolingLevel>> newList = new ArrayList< Pair<LicenseType,CoolingLevel>>();
-            newList.add(pair);
-            this.driversRequirements.put(requiredDate, newList);
+
+
+    public void addDriverRequirement(LocalDate requiredDate, Driver.LicenseType licenseType, Driver.CoolingLevel coolingLevel) throws SQLException {
+        Pair<Driver.LicenseType, Driver.CoolingLevel> requirement = new Pair<>(licenseType, coolingLevel);
+        LinkedHashMap<Pair<Driver.LicenseType, Driver.CoolingLevel>, Integer> requirements = lazyLoadAllRequierementsForDate(requiredDate);
+
+        int amount;
+        // Check if requirement already exists, increment the count
+        if (requirements.containsKey(requirement)) {
+            amount = requirements.get(requirement);
+            requirements.put(requirement, amount + 1);
+            dalDriverService.updateAmountOfRequierement(requiredDate, licenseType.name(), coolingLevel.name(), amount);
+        } else {
+            // Requirement doesn't exist, add a new entry
+            amount = 1;
+            requirements.put(requirement, amount);
+            dalDriverService.addSRequirement(requiredDate, licenseType.name(), coolingLevel.name(), amount);
         }
-    }
-    public ArrayList<Pair<Driver.LicenseType, Driver.CoolingLevel>> getDirverRequirement(LocalDate requiredDate) {
-        if(this.driversRequirements.containsKey(requiredDate))
-            return driversRequirements.get(requiredDate);
-        else
-            return null;
+
     }
 
+
+
 }
+

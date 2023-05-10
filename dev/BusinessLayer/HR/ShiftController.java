@@ -2,6 +2,7 @@ package BusinessLayer.HR;
 
 import DataLayer.HR_T_DAL.DalService.DalShiftService;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -104,8 +105,8 @@ public class ShiftController {
 
 
 
-    public void addDirverRequirement(LocalDate requiredDate, Driver.LicenseType licenseType, Driver.CoolingLevel coolingLevel) {
-        driverController.addDirverRequirement(requiredDate,licenseType,coolingLevel);
+    public void addDirverRequirement(LocalDate requiredDate, Driver.LicenseType licenseType, Driver.CoolingLevel coolingLevel) throws SQLException {
+        driverController.addDriverRequirement(requiredDate,licenseType,coolingLevel);
     }
 
     //todo from Noam Gilad pls

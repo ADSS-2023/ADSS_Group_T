@@ -15,6 +15,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class DalEmployeeService {
@@ -58,8 +59,13 @@ public class DalEmployeeService {
     }
 
     // TODO - israel
-    public void setAssignedPosition(int employeeId,  LocalDate date, String positionType) throws SQLException {
+    public HashMap<LocalDate, Constraint> findAssignConstraintByIdBetwwenDates(LocalDate startDate, LocalDate endDate, int id) throws SQLException {
+        return null;
+    }
 
+    // TODO - israel
+    public Constraint setAssignedPosition(int employeeId,  LocalDate date, String positionType) throws SQLException {
+        return null;
     }
 
     public void addQualification(int employeeId,   String positionType) throws SQLException {

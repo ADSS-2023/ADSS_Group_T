@@ -16,7 +16,7 @@ import java.util.*;
 public class Employee extends User {
 
     private ArrayList<PositionType> qualifiedPositions;
-    private Map<LocalDate, Constraint> submittedShifts; // date, list[0]=morningShift list[1]=eveningShift
+    private HashMap<LocalDate, Constraint> submittedShifts; // date, list[0]=morningShift list[1]=eveningShift
 
     private DalEmployeeService dalEmployeeService;
 
@@ -90,25 +90,30 @@ public class Employee extends User {
             throw new IllegalArgumentException("Employee is already assigned to a shift on this day.");
         }
 
+        // Todo maybe to cheange i between Dates- if not work
         // Requirement 3: An employee cannot work more than six times a week.
         LocalDate startOfWeek = date.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
         LocalDate endOfWeek = startOfWeek.with(TemporalAdjusters.next(DayOfWeek.SATURDAY));
-        for (int i = 0; i <= 6; i++){
-            if (submittedShifts.get(startOfWeek.plusDays(i)) == null){
-                constraint = dalEmployeeService.findConstraintByIdAndDate(id,   startOfWeek.plusDays(i));
-                if (constraint != null)
-                    submittedShifts.put(startOfWeek.plusDays(i), constraint);
-            }
-        }
-
-        long assignedShiftsThisWeek = submittedShifts.entrySet().stream()
-                .filter(e -> !e.getKey().isBefore(startOfWeek) && !e.getKey().isAfter(endOfWeek))
-                .map(Map.Entry::getValue)
-                .filter(c -> c.getAssignedPosition() != null)
-                .count();
-        if (assignedShiftsThisWeek >= 6) {
+        HashMap<LocalDate, Constraint> driverAssignInWeek = dalEmployeeService.findAssignConstraintByIdBetwwenDates(startOfWeek, endOfWeek, id);
+        if (driverAssignInWeek.keySet().size() >= 6)
             throw new IllegalArgumentException("Employee has already worked six shifts this week.");
-        }
+
+//        for (int i = 0; i <= 6; i++){
+//            if (submittedShifts.get(startOfWeek.plusDays(i)) == null){
+//                constraint = dalEmployeeService.findConstraintByIdAndDate(id,   startOfWeek.plusDays(i));
+//                if (constraint != null)
+//                    submittedShifts.put(startOfWeek.plusDays(i), constraint);
+//            }
+//        }
+//
+//        long assignedShiftsThisWeek = submittedShifts.entrySet().stream()
+//                .filter(e -> !e.getKey().isBefore(startOfWeek) && !e.getKey().isAfter(endOfWeek))
+//                .map(Map.Entry::getValue)
+//                .filter(c -> c.getAssignedPosition() != null)
+//                .count();
+//        if (assignedShiftsThisWeek >= 6) {
+//            throw new IllegalArgumentException("Employee has already worked six shifts this week.");
+//        }
 
         // Set the assigned position of the shift
         constraint.setAssignedPosition(positionType);
@@ -165,10 +170,12 @@ public class Employee extends User {
         return dalEmployeeService.findQualificationsById(id);
     }
 
-    public Map<LocalDate,Constraint> getSubmittedShifts() throws SQLException {
-        submittedShifts = dalEmployeeService.findSubmittedShiftsById(id);
-        return submittedShifts;
-    }
+
+    //just for test in the meantime
+//      public Map<LocalDate,Constraint> getSubmittedShifts() throws SQLException {
+//        submittedShifts = dalEmployeeService.findSubmittedShiftsByid(id);
+//        return submittedShifts;
+//   }
 
 
     }
