@@ -6,8 +6,10 @@ import BusinessLayer.HR.ShiftController;
 import BusinessLayer.Transport.*;
 import BusinessLayer.HR.User.UserController;
 import DataLayer.HR_T_DAL.DAOs.TruckDAO;
+import DataLayer.HR_T_DAL.DB_init.Data_init;
 import DataLayer.HR_T_DAL.DalService.DalDeliveryService;
 import DataLayer.HR_T_DAL.DalService.DalLogisticCenterService;
+import DataLayer.Util.DAO;
 import ServiceLayer.HR.EmployeeService;
 import ServiceLayer.HR.ShiftService;
 import ServiceLayer.Transport.*;
@@ -39,6 +41,7 @@ public class ServiceFactory {
     private Connection connection;
     private DalLogisticCenterService dalLogisticCenterService;
     private DalDeliveryService dalDeliveryService;
+    private DAO dao;
 
 
 
@@ -48,6 +51,9 @@ public class ServiceFactory {
 
         String testDBUrl = "jdbc:sqlite:dev/DataLayer/HR_Transport_DB.db";
         connection = DriverManager.getConnection(testDBUrl);
+
+        this.dao = new DAO(connection);
+        Data_init.initBasicData(dao);
 
 
 
@@ -76,6 +82,11 @@ public class ServiceFactory {
         deliveryService = new DeliveryService(deliveryController);
 
     }
+
+    public DAO getDAO() {
+        return this.dao;
+    }
+
     public void callbackEnterWeight(EnterWeightInterface enterWeightInterface){
         deliveryService.setEnterWeightInterface(enterWeightInterface);
     }

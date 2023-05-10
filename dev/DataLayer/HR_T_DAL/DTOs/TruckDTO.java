@@ -11,7 +11,7 @@ public class TruckDTO extends DTO {
     private int maxWeight;
     private String licenseType;
     private String coolingLevel;
-    private static String tableName = "truck";
+
     /**
      * DTO constructor, must get a table name as 'name_of_object'
      *
@@ -27,7 +27,9 @@ public class TruckDTO extends DTO {
         this.weight = weight;
         this.maxWeight =maxWeight;
     }
-
+    public TruckDTO() {
+        super("Truck");
+    }
     public TruckDTO(Truck truck) {
         super("Truck");
         this.coolingLevel = truck.getCoolingLevel().toString();
@@ -38,8 +40,6 @@ public class TruckDTO extends DTO {
         this.maxWeight = truck.getMaxWeight();
     }
 
-    public TruckDTO() {
-    }
 
 
 

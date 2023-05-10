@@ -40,13 +40,12 @@ public class TransportJsonConvert {
     }
 
 
-    public String suppliersAndProductsToString(LinkedHashMap<Supplier, File> suppliersAndProductsToString) {
+    public String suppliersAndProductsToString(LinkedHashMap<? extends Site, File> suppliersAndProductsToString) {
         if (suppliersAndProductsToString == null)
-            return "all good";
+            return "all  good! :)";
         StringBuilder sb = new StringBuilder();
-        for (Map.Entry<Supplier, File> entry : suppliersAndProductsToString.entrySet()) {
-            Supplier supplier = entry.getKey();
-            sb.append("Suppliers:").append(supplier.getAddress()).append("\n");
+        for (Map.Entry<? extends Site, File> entry : suppliersAndProductsToString.entrySet()) {
+            sb.append("Suppliers:").append(entry.getKey().getAddress()).append("\n");
             sb.append(fileToString(entry.getValue()));
         }
         return sb.toString();
@@ -60,14 +59,14 @@ public class TransportJsonConvert {
         return sb.toString();
     }
 
-    public LinkedHashMap<Supplier, File> mapToFile(LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> suppliersAndProducts) {
-        LinkedHashMap<Supplier, File> supplierAndFile = new LinkedHashMap<>();
-        for (Map.Entry<Supplier, LinkedHashMap<Product, Integer>> entry : suppliersAndProducts.entrySet()) {
-            Supplier supplier = entry.getKey();
+    public LinkedHashMap<? extends Site, File> mapToFile(LinkedHashMap<? extends Site, LinkedHashMap<Product, Integer>> suppliersAndProducts) {
+        LinkedHashMap<Site, File> supplierAndFile = new LinkedHashMap<>();
+        for (Map.Entry<? extends Site, LinkedHashMap<Product, Integer>> entry : suppliersAndProducts.entrySet()) {
+            Site site = entry.getKey();
             LinkedHashMap<Product, Integer> productAndAmount = entry.getValue();
             File file = new File(-1);
             file.getProducts().putAll(productAndAmount);
-            supplierAndFile.put(supplier, file);
+            supplierAndFile.put(site, file);
         }
         return supplierAndFile;
     }
@@ -113,6 +112,16 @@ public class TransportJsonConvert {
         }
         return sb.toString();
     }
+
+
+    public static String convertCollectionToString(Collection<String> strings) {
+        StringBuilder sb = new StringBuilder();
+        for (String str : strings) {
+            sb.append(str).append("\n");
+        }
+        return sb.toString();
+    }
+
 
 
 }
