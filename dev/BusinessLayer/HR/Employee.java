@@ -4,6 +4,7 @@ package BusinessLayer.HR;
 import BusinessLayer.HR.User.User;
 import BusinessLayer.HR.User.PositionType;
 import BusinessLayer.HR.User.UserType;
+import DataLayer.HR_T_DAL.DTOs.UserDTO;
 import DataLayer.HR_T_DAL.DalService.DalEmployeeService;
 
 import java.sql.SQLException;
@@ -27,6 +28,14 @@ public class Employee extends User {
         this.qualifiedPositions = new ArrayList<>();
         this.submittedShifts = new LinkedHashMap<>();
       /*  this.shiftsRestriction = new LinkedHashMap<>();*/
+        description = null;
+    }
+
+    public Employee(UserDTO userDTO) {
+        super(userDTO);
+        this.qualifiedPositions = new ArrayList<>();
+        this.submittedShifts = new LinkedHashMap<>();
+        /*  this.shiftsRestriction = new LinkedHashMap<>();*/
         description = null;
     }
 
@@ -59,7 +68,7 @@ public class Employee extends User {
         // Add the new constraint to the submitted shift
         else {
             Constraint cons = new Constraint(branch, id, date, shiftType);
-            dalEmployeeService.addConstraint(id, branch, date, shiftType);
+            dalEmployeeService.addConstraint(id, branch, date, shiftType,null);
             submittedShifts.put(date, cons);
             dalEmployeeService.addSubmittesdShift(branch, date, shiftType, id);
         }
@@ -153,11 +162,11 @@ public class Employee extends User {
     }
 
     public ArrayList<String> getQualifiedPositions() throws SQLException {
-        return dalEmployeeService.findQualificationsBtId(id);
+        return dalEmployeeService.findQualificationsById(id);
     }
 
     public Map<LocalDate,Constraint> getSubmittedShifts() throws SQLException {
-        submittedShifts = dalEmployeeService.findSubmittedShiftsByid(id);
+        submittedShifts = dalEmployeeService.findSubmittedShiftsById(id);
         return submittedShifts;
     }
 

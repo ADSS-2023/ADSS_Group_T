@@ -11,13 +11,36 @@ public class ConstraintDTO extends DTO {
     private String isTemporary;
     private String positionType;
 
-    public ConstraintDTO(int employeeId, String branchAddress, String constraintDate, String shiftType, String isTemporary, String positionType) {
+    public ConstraintDTO(int employeeId, String branchAddress, String constraintDate, String shiftType , String positionType) {
         super("Constraint");
         this.employeeId = employeeId;
         this.branchAddress = branchAddress;
         this.constraintDate = constraintDate;
         this.shiftType = shiftType;
-        this.isTemporary = isTemporary;
         this.positionType = positionType;
+    }
+
+    public int getEmployeeId() {
+        return employeeId;
+    }
+
+    public String getBranchAddress() {
+        return branchAddress;
+    }
+
+    public String getConstraintDate() {
+        return constraintDate;
+    }
+
+    public String getShiftType() {
+        return shiftType;
+    }
+
+    public String getIsTemporary() {
+        return isTemporary;
+    }
+
+    public String getPositionType() {
+        return positionType;
     }
 }
