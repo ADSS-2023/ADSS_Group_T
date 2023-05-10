@@ -132,7 +132,7 @@ public class DeliveryController {
                     continue;
                 Delivery delivery = new Delivery(deliveryCounter++, requiredDate, LocalTime.NOON, truck.getWeight(), new LinkedHashMap<>(),
                         new LinkedHashMap<>(), null, truck.getLicenseNumber(), branch.getShippingArea(),dalDeliveryService);
-                dalDeliveryService.updateCounter("deliveryCounter",deliveryCounter);
+                dalDeliveryService.updateCounter("delivery counter",deliveryCounter);
                 shiftController.addDirverRequirement(requiredDate, truck.getLicenseType(), truck.getCoolingLevel());
                 shiftController.addStoreKeeperRequirement(requiredDate, branch.getAddress());
                 delivery.addUnHandledBranch(branch, filesCounter++);
@@ -186,7 +186,7 @@ public class DeliveryController {
                     continue;
                 Delivery delivery = new Delivery(deliveryCounter++, requiredDate, LocalTime.NOON, truck.getWeight(), null,
                         new LinkedHashMap<>(), logisticCenterController.getLogisticCenter(), truck.getLicenseNumber(), branch.getShippingArea(),dalDeliveryService);
-                dalDeliveryService.updateCounter("deliveryCounter",deliveryCounter);
+                dalDeliveryService.updateCounter("delivery counter",deliveryCounter);
                 shiftController.addDirverRequirement(requiredDate, truck.getLicenseType(), truck.getCoolingLevel());
                 shiftController.addStoreKeeperRequirement(requiredDate, branch.getAddress());
                 delivery.addUnHandledBranch(branch, filesCounter++);
@@ -245,7 +245,7 @@ public class DeliveryController {
                     continue;
                 Delivery delivery = new Delivery(deliveryCounter++, requiredDate, LocalTime.NOON, truck.getWeight(), new LinkedHashMap<>(),
                         new LinkedHashMap<>(), null, truck.getLicenseNumber(), 0,dalDeliveryService);
-                dalDeliveryService.updateCounter("deliveryCounter",deliveryCounter);
+                dalDeliveryService.updateCounter("delivery counter",deliveryCounter);
                 shiftController.addDirverRequirement(requiredDate, truck.getLicenseType(), truck.getCoolingLevel());
                 delivery.addLogisticCenterDestination(++filesCounter);
                 addDelivery(delivery);
@@ -418,7 +418,7 @@ public class DeliveryController {
         int maxWeight = logisticCenterController.getTruck(getDelivery(deliveryID).getTruckNumber()).getMaxWeight();
         double unloadFactor = (currWeight + weight - maxWeight) / weight;
         File loadedProducts = new File(filesCounter++);
-        dalDeliveryService.updateCounter("fileCounter",filesCounter);
+        dalDeliveryService.updateCounter("file counter",filesCounter);
         for (Product p : getDelivery(deliveryID).getUnHandledSuppliers().get(suppliers.get(supplierAddress)).getProducts().keySet()) {
             int amount = getDelivery(deliveryID).getUnHandledSuppliers().get(suppliers.get(supplierAddress)).getProducts().get(p);
             int unloadAmount = (int) Math.ceil(amount * unloadFactor);
