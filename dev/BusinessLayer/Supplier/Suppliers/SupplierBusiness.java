@@ -166,14 +166,28 @@ public abstract class  SupplierBusiness {
         SupplierDiscountDTO discountDTO=null;
         switch(discountEnum){
             case DISCOUNT_BY_TOTAL_PRICE :
-                discountDTO = new SupplierDiscountDTO(supplierNum, amount, discount, isPercentage, false);
-                discountPerTotalPrice.add(new PercentDiscount(amount, discount, isPercentage, supplierDalController,discountDTO));
-                supplierDalController.insert(discountDTO);
+                if(isPercentage) {
+                    discountDTO = new SupplierDiscountDTO(supplierNum, amount, discount, true, false);
+                    discountPerTotalPrice.add(new PercentDiscount(amount, discount, true, supplierDalController, discountDTO));
+                    supplierDalController.insert(discountDTO);
+                }
+                else{
+                    discountDTO = new SupplierDiscountDTO(supplierNum, amount, discount, false, false);
+                    discountPerTotalPrice.add(new NumberDiscount(amount, discount, false, supplierDalController, discountDTO));
+                    supplierDalController.insert(discountDTO);
+                }
                 break;
             case DISCOUNT_BY_TOTAL_QUANTITY:
-                    discountDTO = new SupplierDiscountDTO(supplierNum, amount, discount, isPercentage, true);
-                    discountPerTotalQuantity.add(new PercentDiscount(amount, discount, isPercentage, supplierDalController,discountDTO ));
+                if(isPercentage) {
+                    discountDTO = new SupplierDiscountDTO(supplierNum, amount, discount, true, true);
+                    discountPerTotalQuantity.add(new PercentDiscount(amount, discount, true, supplierDalController, discountDTO));
                     supplierDalController.insert(discountDTO);
+                }
+                else{
+                    discountDTO = new SupplierDiscountDTO(supplierNum, amount, discount, false, true);
+                    discountPerTotalQuantity.add(new NumberDiscount(amount, discount, false, supplierDalController, discountDTO));
+                    supplierDalController.insert(discountDTO);
+                }
                 break;
         }
     }
