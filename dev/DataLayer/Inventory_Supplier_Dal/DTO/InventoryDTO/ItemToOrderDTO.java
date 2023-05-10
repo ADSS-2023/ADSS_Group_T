@@ -16,6 +16,7 @@ public class ItemToOrderDTO extends DTO {
     private String expiryDate;
     private double costPrice;
     private int orderId;
+
     public ItemToOrderDTO(String tableName,String productName,String manufacturer,int quantity,String expiryDate,double costPrice,int orderId) {
         super(tableName);
         this.productName =productName;
@@ -24,5 +25,34 @@ public class ItemToOrderDTO extends DTO {
         this.expiryDate=expiryDate;
         this.costPrice =costPrice;
         this.orderId = orderId;
+    }
+
+    public ItemToOrderDTO() {
+        super("inventory_waiting_list");
+    }
+
+
+    public LocalDate getExpiryDate() {
+        return LocalDate.parse(this.expiryDate);
+    }
+
+    public String getManufacturer() {
+        return this.manufacturer;
+    }
+
+    public String getProductName() {
+        return this.productName;
+    }
+
+    public int getQauntity() {
+        return this.quantity;
+    }
+
+    public double getCostPrice() {
+        return costPrice;
+    }
+
+    public int getOrderId() {
+        return orderId;
     }
 }

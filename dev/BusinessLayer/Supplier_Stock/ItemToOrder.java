@@ -24,12 +24,21 @@ public class ItemToOrder {
         this.costPrice = costPrice;
         this.orderId = orderId;
         if(expiryDate == null)
-            this.item_to_order_DTO = new ItemToOrderDTO("inventory_item_ordered" , productName , manufacturer,
+            this.item_to_order_DTO = new ItemToOrderDTO("inventory_waiting_list" , productName , manufacturer,
                             quantity , "" , costPrice , orderId);
         else {
-            this.item_to_order_DTO = new ItemToOrderDTO("inventory_item_ordered", productName, manufacturer,
+            this.item_to_order_DTO = new ItemToOrderDTO("inventory_waiting_list", productName, manufacturer,
                     quantity, expiryDate.toString(), costPrice, orderId);
         }
+    }
+
+    public ItemToOrder(ItemToOrderDTO i) {
+        this.expiryDate = i.getExpiryDate();
+        this.manufacturer = i.getManufacturer();
+        this.productName = i.getProductName();
+        this.quantity = i.getQauntity();
+        this.costPrice = i.getCostPrice();
+        this.orderId = i.getOrderId();
     }
 
     public ItemToOrderDTO getItemToOrderDTO(){

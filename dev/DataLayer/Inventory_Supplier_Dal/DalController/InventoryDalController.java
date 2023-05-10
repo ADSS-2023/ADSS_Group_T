@@ -27,6 +27,10 @@ public class InventoryDalController{
         this.connection = connection;
     }
 
+    public void setConnection(Connection connection){
+        this.connection = connection;
+    }
+
     public void delete(DTO dto) throws SQLException {
         generic_DAO.delete(connection,dto);
     }

@@ -354,6 +354,8 @@ public class Inventory {
             add_item(itemDTO.getCategoriesIndex(),i);
         }
         loadItemPerOrder();
+        //loadWaitingItems();
+        //need to call here to the orderController
     }
     public void loadItemPerOrder() throws Exception{
         List<ItemPerOrderDTO> itemPerOrder = itemDalController.findAll("inventory_item_per_order", ItemPerOrderDTO.class);
@@ -375,5 +377,12 @@ public class Inventory {
         for (DamagedItemDTO i:damagedItemDTOS) {
             damaged.addDamagedItem(items.get(i.getItem_id()),i);
         }
+    }
+
+
+
+
+    public ItemDalController getItemDalController() {
+        return itemDalController;
     }
 }

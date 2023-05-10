@@ -50,7 +50,7 @@ public class OrderController {
             ItemToOrder new_item = new ItemToOrder(inventory.get_item_by_id(item_id).get_name(),
                     inventory.get_item_by_id(item_id).manufacturer_name, quantity, null, -1,-1);
             list_to_order.addLast(new_item);
-            ItemOrderdDTO item_dto = new ItemOrderdDTO("inventory_item_ordered",item_id,quantity);
+            ItemOrderdDTO item_dto = new ItemOrderdDTO(item_id,quantity);
             insert_items.add(item_dto);
         }
 
@@ -81,10 +81,9 @@ public class OrderController {
             if(special_orders_track.containsKey(item_id)){
                 quantity += special_orders_track.get(item_id);
             }
-            ItemOrderdDTO item_dto = new ItemOrderdDTO("inventory_item_ordered",item_id,quantity);
+            ItemOrderdDTO item_dto = new ItemOrderdDTO(item_id,quantity);
             insert_items.add(item_dto);
             special_orders_track.put(item_id,quantity);
-
         }
         if (!order_service.createSpecialOrder(list_to_order,isUrgent)) {
             throw new Exception("\u001B[31mOrder cannot be supplied\u001B[0m");
@@ -180,13 +179,13 @@ public class OrderController {
             if(special_orders_track.containsKey(item_id)){
                 int amount = special_orders_track.get(item_id);
                 if(itemToOrder.getQuantity()>= amount) {
-                    inventoryDalController.delete(new ItemOrderdDTO("inventory_item_ordered", item_id, itemToOrder.getQuantity()));
+                    inventoryDalController.delete(new ItemOrderdDTO(item_id, itemToOrder.getQuantity()));
                     special_orders_track.remove(item_id);
                 }
                 else {
                     amount -= itemToOrder.getQuantity();
-                    inventoryDalController.update(new ItemOrderdDTO("inventory_item_ordered", item_id, itemToOrder.getQuantity()),
-                            new ItemOrderdDTO("inventory_item_ordered", item_id, amount));
+                    inventoryDalController.update(new ItemOrderdDTO(item_id, itemToOrder.getQuantity()),
+                            new ItemOrderdDTO(item_id, amount));
                     special_orders_track.put(item_id,amount);
                 }
             }
@@ -301,4 +300,19 @@ public class OrderController {
     public List<ItemToOrder> getItems_to_place(){
         return items_to_place;
     }
+
+    public void loadWaitingItems() throws Exception{
+        List<ItemToOrderDTO> item_to_order_DTOS = inventoryDalController.findAll("inventory_waiting_list", ItemToOrderDTO.class);
+        for (ItemToOrderDTO i:item_to_order_DTOS) {
+            this.items_to_place.add(new ItemToOrder(i));
+        }
+    }
+
+    public void loadOrderedItems() throws Exception{
+        List<ItemOrderdDTO> item_to_order_DTOS = inventoryDalController.findAll("inventory_item_ordered", ItemOrderdDTO.class);
+        for (ItemOrderdDTO i:item_to_order_DTOS) {
+            this.special_orders_track.put(i.getId() , i.getQuantity());
+        }
+    }
+
 }
