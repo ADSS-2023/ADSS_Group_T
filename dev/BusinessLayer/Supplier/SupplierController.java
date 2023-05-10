@@ -100,9 +100,6 @@ public class SupplierController {
         else{
             suppliers.put(supplierNum, new ConstantSupplier(name, address, supplierNum, bankAccountNum, contacts, constDeliveryDays, selfDelivery, paymentTerms, supplierDalController));
         }
-
-        supplierDalController.findAll("supplier", SupplierDTO.class);
-
     }
 
     public void deleteSupplier(int supplierNum) throws Exception {
