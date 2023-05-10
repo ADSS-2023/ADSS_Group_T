@@ -26,7 +26,7 @@ public class SupplierProductBusiness {
 
     protected SupplierDalController supplierDalController;
 
-    public SupplierProductBusiness(int supplierNum, String name, int productNum, String manufacturer, float price, int maxAmount, LocalDate expiryDate) throws SQLException {
+    public SupplierProductBusiness(int supplierNum, String name, int productNum, String manufacturer, float price, int maxAmount, LocalDate expiryDate, SupplierDalController supplierDalController) throws SQLException {
         this.supplierNum = supplierNum;
         this.name = name;
         this.productNum = productNum;
@@ -35,6 +35,7 @@ public class SupplierProductBusiness {
         this.maxAmount = maxAmount;
         this.quantitiesAgreement = new ArrayList<>();
         this.expiryDate = expiryDate;
+        this.supplierDalController = supplierDalController;
         this.supplierProductDTO = new SupplierProductDTO(supplierNum, productNum, name, manufacturer, price, maxAmount, expiryDate.toString());
         supplierDalController.insert(supplierProductDTO);
     }

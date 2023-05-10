@@ -90,7 +90,7 @@ public abstract class  SupplierBusiness {
         else if(expiryDate.isBefore(Util_Supplier_Stock.getCurrDay()))
             throw new Exception("expiry date has passed.");
         else
-            products.put(productNum, new SupplierProductBusiness( supplierNum,productName,productNum, manufacturer, price, maxAmount, expiryDate));
+            products.put(productNum, new SupplierProductBusiness(supplierNum,productName,productNum, manufacturer, price, maxAmount, expiryDate, supplierDalController));
     }
 
     public void editProduct(String productName, String manufacturer, int price, int maxAmount, LocalDate expiryDate) throws Exception {
