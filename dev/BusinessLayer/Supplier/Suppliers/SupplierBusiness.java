@@ -151,25 +151,43 @@ public abstract class  SupplierBusiness {
         if(!isDiscountExist(discountEnum,amount,isPercentage))
             throw new Exception("No such discount");
         getDiscount(discountEnum,amount,isPercentage).editDiscount(amount,discountToChange);
+        SupplierDiscountDTO discountDTO =null;
+       DiscountDTO oldDTO = getDiscount(discountEnum,amount,isPercentage).getDiscountDTO();
+        if(discountEnum == Discounts.DISCOUNT_BY_TOTAL_QUANTITY)
+            discountDTO = new SupplierDiscountDTO(supplierNum,amount,discountToChange,isPercentage,true);
+        else
+            discountDTO = new SupplierDiscountDTO(supplierNum,amount,discountToChange,isPercentage,false);
+        supplierDalController.update(oldDTO,discountDTO);
     }
 
     public void addSupplierDiscount(Discounts discountEnum, int amount, int discount,boolean isPercentage) throws Exception {
         if(isDiscountExist(discountEnum,amount,isPercentage))
             throw new Exception("Discount is already exists");
+        SupplierDiscountDTO discountDTO=null;
         switch(discountEnum){
             case DISCOUNT_BY_TOTAL_PRICE :
-                if(isPercentage)
-                     discountPerTotalPrice.add(new PercentDiscount(amount,discount,true, supplierDalController,
-                             new SupplierDiscountDTO(supplierNum, amount, discount, isPercentage, true)));
-                else
-                    discountPerTotalPrice.add(new NumberDiscount(amount,discount,false, supplierDalController,
-                            new SupplierDiscountDTO(supplierNum, amount, discount, isPercentage, true)));
+                if(isPercentage) {
+                    discountDTO = new SupplierDiscountDTO(supplierNum, amount, discount, true, false);
+                    discountPerTotalPrice.add(new PercentDiscount(amount, discount, true, supplierDalController, discountDTO));
+                    supplierDalController.insert(discountDTO);
+                }
+                else{
+                    discountDTO = new SupplierDiscountDTO(supplierNum, amount, discount, false, false);
+                    discountPerTotalPrice.add(new NumberDiscount(amount, discount, false, supplierDalController, discountDTO));
+                    supplierDalController.insert(discountDTO);
+                }
                 break;
             case DISCOUNT_BY_TOTAL_QUANTITY:
-                if(isPercentage)
-                    discountPerTotalQuantity.add(new PercentDiscount(amount,discount,true, supplierDalController, new SupplierDiscountDTO(supplierNum, amount, discount, isPercentage, false)));
-                else
-                    discountPerTotalQuantity.add(new NumberDiscount(amount,discount, false, supplierDalController, new SupplierDiscountDTO(supplierNum, amount, discount, isPercentage, false)));
+                if(isPercentage) {
+                    discountDTO = new SupplierDiscountDTO(supplierNum, amount, discount, true, true);
+                    discountPerTotalQuantity.add(new PercentDiscount(amount, discount, true, supplierDalController, discountDTO));
+                    supplierDalController.insert(discountDTO);
+                }
+                else{
+                    discountDTO = new SupplierDiscountDTO(supplierNum, amount, discount, false, true);
+                    discountPerTotalQuantity.add(new NumberDiscount(amount, discount, false, supplierDalController, discountDTO));
+                    supplierDalController.insert(discountDTO);
+                }
                 break;
         }
     }
@@ -177,21 +195,19 @@ public abstract class  SupplierBusiness {
     public void deleteSupplierDiscount(Discounts discountEnum, int amount, boolean isPercentage) throws Exception {
         if(!isDiscountExist(discountEnum,amount,isPercentage))
             throw new Exception("Discount doesn't Exist");
+        Discount dis = getDiscount(discountEnum,amount,isPercentage);
         switch (discountEnum) {
             case DISCOUNT_BY_TOTAL_PRICE:
-                for (Discount dis : discountPerTotalPrice) {
-                    if (dis.getAmount() == amount && dis.isPercentage() == isPercentage)
                         discountPerTotalPrice.remove(dis);
-                }
+                        supplierDalController.delete(dis.getDiscountDTO());
                 break;
             case DISCOUNT_BY_TOTAL_QUANTITY:
-                for (Discount dis : discountPerTotalQuantity) {
-                    if (dis.getAmount() == amount&& dis.isPercentage() == isPercentage)
                         discountPerTotalQuantity.remove(dis);
-                    break;
+                        supplierDalController.delete(dis.getDiscountDTO());
+                break;
                 }
         }
-    }
+
 
     public boolean isDiscountExist(Discounts discountEnum,int amount, boolean isPercentage) {
         switch(discountEnum){
