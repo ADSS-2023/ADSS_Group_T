@@ -50,6 +50,7 @@ public class ItemPerOrder {
         this.location = itemPerOrderDTO.getLocation();
         this.validity = Util.stringToDate(itemPerOrderDTO.getValidity());
         this.arrived_date = Util.stringToDate(itemPerOrderDTO.getArrivedDate());
+        this.item_per_order_dto = itemPerOrderDTO;
     }
     /**
      * This function return the amount of this item from a specific order at the warehouse.
