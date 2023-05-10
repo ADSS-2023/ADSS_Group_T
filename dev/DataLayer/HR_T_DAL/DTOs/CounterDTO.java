@@ -5,8 +5,11 @@ public class CounterDTO extends DTO {
     private String count;
 
 
-
+public CounterDTO(){
+    super("Counter");
+}
     public CounterDTO(String counter, String count){
+        super("Counter");
       this.counter = counter;
       this.count = count;
     }
