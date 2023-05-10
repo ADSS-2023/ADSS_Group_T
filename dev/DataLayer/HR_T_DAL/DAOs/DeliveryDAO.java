@@ -3,6 +3,7 @@ package DataLayer.HR_T_DAL.DAOs;
 import BusinessLayer.Transport.Delivery;
 import DataLayer.HR_T_DAL.DTOs.*;
 import DataLayer.Util.DAO;
+import DataLayer.Util.DTO;
 
 import java.lang.reflect.Field;
 import java.sql.*;
@@ -75,19 +76,20 @@ public class DeliveryDAO extends DAO {
         return results;
     }
 
-    public ArrayList<DeliveryUnHandledSitesDTO> findAllUnHandledSuppliersForDelivery(int deliveryId) throws SQLException {
-        ArrayList<DeliveryUnHandledSitesDTO> results = new ArrayList<>();
-        String sql = "SELECT d.deliveryId, d.siteAddress, d.productName, d.amount\n" +
-                "FROM DeliveryUnHandledSites d\n" +
+
+    public <T extends DTO> ArrayList<T> findAllCategorySitesForDelivery(String tableName, Class<T> dtoClass, int deliveryId, String type) throws SQLException {
+        ArrayList<T> results = new ArrayList<>();
+        String sql = "SELECT d.deliveryId, d.siteAddress, d.productName, d.fileId, d.amount\n" +
+                "FROM " + tableName + " d\n" +
                 "INNER JOIN Site s ON d.siteAddress = s.siteAddress\n" +
-                "WHERE d.deliveryId = " + deliveryId + " AND s.type = 'Supplier';\n";
+                "WHERE d.deliveryId = " + deliveryId + " AND s.type = '" + type + "';\n";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
             ResultSetMetaData metaData = resultSet.getMetaData();
             int columnCount = metaData.getColumnCount();
             while (resultSet.next()) {
-                DeliveryUnHandledSitesDTO dto = (DeliveryUnHandledSitesDTO.class).getDeclaredConstructor().newInstance();
-                dto.setTableName("DeliveryUnHandledSites");
+                T dto = dtoClass.getDeclaredConstructor().newInstance();
+                dto.setTableName(tableName);
                 for (int i = 1; i <= columnCount; i++) {
                     String columnName = metaData.getColumnName(i);
                     Object value = resultSet.getObject(i);

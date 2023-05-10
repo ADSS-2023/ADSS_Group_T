@@ -18,9 +18,9 @@ public class Delivery {
     private final LocalDate date;
     private final LocalTime departureTime;
     private LinkedHashMap<Supplier, File> unHandledSuppliers;
-    private final LinkedHashMap<Supplier, File> handledSuppliers;
-    private final LinkedHashMap<Branch, File> unHandledBranches;
-    private final LinkedHashMap<Branch, File> handledBranches;
+    private LinkedHashMap<Supplier, File> handledSuppliers;
+    private LinkedHashMap<Branch, File> unHandledBranches;
+    private LinkedHashMap<Branch, File> handledBranches;
     private File toLogisticsCenterFile;
     private File fromLogisticsCenterFile;
     private final int shippingArea;
@@ -54,24 +54,10 @@ public class Delivery {
                 new LinkedHashMap<>(), dalDeliveryService.findSite(dto.getSource()), dto.getTruckNumber(), dto.getShippingArea(), dalDeliveryService);
     }
   
-    public File getToLogisticsCenterFile() {
-        return toLogisticsCenterFile;
-    }
 
-    public File getFromLogisticsCenterFile() {
-        return fromLogisticsCenterFile;
-    }
 
-    public void addHandledSupplier(Supplier supplier, File f) throws SQLException {
-        LinkedHashMap<Product,Integer> products = f.getProducts();
-        for(Product p : products.keySet()){
-            dalDeliveryService.insertHandledSite(id,supplier.getAddress(),p.getName(),products.get(p));
-        }
-        handledSuppliers.put(supplier, f);
-    }
-
-    public int supplierHandled(Supplier supplier, int fileCounter, HashMap<Product, Integer> copyOfSupplierFileProducts) {
-        ArrayList<Branch> branchesTmp = new ArrayList<>(unHandledBranches.keySet());
+    public int supplierHandled(Supplier supplier, int fileCounter, HashMap<Product, Integer> copyOfSupplierFileProducts) throws SQLException {
+        ArrayList<Branch> branchesTmp = new ArrayList<>(getUnHandledBranches().keySet());
         for (Branch b : branchesTmp) {
             if (!copyOfSupplierFileProducts.isEmpty())
                 fileCounter = checkBranch(b, fileCounter, copyOfSupplierFileProducts);
@@ -79,36 +65,32 @@ public class Delivery {
         return fileCounter;
     }
 
-    private int checkBranch(Branch b, int fileCounter, HashMap<Product, Integer> copyOfSupplierFileProducts) {
-        File branchFile = unHandledBranches.get(b);
+    private int checkBranch(Branch b, int fileCounter, HashMap<Product, Integer> copyOfSupplierFileProducts) throws SQLException {
+        File branchFile = getHandledBranches().get(b);
         ArrayList<Product> productsTmp = new ArrayList<>(branchFile.getProducts().keySet());
         for (Product branchProduct : productsTmp) {
             if (copyOfSupplierFileProducts.containsKey(branchProduct)) {
-                if (!handledBranches.containsKey(b)) {
-                    File newBranchFile = new File(fileCounter);
-                    fileCounter++;
-                    handledBranches.put(b, newBranchFile);
-                }
-                int amount = Math.min(copyOfSupplierFileProducts.get(branchProduct), unHandledBranches.get(b).getProducts().get(branchProduct));
-                handleBranch(b, branchProduct, amount, copyOfSupplierFileProducts);
+                int amount = Math.min(copyOfSupplierFileProducts.get(branchProduct), getUnHandledBranches().get(b).getProducts().get(branchProduct));
+                fileCounter = handleBranch(b, branchProduct, amount, copyOfSupplierFileProducts, fileCounter);
             }
         }
         return fileCounter;
     }
 
-    private void handleBranch(Branch b, Product branchProduct, int amount, HashMap<Product, Integer> copyOfSupplierFileProducts) {
-        handledBranches.get(b).addProduct(branchProduct, amount);
-        unHandledBranches.get(b).removeProduct(branchProduct, amount);
-        copyOfSupplierFileProducts.replace(branchProduct, copyOfSupplierFileProducts.get(branchProduct) - amount);
-        if (copyOfSupplierFileProducts.get(branchProduct) == 0)
-            copyOfSupplierFileProducts.remove(branchProduct);
+    private int handleBranch(Branch b, Product product, int amount, HashMap<Product, Integer> copyOfSupplierFileProducts, int fileCounter) throws SQLException {
+        fileCounter = addProductToHandledBranch(b,product,amount,fileCounter);
+        removeProductFromUnHandledBranch(b,product, amount);
+        copyOfSupplierFileProducts.replace(product, copyOfSupplierFileProducts.get(product) - amount);
+        if (copyOfSupplierFileProducts.get(product) == 0)
+            copyOfSupplierFileProducts.remove(product);
+        return fileCounter;
     }
 
     /**
      * remove the first supplier from the suppliers map
      */
-    public void removeSupplier(String address) {
-        unHandledSuppliers.remove(unHandledSuppliers.get(address));
+    public void removeSupplier(String address) throws SQLException {
+        getUnHandledSuppliers().remove(unHandledSuppliers.get(address));
     }
 
     /**
@@ -116,7 +98,7 @@ public class Delivery {
      * @param branch
      * @param fileID
      */
-    public void addBranch(Branch branch, int fileID) throws SQLException {
+    public void addUnHandledBranch(Branch branch, int fileID) throws SQLException {
         File f = new File(fileID);
         unHandledBranches.put(branch, f);
         dalDeliveryService.updateCounter("fileCounter",fileID);
@@ -140,46 +122,105 @@ public class Delivery {
         return fileCounter;
     }
 
+    public int addProductToHandledBranch(Branch branch, Product p, int amount, int fileCounter) throws SQLException {
+        if (!handledBranches.containsKey(branch)) {
+            handledBranches.put(branch, new File(fileCounter++));
+            dalDeliveryService.updateCounter("fileCounter",fileCounter);
+            dalDeliveryService.insertHandledSite(id,branch.getAddress(),p.getName(),fileCounter - 1,amount);
+        }
+        else
+            dalDeliveryService.updateHandledSite(id,branch.getAddress(),p.getName(), handledBranches.get(branch).getId() ,amount);
+        handledBranches.get(branch).addProduct(p, amount);
+        return fileCounter;
+    }
+
+    public void removeProductFromUnHandledBranch(Branch branch, Product product, int amount) throws SQLException {
+        LinkedHashMap<String,Object> pk = new LinkedHashMap<>();
+        pk.put("deliveryId",id);
+        pk.put("siteAddress",branch.getAddress());
+        pk.put("productName",product.getName());
+        DeliveryUnHandledSitesDTO dto = dalDeliveryService.findDeliveryUnHandledSites(pk);
+        if(dto.getAmount() == amount)
+            dalDeliveryService.deleteUnHandledBranch(getId(), branch.getAddress(), product.getName(), dto.getFileId(),amount);
+        else
+            dalDeliveryService.updateUnHandledSite(id, branch.getAddress(), product.getName(), dto.getFileId(),dto.getAmount() - amount);
+        unHandledBranches.get(branch).removeProduct(product, amount);
+    }
+
     public int addProductToLogisticCenterFromFile(String logisticCenterAddress,Product p, int amount, int fileCounter) throws SQLException {
         if (fromLogisticsCenterFile == null){
             fromLogisticsCenterFile = new File(fileCounter++);
             dalDeliveryService.updateCounter("fileCounter",fileCounter);
         }
-        dalDeliveryService.insertUnHandledSite(id,logisticCenterAddress,p.getName(),amount);
+        dalDeliveryService.insertUnHandledSite(id,logisticCenterAddress,p.getName(),fromLogisticsCenterFile.getId(),amount);
         fromLogisticsCenterFile.addProduct(p, amount);
         return fileCounter;
     }
 
-    public int getShippingArea() {
-        return shippingArea;
+    public void addNote(String s) {
+        note = note + "\n" + s;
     }
 
-    /*
-        //for future use
-        public LinkedHashMap<Product,Integer> getProductsOfSupplier(Supplier supplier){
-            return suppliers.get(supplier).getProducts();
+    public void addLogisticCenterDestination(int fileCounter) throws SQLException {
+        toLogisticsCenterFile = new File(fileCounter);
+        dalDeliveryService.updateCounter("fileCounter",fileCounter);
+    }
+
+    public void addHandledSupplier(Supplier supplier, File f) throws SQLException {
+        LinkedHashMap<Product,Integer> products = f.getProducts();
+        for(Product p : products.keySet()){
+            dalDeliveryService.insertHandledSite(id,supplier.getAddress(),p.getName(),f.getId(),products.get(p));
         }
-     */
-    public int getId() {
-        return this.id;
+        handledSuppliers.put(supplier, f);
     }
 
+    public void addHandledBranch(Branch branch, File f) throws SQLException {
+        LinkedHashMap<Product,Integer> products = f.getProducts();
+        for(Product p : products.keySet()){
+            dalDeliveryService.insertHandledSite(id,branch.getAddress(),p.getName(),f.getId(),products.get(p));
+        }
+        handledBranches.put(branch, f);
+    }
 
-    public LinkedHashMap<Branch, File> getHandledBranches() {
+    private DeliveryDTO createDeliveryDTO(){
+        return new DeliveryDTO(getId(),getDate().toString(),getDepartureTime().toString(), getTruckWeight(),
+                getSource().getAddress(),getDriverID(),getTruckNumber(),getShippingArea());
+    }
+
+    public LinkedHashMap<Branch, File> getHandledBranches() throws SQLException {
+        handledBranches = dalDeliveryService.findAllHandledBranchesForDelivery(id);
         return handledBranches;
     }
 
-    public LinkedHashMap<Branch, File> getUnHandledBranches() {
-        return unHandledBranches;
-    }
-
-    public LinkedHashMap<Supplier, File> getHandledSuppliers() {
+    public LinkedHashMap<Supplier, File> getHandledSuppliers() throws SQLException {
+        handledSuppliers = dalDeliveryService.findAllUnHandledSuppliersForDelivery(id);
         return handledSuppliers;
     }
 
     public LinkedHashMap<Supplier, File> getUnHandledSuppliers() throws SQLException {
         unHandledSuppliers = dalDeliveryService.findAllUnHandledSuppliersForDelivery(id);
         return unHandledSuppliers;
+    }
+
+    public LinkedHashMap<Branch, File> getUnHandledBranches() throws SQLException {
+        unHandledBranches = dalDeliveryService.findAllUnHandledBranchesForDelivery(id);
+        return unHandledBranches;
+    }
+
+    public LocalTime getDepartureTime() {
+        return departureTime;
+    }
+
+    public Site getSource() {
+        return this.source;
+    }
+
+    public int getTruckNumber() {
+        return this.truckNumber;
+    }
+
+    public int getDriverID() {
+        return this.driverID;
     }
 
     public LocalDate getDate() {
@@ -190,72 +231,43 @@ public class Delivery {
         return this.truckWeight;
     }
 
-    public void setTruckWeight(int truckWeight) {
+    public int getShippingArea() {
+        return shippingArea;
+    }
+
+    public int getId() {
+        return this.id;
+    }
+
+    public void setTruckWeight(int truckWeight) throws SQLException {
+        DeliveryDTO oldDTO = createDeliveryDTO();
         this.truckWeight = truckWeight;
+        dalDeliveryService.updateDelivery(oldDTO,createDeliveryDTO());
     }
 
-    public Site getSource() {
-        return this.source;
-    }
-
-    public void setSource(Site source) {
+    public void setSource(Site source) throws SQLException {
+        DeliveryDTO oldDTO = createDeliveryDTO();
         this.source = source;
-    }
-
-    /*
-        //for future use
-        public String getDriverName() {
-            return this.driverName;
-        }
-
-        public void setDriverName(String driverName) {
-            this.driverName = driverName;
-        }
-     */
-
-    public LocalTime getDepartureTime() {
-        return departureTime;
-    }
-
-    public int getTruckNumber() {
-        return this.truckNumber;
+        dalDeliveryService.updateDelivery(oldDTO,createDeliveryDTO());
     }
 
     public void setTruckNumber(int truckNumber) throws SQLException {
+        DeliveryDTO oldDTO = createDeliveryDTO();
         this.truckNumber = truckNumber;
-        dalDeliveryService.updateDeliveryTruck(this,truckNumber);
+        dalDeliveryService.updateDelivery(oldDTO,createDeliveryDTO());
     }
-
-    /**
-     * add supplier to the suppliers list of this delivery
-     *
-     * @param supplier
-     * @param fileID
-     */
-    public void addSupplier(Supplier supplier, int fileID) {
-        this.unHandledSuppliers.put(supplier, new File(fileID));
-    }
-
-    public int getDriverID() {
-        return this.driverID;
-    }
-
-    public void addNote(String s) {
-        note = note + "\n" + s;
-    }
-
-    public LinkedHashMap<Supplier, File> getSuppliers() {
-        return null;
-    }
-
 
     public void setDriver(Driver driver) throws SQLException {
+        DeliveryDTO oldDTO = createDeliveryDTO();
         this.driverID = driver.getId();
-        dalDeliveryService.updateDeliveryDriver(this,driverID);
+        dalDeliveryService.updateDelivery(oldDTO,createDeliveryDTO());
     }
 
-    public void addLogisticCenterDestination(int fileCounter) throws SQLException {
-        toLogisticsCenterFile = new File(fileCounter);
-        dalDeliveryService.updateCounter("fileCounter",fileCounter);
+    public File getToLogisticsCenterFile() {
+        return toLogisticsCenterFile;
+    }
+
+    public File getFromLogisticsCenterFile() {
+        return fromLogisticsCenterFile;
     }
 }

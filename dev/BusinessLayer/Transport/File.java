@@ -51,5 +51,7 @@ public class File {
             throw new RuntimeException("attempt to remove an amount larger than the current amount in thr file");
         else
             products.replace(product, products.get(product) - amount);
+        if(products.get(product) == 0)
+            products.remove(product);
     }
 }

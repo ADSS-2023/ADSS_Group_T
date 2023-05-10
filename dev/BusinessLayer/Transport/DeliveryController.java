@@ -109,7 +109,7 @@ public class DeliveryController {
                         for (Product product : new LinkedHashSet<>(products.keySet())) {
                             if (product.getCoolingLevel() == logisticCenterController.getTruck(d.getTruckNumber()).getCoolingLevel()) {
                                 if (!d.getUnHandledBranches().containsKey(branch)) {
-                                    d.addBranch(branch, filesCounter++);
+                                    d.addUnHandledBranch(branch, filesCounter++);
                                     shiftController.addStoreKeeperRequirement(requiredDate, branch.getAddress());
                                 }
                                 this.filesCounter = d.addProductToSupplier(supplier, product, products.get(product), filesCounter);
@@ -134,7 +134,7 @@ public class DeliveryController {
                 dalDeliveryService.updateCounter("deliveryCounter",deliveryCounter);
                 shiftController.addDirverRequirement(requiredDate, truck.getLicenseType(), truck.getCoolingLevel());
                 shiftController.addStoreKeeperRequirement(requiredDate, branch.getAddress());
-                delivery.addBranch(branch, filesCounter++);
+                delivery.addUnHandledBranch(branch, filesCounter++);
                 addDelivery(delivery);
                 addDeliveryToDate(requiredDate,delivery,true);
                 for (Supplier supplier : new ArrayList<>(suppliers.keySet())) {
@@ -164,7 +164,7 @@ public class DeliveryController {
                     for (Product product : new LinkedHashSet<>(products.keySet())) {
                         if (product.getCoolingLevel() == logisticCenterController.getTruck(d.getTruckNumber()).getCoolingLevel()) {
                             if (!d.getUnHandledBranches().containsKey(branch)) {
-                                d.addBranch(branch, filesCounter++);
+                                d.addUnHandledBranch(branch, filesCounter++);
                                 shiftController.addStoreKeeperRequirement(requiredDate, branch.getAddress());
                             }
                             this.filesCounter = d.addProductToLogisticCenterFromFile(logisticCenterController.getLogisticCenter().getAddress()
@@ -186,7 +186,7 @@ public class DeliveryController {
                 dalDeliveryService.updateCounter("deliveryCounter",deliveryCounter);
                 shiftController.addDirverRequirement(requiredDate, truck.getLicenseType(), truck.getCoolingLevel());
                 shiftController.addStoreKeeperRequirement(requiredDate, branch.getAddress());
-                delivery.addBranch(branch, filesCounter++);
+                delivery.addUnHandledBranch(branch, filesCounter++);
                 addDelivery(delivery);
                 addDeliveryToDate(requiredDate,delivery,true);
                 for (Product product : new LinkedHashSet<>(products.keySet())) {
@@ -415,7 +415,9 @@ public class DeliveryController {
             int amount = getDelivery(deliveryID).getUnHandledSuppliers().get(suppliers.get(supplierAddress)).getProducts().get(p);
             int unloadAmount = (int) Math.ceil(amount * unloadFactor);
             loadedProducts.addProduct(p, amount - unloadAmount);
-            getDelivery(deliveryID).getUnHandledSuppliers().get(suppliers.get(supplierAddress)).getProducts().replace(p, unloadAmount);
+            File f = getDelivery(deliveryID).getUnHandledSuppliers().get(suppliers.get(supplierAddress));
+            f.getProducts().replace(p, unloadAmount);
+            dalDeliveryService.updateUnHandledSite(deliveryID,supplierAddress,p.getName(),f.getId(),unloadAmount);
         }
         getDelivery(deliveryID).addHandledSupplier(suppliers.get(supplierAddress), loadedProducts);
         HashMap<Product, Integer> copyOfSupplierFileProducts = new HashMap<>(loadedProducts.getProducts());
@@ -424,11 +426,11 @@ public class DeliveryController {
     }
 
     /**
-     * replace or drop one of the suppliers from the delivery due to overweight
+     * drop the current supplier from the delivery due to overweight
      *
      * @param deliveryID - the id of the delivery that the action required for
      */
-    public void DropSite(int deliveryID, String address) {
+    public void DropSite(int deliveryID, String address) throws SQLException {
         Delivery delivery = deliveries.get(deliveryID);
         delivery.removeSupplier(address);
         delivery.addNote("over load in " + address);
@@ -648,7 +650,7 @@ public class DeliveryController {
 
     }
     private boolean isDeliveryFromLC(Delivery delivery) throws SQLException {return delivery.getUnHandledSuppliers()==null;}
-    private boolean isDeliveryToLC(Delivery delivery){return delivery.getHandledBranches()==null;}
+    private boolean isDeliveryToLC(Delivery delivery) throws SQLException {return delivery.getHandledBranches()==null;}
 
     private ArrayList<Delivery> getDeliveriesByDate(LocalDate date) throws SQLException {
         ArrayList<Delivery> dateDeliveries = new ArrayList<>();
