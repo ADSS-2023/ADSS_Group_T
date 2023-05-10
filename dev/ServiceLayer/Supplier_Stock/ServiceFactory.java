@@ -32,7 +32,7 @@ public class ServiceFactory {
 
     public Connection connection;
 
-    public ServiceFactory(){
+    public ServiceFactory() throws Exception {
 
         this.inventoryService = new InventoryService();
         this.categoryService = new CategoryService(inventoryService.get_inventory());

@@ -1,5 +1,8 @@
 package BusinessLayer.Supplier.Suppliers;
 
+import BusinessLayer.Supplier.Discounts.Discount;
+import BusinessLayer.Supplier.SupplierController;
+import BusinessLayer.Supplier.SupplierProductBusiness;
 import BusinessLayer.Supplier.Supplier_Util.PaymentTerms;
 import BusinessLayer.Supplier_Stock.Util_Supplier_Stock;
 import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.SupplierContactDTO;
@@ -19,9 +22,18 @@ public class ConstantSupplier extends SupplierBusiness {
     private List<DayOfWeek> constDeliveryDays;
     public ConstantSupplier(String supplierName, String address, int supplierNum, int bankAccountNum, HashMap<String, String> contacts, List<DayOfWeek> constDeliveryDays, boolean selfDelivery, PaymentTerms paymentTerms, SupplierDalController supplierDalController) throws SQLException, SQLException {
         super(supplierName, address, supplierNum, bankAccountNum, contacts, selfDelivery, paymentTerms, supplierDalController);
-        this.supplierDTO = new SupplierDTO(supplierNum, supplierName, address, bankAccountNum, selfDelivery, -1);
+        this.supplierDTO = new SupplierDTO(supplierNum, supplierName, address, bankAccountNum, selfDelivery, -1, paymentTerms.toString());
         supplierDalController.insert(supplierDTO);
         this.constDeliveryDays =constDeliveryDays;
+    }
+
+    public ConstantSupplier(SupplierDTO supplierDTO, HashMap<String, String> contacts, HashMap<Integer, SupplierProductBusiness> products, List<DayOfWeek> days, SupplierDalController supplierDalController, List<Discount> discountPerTotalQuantity, List<Discount> discountPerTotalPrice) throws SQLException {
+        super(supplierDTO.getSupplierName(), supplierDTO.getAddress(), supplierDTO.getSupplierNum(), supplierDTO.getBankAccountNum(), contacts, supplierDTO.isSelfDelivery(), SupplierController.stringToPaymentTerms(supplierDTO.getPaymentTerms()), supplierDalController);
+        setProducts(products);
+        this.constDeliveryDays = days;
+        this.supplierDTO = supplierDTO;
+        this.discountPerTotalPrice = discountPerTotalPrice;
+        this.discountPerTotalQuantity = discountPerTotalQuantity;
     }
 
     @Override

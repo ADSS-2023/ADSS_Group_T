@@ -28,7 +28,7 @@ public abstract class  SupplierBusiness {
 
     private HashMap<Integer, SupplierProductBusiness> products;
 
-    private List<Discount> discountPerTotalQuantity;
+    protected List<Discount> discountPerTotalQuantity;
 
     protected List<Discount> discountPerTotalPrice;
 
@@ -36,7 +36,7 @@ public abstract class  SupplierBusiness {
 
     protected List<SupplierContactDTO> contactDTOS;
 
-    private SupplierDalController supplierDalController;
+    protected SupplierDalController supplierDalController;
 
     public SupplierBusiness(String supplierName, String address, int supplierNum,int bankAccountNum, HashMap<String, String> contacts, boolean selfDelivery,PaymentTerms paymentTerms, SupplierDalController supplierDalController) throws SQLException {
         this.supplierName = supplierName;
@@ -324,4 +324,7 @@ public abstract class  SupplierBusiness {
                 '}';
     }
 
+    public void setProducts(HashMap<Integer, SupplierProductBusiness> products) {
+        this.products = products;
+    }
 }

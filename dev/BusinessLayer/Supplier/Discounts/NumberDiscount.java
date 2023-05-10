@@ -12,6 +12,14 @@ public class NumberDiscount extends Discount{
         this.discountDTO = dto;
     }
 
+    public NumberDiscount(DiscountDTO discountDTO, SupplierDalController supplierDalController) throws SQLException {
+        this.amount = discountDTO.getAmount();
+        this.discount = discountDTO.getDiscount();
+        this.isPercentage = discountDTO.isPercentage();
+        this.supplierDalController = supplierDalController;
+        this.discountDTO = discountDTO;
+    }
+
     @Override
     public String toString() {
         return "Amount to be discounted: " + amount +

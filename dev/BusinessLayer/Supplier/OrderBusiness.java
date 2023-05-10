@@ -31,7 +31,7 @@ public class OrderBusiness {
     public OrderBusiness(int orderNum, String supplierName, LocalDate  orderDate,
                          String supplierAddress, String destinationAddress
             , int supplierNum, String contactName, String contactNumber,
-                         List<OrderProduct> products, int daysToSupplied) {
+                         List<OrderProduct> products, int daysToSupplied, boolean orderSupplied, int daysTodeliver, int constantDay){
         this.orderNum = orderNum;
         this.supplierName = supplierName;
         this.orderDate = orderDate;
