@@ -247,6 +247,35 @@ public class DAO {
             statement.executeUpdate();
         }
     }
+    // Method to delete all data from a table
+    public void deleteAllDataFromTable(String tableName) throws SQLException {
+        PreparedStatement stmt = connection.prepareStatement("DELETE FROM " + tableName);
+        stmt.executeUpdate();
+        stmt.close();
+    }
+
+
+    // Method to delete all data from all tables in the database
+    public void deleteAllDataFromDatabase() throws SQLException {
+        // Get a list of all tables in the database
+        DatabaseMetaData metaData = connection.getMetaData();
+        ResultSet tables = metaData.getTables(null, null, "%", null);
+
+        // Loop through each table and delete all data
+        while (tables.next()) {
+            String tableName = tables.getString("TABLE_NAME");
+            try {
+                deleteAllDataFromTable(tableName);
+            }
+            catch (Exception e){
+
+            }
+
+        }
+    }
+
+
+
 
 
 
