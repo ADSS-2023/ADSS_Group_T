@@ -131,7 +131,9 @@ public class ManageOrderService {
     }
     public void set_up()  {
         try {
-            orderController.set_up_waiting_items();
+            orderController.loadWaitingItems();
+            orderController.loadOrderedItems();
+            //orderController.set_up_waiting_items();
         }
         catch (Exception e){
             e.getMessage();

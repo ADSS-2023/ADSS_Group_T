@@ -11,9 +11,18 @@ public class ItemOrderdDTO extends DTO {
      *
      * @param tableName
      */
-    public ItemOrderdDTO(String tableName,int id,int quantity) {
-        super(tableName);
+    public ItemOrderdDTO(int id,int quantity) {
+        super("inventory_item_ordered");
         this.id=id;
         this.quantity=quantity;
+    }
+    public ItemOrderdDTO(){super("inventory_item_ordered");}
+
+    public int getId() {
+        return id;
+    }
+
+    public int getQuantity() {
+        return quantity;
     }
 }
