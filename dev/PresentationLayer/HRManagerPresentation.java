@@ -124,10 +124,12 @@ public class HRManagerPresentation {
         String password = scanner.nextLine();
         System.out.println("Please enter the driver salary:");
         int salary = scanner.nextInt();
-        System.out.println("Please enter the driver cooling level: C1 , C , E " );
-        String coolinglevel = scanner.nextLine();
-        System.out.println("Please enter the driver license type by number: (1)=non (2)=fridge (3)=freezer");
-        int licenseType = scanner.nextInt();
-        employeeService.addNewDriver(id,Name,bank,description,salary,joiningDay,password,coolinglevel,licenseType);
+        scanner.nextLine();
+        System.out.println("Please enter the driver cooling level by number: (1)=non (2)=fridge (3)=freezer");
+        int coolinglevel = scanner.nextInt();
+        scanner.nextLine();
+        System.out.println("Please enter the driver license type : C1 , C , E " );
+        String licenseType = scanner.nextLine();
+        employeeService.addNewDriver(id,Name,bank,description,salary,joiningDay,password,licenseType,coolinglevel);
     }
 }

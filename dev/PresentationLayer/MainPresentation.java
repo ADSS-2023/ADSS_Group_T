@@ -45,6 +45,7 @@ public class MainPresentation {
         this.branchService = serviceFactory.getBranchService();
         this.supplierService = serviceFactory.getSupplierService();
         transportManagerPresentation = new TransportManagerPresentation(logisticCenterService,deliveryService,supplierService,branchService);
+        hrManagerPresentation = new HRManagerPresentation(shiftService,employeeService);
         serviceFactory.callbackEnterWeight(this.transportManagerPresentation::enterWeightFunction);
         serviceFactory.callbackEnterOverWeight(this.transportManagerPresentation::enterOverWeightAction);
     }
@@ -76,7 +77,8 @@ public class MainPresentation {
      */
     public void loginWindow() {
         //TODO remove shortCut:
-        this.transportManagerPresentation.start();
+        //this.transportManagerPresentation.start();
+        this.hrManagerPresentation.start();
 
         Scanner scanner = new Scanner(System.in);
         System.out.println(" ");
@@ -100,7 +102,7 @@ public class MainPresentation {
 
             switch (result) {
                 case "employee": employeePresentation.start();
-                case "delivery manager": transportManagerPresentation.start();
+                case "TransportManager": transportManagerPresentation.start();
                 case "HRManager" : hrManagerPresentation.start();
                 case "driver" :
                 default:

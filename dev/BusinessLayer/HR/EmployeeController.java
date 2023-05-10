@@ -14,13 +14,14 @@ public class EmployeeController {
     private HashMap<Integer,Employee> employeesMapper;
     public ShiftController shiftController;
     public DalEmployeeService dalEmployeeService;
-
     public DalUserService dalUserService;
 
 
 
-    public EmployeeController(){
+    public EmployeeController(DalEmployeeService dalEmployeeService , DalUserService dalUserService){
         employeesMapper = new HashMap<Integer,Employee>();
+        this.dalEmployeeService = dalEmployeeService;
+        this.dalUserService = dalUserService;
     }
     public void addNewEmployee(int id, String employeeName, String bankAccount, String description, int salary, LocalDate joiningDay, String password, UserType userType) throws Exception {
         // Check if the ID already exists

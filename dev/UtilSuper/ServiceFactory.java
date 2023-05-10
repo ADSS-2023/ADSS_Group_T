@@ -10,9 +10,7 @@ import BusinessLayer.HR.User.UserController;
 import DataLayer.HR_T_DAL.DAOs.TruckDAO;
 import DataLayer.HR_T_DAL.DB_init.Data_init;
 import DataLayer.HR_T_DAL.DB_init.Data_init_HR;
-import DataLayer.HR_T_DAL.DalService.DalDeliveryService;
-import DataLayer.HR_T_DAL.DalService.DalLogisticCenterService;
-import DataLayer.HR_T_DAL.DalService.DalUserService;
+import DataLayer.HR_T_DAL.DalService.*;
 import DataLayer.Util.DAO;
 import ServiceLayer.HR.EmployeeService;
 import ServiceLayer.HR.ShiftService;
@@ -45,6 +43,10 @@ public class ServiceFactory {
     private Connection connection;
     private DalLogisticCenterService dalLogisticCenterService;
     private DalDeliveryService dalDeliveryService;
+    private DalUserService dalUserService;
+    private DalEmployeeService dalEmployeeService;
+
+    private DalDriverService dalDriverService;
     private DAO dao;
 
 
@@ -65,12 +67,16 @@ public class ServiceFactory {
 
         dalLogisticCenterService = new DalLogisticCenterService(connection);
         dalDeliveryService = new DalDeliveryService(connection,dalLogisticCenterService);
+        dalUserService = new DalUserService(connection);
+        dalDriverService = new DalDriverService(connection,dalUserService);
+        dalEmployeeService = new DalEmployeeService(connection,dalUserService);
+
 
 
         shiftController = new ShiftController();
         shiftService = new ShiftService(shiftController);
-        employeeController = new EmployeeController();
-        driverController = new DriverController();
+        employeeController = new EmployeeController(dalEmployeeService,dalUserService);
+        driverController = new DriverController(dalDriverService);
         employeeService = new EmployeeService(employeeController,driverController);
 
 

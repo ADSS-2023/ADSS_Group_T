@@ -22,17 +22,10 @@ public class DriverController {
     private DalDriverService dalDriverService;
 
 
-// TODO- modify it if needed
-    public DriverController() {
+    public DriverController(DalDriverService dalDriverService) {
         drivers = new LinkedHashMap<Integer, Driver>();
-    }
-
-
-    // TODO - do not forge to init
-    public void initDriverController(DalDriverService dalDriverService) {
         this.dalDriverService = dalDriverService;
     }
-
 
 public Driver lazyLoadDriver (int id) throws SQLException {
     Driver driver = drivers.get(id);
