@@ -4,6 +4,7 @@ package BusinessLayer.HR;
 import BusinessLayer.HR.User.User;
 import BusinessLayer.HR.User.PositionType;
 import BusinessLayer.HR.User.UserType;
+import DataLayer.HR_T_DAL.DTOs.UserDTO;
 import DataLayer.HR_T_DAL.DalService.DalEmployeeService;
 
 import java.sql.SQLException;
@@ -27,6 +28,14 @@ public class Employee extends User {
         this.qualifiedPositions = new ArrayList<>();
         this.submittedShifts = new LinkedHashMap<>();
       /*  this.shiftsRestriction = new LinkedHashMap<>();*/
+        description = null;
+    }
+
+    public Employee(UserDTO userDTO) {
+        super(userDTO);
+        this.qualifiedPositions = new ArrayList<>();
+        this.submittedShifts = new LinkedHashMap<>();
+        /*  this.shiftsRestriction = new LinkedHashMap<>();*/
         description = null;
     }
 

@@ -4,7 +4,9 @@ import BusinessLayer.HR.Constraint;
 import BusinessLayer.HR.Employee;
 import DataLayer.HR_T_DAL.DAOs.ConstraintDao;
 import DataLayer.HR_T_DAL.DAOs.EmployeeDAO;
+import DataLayer.HR_T_DAL.DAOs.UserDAO;
 import DataLayer.HR_T_DAL.DTOs.ConstraintDTO;
+import DataLayer.HR_T_DAL.DTOs.QualifiedPositionDTO;
 import DataLayer.HR_T_DAL.DTOs.SubmittedShiftDTO;
 import DataLayer.Util.DAO;
 
@@ -51,13 +53,13 @@ public class DalEmployeeService {
     }
 
     // TODO - israel
-    public Constraint setAssignedPosition(int employeeId,  LocalDate date, String positionType) throws SQLException {
-        return null;
+    public void setAssignedPosition(int employeeId,  LocalDate date, String positionType) throws SQLException {
+
     }
 
-    // TODO - israel
-    public Constraint addQualification(int employeeId,   String positionType) throws SQLException {
-        return null;
+    public void addQualification(int employeeId,   String positionType) throws SQLException {
+        QualifiedPositionDTO qualifiedPositionDTO = new QualifiedPositionDTO(employeeId,positionType);
+        dao.insert(qualifiedPositionDTO);
     }
 
     // TODO - israel
@@ -71,14 +73,9 @@ public class DalEmployeeService {
     }
 
     public Employee findEmployeeById(int employeeId) throws SQLException {
+        Employee employee = new Employee(UserDAO)
+         ;
         return null;
     }
-    // TODO - israel
-    public Employee deleteEmployee(int employeeId) throws SQLException {
-        return null;
-    }
-
-
-
 
 }

@@ -60,14 +60,8 @@ public class EmployeeController {
         employee.addQualification(position);
     }
 
-
     public HashMap<Integer, Employee> getEmployeesMapper(){
         return employeesMapper;
     }
 
-
-    public void deleteEmployee(int emploeeyId) throws SQLException {
-        dalUserService.deleteUser(emploeeyId);
-        employeesMapper.remove(emploeeyId);
-    }
 }
