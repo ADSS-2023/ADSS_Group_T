@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class DalDriverService {
@@ -32,28 +33,53 @@ public class DalDriverService {
     }
 
     // TODO - israel
-    public HashMap<Driver, Boolean> findSubmissionByIdAndDate(int driverId, LocalDate date) throws SQLException { // the boolean is if assigned or not
+    public LinkedHashMap<Driver, Boolean> findSubmissionByIdAndDate(int driverId, LocalDate date) throws SQLException {
         return null;
     }
 
     // TODO - israel
-    public HashMap<Driver, Boolean>  findAllSubmissionByDate(LocalDate date) throws SQLException { // the boolean is if assigned or not
+    public LinkedHashMap<Driver, Boolean>  findAllSubmissionByDate(LocalDate date) throws SQLException {
         return null;
     }
 
     // TODO - israel
-    public ArrayList<Pair<Driver.LicenseType, Driver.CoolingLevel>>  findAllRequirementsByDate(LocalDate date) throws SQLException { // the boolean is if assigned or not
+    public LinkedHashMap<Pair<Driver.LicenseType, Driver.CoolingLevel> , Integer>  findAllRequirementsByDate(LocalDate date) throws SQLException {
         return null;
     }
 
     // TODO - israel
-    public ArrayList<Pair<Driver.LicenseType, Driver.CoolingLevel>> findRequirementsByDate(LocalDate date) throws SQLException { // the boolean is if assigned or not
+    public ArrayList<Pair<Driver.LicenseType, Driver.CoolingLevel>> findRequirementsByDate(LocalDate date) throws SQLException {
         return null;
     }
 
-    public HashMap<Driver, Boolean> assignDriver(int driverId, LocalDate date) throws SQLException { // the boolean is if assigned or not
+    // TODO - israel
+    public LinkedHashMap<LocalDate, LinkedHashMap<Driver, Boolean>> findAllDriverSubmissionsBetweenDates(LocalDate startDate, LocalDate finishDate, int driverId) throws SQLException { // the boolean is if assigned or not
         return null;
     }
+
+    // TODO - israel
+    public boolean deleterequieremnt(LocalDate date, String licenseType,  String coolingLevel ) throws SQLException { // delete the num's requierment - the index that it show in the order of findRequirementsByDate
+        return false;
+    }
+
+    // TODO - israel
+    public boolean updateAmountOfRequierement(LocalDate date, String licenseType,  String coolingLevel, int updateNumber ) throws SQLException { // delete the num's requierment - the index that it show in the order of findRequirementsByDate
+        return false;
+    }
+    // TODO - israel
+    public LinkedHashMap<Driver, Boolean> assignDriver(int driverId, LocalDate date) throws SQLException { // the boolean is if assigned or not
+        return null;
+    }
+
+    // TODO - israel
+    public void addSubmissionForDriver(int driverId, LocalDate date) throws SQLException { // the boolean is if assigned or not
+
+    }
+
+    public void addSRequirement( LocalDate date, String licenseType, String coolingLevel, int amount ) throws SQLException { // the boolean is if assigned or not
+
+    }
+
 
     public void addDriver (Driver driver) throws SQLException {
         DriverDTO driverDTO = new DriverDTO(driver.getId(), driver.getLicenseLevel().toString(),driver.getCoolingLevel().toString());
