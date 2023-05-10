@@ -12,7 +12,7 @@ public class CategoryDAO extends DAO {
 
     public <T extends DTO> ArrayList<T> findAll(String tableName, Class<T> dtoClass, Connection connection) throws SQLException {
         ArrayList<T> results = new ArrayList<>();
-        String sql = "SELECT * FROM ORDER BY index_item ASC" + tableName;
+        String sql = "SELECT * FROM "+tableName+" ORDER BY index_item ASC";
 
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
