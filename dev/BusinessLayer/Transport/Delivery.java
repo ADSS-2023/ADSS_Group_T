@@ -99,7 +99,7 @@ public class Delivery {
     public void addUnHandledBranch(Branch branch, int fileID) throws SQLException {
         File f = new File(fileID);
         unHandledBranches.put(branch, f);
-        dalDeliveryService.updateCounter("fileCounter",fileID);
+        dalDeliveryService.updateCounter("fileCounter",fileID+1);
     }
 
     /**
@@ -120,16 +120,13 @@ public class Delivery {
         return fileCounter;
     }
 
-    public int addProductToUnHandledBranch(Branch branch, Product p, int amount, int fileCounter) throws SQLException {
-        if (!unHandledBranches.containsKey(branch)) {
-            unHandledBranches.put(branch, new File(fileCounter++));
-            dalDeliveryService.updateCounter("fileCounter",fileCounter);
-            dalDeliveryService.insertUnHandledSite(id,branch.getAddress(),p.getName(),fileCounter - 1,amount);
-        }
+    public void addProductToUnHandledBranch(Branch branch, Product p, int amount) throws SQLException {
+        File file = unHandledBranches.get(branch);
+        if (file.getProducts().isEmpty())
+            dalDeliveryService.insertUnHandledSite(id,branch.getAddress(),p.getName(),file.getId(),amount);
         else
-            dalDeliveryService.updateUnHandledSite(id,branch.getAddress(),p.getName(), unHandledBranches.get(branch).getId() ,amount);
-        unHandledBranches.get(branch).addProduct(p, amount);
-        return fileCounter;
+            dalDeliveryService.updateUnHandledSite(id,branch.getAddress(),p.getName(), file.getId() ,amount);
+        file.addProduct(p, amount);
     }
 
     public int addProductToHandledBranch(Branch branch, Product p, int amount, int fileCounter) throws SQLException {

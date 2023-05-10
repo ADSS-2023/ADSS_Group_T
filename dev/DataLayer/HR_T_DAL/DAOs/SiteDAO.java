@@ -16,7 +16,7 @@ public class SiteDAO extends DAO {
 
     public ArrayList<SiteDTO> findAllSite(String siteType) throws SQLException {
         ArrayList<SiteDTO> results = new ArrayList<>();
-        String sql = "SELECT * FROM Site where type = " + siteType;
+        String sql = "SELECT * FROM Site where type = " + "'" + siteType + "'";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
             ResultSetMetaData metaData = resultSet.getMetaData();

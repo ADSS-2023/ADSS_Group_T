@@ -28,7 +28,7 @@ public class DeliveryDAO extends DAO {
 
     public List<DateToDeliveryDTO> findAllDeliveriesByDate(String date) throws SQLException {
         ArrayList<DateToDeliveryDTO> results = new ArrayList<>();
-        String sql = "SELECT * FROM DateToDelivery where shiftDate = " + date;
+        String sql = "SELECT * FROM DateToDelivery where shiftDate = " + "'" + date + "'";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
             ResultSetMetaData metaData = resultSet.getMetaData();
@@ -53,7 +53,7 @@ public class DeliveryDAO extends DAO {
 
     public ArrayList<DateToTruckDTO> findAllTrucksByDate(String date) throws SQLException {
         ArrayList<DateToTruckDTO> results = new ArrayList<>();
-        String sql = "SELECT * FROM DateToTruck where shiftDate = " + date;
+        String sql = "SELECT * FROM DateToTruck where shiftDate = " + "'" + date + "'";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
             ResultSetMetaData metaData = resultSet.getMetaData();
@@ -82,7 +82,7 @@ public class DeliveryDAO extends DAO {
         String sql = "SELECT d.deliveryId, d.siteAddress, d.productName, d.fileId, d.amount\n" +
                 "FROM " + tableName + " d\n" +
                 "INNER JOIN Site s ON d.siteAddress = s.siteAddress\n" +
-                "WHERE d.deliveryId = " + deliveryId + " AND s.type = '" + type + "';\n";
+                "WHERE d.deliveryId = " + deliveryId + " AND s.type = '" + "'" + type + "'" + "';\n";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
             ResultSetMetaData metaData = resultSet.getMetaData();

@@ -113,7 +113,7 @@ public class DeliveryController {
                                     shiftController.addStoreKeeperRequirement(requiredDate, branch.getAddress());
                                 }
                                 this.filesCounter = d.addProductToUnHandledSupplier(supplier, product, products.get(product), filesCounter);
-                                this.filesCounter = d.addProductToUnHandledBranch(branch, product, products.get(product), filesCounter);
+                                d.addProductToUnHandledBranch(branch, product, products.get(product));
                                 products.remove(product);
                             }
                         }
@@ -143,7 +143,7 @@ public class DeliveryController {
                     for (Product product : new LinkedHashSet<>(products.keySet())) {
                         if (product.getCoolingLevel() == coolingLevel) {
                             this.filesCounter = delivery.addProductToUnHandledSupplier(supplier, product, products.get(product), filesCounter);
-                            this.filesCounter = delivery.addProductToUnHandledBranch(branch, product, products.get(product), filesCounter);
+                            delivery.addProductToUnHandledBranch(branch, product, products.get(product));
                             products.remove(product);
                         }
                     }
@@ -171,7 +171,7 @@ public class DeliveryController {
                             }
                             this.filesCounter = d.addProductToLogisticCenterFromFile(logisticCenterController.getLogisticCenter().getAddress()
                                     ,product, products.get(product), filesCounter);
-                            this.filesCounter = d.addProductToUnHandledBranch(branch, product, products.get(product), filesCounter);
+                            d.addProductToUnHandledBranch(branch, product, products.get(product));
                             products.remove(product);
                         }
                     }
@@ -196,7 +196,7 @@ public class DeliveryController {
                     if (product.getCoolingLevel() == coolingLevel) {
                         this.filesCounter = delivery.addProductToLogisticCenterFromFile(logisticCenterController.getLogisticCenter().getAddress(),
                                 product, products.get(product), filesCounter);
-                        this.filesCounter = delivery.addProductToUnHandledBranch(branch, product, products.get(product), filesCounter);
+                        delivery.addProductToUnHandledBranch(branch, product, products.get(product));
                         products.remove(product);
                     }
                 }
