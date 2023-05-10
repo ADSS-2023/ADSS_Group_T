@@ -578,8 +578,7 @@ public class DeliveryController {
     }
 
     public File getLoadedProducts(int deliveryID, String address) throws SQLException {
-        LinkedHashMap<String, Supplier> suppliers = supplierController.getAllSuppliers();
-        return deliveries.get(deliveryID).getUnHandledSuppliers().get(suppliers.get(address));
+        return deliveries.get(deliveryID).getUnHandledSuppliers().get(supplierController.getSupplier(address));
     }
 
     public void setEnterWeightInterface(EnterWeightInterface enterWeightInterface) {
@@ -601,15 +600,15 @@ public class DeliveryController {
     private ArrayList<Delivery> checkStoreKeeperForTomorrow() throws Exception {
         LocalDate tomorrow = this.currDate.plusDays(1);
         ArrayList<String> branchWithoutStoreKeeper = shiftController.getBranchesWithoutStoreKeeper(tomorrow);
-        ArrayList<Delivery> deliveriesTomorrow = new ArrayList<>(date2deliveries.get(tomorrow));
+        ArrayList<Delivery> deliveriesTomorrow = new ArrayList<>(getDeliveriesByDate(tomorrow));
         ArrayList<Delivery> deliveriesWithoutStoreKeeper = new ArrayList<>();
         for (Delivery delivery : deliveriesTomorrow) {
             LinkedHashSet<Branch> branchesOfDeliveries = new LinkedHashSet<>(delivery.getUnHandledBranches().keySet());
             for (Branch branch : branchesOfDeliveries) {
                 if (branchWithoutStoreKeeper.contains(branch.getAddress())) {
                     reScheduleDelivery(delivery.getUnHandledSuppliers(), delivery.getUnHandledBranches());
-                    date2deliveries.get(tomorrow).remove(deliveries.get(delivery.getId()));
-                    date2trucks.get(tomorrow).remove(logisticCenterController.getTruck(delivery.getTruckNumber()));
+                    removeDeliveryFromDate(tomorrow,getDelivery(delivery.getId()));
+                    removeTruckFromDate(tomorrow,logisticCenterController.getTruck(delivery.getTruckNumber()));
                     deliveriesWithoutStoreKeeper.add(delivery);
                     break;
                 }
@@ -675,6 +674,17 @@ public class DeliveryController {
         return dateDeliveries;
     }
 
+    private ArrayList<Truck> getTrucksByDate(LocalDate date) throws Exception {
+        ArrayList<Truck> dateTrucks = new ArrayList<>();
+        List<DateToTruckDTO> dateTrucksDTOs = dalDeliveryService.findAllTrucksByDate(date.toString());
+        for(DateToTruckDTO dto : dateTrucksDTOs){
+            Truck truck = logisticCenterController.getTruck(dto.getTruckId());
+            dateTrucks.add(truck);
+            addTruckToDate(date,truck,false);
+        }
+        return dateTrucks;
+    }
+
     private boolean deliveryInDate(LocalDate date) throws SQLException {
         return (date2deliveries.containsKey(date) && !date2deliveries.get(date).isEmpty()) || dalDeliveryService.findAllDeliveriesByDate(date.toString()) != null;
     }
@@ -687,9 +697,14 @@ public class DeliveryController {
         return date2trucks.containsKey(date) || dto != null;
     }
 
-    private void removeTruckFromDate(LocalDate date,Truck t) throws SQLException {
+    private void removeTruckFromDate(LocalDate date,Truck t) throws Exception {
         dalDeliveryService.deleteDateToTruck(date.toString(),t.getLicenseNumber());
-        date2trucks.get(date).remove(t);
+        getTrucksByDate(date).remove(t);
+    }
+
+    private void removeDeliveryFromDate(LocalDate date,Delivery d) throws SQLException {
+        dalDeliveryService.deleteDateToDelivery(date.toString(),d.getId());
+        getDeliveriesByDate(date).remove(d);
     }
 }
 
