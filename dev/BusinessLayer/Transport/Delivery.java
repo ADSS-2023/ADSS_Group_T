@@ -53,10 +53,8 @@ public class Delivery {
         this(dto.getId(), Time.stringToLocalDate(dto.getDeliveryDate()),Time.stringToLocalTime(dto.getDepartureTime()), dto.getTruckWeight(),new LinkedHashMap<>(),
                 new LinkedHashMap<>(), dalDeliveryService.findSite(dto.getSource()), dto.getTruckNumber(), dto.getShippingArea(), dalDeliveryService);
     }
-  
 
-
-    public int supplierHandled(Supplier supplier, int fileCounter, HashMap<Product, Integer> copyOfSupplierFileProducts) throws SQLException {
+    public int supplierHandled(int fileCounter, HashMap<Product, Integer> copyOfSupplierFileProducts) throws SQLException {
         ArrayList<Branch> branchesTmp = new ArrayList<>(getUnHandledBranches().keySet());
         for (Branch b : branchesTmp) {
             if (!copyOfSupplierFileProducts.isEmpty())
@@ -86,12 +84,12 @@ public class Delivery {
         return fileCounter;
     }
 
-    /**
-     * remove the first supplier from the suppliers map
-     */
-    public void removeSupplier(String address) throws SQLException {
-        getUnHandledSuppliers().remove(unHandledSuppliers.get(address));
-    }
+//    /**
+//     * remove the first supplier from the suppliers map
+//     */
+//    public void removeSupplier(String address) throws SQLException {
+//        getUnHandledSuppliers().remove(unHandledSuppliers.get(address));
+//    }
 
     /**
      * add branch to the branches map
@@ -110,7 +108,7 @@ public class Delivery {
      * @param p        - the product to add
      * @param amount
      */
-    public int addProductToSupplier(Supplier supplier, Product p, int amount, int fileCounter) throws SQLException {
+    public int addProductToUnHandledSupplier(Supplier supplier, Product p, int amount, int fileCounter) throws SQLException {
         if (!unHandledSuppliers.containsKey(supplier)) {
             unHandledSuppliers.put(supplier, new File(fileCounter++));
             dalDeliveryService.updateCounter("fileCounter",fileCounter);
@@ -119,6 +117,18 @@ public class Delivery {
         else
             dalDeliveryService.updateUnHandledSite(id,supplier.getAddress(),p.getName(), unHandledSuppliers.get(supplier).getId() ,amount);
         unHandledSuppliers.get(supplier).addProduct(p, amount);
+        return fileCounter;
+    }
+
+    public int addProductToUnHandledBranch(Branch branch, Product p, int amount, int fileCounter) throws SQLException {
+        if (!unHandledBranches.containsKey(branch)) {
+            unHandledBranches.put(branch, new File(fileCounter++));
+            dalDeliveryService.updateCounter("fileCounter",fileCounter);
+            dalDeliveryService.insertUnHandledSite(id,branch.getAddress(),p.getName(),fileCounter - 1,amount);
+        }
+        else
+            dalDeliveryService.updateUnHandledSite(id,branch.getAddress(),p.getName(), unHandledBranches.get(branch).getId() ,amount);
+        unHandledBranches.get(branch).addProduct(p, amount);
         return fileCounter;
     }
 
@@ -154,6 +164,18 @@ public class Delivery {
         }
         dalDeliveryService.insertUnHandledSite(id,logisticCenterAddress,p.getName(),fromLogisticsCenterFile.getId(),amount);
         fromLogisticsCenterFile.addProduct(p, amount);
+        return fileCounter;
+    }
+
+    public int addProductToLogisticCenterToFile(String logisticCenterAddress,Product p, int amount, int fileCounter) throws SQLException {
+        if (toLogisticsCenterFile == null){
+            toLogisticsCenterFile = new File(fileCounter++);
+            dalDeliveryService.updateCounter("fileCounter",fileCounter);
+            dalDeliveryService.insertUnHandledSite(id,logisticCenterAddress,p.getName(),toLogisticsCenterFile.getId(),amount);
+        }
+        dalDeliveryService.updateUnHandledSite(getId(),logisticCenterAddress,p.getName(),toLogisticsCenterFile.getId(),
+                toLogisticsCenterFile.getProducts().get(p) + amount);
+        toLogisticsCenterFile.addProduct(p, amount);
         return fileCounter;
     }
 

@@ -103,7 +103,7 @@ public class DeliveryController {
 
         if (deliveryInDate(requiredDate)) { // there is delivery in this date
             for (Delivery d : getDeliveriesByDate(requiredDate)) { // the delivery is to the required date
-                if (branch.getShippingArea() == d.getShippingArea()) { // the delivery is to the required branch
+                if (branch.getShippingArea() == d.getShippingArea()) { // the delivery is to the same shipping area as the required branch
                     for (Supplier supplier : new ArrayList<>(suppliers.keySet())) {
                         Map<Product, Integer> products = suppliers.get(supplier);
                         for (Product product : new LinkedHashSet<>(products.keySet())) {
@@ -112,7 +112,8 @@ public class DeliveryController {
                                     d.addUnHandledBranch(branch, filesCounter++);
                                     shiftController.addStoreKeeperRequirement(requiredDate, branch.getAddress());
                                 }
-                                this.filesCounter = d.addProductToSupplier(supplier, product, products.get(product), filesCounter);
+                                this.filesCounter = d.addProductToUnHandledSupplier(supplier, product, products.get(product), filesCounter);
+                                this.filesCounter = d.addProductToUnHandledBranch(branch, product, products.get(product), filesCounter);
                                 products.remove(product);
                             }
                         }
@@ -141,7 +142,8 @@ public class DeliveryController {
                     Map<Product, Integer> products = suppliers.get(supplier);
                     for (Product product : new LinkedHashSet<>(products.keySet())) {
                         if (product.getCoolingLevel() == coolingLevel) {
-                            this.filesCounter = delivery.addProductToSupplier(supplier, product, products.get(product), filesCounter);
+                            this.filesCounter = delivery.addProductToUnHandledSupplier(supplier, product, products.get(product), filesCounter);
+                            this.filesCounter = delivery.addProductToUnHandledBranch(branch, product, products.get(product), filesCounter);
                             products.remove(product);
                         }
                     }
@@ -169,6 +171,7 @@ public class DeliveryController {
                             }
                             this.filesCounter = d.addProductToLogisticCenterFromFile(logisticCenterController.getLogisticCenter().getAddress()
                                     ,product, products.get(product), filesCounter);
+                            this.filesCounter = d.addProductToUnHandledBranch(branch, product, products.get(product), filesCounter);
                             products.remove(product);
                         }
                     }
@@ -193,6 +196,7 @@ public class DeliveryController {
                     if (product.getCoolingLevel() == coolingLevel) {
                         this.filesCounter = delivery.addProductToLogisticCenterFromFile(logisticCenterController.getLogisticCenter().getAddress(),
                                 product, products.get(product), filesCounter);
+                        this.filesCounter = delivery.addProductToUnHandledBranch(branch, product, products.get(product), filesCounter);
                         products.remove(product);
                     }
                 }
@@ -220,7 +224,9 @@ public class DeliveryController {
                         Map<Product, Integer> products = suppliers.get(supplier);
                         for (Product product : new LinkedHashSet<>(products.keySet())) {
                             if (product.getCoolingLevel() == logisticCenterController.getTruck(d.getTruckNumber()).getCoolingLevel()) {
-                                this.filesCounter = d.addProductToSupplier(supplier, product, products.get(product), filesCounter);
+                                this.filesCounter = d.addProductToUnHandledSupplier(supplier, product, products.get(product), filesCounter);
+                                this.filesCounter = d.addProductToLogisticCenterToFile(logisticCenterController.getLogisticCenter().getAddress(),
+                                        product, products.get(product), filesCounter);
                                 products.remove(product);
                             }
                         }
@@ -248,7 +254,9 @@ public class DeliveryController {
                     Map<Product, Integer> products = suppliers.get(supplier);
                     for (Product product : new LinkedHashSet<>(products.keySet())) {
                         if (product.getCoolingLevel() == coolingLevel) {
-                            this.filesCounter = delivery.addProductToSupplier(supplier, product, products.get(product), filesCounter);
+                            this.filesCounter = delivery.addProductToUnHandledSupplier(supplier, product, products.get(product), filesCounter);
+                            this.filesCounter = delivery.addProductToLogisticCenterToFile(logisticCenterController.getLogisticCenter().getAddress(),
+                                    product, products.get(product), filesCounter);
                             products.remove(product);
                         }
                     }
@@ -421,20 +429,20 @@ public class DeliveryController {
         }
         getDelivery(deliveryID).addHandledSupplier(suppliers.get(supplierAddress), loadedProducts);
         HashMap<Product, Integer> copyOfSupplierFileProducts = new HashMap<>(loadedProducts.getProducts());
-        filesCounter = getDelivery(deliveryID).supplierHandled(suppliers.get(supplierAddress), filesCounter, copyOfSupplierFileProducts);
+        filesCounter = getDelivery(deliveryID).supplierHandled(filesCounter, copyOfSupplierFileProducts);
         getDelivery(deliveryID).setTruckWeight(maxWeight);
     }
 
-    /**
-     * drop the current supplier from the delivery due to overweight
-     *
-     * @param deliveryID - the id of the delivery that the action required for
-     */
-    public void DropSite(int deliveryID, String address) throws SQLException {
-        Delivery delivery = deliveries.get(deliveryID);
-        delivery.removeSupplier(address);
-        delivery.addNote("over load in " + address);
-    }
+//    /**
+//     * drop the current supplier from the delivery due to overweight
+//     *
+//     * @param deliveryID - the id of the delivery that the action required for
+//     */
+//    public void DropSite(int deliveryID, String address) throws SQLException {
+//        Delivery delivery = deliveries.get(deliveryID);
+//        delivery.removeSupplier(address);
+//        delivery.addNote("over load in " + address);
+//    }
 
     /**
      * handle the required action for the overweight problem for specific delivery
@@ -534,7 +542,7 @@ public class DeliveryController {
                 delivery.getHandledSuppliers().put(supplier, f);
                 delivery.getUnHandledSuppliers().remove(supplier);
                 HashMap<Product, Integer> copyOfSupplierFileProducts = new HashMap<>(f.getProducts());
-                filesCounter = delivery.supplierHandled(supplier, filesCounter, copyOfSupplierFileProducts);
+                filesCounter = delivery.supplierHandled(filesCounter, copyOfSupplierFileProducts);
             }
         }
         reScheduleDelivery(delivery.getUnHandledSuppliers(), delivery.getUnHandledBranches());
