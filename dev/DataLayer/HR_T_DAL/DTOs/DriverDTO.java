@@ -13,4 +13,16 @@ public class DriverDTO extends DTO {
         this.licenseType = licenseType;
         this.coolingLevel = coolingLevel;
     }
+
+    public int getDriverId() {
+        return driverId;
+    }
+
+    public String getLicenseType() {
+        return licenseType;
+    }
+
+    public String getCoolingLevel() {
+        return coolingLevel;
+    }
 }

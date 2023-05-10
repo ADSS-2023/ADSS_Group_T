@@ -1,5 +1,8 @@
 package BusinessLayer.HR;
 
+import DataLayer.HR_T_DAL.DalService.DalShiftService;
+
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,6 +17,8 @@ public class ShiftController {
 
 
     private HashMap<Integer,Employee> employeesMapper;
+
+    private DalShiftService dalShiftService;
 
 
     public ShiftController(){
@@ -41,6 +46,8 @@ public class ShiftController {
 //        }
 //    }
 
+
+
     public void SkipDay(LocalDate localDate) {
        //TODO
     }
@@ -54,11 +61,9 @@ public class ShiftController {
 
 
 
-
-
     public String submitShiftForEmployee(String branch, int id, LocalDate date, boolean shiftType) throws Exception {
         Employee employee =    employeesMapper.get(id);
-        employee.addSubmittedShift(branch, id, date, shiftType);
+        employee.addSubmittedShift(branch,  date, shiftType);
         HashMap<LocalDate, ArrayList<Shift>> branchShifts = shifts.get(branch);
         Shift shift = shiftType ?  branchShifts.get(date).get(0) : branchShifts.get(date).get(1);
         return shift.submitShiftForEmployee( employeesMapper.get(id),  employee.getQualifiedPositions());
@@ -99,10 +104,11 @@ public class ShiftController {
     }
 
 
-    //todo from Noam Gilad pls
-    public void addDirverRequirement(LocalDate requiredDate, Driver.LicenseType licenseType, Driver.CoolingLevel coolingLevel) {
-        driverController.addDirverRequirement(requiredDate,licenseType,coolingLevel);
+
+    public void addDirverRequirement(LocalDate requiredDate, Driver.LicenseType licenseType, Driver.CoolingLevel coolingLevel) throws SQLException {
+        driverController.addDriverRequirement(requiredDate,licenseType,coolingLevel);
     }
+
     //todo from Noam Gilad pls
     public void addStoreKeeperRequirement(LocalDate requiredDate, String address) {
     }
@@ -110,4 +116,6 @@ public class ShiftController {
     public ArrayList<String> getBranchesWithoutStoreKeeper(LocalDate tomorrow) {
         return null;
     }
+
+
 }

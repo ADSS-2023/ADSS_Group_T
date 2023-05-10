@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -20,49 +21,26 @@ import java.util.List;
             super(connection);
         }
 
-        public Shift getShiftByDateAndBranch(LocalDate date, String branch) {
-            // Retrieve a shift's details from the database by its date and branch
-            return null;
-        }
+        public List<ShiftDTO> getShiftsByDate(LocalDate localDate) throws SQLException {
+            List<ShiftDTO> result = new ArrayList<>();
+            String sql = "SELECT * FROM shifts WHERE shiftDate = ?";
 
-        public List<ShiftDTO> getshifsByDate(LocalDate localDate) {
-            // Retrieve all shifts from the database
-            return null;
-        }
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setString(1, localDate.toString());
+                ResultSet resultSet = statement.executeQuery();
 
-        public List<ShiftDTO> getshifsByDateAndShiftType(LocalDate localDate, boolean shiftType) {
-            // Retrieve all shifts from the database
-            return null;
-        }
-
-        public static EmployeeDTO find(Connection connection, String tableName, int id) throws SQLException {
-            EmployeeDTO dto = null;
-            String sql = "SELECT * FROM " + tableName + " WHERE id=?";
-            PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1, id);
-            ResultSet rs = statement.executeQuery();
-            if (rs.next()) {
-                dto = new EmployeeDTO();
-                Field[] fields = dto.getClass().getDeclaredFields();
-                for (Field field : fields) {
-                    field.setAccessible(true);
-                    Object value;
-                    try {
-                        value = rs.getObject(field.getName());
-                    } catch (SQLException e) {
-                        throw new SQLException("Error getting value of field " + field.getName() + " from ResultSet", e);
-                    }
-                    try {
-                        field.set(dto, value);
-                    } catch (IllegalAccessException e) {
-                        throw new SQLException("Error setting value " + value + " of field " + field.getName() + " to DTO " + dto.getClass().getSimpleName(), e);
-                    }
+                while (resultSet.next()) {
+                    ShiftDTO shift = new ShiftDTO(
+                            resultSet.getString("shiftDate"),
+                            resultSet.getString("shiftType"),
+                            resultSet.getInt("managerId")
+                    );
+                    shift.setTableName("Shift");
+                    result.add(shift);
                 }
             }
-            return dto;
+            return result;
         }
-
-
     }
 
 

@@ -26,22 +26,10 @@ public class EmployeeDAO extends DAO {
         super(connection);
     }
 
-    public EmployeeDTO getEmployeeById(int id) {
-        // Retrieve an employee's details from the database by their ID
-        return null;
-    }
-
-    public List<EmployeeDTO> getAllEmployees() {
-        // Retrieve all employees from the database
-        return null;
-    }
-
     public List<Employee> getEmployeesByPositionType(PositionType positionType) {
         // Retrieve employees from the database by their position type
         return null;
     }
-
-
 
     public List<ConstraintDTO> getSubmittedShiftsByEmployee(EmployeeDTO employee) {
         // Retrieve all submitted shifts for an employee from the database
@@ -79,68 +67,4 @@ public class EmployeeDAO extends DAO {
         // Retrieve employees from the database by their user type
         return null;
     }
-
-    // Find a single record by ID
-    public static EmployeeDTO find(Connection connection, String tableName, int id) throws SQLException {
-        EmployeeDTO dto = null;
-        String sql = "SELECT * FROM " + tableName + " WHERE id=?";
-        PreparedStatement statement = connection.prepareStatement(sql);
-        statement.setInt(1, id);
-        ResultSet rs = statement.executeQuery();
-        if (rs.next()) {
-            dto = new EmployeeDTO();
-            Field[] fields = dto.getClass().getDeclaredFields();
-            for (Field field : fields) {
-                field.setAccessible(true);
-                Object value;
-                try {
-                    value = rs.getObject(field.getName());
-                } catch (SQLException e) {
-                    throw new SQLException("Error getting value of field " + field.getName() + " from ResultSet", e);
-                }
-                try {
-                    field.set(dto, value);
-                } catch (IllegalAccessException e) {
-                    throw new SQLException("Error setting value " + value + " of field " + field.getName() + " to DTO " + dto.getClass().getSimpleName(), e);
-                }
-            }
-        }
-        return dto;
-    }
-
-    // Find all records in a table
-    public static List<EmployeeDTO> find_all(Connection connection, String tableName) throws SQLException {
-        List<EmployeeDTO> list = new ArrayList<>();
-        String sql = "SELECT * FROM " + tableName;
-        PreparedStatement statement = connection.prepareStatement(sql);
-        ResultSet rs = statement.executeQuery();
-        while (rs.next()) {
-            EmployeeDTO dto = new EmployeeDTO();
-            Field[] fields = dto.getClass().getDeclaredFields();
-            for (Field field : fields) {
-                field.setAccessible(true);
-                Object value;
-                try {
-                    value = rs.getObject(field.getName());
-                } catch (SQLException e) {
-                    throw new SQLException("Error getting value of field " + field.getName() + " from ResultSet", e);
-                }
-                try {
-                    field.set(dto, value);
-                } catch (IllegalAccessException e) {
-                    throw new SQLException("Error setting value " + value + " of field " + field.getName() + " to DTO " + dto.getClass().getSimpleName(), e);
-                }
-            }
-            list.add(dto);
-        }
-        return list;
-    }
-
-
-
-
-
-
-
-
 }

@@ -4,7 +4,10 @@ package BusinessLayer.HR;
 import BusinessLayer.HR.User.User;
 import BusinessLayer.HR.User.PositionType;
 import BusinessLayer.HR.User.UserType;
+import DataLayer.HR_T_DAL.DTOs.UserDTO;
+import DataLayer.HR_T_DAL.DalService.DalEmployeeService;
 
+import java.sql.SQLException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
@@ -12,12 +15,12 @@ import java.util.*;
 
 public class Employee extends User {
 
+    private ArrayList<PositionType> qualifiedPositions;
+    private HashMap<LocalDate, Constraint> submittedShifts; // date, list[0]=morningShift list[1]=eveningShift
 
-    private List<PositionType> qualifiedPositions;
-    private Map<LocalDate, List<Constraint>> submittedShifts; // date, list[0]=morningShift list[1]=eveningShift
+    private DalEmployeeService dalEmployeeService;
 
-    private String description;
-    private int salary;
+
 
 
     public Employee(int id, String employeeName, String bankAccount, String description, int salary, LocalDate joiningDay, String password, UserType userType) {
@@ -26,6 +29,18 @@ public class Employee extends User {
         this.submittedShifts = new LinkedHashMap<>();
       /*  this.shiftsRestriction = new LinkedHashMap<>();*/
         description = null;
+    }
+
+    public Employee(UserDTO userDTO) {
+        super(userDTO);
+        this.qualifiedPositions = new ArrayList<>();
+        this.submittedShifts = new LinkedHashMap<>();
+        /*  this.shiftsRestriction = new LinkedHashMap<>();*/
+        description = null;
+    }
+
+    public void init (DalEmployeeService dalEmployeeService){
+        this.dalEmployeeService = dalEmployeeService;
     }
 
     /**
@@ -41,118 +56,106 @@ public class Employee extends User {
      * Add a new submitted shift for the employee.
      *
      * @param branch     The branch ID where the shift is submitted.
-     * @param employeeId The ID of the employee submitting the shift.
      * @param date       The date of the shift.
      * @param shiftType  The type of the shift (true for morning, false for evening).
      * @throws IllegalArgumentException If the shift cannot be submitted due to a restriction or existing shift.
      */
-    public void addSubmittedShift(String branch, int employeeId, LocalDate date, boolean shiftType) {
-        // Check if a shift for the same date and shift type already exists
-        if (submittedShifts.containsKey(date)
-                && submittedShifts.get(date).stream().anyMatch(c -> c.getShiftType() == shiftType)) {
-            throw new IllegalArgumentException("You have been already submit to that shift.");
+    public void addSubmittedShift(String branch,  LocalDate date, boolean shiftType) throws SQLException {
+        // Check if a shift for the same date  already exists
+        if (submittedShifts.containsKey(date)) {
+            throw new IllegalArgumentException("You have been already submit to that day.");
         }
-        // Add the new constraint to the list of submitted shifts
+        // Add the new constraint to the submitted shift
         else {
-            Constraint cons = new Constraint(branch, employeeId, date, shiftType);
-            List<Constraint> constraints = submittedShifts.get(date);
-            if (constraints == null) {
-                constraints = new ArrayList<>();
-                constraints.add(cons);
-                submittedShifts.put(date, constraints);
-            } else {
-                constraints.add(cons);
-            }
+            Constraint cons = new Constraint(branch, id, date, shiftType);
+            dalEmployeeService.addConstraint(id, branch, date, shiftType,null);
+            submittedShifts.put(date, cons);
+            dalEmployeeService.addSubmittesdShift(branch, date, shiftType, id);
         }
     }
 
 
 
-    public void assignShift(String branch, LocalDate date, boolean shiftType, PositionType positionType) throws Exception{
-        List<Constraint> shifts = submittedShifts.get(date);
-
-        if (shifts == null) {
-            throw new IllegalArgumentException("Wrong date");
+    public void assignShift(String branch, LocalDate date, boolean shiftType, PositionType positionType) throws Exception {
+        Constraint constraint = submittedShifts.get(date);
+        if (constraint == null){
+            constraint = dalEmployeeService.findConstraintByIdAndDate(id, date);;
+            submittedShifts.put(date, constraint);
         }
 
-        if (shifts.stream().anyMatch(c -> c.getAssignedPosition() != null)) {
-            throw new IllegalArgumentException("Employee already assigned to a shift on this day.");
+        if (constraint == null) {
+            throw new IllegalArgumentException("Invalid date");
+        }
+        if (constraint.getAssignedPosition() != null) {
+            throw new IllegalArgumentException("Employee is already assigned to a shift on this day.");
         }
 
-
+        // Todo maybe to cheange i between Dates- if not work
         // Requirement 3: An employee cannot work more than six times a week.
         LocalDate startOfWeek = date.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
         LocalDate endOfWeek = startOfWeek.with(TemporalAdjusters.next(DayOfWeek.SATURDAY));
-        long assignedShiftsThisWeek = submittedShifts.entrySet().stream()
-                .filter(e -> !e.getKey().isBefore(startOfWeek) && !e.getKey().isAfter(endOfWeek))
-                .flatMap(e -> e.getValue().stream())
-                .filter(c -> c.getAssignedPosition() != null)
-                .count();
-        if (assignedShiftsThisWeek >= 6) {
+        HashMap<LocalDate, Constraint> driverAssignInWeek = dalEmployeeService.findAssignConstraintByIdBetwwenDates(startOfWeek, endOfWeek, id);
+        if (driverAssignInWeek.keySet().size() >= 6)
             throw new IllegalArgumentException("Employee has already worked six shifts this week.");
-        }
 
-        // set the assigned position of the shift
-        Constraint constraint =  shiftType ?  shifts.get(0) : shifts.get(1);
+//        for (int i = 0; i <= 6; i++){
+//            if (submittedShifts.get(startOfWeek.plusDays(i)) == null){
+//                constraint = dalEmployeeService.findConstraintByIdAndDate(id,   startOfWeek.plusDays(i));
+//                if (constraint != null)
+//                    submittedShifts.put(startOfWeek.plusDays(i), constraint);
+//            }
+//        }
+//
+//        long assignedShiftsThisWeek = submittedShifts.entrySet().stream()
+//                .filter(e -> !e.getKey().isBefore(startOfWeek) && !e.getKey().isAfter(endOfWeek))
+//                .map(Map.Entry::getValue)
+//                .filter(c -> c.getAssignedPosition() != null)
+//                .count();
+//        if (assignedShiftsThisWeek >= 6) {
+//            throw new IllegalArgumentException("Employee has already worked six shifts this week.");
+//        }
+
+        // Set the assigned position of the shift
         constraint.setAssignedPosition(positionType);
+        dalEmployeeService.setAssignedPosition(id,  date, positionType.name());
     }
 
 
-    public String showShiftsStatusByEmployee(LocalDate localDate) {
+
+    public String showShiftsStatusByEmployee(LocalDate localDate) throws SQLException {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 30; i++) {
             LocalDate date = localDate.plusDays(i);
-            List<Constraint> morningShifts = submittedShifts.getOrDefault(date, new ArrayList<>()).stream()
-                    .filter(Constraint::getShiftType)
-                    .toList();
-            List<Constraint> eveningShifts = submittedShifts.getOrDefault(date, new ArrayList<>()).stream()
-                    .filter(c -> !c.getShiftType())
-                    .toList();
+            Constraint constraint = submittedShifts.getOrDefault(date, null);
+            if (constraint == null)
+                constraint =  dalEmployeeService.findConstraintByIdAndDate(id, date.plusDays(i));
+            if (constraint != null)
+                submittedShifts.put(date.plusDays(i), constraint);
             sb.append(String.format("%-12s%-12s%-12s%-12s\n", "Date", "Shift Type", "Is Approved", "Assigned Position"));
             sb.append(String.format("%-12s%-12s%-12s%-12s\n", date, "Morning", "", ""));
-            for (Constraint c : morningShifts) {
-                sb.append(String.format("%-12s%-12s%-12s%-12s\n", "", "", c.getAssignedPosition() == null ? "No" : "Yes", c.getAssignedPosition()));
+            if (constraint != null && constraint.getShiftType()) {
+                sb.append(String.format("%-12s%-12s%-12s%-12s\n", "", "", constraint.getAssignedPosition() == null  ? "Yes" : "No", constraint.getAssignedPosition() == null ? "No" : "Yes"));
+            } else {
+                sb.append(String.format("%-12s%-12s%-12s%-12s\n", "", "", "", ""));
             }
             sb.append(String.format("%-12s%-12s%-12s%-12s\n", "", "Evening", "", ""));
-            for (Constraint c : eveningShifts) {
-                sb.append(String.format("%-12s%-12s%-12s%-12s\n", "", "", c.getAssignedPosition() == null ? "No" : "Yes", c.getAssignedPosition()));
+            if (constraint != null && !constraint.getShiftType()) {
+                sb.append(String.format("%-12s%-12s%-12s%-12s\n", "", "", constraint.getAssignedPosition() == null ? "Yes" : "No", constraint.getAssignedPosition() == null ? "No" : "Yes"));
+            } else {
+                sb.append(String.format("%-12s%-12s%-12s%-12s\n", "", "", "", ""));
             }
             sb.append("\n");
         }
         return sb.toString();
     }
 
-/*    public String addRestriction(String branch, LocalDate date, boolean isMorning) {
-
-            if (shiftsRestriction.containsKey(branch)) {
-                if (shiftsRestriction.get(branch).containsKey(date)) {
-                    if (!shiftsRestriction.get(branch).get(date).contains(isMorning)) {
-                        shiftsRestriction.get(branch).get(date).add(isMorning);
-                    } else {
-                        return "Restriction already exists for the given date and shift type.";
-                    }
-                } else {
-                    List<Boolean> shiftTypes = new ArrayList<>();
-                    shiftTypes.add(isMorning);
-                    shiftsRestriction.get(branch).put(date, shiftTypes);
-                }
-            } else {
-                HashMap<LocalDate, List<Boolean>> dateMap = new HashMap<>();
-                List<Boolean> shiftTypes = new ArrayList<>();
-                shiftTypes.add(isMorning);
-                dateMap.put(date, shiftTypes);
-                shiftsRestriction.put(branch, dateMap);
-            }
-            return "Restriction added successfully.";
-    }*/
 
 
-
-
-    public void addQualification(String position) {
+    public void addQualification(String position) throws SQLException {
         if (! isLeagalPosition(position))
             throw new IllegalArgumentException("The position " + position + " does not exist");
         qualifiedPositions.add(PositionType.valueOf(position));
+        dalEmployeeService.addQualification(id, position);
     }
 
     public boolean isLeagalPosition(String position) {
@@ -163,17 +166,16 @@ public class Employee extends User {
        return  false;
     }
 
-    public List<String> getQualifiedPositions() {
-        List<String> positionNames = new ArrayList<>();
-        for (PositionType position : qualifiedPositions) {
-            positionNames.add(position.name());
-        }
-        return positionNames;
+    public ArrayList<String> getQualifiedPositions() throws SQLException {
+        return dalEmployeeService.findQualificationsById(id);
     }
 
-    public Map<LocalDate, List<Constraint>> getSubmittedShifts() {
-        return submittedShifts;
-    }
+
+    //just for test in the meantime
+//      public Map<LocalDate,Constraint> getSubmittedShifts() throws SQLException {
+//        submittedShifts = dalEmployeeService.findSubmittedShiftsByid(id);
+//        return submittedShifts;
+//   }
 
 
     }

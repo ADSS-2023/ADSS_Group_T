@@ -11,7 +11,7 @@ public class Shift {
     String branch;
     private boolean shiftType;
 
-    private HashMap<String, Integer> employeesRequirement; // HashMap<PositionType, amount> - require employees per shift
+    private HashMap<String, Integer> employeeRequirements; // HashMap<PositionType, amount> - require employees per shift
 
     private HashMap<String, HashMap<Employee, Boolean>> submittedPositionByEmployees; // positionType, Empoyee, isAssigned
 
@@ -19,24 +19,36 @@ public class Shift {
     private int shiftManagerId;
 
 
+
     public Shift(String branch, LocalDate date, boolean shiftType) {
         this.branch = branch;
         this.date = date;
         this.shiftType = shiftType;
-        employeesRequirement = new LinkedHashMap<>();
+        employeeRequirements = new LinkedHashMap<>();
         submittedPositionByEmployees = new LinkedHashMap<>();
         this.shiftManagerId = -1;
     }
 
+    public boolean getShiftType() {
+        return shiftType;
+    }
+
+    public int getShiftManagerId() {
+        return shiftManagerId;
+    }
+
+    public void setShiftManagerId(int shiftManagerId) {
+        this.shiftManagerId = shiftManagerId;
+    }
 
     public void addEmployeeRequirements(HashMap<String, Integer> requirements) {
         for (Map.Entry<String, Integer> entry : requirements.entrySet()) {
             String pos = entry.getKey();
             int amount = entry.getValue();
-            if (employeesRequirement.containsKey(pos)) {
-                employeesRequirement.put(pos, employeesRequirement.get(pos) + amount);
+            if (employeeRequirements.containsKey(pos)) {
+                employeeRequirements.put(pos, employeeRequirements.get(pos) + amount);
             } else {
-                employeesRequirement.put(pos, amount);
+                employeeRequirements.put(pos, amount);
             }
         }
     }
@@ -49,7 +61,7 @@ public class Shift {
         if (shiftManagerId == -1)
             missing += "Noticed- the shift must have a manager!!!" + "\n";
         // Check if all position requirements are fulfilled
-        for (Map.Entry<String, Integer> entry : employeesRequirement.entrySet()) {
+        for (Map.Entry<String, Integer> entry : employeeRequirements.entrySet()) {
             String position = entry.getKey();
             int requiredAmount = entry.getValue();
             int assignedAmount = 0;
@@ -61,7 +73,7 @@ public class Shift {
                     }
                 }
             }
-            if (assignedAmount != requiredAmount && position.equals(PositionType.shiftManager.name())) {
+            if (assignedAmount != requiredAmount && !position.equals(PositionType.shiftManager.name())) {
                 int num = requiredAmount - assignedAmount;
                 missing += num + " employees are missing in the position of " + position + "\n";
             }
@@ -77,7 +89,7 @@ public class Shift {
         String st = "Shift state:\n\n";
         st += String.format("| %-15s | %-8s | %-8s | %-25s | %-25s |\n", "Position", "Assigned", "Required", "Submissions Not Assigned", "Employee IDs Not Assigned");
         st += "|-----------------|----------|----------|-------------------------|-----------------------------|\n";
-        for (Map.Entry<String, Integer> entry : employeesRequirement.entrySet()) {
+        for (Map.Entry<String, Integer> entry : employeeRequirements.entrySet()) {
             String position = entry.getKey();
             int required = entry.getValue();
             int assigned = 0;
@@ -135,8 +147,8 @@ public class Shift {
 
 
     public void makeSureThereIsStorekeeperRequirement() throws Exception {
-        if (!employeesRequirement.containsKey(PositionType.storekeeper.name()) || employeesRequirement.get(PositionType.storekeeper.name()) < 1) {
-            employeesRequirement.put(PositionType.storekeeper.name(), 1);
+        if (!employeeRequirements.containsKey(PositionType.storekeeper.name()) || employeeRequirements.get(PositionType.storekeeper.name()) < 1) {
+            employeeRequirements.put(PositionType.storekeeper.name(), 1);
         }
     }
 
@@ -144,7 +156,7 @@ public class Shift {
     public String assignEmployeeForShift(String pos, Employee employee) throws Exception {
         // Get the map of employees and their assigned status for the given position
         HashMap<Employee, Boolean> employees = submittedPositionByEmployees.get(pos);
-        if (employees != null) {
+        if (! (employees == null)) {
             // Check if the employee has submitted to this position before
             if (!employees.containsKey(employee)) {
                 return employee.getEmployeeName() + " has not submitted to position " + pos + " yet.";
@@ -158,6 +170,9 @@ public class Shift {
                 employee.assignShift(this.branch, this.date, this.shiftType, PositionType.valueOf(pos));
 
                 // Assign the employee to the position by updating their assigned status in the map
+                employees.put(employee, true);
+
+                // remove the requierements- TODO
                 employees.put(employee, true);
                 return employee.getEmployeeName() + " has been assigned to position " + pos + " successfully.";
             }
@@ -174,7 +189,7 @@ public class Shift {
         // Iterate over the position types
         for (String positionType : submittedPositionByEmployees.keySet()) {
             HashMap<Employee, Boolean> employeeMap = submittedPositionByEmployees.get(positionType);
-            int requirement = employeesRequirement.get(positionType);
+            int requirement = employeeRequirements.get(positionType);
             int assignedCount = 0;
 
             // Filter out employees who have already been assigned
@@ -217,10 +232,24 @@ public class Shift {
         this.submittedPositionByEmployees = submittedPositionByEmployees;
     }
 
-    public HashMap<String, Integer> getEmployeesRequirement() {
-        return employeesRequirement;
+    public HashMap<String, Integer> getEmployeeRequirements() {
+        return employeeRequirements;
+    }
+    public String getBranch() {
+        return branch;
     }
 
+    public boolean isShiftType() {
+        return shiftType;
+    }
+
+    public HashMap<String, Integer> getEmployeesRequirement() {
+        return employeeRequirements;
+    }
+
+    public HashMap<String, HashMap<Employee, Boolean>> getSubmittedPositionByEmployees() {
+        return submittedPositionByEmployees;
+    }
     public LocalDate getDate() {
         return date;
     }

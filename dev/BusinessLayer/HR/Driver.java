@@ -3,17 +3,16 @@ package BusinessLayer.HR;
 import BusinessLayer.HR.User.User;
 import BusinessLayer.HR.User.PositionType;
 import BusinessLayer.HR.User.UserType;
+import DataLayer.HR_T_DAL.DTOs.DriverDTO;
 
 import java.time.LocalDate;
 import java.util.List;
 
 public class Driver extends User {
     private final CoolingLevel coolingLevel;
-    private int id;
-    private String name;
     private LicenseType licenseType;
     //    private Map<LocalDate, boolean > submittedShifts; // TODO- impliment:  submit shift, assignShift and assignAll
-    private List<LocalDate> restrictions; // TODo- is neccessary?
+
 
     public Driver(int id, String employeeName, String bankAccount, List<PositionType> qualifiedPositions, String description, int salary, LocalDate joiningDay, String password, UserType userType, LicenseType licenseType, CoolingLevel coolingLevel) {
         super(id, employeeName, bankAccount, description, salary, joiningDay, password, userType);
@@ -22,10 +21,33 @@ public class Driver extends User {
         // restrictions = new ArrayList<>();
     }
 
+    public Driver(DriverDTO driverDTO , User user) {
+        super(driverDTO.getDriverId(),user.getEmployeeName(),user.getBankAccount(),user.getDescription(),user.getSalary(),user.getJoiningDay(),user.getPassword(),user.getUserType());
+        this.licenseType = getByString (driverDTO.getLicenseType());
+        this.coolingLevel =  getcoolingByString (driverDTO.getCoolingLevel());
+    }
 
-//    public boolean isLegalDate(LocalDate date) {
-//        return !restrictions.contains(date);
-//    }
+    public static LicenseType getByString (String licenseType ) {
+        if (licenseType.equals("C1"))
+            return LicenseType.C1;
+        if (licenseType.equals("C"))
+            return LicenseType.C;
+        if (licenseType.equals("E"))
+            return LicenseType.E;
+        else
+            return LicenseType.C1;
+    }
+
+    public static CoolingLevel getcoolingByString (String coolingLevel) {
+        if (coolingLevel.equals("non"))
+            return CoolingLevel.non;
+        if (coolingLevel.equals("fridge"))
+            return CoolingLevel.fridge;
+        if (coolingLevel.equals("freezer"))
+            return CoolingLevel.freezer;
+        else
+            return CoolingLevel.non;
+    }
 
 
     public CoolingLevel getCoolingLevel() {
@@ -57,17 +79,6 @@ public class Driver extends User {
 
     public enum LicenseType {
         C1, C, E;
-
-        public static LicenseType getByNumber(int licenseType) {
-            if (licenseType == 1)
-                return LicenseType.C1;
-            if (licenseType == 2)
-                return LicenseType.C;
-            if (licenseType == 3)
-                return LicenseType.E;
-            else
-                return LicenseType.C1;
-        }
 
         public static LicenseType getByWeight(int weight) {
             if (weight < 12000)

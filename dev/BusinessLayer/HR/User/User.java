@@ -1,18 +1,20 @@
 package BusinessLayer.HR.User;
 
+import BusinessLayer.HR.Driver;
+import DataLayer.HR_T_DAL.DTOs.UserDTO;
+
 import java.time.LocalDate;
 import java.util.Objects;
 
-public abstract class  User {
-    private int id;
-    private String employeeName;
-    private String bankAccount;
-
-    private String description;
-    private int salary;
-    private LocalDate joiningDay;
-    private String password;
-    private UserType userType;
+public  class  User {
+    protected int id;
+    protected String employeeName;
+    protected String bankAccount;
+    protected String description;
+    protected int salary;
+    protected LocalDate joiningDay;
+    protected String password;
+    protected UserType userType;
 
     public User(int id, String employeeName, String bankAccount,  String description, int salary, LocalDate joiningDay, String password, UserType userType) {
         this.id = id;
@@ -25,6 +27,27 @@ public abstract class  User {
         this.userType =  userType;
     }
 
+    public User(UserDTO userDTO) {
+        this.id = userDTO.getId();
+        this.employeeName = userDTO.getUserName();
+        this.bankAccount = userDTO.getBankAccount();
+        this.description = userDTO.getDescription();
+        this.salary = userDTO.getSalary();
+        //this.joiningDay = userDTO.getJoiningDay();/////using time object
+        this.password = userDTO.getPassword();
+        this.userType =  getTypeByString (userDTO.getUserType());
+    }
+
+    public static UserType getTypeByString (String type ) {
+        if (type.equals("HRManager"))
+            return UserType.HRManager;
+        if (type.equals("driver"))
+            return UserType.driver;
+        if (type.equals("TransportManager"))
+            return UserType.TransportManager;
+        else
+            return UserType.employee;
+    }
     @Override
     public int hashCode() {
         return Objects.hash(id);
