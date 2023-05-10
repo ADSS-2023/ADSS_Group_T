@@ -25,7 +25,7 @@ public class SupplierController {
         suppliers = new HashMap<>();
         this.connection = connection;
         this.supplierDalController = supplierDalController;
-        loadSuppliers();
+        //loadSuppliers();
     }
 
     public void loadSuppliers() throws Exception {

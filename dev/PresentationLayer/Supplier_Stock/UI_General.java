@@ -47,7 +47,7 @@ public class UI_General {
         int action = scanner.nextInt();
         scanner.nextLine();
         if(action==1) {
-            stockUI.loadData();
+            //stockUI.loadData();
             supplierManager.setUpData();
         }
         run(stockUI,supplierManager,sf);
