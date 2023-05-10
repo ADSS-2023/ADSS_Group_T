@@ -8,19 +8,51 @@ public class DeliveryDTO extends DTO {
     private String departureTime;
     private int truckWeight;
     private String source;
-    private String driverName;
+    private int driverId;
     private int truckNumber;
-    private String shippingArea;
+    private int shippingArea;
 
-    public DeliveryDTO(int id, String deliveryDate, String departureTime, int truckWeight, String source, String driverName, int truckNumber, String shippingArea) {
+    public DeliveryDTO(int id, String deliveryDate, String departureTime, int truckWeight, String source, int driverId, int truckNumber, int shippingArea) {
         super("Delivery");
         this.id = id;
         this.deliveryDate = deliveryDate;
         this.departureTime = departureTime;
         this.truckWeight = truckWeight;
         this.source = source;
-        this.driverName = driverName;
+        this.driverId = driverId;
         this.truckNumber = truckNumber;
         this.shippingArea = shippingArea;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getDeliveryDate() {
+        return deliveryDate;
+    }
+
+    public String getDepartureTime() {
+        return departureTime;
+    }
+
+    public int getTruckWeight() {
+        return truckWeight;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public int getDriverId() {
+        return driverId;
+    }
+
+    public int getTruckNumber() {
+        return truckNumber;
+    }
+
+    public int getShippingArea() {
+        return shippingArea;
     }
 }

@@ -3,7 +3,6 @@ package DataLayer.Util;
 
 import java.lang.reflect.Field;
 import java.sql.*;
-import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,7 +13,7 @@ import java.util.List;
 
 public class DAO {
 
-    public Connection connection;
+    protected Connection connection;
 
     public DAO(Connection connection) {
         this.connection = connection;
@@ -62,7 +61,7 @@ public class DAO {
      * @param newDto new value
      * @throws SQLException
      */
-    public static void update(Connection connection, DTO oldDto, DTO newDto) throws SQLException {
+    public void update(DTO oldDto, DTO newDto) throws SQLException {
         String tableName = newDto.getTableName();
         String sql = "UPDATE " + tableName + " SET ";
         Field[] fields = newDto.getClass().getDeclaredFields();
@@ -147,6 +146,7 @@ public class DAO {
         T result = null;
         String sql = "SELECT * FROM " + tableName + " WHERE " + pkName + " = ?";
 
+
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setObject(1, pkVal);
             ResultSet resultSet = statement.executeQuery();
@@ -180,7 +180,6 @@ public class DAO {
         for(int i = 0; i< pkNames.size() - 1;i++)
             sql = sql + pkNames.get(i) + " = " + pk.get(pkNames.get(i)) + " and " ;
         sql = sql + pkNames.get(pkNames.size()-1) + " = " + pk.get(pkNames.get(pkNames.size()-1));
-
 
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
@@ -237,5 +236,19 @@ public class DAO {
 
         return results;
     }
+    public void deleteTableDataWithDTO(DTO dto) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement("DELETE FROM " + dto.getTableName())) {
+            statement.executeUpdate();
+        }
+    }
+
+    public void deleteTableDataWithTableName(String tableName) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement("DELETE FROM " + tableName)) {
+            statement.executeUpdate();
+        }
+    }
+
+
+
 }
 

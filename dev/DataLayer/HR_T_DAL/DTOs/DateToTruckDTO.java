@@ -11,4 +11,15 @@ public class DateToTruckDTO extends DTO {
         this.shiftDate = shiftDate;
         this.truckId = truckId;
     }
+
+    public DateToTruckDTO() {
+    }
+
+    public String getShiftDate() {
+        return shiftDate;
+    }
+
+    public int getTruckId() {
+        return truckId;
+    }
 }

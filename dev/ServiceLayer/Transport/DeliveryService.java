@@ -36,15 +36,6 @@ public class DeliveryService {
         }
     }
 
-    public String overWeightAction(int id, int action, String address, int weight) {
-        try {
-            deliveryController.overWeightAction(id, action, address, weight);
-            return "good";
-        } catch (Exception ex) {
-            return ex.toString();
-        }
-    }
-
 
     public String getDeliveryDetail(int deliveryID) {
         try {
@@ -93,4 +84,5 @@ public class DeliveryService {
     public String showAllDeliveries() {
         return transportJsonConvert.deliveryListToString(this.deliveryController.getAllDeliveries());
     }
+
 }
