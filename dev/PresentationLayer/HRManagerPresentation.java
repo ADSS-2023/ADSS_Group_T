@@ -59,6 +59,7 @@ public class HRManagerPresentation {
     }
 
     private void notification() {
+        shiftService.getNotification();
     }
 
     private void assignEmployeeForShift1() {
