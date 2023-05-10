@@ -154,7 +154,7 @@ public class DalDeliveryService {
         return dao.find(pk,"DeliveryUnHandledSites",DeliveryUnHandledSitesDTO.class);
     }
     public LinkedHashMap<String, Supplier> findAllSupplier() throws SQLException {
-        ArrayList<SiteDTO> suppliersDTOs =  siteDAO.findAllSite("Supplier");
+        ArrayList<SiteDTO> suppliersDTOs =  siteDAO.findAllSite("supplier");
         LinkedHashMap<String, Supplier> suppliers = new LinkedHashMap<>();
         for(SiteDTO s : suppliersDTOs){
             suppliers.put(s.getSiteAddress(),new Supplier(s,this));
@@ -188,13 +188,13 @@ public class DalDeliveryService {
     }
 
     public CounterDTO findTime() throws SQLException {
-        return dao.find("dateCounter",CounterDTO.getPKStatic(),CounterDTO.getTableNameStatic(), CounterDTO.class);
+        return dao.find("date counter",CounterDTO.getPKStatic(),CounterDTO.getTableNameStatic(), CounterDTO.class);
     }
 
     public CounterDTO findFilesCounter() throws SQLException {
-        return dao.find("fileCounter",CounterDTO.getPKStatic(),CounterDTO.getTableNameStatic(), CounterDTO.class);
+        return dao.find("file counter",CounterDTO.getPKStatic(),CounterDTO.getTableNameStatic(), CounterDTO.class);
     }
     public CounterDTO findDeliveryCounter() throws SQLException {
-        return dao.find("dekiveryCounter",CounterDTO.getPKStatic(),CounterDTO.getTableNameStatic(), CounterDTO.class);
+        return dao.find("delivery counter",CounterDTO.getPKStatic(),CounterDTO.getTableNameStatic(), CounterDTO.class);
     }
 }

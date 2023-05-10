@@ -41,6 +41,7 @@ public class ServiceFactory {
     private Connection connection;
     private DalLogisticCenterService dalLogisticCenterService;
     private DalDeliveryService dalDeliveryService;
+    private DAO dao;
 
 
 
@@ -51,7 +52,7 @@ public class ServiceFactory {
         String testDBUrl = "jdbc:sqlite:dev/DataLayer/HR_Transport_DB.db";
         connection = DriverManager.getConnection(testDBUrl);
 
-        DAO dao = new DAO(connection);
+        this.dao = new DAO(connection);
         Data_init.initBasicData(dao);
 
 
@@ -81,6 +82,11 @@ public class ServiceFactory {
         deliveryService = new DeliveryService(deliveryController);
 
     }
+
+    public DAO getDAO() {
+        return this.dao;
+    }
+
     public void callbackEnterWeight(EnterWeightInterface enterWeightInterface){
         deliveryService.setEnterWeightInterface(enterWeightInterface);
     }

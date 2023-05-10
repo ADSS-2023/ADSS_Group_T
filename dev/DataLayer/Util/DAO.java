@@ -3,7 +3,6 @@ package DataLayer.Util;
 
 import java.lang.reflect.Field;
 import java.sql.*;
-import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -238,11 +237,19 @@ public class DAO {
 
         return results;
     }
-    public void deleteTableData(DTO dto) throws SQLException {
+    public void deleteTableDataWithDTO(DTO dto) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement("DELETE FROM " + dto.getTableName())) {
             statement.executeUpdate();
         }
     }
+
+    public void deleteTableDataWithTableName(String tableName) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement("DELETE FROM " + tableName)) {
+            statement.executeUpdate();
+        }
+    }
+
+
 
 }
 

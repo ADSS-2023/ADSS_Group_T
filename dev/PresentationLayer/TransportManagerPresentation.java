@@ -157,7 +157,7 @@ public class TransportManagerPresentation {
         Scanner scanner = new Scanner(System.in);
         LinkedHashMap<String, Integer> products = new LinkedHashMap<>();
         System.out.println("Please enter supplier from the list:");
-        supplierService.getAllSuppliers();
+        System.out.println(supplierService.getAllSuppliers());
         String supplier = scanner.nextLine();
 
         int coolingLevel = 0;
