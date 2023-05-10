@@ -5,6 +5,7 @@ import BusinessLayer.Supplier.SupplierController;
 import BusinessLayer.Supplier.SupplierProductBusiness;
 import BusinessLayer.Supplier.Supplier_Util.PaymentTerms;
 import BusinessLayer.Supplier_Stock.Util_Supplier_Stock;
+import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.ConstDeliveryDaysDTO;
 import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.SupplierContactDTO;
 import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.SupplierDTO;
 import DataLayer.Inventory_Supplier_Dal.DalController.SupplierDalController;
@@ -12,18 +13,23 @@ import DataLayer.Inventory_Supplier_Dal.DalController.SupplierDalController;
 import java.sql.SQLException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 public class ConstantSupplier extends SupplierBusiness {
 
     private List<DayOfWeek> constDeliveryDays;
+
+    private List<ConstDeliveryDaysDTO> constDeliveryDaysDTOS;
     public ConstantSupplier(String supplierName, String address, int supplierNum, int bankAccountNum, HashMap<String, String> contacts, List<DayOfWeek> constDeliveryDays, boolean selfDelivery, PaymentTerms paymentTerms, SupplierDalController supplierDalController) throws SQLException, SQLException {
         super(supplierName, address, supplierNum, bankAccountNum, contacts, selfDelivery, paymentTerms, supplierDalController);
+        this.constDeliveryDaysDTOS = new LinkedList<>();
         this.supplierDTO = new SupplierDTO(supplierNum, supplierName, address, bankAccountNum, String.valueOf(selfDelivery), -1, paymentTerms.toString());
         supplierDalController.insert(supplierDTO);
+        for (DayOfWeek day : constDeliveryDays) {
+            ConstDeliveryDaysDTO constDeliveryDaysDTO = new ConstDeliveryDaysDTO(supplierNum, day.getValue());
+            supplierDalController.insert(constDeliveryDaysDTO);
+            constDeliveryDaysDTOS.add(constDeliveryDaysDTO);
+        }
         this.constDeliveryDays =constDeliveryDays;
     }
 
