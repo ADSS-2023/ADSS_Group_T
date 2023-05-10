@@ -9,6 +9,4 @@ public class Main {
        mainPresentation.start();
     }
 
-
-
 }

@@ -203,7 +203,7 @@ public class DeliveryController {
      *
      * @return List of the delivery ids that scheduled for the new day and have overweight problem
      */
-    public ArrayList<Delivery> skipDay() throws SQLException {
+    public ArrayList<Delivery> skipDay() throws SQLException, NoSuchFieldException {
         this.currDate = this.currDate.plusDays(1);
         if (date2deliveries.get(currDate) == null || date2deliveries.get(currDate).isEmpty())
             return null;
@@ -352,7 +352,7 @@ public class DeliveryController {
     }
 
 
-    public void executeDelivery(Delivery delivery) throws SQLException {
+    public void executeDelivery(Delivery delivery) throws SQLException, NoSuchFieldException {
         ArrayList<Supplier> suppliersTmp = new ArrayList<>(delivery.getUnHandledSuppliers().keySet());
         for (Supplier supplier : suppliersTmp) {
             int productsWeight = enterWeightInterface.enterWeightFunction(supplier.getAddress(), delivery.getId());
@@ -374,7 +374,7 @@ public class DeliveryController {
         reScheduleDelivery(delivery.getUnHandledSuppliers(), delivery.getUnHandledBranches());
     }
 
-    private void reScheduleDelivery(LinkedHashMap<Supplier, File> suppliers, LinkedHashMap<Branch, File> branches) throws SQLException {
+    private void reScheduleDelivery(LinkedHashMap<Supplier, File> suppliers, LinkedHashMap<Branch, File> branches) throws SQLException, NoSuchFieldException {
         boolean found = false;
         LocalDate newDeliveredDate = this.currDate.plusDays(2);
         CoolingLevel coolingLevel = CoolingLevel.non;
@@ -412,14 +412,14 @@ public class DeliveryController {
         this.overweightAction = overweightAction;
     }
 
-    public ArrayList<Delivery> getNextDayDeatails() throws SQLException {
+    public ArrayList<Delivery> getNextDayDeatails() throws Exception {
         ArrayList<Delivery> deliveriesThatReScheduleDelivery = new ArrayList<>();
         deliveriesThatReScheduleDelivery.addAll(checkStoreKeeperForTomorrow());
         deliveriesThatReScheduleDelivery.addAll(scheduleDriversForTomorrow());
         return deliveriesThatReScheduleDelivery;
     }
 
-    private ArrayList<Delivery> checkStoreKeeperForTomorrow() throws SQLException {
+    private ArrayList<Delivery> checkStoreKeeperForTomorrow() throws Exception {
         LocalDate tomorrow = this.currDate.plusDays(1);
         ArrayList<String> branchWithoutStoreKeeper = shiftController.getBranchesWithoutStoreKeeper(tomorrow);
         ArrayList<Delivery> deliveriesTomorrow = new ArrayList<>(date2deliveries.get(tomorrow));
