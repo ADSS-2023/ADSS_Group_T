@@ -6,6 +6,7 @@ import ServiceLayer.Stock.CategoryService;
 import ServiceLayer.Stock.DamagedService;
 import ServiceLayer.Stock.InventoryService;
 import ServiceLayer.Stock.ItemService;
+import ServiceLayer.Supplier_Stock.ServiceFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -20,23 +21,21 @@ import static org.junit.Assert.assertThrows;
 class ItemTest {
 
     public static InventoryService inventoryService;
-    public static CategoryService categoryService;
-    public static DamagedService damagedService;
     public static ItemService itemService;
     private Inventory inventory;
+    public static ServiceFactory serviceFactory;
 
     @BeforeEach
     public void setUp() {
         try {
-            inventoryService = new InventoryService();
-            categoryService = new CategoryService(inventoryService.get_inventory());
-            damagedService = new DamagedService(inventoryService.get_inventory());
-            itemService = new ItemService(inventoryService.get_inventory());
+            serviceFactory = new ServiceFactory();
+            inventoryService = serviceFactory.inventoryService;
+            itemService = serviceFactory.itemService;
             inventory = inventoryService.get_inventory();
-            inventory.setUp();
+            //inventory.setUp();
         }
         catch (Exception e){
-
+            e.getMessage();
         }
     }
 
@@ -62,6 +61,11 @@ class ItemTest {
         catch (Exception e){
 
         }
+
+    }
+
+    @Test
+    void makeItemFromData(){
 
     }
 }
