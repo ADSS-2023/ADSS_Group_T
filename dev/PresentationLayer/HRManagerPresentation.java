@@ -43,7 +43,7 @@ public class HRManagerPresentation {
             switch (choice) {
                 case 1 -> {addNewEmployee();}
                 case 2 -> {notification();}
-                case 3 -> {addQualification1();}
+                case 3 -> {addQualification();}
                 case 4 -> {ShowShiftStatus1();}
                 case 5 -> {addNewDriver();}
                 case 6 -> {updateEmployeeDetails1();}
@@ -78,7 +78,16 @@ public class HRManagerPresentation {
     private void ShowShiftStatus1() {
     }
 
-    private void addQualification1() {
+    private void addQualification() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Please enter the employee details:");
+        System.out.println("Please enter the employee ID:");
+        int employeeId = scanner.nextInt();
+        scanner.nextLine();
+        System.out.println("Please enter the employee new Qualification from those options:" +
+                "\n"+"cashier, storekeeper, security, cleaning, orderly, general_worker, shiftManager");
+        String quali = scanner.nextLine();
+        employeeService.addQualification(employeeId,quali);
     }
 
     private void addNewEmployee() {
