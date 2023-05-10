@@ -15,13 +15,12 @@ public class BranchController {
 
     /**
      * add a new branch to the branches map
-     *
-     * @param address     - the branch to add
-     * @param telNumber   - the branch tel number
-     * @param contactName - the branch contact name
-     * @param x           - the x coordinate of the branch
-     * @param y           - the y coordinate of the branch
-     * @return true if the branch added successfully , and false otherwise
+     * @param branchAddress the branch to add
+     * @param telNumber the branch tel number
+     * @param contactName the branch contact name
+     * @param x the x coordinate of the branch
+     * @param y the y coordinate of the branch
+     * @throws SQLException query error
      */
     public void addBranch(String branchAddress, String telNumber, String contactName, int x, int y) throws SQLException {
         if (branches.containsKey(branchAddress) ||
@@ -33,6 +32,12 @@ public class BranchController {
         branches.put(branch.getAddress(), branch);
     }
 
+    /**
+     * get branch by address
+     * @param branchAddress the address of the requested branch
+     * @return the requested branch, or null if it does not exist
+     * @throws SQLException query error
+     */
     public Branch getBranch(String branchAddress) throws SQLException {
         Branch b;
         if (!branches.containsKey(branchAddress)) {
@@ -46,6 +51,11 @@ public class BranchController {
             return branches.get(branchAddress);
     }
 
+    /**
+     * get all the branches in the system
+     * @return map with keys of the branch address, and with value of the suitable branch
+     * @throws SQLException query error
+     */
     public LinkedHashMap<String, Branch> getAllBranches() throws SQLException {
         branches = dalDeliveryService.findAllBranch();
         return branches;
