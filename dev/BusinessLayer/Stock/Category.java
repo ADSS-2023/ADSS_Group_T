@@ -41,7 +41,7 @@ public class Category implements ProductCategoryManagement{
         discount_list = new LinkedList<>();
         categoryDTO = dto;
         this.inv_dal_controller = inv_dal_controller;
-        loadData(itemDalController);
+
     }
     /**
      *  This function called from CategoryService when there is a requirement to produce
@@ -242,14 +242,6 @@ public class Category implements ProductCategoryManagement{
             int current_index = Integer.parseInt(Util.extractFirstNumber("."+categoryDTO.getIndex()));
             next_index = Util.extractNextIndex(next_index);
             categories_list.get(current_index).add_product(categoryDTO,next_index);
-        }
-    }
-    public void loadData(ItemDalController itemDalController) throws Exception {
-        List<ItemDTO> itemDTOList = inv_dal_controller.findAllOfCondition("inventory_item","categoriesIndex","'"+"."+categoryDTO.getIndex()+"'", ItemDTO.class);
-        if(!itemDTOList.isEmpty()){
-            for (ItemDTO itemDTO : itemDTOList){
-                add_item("",new Item(itemDTO,itemDalController));
-            }
         }
     }
 }
