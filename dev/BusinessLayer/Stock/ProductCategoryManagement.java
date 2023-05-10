@@ -21,5 +21,5 @@ public interface ProductCategoryManagement {
     DTO getDto();
     void add_item(String index,Item item) throws Exception;
 
-    void add_product(CategoryDTO categoryDTO, String next_index);
+    void add_product(CategoryDTO categoryDTO, String next_index) throws Exception;
 }

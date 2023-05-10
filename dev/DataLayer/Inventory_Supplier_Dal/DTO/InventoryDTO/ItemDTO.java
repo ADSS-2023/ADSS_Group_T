@@ -20,6 +20,9 @@ public class ItemDTO extends DTO {
         this.originalPrice = originalPrice;
         this.categoriesIndex = category_index;
     }
+    public ItemDTO(){
+        super("inventory_item");
+    }
 
     // Getters and setters
     public int getItemId() {
@@ -49,5 +52,7 @@ public class ItemDTO extends DTO {
         this.minAmount = minAmount;
     }
 
-
+    public String getCategoriesIndex() {
+        return categoriesIndex;
+    }
 }

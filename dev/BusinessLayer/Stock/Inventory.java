@@ -284,13 +284,13 @@ public class Inventory {
     }
     public void add_category(CategoryDTO categoryDTO) throws Exception {
         if (!categoryDTO.getIndex().contains(".")) {
-            Category new_category = new Category(categoryDTO , inv_dal_controller);
+            Category new_category = new Category(categoryDTO , inv_dal_controller,itemDalController);
             categories.add(new_category);
-            inv_dal_controller.insert(new_category.getDto());
+
         }
         else {
-            int current_index = Integer.parseInt(Util.extractFirstNumber(categoryDTO.getIndex()));
-            String next_index = Util.extractNextIndex(categoryDTO.getIndex());
+            int current_index = Integer.parseInt(Util.extractFirstNumber("."+categoryDTO.getIndex()));
+            String next_index = Util.extractNextIndex("."+categoryDTO.getFatherCategoryIndex());
             Category cur_category = categories.get(current_index);
             cur_category.add_product(categoryDTO,next_index);
         }
@@ -372,4 +372,5 @@ public class Inventory {
             add_category(categoryDTO);
         }
     }
+
 }

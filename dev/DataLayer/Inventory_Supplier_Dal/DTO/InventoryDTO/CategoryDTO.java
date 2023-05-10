@@ -11,6 +11,10 @@ public class CategoryDTO extends DataLayer.Util.DTO{
         this.father_category_index = father_category_index;
         this.name = name;
     }
+    public CategoryDTO(){
+        super("inventory_categories");
+
+    }
 
     public String getIndex() {
         return index_item;
