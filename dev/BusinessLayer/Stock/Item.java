@@ -248,7 +248,12 @@ public class Item implements ProductCategoryManagement {
             return alert();
         return "";
     }
-
+    public String recive_order(ItemPerOrder i) throws SQLException {
+        items.put(i.getOrderId(),i);
+        if (current_amount()<=min_amount)
+            return alert();
+        return "";
+    }
     /**
      * This function return the amount of this specific item at the warehouse.
      * @return

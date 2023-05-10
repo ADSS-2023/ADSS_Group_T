@@ -13,6 +13,9 @@ public class DamagedItemDTO extends DTO {
         this.amount = amount;
         this.description = description;
     }
+    public DamagedItemDTO(){
+        super("inventory_damaged_items");
+    }
 
     public int getItem_id() {
         return item_id;

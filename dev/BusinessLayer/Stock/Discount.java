@@ -1,6 +1,7 @@
 package BusinessLayer.Stock;
 
 import BusinessLayer.Stock.Util.Util;
+import BusinessLayer.Supplier_Stock.Util_Supplier_Stock;
 import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.DiscountDTO;
 import DataLayer.Util.DTO;
 
@@ -40,7 +41,7 @@ public class Discount {
      * @return
      */
     public boolean isDue() {
-        LocalDate today = LocalDate.now();
+        LocalDate today = Util_Supplier_Stock.getCurrDay();
         return (today.isEqual(start_date) || today.isAfter(start_date))
                 && (today.isEqual(end_date) || today.isBefore(end_date));
     }
@@ -55,5 +56,9 @@ public class Discount {
 
     public DTO getDto() {
         return discount_dto;
+    }
+
+    public int getIndex() {
+        return index;
     }
 }
