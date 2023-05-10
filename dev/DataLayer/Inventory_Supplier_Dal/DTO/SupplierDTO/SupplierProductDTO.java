@@ -14,6 +14,34 @@ public class SupplierProductDTO extends DTO {
     private int maxAmount;
     private String expiryDate;
 
+    public int getSupplierNum() {
+        return supplierNum;
+    }
+
+    public int getProductNum() {
+        return productNum;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getManufacturer() {
+        return manufacturer;
+    }
+
+    public float getPrice() {
+        return price;
+    }
+
+    public int getMaxAmount() {
+        return maxAmount;
+    }
+
+    public String getExpiryDate() {
+        return expiryDate;
+    }
+
     public SupplierProductDTO(int supplierNum, int productNum, String name, String manufacturer, float price, int maxAmount, String expiryDate) {
         super("supplier_supplier_product");
         this.supplierNum = supplierNum;

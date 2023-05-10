@@ -10,7 +10,9 @@ import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 
+
 public class OrderBusiness {
+
 
     private int orderNum;
     private String supplierName;
@@ -32,6 +34,7 @@ public class OrderBusiness {
             , int supplierNum, String contactName, String contactNumber,
                          List<OrderProduct> products, int daysToSupplied,
                          boolean orderSupplied, int daysTodeliver, int constantDay){
+                         List<OrderProduct> products, int daysToSupplied, boolean orderSupplied, int daysTodeliver, int constantDay){
         this.orderNum = orderNum;
         this.supplierName = supplierName;
         this.orderDate = orderDate;

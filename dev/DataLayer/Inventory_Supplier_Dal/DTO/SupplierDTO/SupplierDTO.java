@@ -8,6 +8,11 @@ public class SupplierDTO extends DTO {
     private String address;
     private int bankAccountNum;
     private boolean selfDelivery;
+    private String paymentTerms;
+
+    public String getPaymentTerms() {
+        return paymentTerms;
+    }
 
     public int getSupplierNum() {
         return supplierNum;
@@ -35,7 +40,7 @@ public class SupplierDTO extends DTO {
 
     private int daysToDeliver;
 
-    public SupplierDTO(int supplierNum, String supplierName, String address, int bankAccountNum, boolean selfDelivery, int daysToDeliver){
+    public SupplierDTO(int supplierNum, String supplierName, String address, int bankAccountNum, boolean selfDelivery, int daysToDeliver, String paymentTerms){
         super("supplier_supplier");
         this.supplierNum = supplierNum;
         this.supplierName = supplierName;
@@ -43,5 +48,6 @@ public class SupplierDTO extends DTO {
         this.bankAccountNum = bankAccountNum;
         this.selfDelivery = selfDelivery;
         this.daysToDeliver = daysToDeliver;
+        this.paymentTerms = paymentTerms;
     }
 }

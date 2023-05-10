@@ -22,6 +22,10 @@ public abstract class Discount {
         this.discountDTO = dto;
         supplierDalController.insert(dto);
     }
+
+    public Discount(){
+    }
+
     public void editDiscount(int amount, float discount){
         this.discount=discount;
         this.amount=amount;

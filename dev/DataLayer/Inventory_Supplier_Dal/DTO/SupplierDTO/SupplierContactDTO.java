@@ -7,6 +7,18 @@ public class SupplierContactDTO  extends DTO {
     private String contactName;
     private String contactNumber;
 
+    public int getSupplierNum() {
+        return supplierNum;
+    }
+
+    public String getContactName() {
+        return contactName;
+    }
+
+    public String getContactNumber() {
+        return contactNumber;
+    }
+
     public SupplierContactDTO(int supplierNum, String contactName, String contactNumber){
         super("supplier_supplier_contact");
         this.supplierNum  = supplierNum;

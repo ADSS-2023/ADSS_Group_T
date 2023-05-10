@@ -8,6 +8,8 @@ import DataLayer.Util.DTO;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.ArrayList;
 
 public class OrderDalController {
     private DAO dao;
@@ -33,11 +35,14 @@ public class OrderDalController {
         dao.delete(connection, dto);
     }
 
+    public <T extends DTO> T find(LinkedHashMap<String,Object> pk, String tableName, Class<T> dtoClass) throws SQLException {
+        return dao.find(pk, tableName,dtoClass, connection);
+    }
     public <T extends DTO> ArrayList<T> findAll  (String tableName, Class<T> DTOName) throws SQLException {
-        return dao.findAll(tableName, DTOName, connection);
+        return dao.findAll(tableName,DTOName,connection);
     }
 
-    public <T extends DTO> ArrayList<T> findAllOfCondition  (String tableName,String conditionKey,Object conditionValue ,Class<T> DTOName) throws SQLException {
-        return dao.findAllOfCondition(tableName, conditionKey,conditionValue ,DTOName,connection);
+    public <T extends DTO> ArrayList<T> findAllOfCondition(String tableName, String conditionKey,Object conditionValue,Class<T> classDTO) throws SQLException {
+        return dao.findAllOfCondition(tableName, conditionKey, conditionValue, classDTO, connection);
     }
 }

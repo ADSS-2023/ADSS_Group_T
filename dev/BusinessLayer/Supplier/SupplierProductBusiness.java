@@ -39,6 +39,18 @@ public class SupplierProductBusiness {
         supplierDalController.insert(supplierProductDTO);
     }
 
+    public SupplierProductBusiness(SupplierProductDTO supplierProductDTO, SupplierDalController supplierDalController){
+        this.supplierNum = supplierProductDTO.getSupplierNum();
+        this.name = supplierProductDTO.getName();
+        this.productNum = supplierProductDTO.getProductNum();
+        this.manufacturer = supplierProductDTO.getManufacturer();
+        this.price = supplierProductDTO.getPrice();
+        this.maxAmount = supplierProductDTO.getMaxAmount();
+        this.supplierDalController = supplierDalController;
+        this.supplierProductDTO = supplierProductDTO;
+        this.expiryDate = LocalDate.parse(supplierProductDTO.getExpiryDate());
+    }
+
     private boolean isDiscountExists(int productAmount, boolean isPercentage){
         for(Discount dis:quantitiesAgreement) {
             if (dis.isPercentage() == isPercentage && dis.getAmount() == productAmount)
@@ -86,6 +98,13 @@ public class SupplierProductBusiness {
                 quantitiesAgreement.add(new NumberDiscount(productAmount, discount, false, supplierDalController,
                         new ProductDiscountDTO(supplierNum, productAmount, discount, isPercentage, productNum)));
 
+    }
+
+    public void addProductDiscount(ProductDiscountDTO productDiscountDTO) throws SQLException {
+        if(productDiscountDTO.isPercentage())
+            quantitiesAgreement.add(new PercentDiscount(productDiscountDTO, supplierDalController));
+        else
+            quantitiesAgreement.add(new NumberDiscount(productDiscountDTO, supplierDalController));
     }
 
     public void deleteProductDiscount(int productAmount, float discount, boolean isPercentage) throws Exception {

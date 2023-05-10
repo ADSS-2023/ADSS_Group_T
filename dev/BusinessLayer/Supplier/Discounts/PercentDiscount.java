@@ -11,6 +11,14 @@ public class PercentDiscount extends Discount {
         super(amount, discount,isPercentage, supplierDalController, dto);
     }
 
+    public PercentDiscount(DiscountDTO discountDTO, SupplierDalController supplierDalController) throws SQLException {
+        this.amount = discountDTO.getAmount();
+        this.discount = discountDTO.getDiscount();
+        this.isPercentage = discountDTO.isPercentage();
+        this.supplierDalController = supplierDalController;
+        this.discountDTO = discountDTO;
+    }
+
     @Override
     public float getPriceAfterDiscount(float oldPrice) {
        return (1-(discount/100))*oldPrice;
