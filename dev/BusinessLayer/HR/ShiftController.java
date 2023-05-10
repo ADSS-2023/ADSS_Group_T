@@ -26,6 +26,9 @@ public class ShiftController {
 
     private  HashMap<LocalDate, String>  notifications;
 
+    public HashMap<LocalDate, String> getNotifications() {
+        return notifications;
+    }
 
     public ShiftController(){
         shifts = new LinkedHashMap<>();
