@@ -27,15 +27,26 @@ public class DalDriverService {
         this.driverDAO = new DriverDAO(connection);
     }
 
-    // TODO - israel
     public Driver findDriverById(int driverId) throws SQLException {
-        return null;
+        DriverDTO driverdto = driverDAO.find(driverId,"driverId","Driver",DriverDTO.class);
+        Driver driver = new Driver(driverdto ,dalUserService.findUserById(driverId) );
+        return driver;
     }
 
-    // TODO - israel
-    public LinkedHashMap<Driver, Boolean> findSubmissionByIdAndDate(int driverId, LocalDate date) throws SQLException {
-        return null;
+
+    public HashMap<Driver, Boolean> findSubmissionByIdAndDate(int driverId, LocalDate date) throws SQLException { // the boolean is if assigned or not
+         Pair result = driverDAO.getDriverAndIfIsAssigned(driverId,date.toString());
+         HashMap<Driver, Boolean> ret = new HashMap<>();
+         if(result.getFirst() != null && result.getSecond() != null ) {
+             DriverDTO dd = (DriverDTO) result.getFirst();
+             Driver driver = new Driver(dd, dalUserService.findUserById(driverId));
+             ret.put(driver,true);
+             return ret;
+         }
+         else return null;
     }
+
+//TODO - israel
 
     // TODO - israel
     public LinkedHashMap<Driver, Boolean>  findAllSubmissionByDate(LocalDate date) throws SQLException {
@@ -51,6 +62,7 @@ public class DalDriverService {
     public ArrayList<Pair<Driver.LicenseType, Driver.CoolingLevel>> findRequirementsByDate(LocalDate date) throws SQLException {
         return null;
     }
+
 
     // TODO - israel
     public LinkedHashMap<LocalDate, LinkedHashMap<Driver, Boolean>> findAllDriverSubmissionsBetweenDates(LocalDate startDate, LocalDate finishDate, int driverId) throws SQLException { // the boolean is if assigned or not
