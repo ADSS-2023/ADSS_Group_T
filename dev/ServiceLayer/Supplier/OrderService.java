@@ -5,6 +5,7 @@ import BusinessLayer.Supplier.OrderController;
 import BusinessLayer.Supplier.SupplierController;
 import BusinessLayer.Supplier_Stock.ItemToOrder;
 
+import java.rmi.server.ExportException;
 import java.time.DayOfWeek;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,6 +17,14 @@ public class OrderService {
     public OrderService(OrderController oc , SupplierController sc) {
          this.oc = oc;
          this.sc=sc;
+        }
+        public void loadOrders()  {
+        try {
+            oc.loadOrders();
+        }
+        catch (Exception e){
+            System.out.println(e.getMessage());
+        }
         }
     public boolean nextDay(){
         try {
