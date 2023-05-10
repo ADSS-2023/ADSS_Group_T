@@ -58,7 +58,27 @@ public abstract class  SupplierBusiness {
         }
     }
 
-    public SupplierBusiness(SupplierDTO supplierDTO)
+    public SupplierBusiness(){}
+
+//    public SupplierBusiness(SupplierDTO supplierDTO, HashMap<String, String> contacts, boolean selfDelivery, PaymentTerms paymentTerms, SupplierDalController supplierDalController){
+//        contactDTOS = new LinkedList<>();
+//        this.supplierName = supplierDTO.getSupplierName();
+//        this.address = supplierDTO.getAddress();
+//        this.supplierNum = supplierDTO.getSupplierNum();
+//        this.bankAccountNum = supplierDTO.getBankAccountNum();
+//        this.contacts = contacts;
+//        this.selfDelivery = selfDelivery;
+//        this.products = new HashMap<>();
+//        this.discountPerTotalQuantity = new ArrayList<>();
+//        this.discountPerTotalPrice = new ArrayList<>();
+//        this.paymentTerms=paymentTerms;
+//        this.supplierDalController = supplierDalController;
+//        for (Map.Entry<String, String> entry : contacts.entrySet()) {
+//            SupplierContactDTO supplierContactDTO = new SupplierContactDTO(supplierNum, entry.getKey(), entry.getValue());
+//            supplierDalController.insert(supplierContactDTO);
+//            contactDTOS.add(supplierContactDTO);
+//        }
+//    }
     public void editSupplier(String supplierName, String address, int bankAccountNum, boolean selfDelivery,PaymentTerms paymentTerms) throws SQLException {
         this.supplierName = supplierName;
         this.address = address;

@@ -34,8 +34,30 @@ public class ConstantSupplier extends SupplierBusiness {
     }
 
     public ConstantSupplier(SupplierDTO supplierDTO, HashMap<String, String> contacts, HashMap<Integer, SupplierProductBusiness> products, List<DayOfWeek> days, SupplierDalController supplierDalController, List<Discount> discountPerTotalQuantity, List<Discount> discountPerTotalPrice) throws SQLException {
-        super(supplierDTO.getSupplierName(), supplierDTO.getAddress(), supplierDTO.getSupplierNum(), supplierDTO.getBankAccountNum(), contacts, Boolean.parseBoolean(supplierDTO.isSelfDelivery()), SupplierController.stringToPaymentTerms(supplierDTO.getPaymentTerms()), supplierDalController);
-        setProducts(products);
+        super();
+        this.contactDTOS = new LinkedList<>();
+        this.constDeliveryDaysDTOS = new LinkedList<>();
+        this.products = new HashMap<>();
+        this.discountPerTotalQuantity = new ArrayList<>();
+        this.discountPerTotalPrice = new ArrayList<>();
+        this.supplierName = supplierDTO.getSupplierName();
+        this.address = supplierDTO.getAddress();
+        this.supplierNum = supplierDTO.getSupplierNum();
+        this.bankAccountNum = supplierDTO.getBankAccountNum();
+        this.contacts = contacts;
+        this.selfDelivery = Boolean.parseBoolean(supplierDTO.isSelfDelivery());
+        this.constDeliveryDays = days;
+        this.paymentTerms = SupplierController.stringToPaymentTerms(supplierDTO.getPaymentTerms());
+        this.supplierDalController = supplierDalController;
+        for (Map.Entry<String, String> entry : contacts.entrySet()) {
+            SupplierContactDTO supplierContactDTO = new SupplierContactDTO(supplierNum, entry.getKey(), entry.getValue());
+            contactDTOS.add(supplierContactDTO);
+        }
+        for (DayOfWeek day : constDeliveryDays) {
+            ConstDeliveryDaysDTO constDeliveryDaysDTO = new ConstDeliveryDaysDTO(supplierNum, day.getValue());
+            constDeliveryDaysDTOS.add(constDeliveryDaysDTO);
+        }
+        this.products = products;
         this.constDeliveryDays = days;
         this.supplierDTO = supplierDTO;
         this.discountPerTotalPrice = discountPerTotalPrice;
