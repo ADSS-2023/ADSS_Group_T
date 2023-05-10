@@ -25,19 +25,22 @@ class ItemTest {
     public static DamagedService damagedService;
     public static ItemService itemService;
     private Inventory inventory;
+    public static ServiceFactory serviceFactory;
 
     @BeforeEach
-    public void setUp() {
+    public void setUp(){
+        serviceFactory = new ServiceFactory();
+        inventory = serviceFactory.inventoryService.get_inventory();
+        damagedService = serviceFactory.damagedService;
+        categoryService = serviceFactory.categoryService;
+        inventoryService = serviceFactory.inventoryService;
+        itemService = serviceFactory.itemService;
         try {
-            inventoryService = new InventoryService();
-            categoryService = new CategoryService(inventoryService.get_inventory());
-            damagedService = new DamagedService(inventoryService.get_inventory());
-            itemService = new ItemService(inventoryService.get_inventory());
-            inventory = inventoryService.get_inventory();
+            //serviceFactory.dataSetUp();
             inventory.setUp();
         }
         catch (Exception e){
-
+            System.out.println(e.getMessage());
         }
     }
 
@@ -45,8 +48,8 @@ class ItemTest {
     @Test
     void setMin_amount(){
         try {
-            String afterUpdate = itemService.setMinimalAmount(2 , 7);
-            assertEquals(inventory.get_item_by_id(2).get_name() + " new minimal amount:7" , afterUpdate);
+            String afterUpdate = itemService.setMinimalAmount(2 , 2);
+            assertEquals(inventory.get_item_by_id(2).get_name() + " new minimal amount:2" , afterUpdate);
         }
         catch (Exception e){
         }

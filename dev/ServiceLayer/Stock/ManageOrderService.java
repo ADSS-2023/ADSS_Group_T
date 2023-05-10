@@ -151,4 +151,8 @@ public class ManageOrderService {
             return e.getMessage();
         }
     }
+
+    public OrderController getStockOrderController() {
+        return orderController;
+    }
 }

@@ -6,6 +6,7 @@ import ServiceLayer.Stock.CategoryService;
 import ServiceLayer.Stock.DamagedService;
 import ServiceLayer.Stock.InventoryService;
 import ServiceLayer.Stock.ItemService;
+import ServiceLayer.Supplier_Stock.ServiceFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -17,19 +18,22 @@ public class DamagedTest {
     public static DamagedService damagedService;
     public static ItemService itemService;
     private Inventory inventory;
+    public static ServiceFactory serviceFactory;
 
     @BeforeEach
-    public void setUp() {
+    public void setUp(){
+        serviceFactory = new ServiceFactory();
+        inventory = serviceFactory.inventoryService.get_inventory();
+        damagedService = serviceFactory.damagedService;
+        categoryService = serviceFactory.categoryService;
+        inventoryService = serviceFactory.inventoryService;
+        itemService = serviceFactory.itemService;
         try {
-            inventoryService = new InventoryService();
-            categoryService = new CategoryService(inventoryService.get_inventory());
-            damagedService = new DamagedService(inventoryService.get_inventory());
-            itemService = new ItemService(inventoryService.get_inventory());
-            inventory = inventoryService.get_inventory();
+            //serviceFactory.dataSetUp();
             inventory.setUp();
         }
         catch (Exception e){
-            e.getMessage();
+            System.out.println(e.getMessage());
         }
     }
 
@@ -38,7 +42,7 @@ public class DamagedTest {
         try {
             int before_amount = inventory.get_item_by_id(1).amount_store();
             damagedService.report_damaged_item( 1, 120,3, "Damaged during transit");
-            assertEquals(inventory.get_item_by_id(1).amount_store(), before_amount - 3);
+            assertEquals( before_amount - 3 , inventory.get_item_by_id(1).amount_store());
         }
         catch (Exception e){
 
@@ -54,7 +58,7 @@ public class DamagedTest {
             String result = damagedService.produce_damaged_report();
             // Check if the returned report is not empty and contains the correct item details
             assertNotNull(result);
-            assertEquals(result, "Item name : 1.5% , Item ID : 1 , Amount : 3 , Description : Damaged during transit");
+            assertEquals("Item name : 1.5% milk , Item ID : 1 , Amount : 3 , Description : Damaged during transit", result);
         } catch (Exception e) {
             fail("produce_damaged_report() threw an exception: " + e.getMessage());
         }
