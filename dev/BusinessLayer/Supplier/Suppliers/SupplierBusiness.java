@@ -216,6 +216,7 @@ public abstract class  SupplierBusiness {
                     if (dis.getAmount() == amount && dis.isPercentage() == isPercentage)
                         return true;
                 }
+
                 break;
             case DISCOUNT_BY_TOTAL_QUANTITY:
                 for (Discount dis : discountPerTotalQuantity) {
