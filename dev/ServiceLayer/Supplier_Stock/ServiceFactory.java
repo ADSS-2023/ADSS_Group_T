@@ -48,7 +48,7 @@ public class ServiceFactory {
     public Connection connection;
     public Util_Supplier_Stock uss;
 
-    public ServiceFactory() {
+    public ServiceFactory(){
         this.inventoryService = new InventoryService();
         this.categoryService = new CategoryService(this.inventoryService.get_inventory());
         this.damagedService = new DamagedService(this.inventoryService.get_inventory());
@@ -58,12 +58,18 @@ public class ServiceFactory {
         this.oc = new OrderController(this.sc, this.manageOrderService);
         this.supplierService = new SupplierService(this.sc, this.oc);
         this.orderService = new OrderService(this.oc, this.sc);
-        uss = new Util_Supplier_Stock();
+
         connection = makeCon();
         inventoryDalController = new InventoryDalController(connection);
         this.manageOrderService.setOrderController(this.inventoryService.get_inventory(), this.orderService,inventoryDalController);
         this.inventoryService.get_inventory().setInventoryDalController(inventoryDalController);
         inventoryService.get_inventory().setItemDalController(new ItemDalController(connection));
+        try {
+            uss = new Util_Supplier_Stock(inventoryDalController);
+        }
+        catch (Exception e){
+            System.out.println(e.getMessage());
+        }
         //this.deleteAllData();
     }
 

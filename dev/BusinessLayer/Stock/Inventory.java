@@ -145,7 +145,7 @@ public class Inventory {
 
     public void set_discount(DiscountDTO discount) throws Exception {
         int current_index = Integer.parseInt(Util.extractFirstNumber(discount.getIndex_product()));
-        String next_index = Util.extractNextIndex("."+discount.getIndex_product());
+        String next_index = Util.extractNextIndex(discount.getIndex_product());
         Discount new_discount = new Discount(discount);
         categories.get(current_index).setDiscount(next_index , new_discount);
     }
