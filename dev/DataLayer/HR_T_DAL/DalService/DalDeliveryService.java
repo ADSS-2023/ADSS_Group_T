@@ -82,7 +82,7 @@ public class DalDeliveryService {
         dao.insert(dto);
     }
 
-    public void deleteUnHandledBranch(int deliveryId, String siteAddress, String productName, int fileId, int amount) throws SQLException {
+    public void deleteUnHandledSite(int deliveryId, String siteAddress, String productName, int fileId, int amount) throws SQLException {
         DeliveryHandledSitesDTO dto = new DeliveryHandledSitesDTO(deliveryId,siteAddress,productName,fileId,amount);
         dao.delete(dto);
     }

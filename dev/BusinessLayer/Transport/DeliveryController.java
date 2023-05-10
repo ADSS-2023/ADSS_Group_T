@@ -471,6 +471,8 @@ public class DeliveryController {
         if(deliveries.containsKey(id))
             return deliveries.get(id);
         Delivery d = dalDeliveryService.findDelivery(id);
+        if(d==null)
+            throw new RuntimeException("there is no delivery with this id");
         deliveries.put(id,d);
         return d;
     }
@@ -521,8 +523,8 @@ public class DeliveryController {
             } else {
                 delivery.setTruckWeight(currentWeight + productsWeight);
                 File f = delivery.getUnHandledSuppliers().get(supplier);
-                delivery.getHandledSuppliers().put(supplier, f);
-                delivery.getUnHandledSuppliers().remove(supplier);
+                delivery.addHandledSupplier(supplier,f);
+                delivery.removeUnHandledSupplier(supplier,f);
             }
         }
         reScheduleDelivery(delivery.getUnHandledSuppliers(), delivery.getUnHandledBranches());
@@ -541,8 +543,8 @@ public class DeliveryController {
             } else {
                 delivery.setTruckWeight(currentWeight + productsWeight);
                 File f = delivery.getUnHandledSuppliers().get(supplier);
-                delivery.getHandledSuppliers().put(supplier, f);
-                delivery.getUnHandledSuppliers().remove(supplier);
+                delivery.addHandledSupplier(supplier,f);
+                delivery.removeUnHandledSupplier(supplier,f);
                 HashMap<Product, Integer> copyOfSupplierFileProducts = new HashMap<>(f.getProducts());
                 filesCounter = delivery.supplierHandled(filesCounter, copyOfSupplierFileProducts);
             }
@@ -568,9 +570,9 @@ public class DeliveryController {
 
             Delivery newDelivery = new Delivery(deliveryCounter, newDeliveredDate, LocalTime.NOON, t.getWeight(), suppliers, branches,
                     suppliers.entrySet().iterator().next().getKey(), t.getLicenseNumber(), branches.entrySet().iterator().next().getKey().getShippingArea(),dalDeliveryService);
-            if (!date2deliveries.containsKey(newDeliveredDate))
-                date2deliveries.put(newDeliveredDate, new ArrayList<>());
-            date2deliveries.get(newDeliveredDate).add(newDelivery);
+            addDelivery(newDelivery);
+            deliveryInDate(newDeliveredDate);
+            addDeliveryToDate(newDeliveredDate,newDelivery,true);
             found = true;
         }
     }
@@ -674,7 +676,7 @@ public class DeliveryController {
     }
 
     private boolean deliveryInDate(LocalDate date) throws SQLException {
-        return date2deliveries.containsKey(date) || dalDeliveryService.findAllDeliveriesByDate(date.toString()) != null;
+        return (date2deliveries.containsKey(date) && !date2deliveries.get(date).isEmpty()) || dalDeliveryService.findAllDeliveriesByDate(date.toString()) != null;
     }
 
     private boolean specificTruckInDate(LocalDate date,Truck truck) throws SQLException {
