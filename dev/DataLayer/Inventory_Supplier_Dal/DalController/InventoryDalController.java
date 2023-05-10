@@ -48,6 +48,9 @@ public class InventoryDalController{
     public <T extends DTO> ArrayList<T> findAll(String tableName, Class<T> dtoClass) throws SQLException {
         return generic_DAO.findAll(tableName,dtoClass,connection);
     }
+    public <T extends DTO> ArrayList<T> findAllOfCondition(String tableName, String conditionKey,Object conditionValue,Class<T> classDTo) throws SQLException{
+        return generic_DAO.findAllOfCondition(tableName,conditionKey,conditionValue,classDTo,connection);
+    }
     public <T extends DTO> ArrayList<T> findAllCategories(String tableName, Class<T> dtoClass) throws SQLException {
         return category_DAO.findAll(tableName,dtoClass,connection);
     }

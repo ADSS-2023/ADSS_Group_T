@@ -2,8 +2,11 @@ package BusinessLayer.Stock;
 
 import BusinessLayer.Stock.Util.Util;
 import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.CategoryDTO;
+import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.ItemDTO;
 import DataLayer.Inventory_Supplier_Dal.DalController.InventoryDalController;
+import DataLayer.Inventory_Supplier_Dal.DalController.ItemDalController;
 
+import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 /*
@@ -19,6 +22,8 @@ public class Category implements ProductCategoryManagement{
     protected CategoryDTO categoryDTO;
     protected InventoryDalController inv_dal_controller;
 
+    private ItemDalController itemDalController;
+
 
     public Category(String name,String index,InventoryDalController inv_dal_controller) {
         this.name = name;
@@ -29,13 +34,14 @@ public class Category implements ProductCategoryManagement{
         this.inv_dal_controller = inv_dal_controller;
     }
 
-    public Category(CategoryDTO dto,InventoryDalController inv_dal_controller){
+    public Category(CategoryDTO dto,InventoryDalController inv_dal_controller,ItemDalController itemDalController) throws Exception {
         this.name = dto.getName();
         this.index = dto.getFatherCategoryIndex(); // need to change it to be 0.1.1...
         categories_list = new LinkedList<>();
         discount_list = new LinkedList<>();
         categoryDTO = dto;
         this.inv_dal_controller = inv_dal_controller;
+        loadData(itemDalController);
     }
     /**
      *  This function called from CategoryService when there is a requirement to produce
@@ -225,17 +231,25 @@ public class Category implements ProductCategoryManagement{
     }
 
     @Override
-    public void add_product(CategoryDTO categoryDTO, String next_index) {
+    public void add_product(CategoryDTO categoryDTO, String next_index) throws Exception {
         if (next_index == "") {
-            Category new_category = new Category(categoryDTO,inv_dal_controller);
+            Category new_category = new Category(categoryDTO,inv_dal_controller,itemDalController);
             categories_list.add(new_category);
             new_category.categoryDTO.setFatherCategoryIndex(this.categoryDTO.getIndex());
             new_category.categoryDTO.setIndex(categoryDTO.getIndex() +"."+ (categories_list.size()-1));
         }
         else {
-            int current_index = Integer.parseInt(Util.extractFirstNumber(index));
-            next_index = Util.extractNextIndex(index);
+            int current_index = Integer.parseInt(Util.extractFirstNumber("."+categoryDTO.getIndex()));
+            next_index = Util.extractNextIndex(next_index);
             categories_list.get(current_index).add_product(categoryDTO,next_index);
+        }
+    }
+    public void loadData(ItemDalController itemDalController) throws Exception {
+        List<ItemDTO> itemDTOList = inv_dal_controller.findAllOfCondition("inventory_item","categoriesIndex","'"+"."+categoryDTO.getIndex()+"'", ItemDTO.class);
+        if(!itemDTOList.isEmpty()){
+            for (ItemDTO itemDTO : itemDTOList){
+                add_item("",new Item(itemDTO,itemDalController));
+            }
         }
     }
 }
