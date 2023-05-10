@@ -52,4 +52,8 @@ public class SupplierProductDTO extends DTO {
         this.maxAmount = maxAmount;
         this.expiryDate = expiryDate;
     }
+    public SupplierProductDTO() {
+        super("supplier_supplier_product");
+
+    }
 }

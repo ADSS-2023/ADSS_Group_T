@@ -31,4 +31,8 @@ public abstract class DiscountDTO extends DTO {
         this.discount = discount;
         this.isPercentage = isPercentage;
     }
+
+    public DiscountDTO(String tableName) {
+        super(tableName);
+    }
 }

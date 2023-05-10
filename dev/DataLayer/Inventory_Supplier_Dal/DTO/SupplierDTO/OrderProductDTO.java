@@ -62,4 +62,7 @@ public class OrderProductDTO extends DTO {
         this.productName = productName;
         this.finalPrice = finalPrice;
     }
+    public OrderProductDTO() {
+        super("supplier_order_product");
+    }
 }

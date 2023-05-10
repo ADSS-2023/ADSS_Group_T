@@ -11,4 +11,8 @@ public class SupplierDiscountDTO extends DiscountDTO{
         super("supplier_supplier_discount", supplierNum, amount, discount, isPercentage);
         this.isTotalAmount = isTotalAmount;
     }
+
+    public SupplierDiscountDTO() {
+        super("supplier_supplier_discount");
+    }
 }

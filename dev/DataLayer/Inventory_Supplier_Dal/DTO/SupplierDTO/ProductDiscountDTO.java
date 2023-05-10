@@ -11,4 +11,7 @@ public class ProductDiscountDTO extends DiscountDTO{
         super("supplier_product_discount", supplierNum, amount, discount, isPercentage);
         this.productNum = productNum;
     }
+    public ProductDiscountDTO() {
+        super("supplier_product_discount");
+    }
 }

@@ -33,6 +33,10 @@ public class OrderDTO extends DTO {
         this.constantDay = constantDay;
     }
 
+    public OrderDTO() {
+        super("supplier_order");
+    }
+
     public int getOrderNum() {
         return orderNum;
     }

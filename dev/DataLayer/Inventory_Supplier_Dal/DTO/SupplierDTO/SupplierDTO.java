@@ -50,4 +50,7 @@ public class SupplierDTO extends DTO {
         this.daysToDeliver = daysToDeliver;
         this.paymentTerms = paymentTerms;
     }
+    public SupplierDTO(){
+        super("supplier_supplier");
+    }
 }

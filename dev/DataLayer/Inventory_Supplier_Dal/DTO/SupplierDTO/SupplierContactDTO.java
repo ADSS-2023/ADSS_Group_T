@@ -25,4 +25,8 @@ public class SupplierContactDTO  extends DTO {
         this.contactName = contactName;
         this.contactNumber = contactNumber;
     }
+
+    public SupplierContactDTO(){
+        super("supplier_supplier_contact");
+    }
 }
