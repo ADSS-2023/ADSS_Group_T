@@ -360,4 +360,9 @@ public class StockUI {
         int amount = scanner.nextInt();
         sf.itemService.move_items_to_store(id,amount);
     }
+
+    public void deleteData() {
+        this.sf.makeEmptyDB();
+        this.sf.deleteAllData();
+    }
 }

@@ -64,7 +64,7 @@ public class ServiceFactory {
         this.manageOrderService.setOrderController(this.inventoryService.get_inventory(), this.orderService,inventoryDalController);
         this.inventoryService.get_inventory().setInventoryDalController(inventoryDalController);
         inventoryService.get_inventory().setItemDalController(new ItemDalController(connection));
-
+        //this.deleteAllData();
     }
 
     private Connection makeCon() {
@@ -114,5 +114,25 @@ public class ServiceFactory {
         } catch (Exception var2) {
             return var2.getMessage();
         }
+    }
+
+    private Connection makeEmptyCon() {
+        try {
+            String dbFile = "./dev/DataLayer/stock_supplier_empty_db.db";
+            String url = "jdbc:sqlite:" + dbFile;
+            Class.forName("org.sqlite.JDBC");
+            return DriverManager.getConnection(url);
+        } catch (Exception var3) {
+            System.out.println(var3.getMessage());
+            return null;
+
+        }
+    }
+
+
+    public void makeEmptyDB() {
+        connection = makeEmptyCon();
+        this.inventoryDalController.setConnection(connection);
+        this.inventoryService.get_inventory().getItemDalController().setConnection(connection);
     }
 }
