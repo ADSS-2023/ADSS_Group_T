@@ -39,7 +39,7 @@ public class SupplierController {
             List<DayOfWeek> days = new ArrayList<>();
             for(ConstDeliveryDaysDTO constDeliveryDaysDTO : constDeliveryDaysDTOS)
                 days.add(DayOfWeek.of(constDeliveryDaysDTO.getDay()));
-            List<SupplierProductDTO> productDTOS = loadSupplierProducus(supplierDTO.getSupplierNum());
+            List<SupplierProductDTO> productDTOS = loadSupplierProducts(supplierDTO.getSupplierNum());
             HashMap<Integer, SupplierProductBusiness> products = new HashMap<>();
             for(SupplierProductDTO supplierProductDTO :  productDTOS){
                 products.put(supplierProductDTO.getSupplierNum(), new SupplierProductBusiness(supplierProductDTO, supplierDalController));
@@ -79,7 +79,7 @@ public class SupplierController {
         return supplierDalController.findAllOfCondition("supplier_const_delivery_days", "supplierNum", supplierNum, ConstDeliveryDaysDTO.class);
     }
 
-    public List<SupplierProductDTO> loadSupplierProducus(int supplierNum) throws SQLException {
+    public List<SupplierProductDTO> loadSupplierProducts(int supplierNum) throws SQLException {
         return supplierDalController.findAllOfCondition("supplier_supplier_product", "supplierNum", supplierNum, SupplierProductDTO.class);
     }
 

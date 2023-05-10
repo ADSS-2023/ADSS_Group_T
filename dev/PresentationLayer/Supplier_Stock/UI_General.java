@@ -35,8 +35,12 @@ public class UI_General {
     }
 
     public static void main(String[] args) throws Exception {
+
         ServiceFactory sf = new ServiceFactory();
-        StockUI stockUI = new StockUI(sf);
+
+
+        sf.sc.loadSuppliers();
+        /*StockUI stockUI = new StockUI(sf);
         SupplierManager supplierManager = new SupplierManager(sf);
         stockUI.setPreviousCallBack(()->run(stockUI,supplierManager,sf));
         supplierManager.setPreviousCallBack(()->run(stockUI,supplierManager,sf));
@@ -51,5 +55,6 @@ public class UI_General {
             supplierManager.setUpData();
         }
         run(stockUI,supplierManager,sf);
+         */
     }
 }
