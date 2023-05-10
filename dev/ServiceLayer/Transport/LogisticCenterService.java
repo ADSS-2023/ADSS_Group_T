@@ -21,13 +21,22 @@ public class LogisticCenterService {
 
     public String addTruck(int licenseNumber, String model, int weight, int maxWeight, int coolingLevel) {
         try {
-            return logisticCenterController.addTruck(licenseNumber, model, weight, maxWeight, coolingLevel) + " ";
+            if (logisticCenterController.addTruck(licenseNumber, model, weight, maxWeight, coolingLevel))
+                return "truck added to logistic center";
+            else
+                return "cant add truck to logistic center";
         } catch (Exception ex) {
             return ex.getMessage();
         }
     }
 
     public String getAddress() {
-        return this.logisticCenterController.getAddress();
+        try {
+            return this.logisticCenterController.getAddress();
+        }
+        catch (Exception ex){
+            return ex.getMessage();
+        }
+
     }
 }

@@ -47,7 +47,7 @@ public class SupplierService {
     public String addProducts(String supplierAddress, LinkedHashMap<String, Integer> productMap1) {
         try {
             supplierController.addProductsToSupplier(supplierAddress, productMap1);
-            return "true";
+            return "products added";
         } catch (Exception ex) {
             return ex.toString();
         }
