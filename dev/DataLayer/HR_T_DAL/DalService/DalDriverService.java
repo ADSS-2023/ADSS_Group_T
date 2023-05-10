@@ -12,6 +12,7 @@ import UtilSuper.Pair;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -42,7 +43,25 @@ public class DalDriverService {
          }
          else return null;
     }
+
 //TODO - israel
+
+    // TODO - israel
+    public HashMap<Driver, Boolean>  findAllSubmissionByDate(LocalDate date) throws SQLException { // the boolean is if assigned or not
+        return null;
+    }
+
+    // TODO - israel
+    public ArrayList<Pair<Driver.LicenseType, Driver.CoolingLevel>>  findAllRequirementsByDate(LocalDate date) throws SQLException { // the boolean is if assigned or not
+        return null;
+    }
+
+    // TODO - israel
+    public ArrayList<Pair<Driver.LicenseType, Driver.CoolingLevel>> findRequirementsByDate(LocalDate date) throws SQLException { // the boolean is if assigned or not
+        return null;
+    }
+
+
     public HashMap<Driver, Boolean> assignDriver(int driverId, LocalDate date) throws SQLException { // the boolean is if assigned or not
         return null;
     }

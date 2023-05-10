@@ -171,6 +171,9 @@ public class Shift {
 
                 // Assign the employee to the position by updating their assigned status in the map
                 employees.put(employee, true);
+
+                // remove the requierements- TODO
+                employees.put(employee, true);
                 return employee.getEmployeeName() + " has been assigned to position " + pos + " successfully.";
             }
         } else {
