@@ -21,13 +21,13 @@ public class Data_init {
     }
     public static void initBasicData(DAO dao) throws SQLException {
 
-      //  dao.deleteAllDataFromDatabase();
+     dao.deleteAllDataFromDatabase();
         SiteDTO logisticCenter = new SiteDTO("logistic center address","0000000000","logistic center contact",0,0,0,"logistic center");
-      //  dao.deleteTableDataWithDTO(logisticCenter);
+      dao.deleteTableDataWithDTO(logisticCenter);
         dao.insert(logisticCenter);
 
         CounterDTO dateCounter = new CounterDTO("date counter", LocalDate.now().toString());
-     //   dao.deleteTableDataWithDTO(dateCounter);
+    dao.deleteTableDataWithDTO(dateCounter);
         dao.insert(dateCounter);
 
         CounterDTO fileCounter = new CounterDTO("file counter","0");
@@ -42,8 +42,14 @@ public class Data_init {
 
 
     }
-    public static void initOldData(DAO dao) throws SQLException {
+    public static void initOldData(DAO dao,SupplierService supplierService,DeliveryService deliveryService) throws SQLException {
+        initSites(dao);
+        initTrucks(dao);
+        initSupplierProducts(supplierService);
+        initDelivery(deliveryService);
+    }
 
+    public static void initSites(DAO dao) throws SQLException {
 
         dao.insert(new SiteDTO("b1", "000000001", "Contact B1", 1, 30, Location.getShippingArea(1,30),"branch"));
         dao.insert(new SiteDTO("b2", "000000002", "Contact B2", 30, 34, Location.getShippingArea(30, 34), "branch"));
@@ -65,6 +71,9 @@ public class Data_init {
         dao.insert(new SiteDTO("s8", "000000018", "Contact S8", -20, -10, Location.getShippingArea(-20, -10), "supplier"));
         dao.insert(new SiteDTO("s9", "000000019", "Contact S9", 5, -5, Location.getShippingArea(5, -5), "supplier"));
 
+    }
+
+    public static void  initTrucks(DAO dao) throws SQLException {
         dao.deleteTableDataWithTableName(TruckDTO.getTableNameStatic());
         dao.insert(new TruckDTO(1001, "t1", 4000, 8000, Driver.LicenseType.intToLicenseType(4000), Driver.CoolingLevel.intToCoolinglevel(1)));
         dao.insert(new TruckDTO(1002, "t2", 6000, 12000, Driver.LicenseType.intToLicenseType(5000), Driver.CoolingLevel.intToCoolinglevel(2)));
@@ -75,7 +84,6 @@ public class Data_init {
         dao.insert(new TruckDTO(1007, "t7", 160000, 32000, Driver.LicenseType.intToLicenseType(10000), Driver.CoolingLevel.intToCoolinglevel(1)));
         dao.insert(new TruckDTO(1008, "t8", 18000, 36000, Driver.LicenseType.intToLicenseType(11000), Driver.CoolingLevel.intToCoolinglevel(2)));
         dao.insert(new TruckDTO(1009, "t9", 20000, 40000, Driver.LicenseType.intToLicenseType(12000), Driver.CoolingLevel.intToCoolinglevel(3)));
-
 
     }
 

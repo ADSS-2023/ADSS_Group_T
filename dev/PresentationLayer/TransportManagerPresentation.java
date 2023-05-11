@@ -31,15 +31,16 @@ public class TransportManagerPresentation {
         Scanner scanner = new Scanner(System.in);
         while (true) {
 
-            Response response = ResponseSerializer.deserializeFromJson(deliveryService.getCurrDate().toString());
-            if (response.isError()) {
-                System.out.println(response.getErrorMessage());
-            } else {
-            }
+
 
             System.out.println(" ");
             System.out.println("------ main window -------");
-            System.out.println("Current date: " + ResponseSerializer.deserializeFromJson(deliveryService.getCurrDate()));
+            Response response = ResponseSerializer.deserializeFromJson(deliveryService.getCurrDate());
+            if (response.isError()) {
+                System.out.println("cant show current day");
+            } else {
+                System.out.println("Current date: " + response.getReturnValue());
+            }
             System.out.println("Please choose an option:");
             System.out.println("1. Skip day");
             System.out.println("2. Enter new delivery");

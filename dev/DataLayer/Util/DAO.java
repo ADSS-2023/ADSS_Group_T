@@ -90,6 +90,7 @@ public class DAO {
                 } catch (IllegalAccessException e) {
                     throw new SQLException("Error accessing field " + field.getName() + " of DTO " + newDto.getClass().getSimpleName(), e);
                 }
+
                 statement.setObject(index, value);
                 index++;
             }
@@ -102,9 +103,11 @@ public class DAO {
             } catch (IllegalAccessException e) {
                 throw new SQLException("Error accessing field " + field.getName() + " of DTO " + oldDto.getClass().getSimpleName(), e);
             }
+
             statement.setObject(index, value);
             index++;
         }
+
         statement.executeUpdate();
     }
 

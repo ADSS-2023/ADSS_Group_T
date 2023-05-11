@@ -6,7 +6,7 @@ import UtilSuper.Time;
 
 import java.util.HashMap;
 import java.util.Scanner;
-
+import UtilSuper.Response;
 public class HRManagerPresentation {
 
     private ShiftService shiftService;
@@ -109,7 +109,8 @@ public class HRManagerPresentation {
         String password = scanner.nextLine();
         System.out.println("Please enter the employee salary:");
         int salary = scanner.nextInt();
-        employeeService.addNewEmployee(employeeId,employeeName,employeebank,description,salary, Time.stringToLocalDate(joiningDay),password);
+
+        //employeeService.addNewEmployee(employeeId,employeeName,employeebank,description,salary, Time.stringToLocalDate(joiningDay),password);
     }
 
     // option 3
@@ -140,6 +141,6 @@ public class HRManagerPresentation {
         scanner.nextLine();
         System.out.println("Please enter the driver license type : C1 , C , E " );
         String licenseType = scanner.nextLine();
-        employeeService.addNewDriver(id,Name,bank,description,salary,joiningDay,password,licenseType,coolinglevel);
+        //employeeService.addNewDriver(id,Name,bank,description,salary,joiningDay,password,licenseType,coolinglevel);
     }
 }

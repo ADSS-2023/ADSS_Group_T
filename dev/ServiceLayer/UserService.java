@@ -2,7 +2,7 @@ package ServiceLayer;
 
 import BusinessLayer.HR.User.UserController;
 import BusinessLayer.HR.User.UserType;
-import ServiceLayer.HR.Response;
+
 import UtilSuper.Response;
 
 public class UserService {
