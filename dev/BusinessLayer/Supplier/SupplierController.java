@@ -42,7 +42,7 @@ public class SupplierController {
             List<SupplierProductDTO> productDTOS = loadSupplierProducts(supplierDTO.getSupplierNum());
             HashMap<Integer, SupplierProductBusiness> products = new HashMap<>();
             for(SupplierProductDTO supplierProductDTO :  productDTOS){
-                products.put(supplierProductDTO.getSupplierNum(), new SupplierProductBusiness(supplierProductDTO, supplierDalController));
+                products.put(supplierProductDTO.getProductNum(), new SupplierProductBusiness(supplierProductDTO, supplierDalController));
             }
             List<DiscountDTO> productDiscountDTOS = loadDiscounts(supplierDTO.getSupplierNum());
             for(DiscountDTO productDiscountDTO : productDiscountDTOS)
