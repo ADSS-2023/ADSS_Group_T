@@ -156,6 +156,7 @@ public class ShiftController {
             else s = "evening";
             dalShiftService.addRequierement(branch,requiredDate.toString(),s ,PositionType.storekeeper.toString(),1);
         }
+
     }
 
     public ArrayList<String> getBranchesWithoutStoreKeeper(LocalDate date) throws Exception {
