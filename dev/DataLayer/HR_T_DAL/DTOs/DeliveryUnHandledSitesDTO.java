@@ -23,6 +23,10 @@ public class DeliveryUnHandledSitesDTO extends DTO {
     public DeliveryUnHandledSitesDTO() {
     }
 
+    public static String getTableNameStatic() {
+        return "DeliveryUnHandledSites";
+    }
+
     public int getFileId() {
         return fileId;
     }

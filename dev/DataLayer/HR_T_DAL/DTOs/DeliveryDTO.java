@@ -13,7 +13,7 @@ public class DeliveryDTO extends DTO {
     private int shippingArea;
 
     public DeliveryDTO(int id, String deliveryDate, String departureTime, int truckWeight, String source, int driverId, int truckNumber, int shippingArea) {
-        super(getTableNameStatic());
+        super("Delivery");
         this.id = id;
         this.deliveryDate = deliveryDate;
         this.departureTime = departureTime;
@@ -24,7 +24,7 @@ public class DeliveryDTO extends DTO {
         this.shippingArea = shippingArea;
     }
     public  DeliveryDTO(){
-        super(getTableNameStatic());
+        super("Delivery");
     }
 
     public static String getTableNameStatic() {

@@ -60,9 +60,9 @@ public class DAO {
         String sql = "UPDATE " + tableName + " SET ";
         Field[] fields = newDto.getClass().getDeclaredFields();
         for (Field field : fields) {
-            if (!field.getName().equals("id")) {
+            //if (!field.getName().equals("id")) {
                 sql += field.getName() + " = ?, ";
-            }
+            //}
 
         }
         sql = sql.substring(0, sql.length() - 2); // Remove trailing comma and space
@@ -82,7 +82,7 @@ public class DAO {
         PreparedStatement statement = connection.prepareStatement(sql);
         int index = 1;
         for (Field field : fields) {
-            if (!field.getName().equals("id")) {
+            //if (!field.getName().equals("id")) {
                 field.setAccessible(true);
                 Object value;
                 try {
@@ -93,7 +93,7 @@ public class DAO {
 
                 statement.setObject(index, value);
                 index++;
-            }
+            //}
         }
         for (Field field : idFields) {
             field.setAccessible(true);
