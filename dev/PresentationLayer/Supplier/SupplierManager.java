@@ -182,7 +182,9 @@ public class SupplierManager {
 
     private void deleteAll(){
         try {
-            serviceFactory.supplierDalController.deleteAll();
+            serviceFactory.supplierService.deleteAll();
+            //serviceFactory.orderService.deleteAll();
+
             System.out.println("All the data deleted successfully.");
         }
         catch (Exception e){

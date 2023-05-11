@@ -106,12 +106,14 @@ public class SupplierController {
             throw new Exception("supplier number doesn't exist.");
         SupplierBusiness sp = getSupplier(supplierNum);
         sp.deleteContacts();
+        sp.deleteConstantDays();
+        sp.deleteGeneralDiscounts();
         for (Map.Entry<Integer, SupplierProductBusiness> entry : sp.getProducts().entrySet())
             sp.deleteProduct(entry.getKey());
         supplierDalController.delete(getSupplier(supplierNum).getSupplierDTO());
         suppliers.remove(supplierNum);
-
     }
+
 
     public HashMap<Integer, SupplierProductBusiness> getProducts(int supplierNum) throws Exception {
         if(!isSupplierExists(supplierNum))
@@ -310,4 +312,9 @@ public class SupplierController {
 
     public HashMap<Integer, SupplierBusiness> getSuppliers(){return suppliers;}
 
+    public void deleteAll() throws Exception {
+        for (Map.Entry<Integer, SupplierBusiness> entry : suppliers.entrySet())
+            deleteSupplier(entry.getKey());
+        suppliers = null;
+    }
 }

@@ -143,30 +143,6 @@ public class DAO {
         statement.executeUpdate();
     }
 
-    public void deleteAll(Connection connection) throws SQLException {
-        String sql = "DELETE FROM \"supplier_const_delivery_days\"";
-        PreparedStatement statement = connection.prepareStatement(sql);
-        statement.executeUpdate();
-        sql = "DELETE FROM \"supplier_discount\"";
-        statement = connection.prepareStatement(sql);
-        statement.executeUpdate();
-        sql = "DELETE FROM \"supplier_order\"";
-        statement = connection.prepareStatement(sql);
-        statement.executeUpdate();
-        sql = "DELETE FROM \"supplier_order_product\"";
-        statement = connection.prepareStatement(sql);
-        statement.executeUpdate();
-        sql = "DELETE FROM \"supplier_supplier_contact\"";
-        statement = connection.prepareStatement(sql);
-        statement.executeUpdate();
-        sql = "DELETE FROM \"supplier_supplier\"";
-        statement = connection.prepareStatement(sql);
-        statement.executeUpdate();
-        sql = "DELETE FROM \"supplier_supplier_product\"";
-        statement = connection.prepareStatement(sql);
-        statement.executeUpdate();
-    }
-
     public <T extends DTO> T find(LinkedHashMap<String,Object> pk, String tableName, Class<T> dtoClass,Connection connection) throws SQLException {
         T result = null;
         String sql = "SELECT * FROM " + tableName + " WHERE ";
