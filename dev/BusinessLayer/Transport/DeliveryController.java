@@ -4,13 +4,11 @@ import BusinessLayer.HR.Driver;
 import BusinessLayer.HR.Driver.CoolingLevel;
 import BusinessLayer.HR.DriverController;
 import BusinessLayer.HR.ShiftController;
-import DataLayer.HR_T_DAL.DTOs.DateToTruckDTO;
-import DataLayer.HR_T_DAL.DTOs.DeliveryDTO;
-import DataLayer.HR_T_DAL.DTOs.ProductDTO;
 import DataLayer.HR_T_DAL.DTOs.DateToDeliveryDTO;
+import DataLayer.HR_T_DAL.DTOs.DateToTruckDTO;
 import DataLayer.HR_T_DAL.DalService.DalDeliveryService;
-import UtilSuper.EnterWeightInterface;
 import UtilSuper.EnterOverWeightInterface;
+import UtilSuper.EnterWeightInterface;
 import UtilSuper.Time;
 
 import java.sql.SQLException;
@@ -135,8 +133,11 @@ public class DeliveryController {
                 Delivery delivery = new Delivery(deliveryCounter++, requiredDate, LocalTime.NOON, truck.getWeight(), new LinkedHashMap<>(),
                         new LinkedHashMap<>(), null, truck.getLicenseNumber(), branch.getShippingArea(),dalDeliveryService);
                 dalDeliveryService.updateCounter("delivery counter",deliveryCounter);
-                shiftController.addDirverRequirement(requiredDate, truck.getLicenseType(), truck.getCoolingLevel());
-                shiftController.addStoreKeeperRequirement(requiredDate, branch.getAddress());
+                try {
+                    shiftController.addDirverRequirement(requiredDate, truck.getLicenseType(), truck.getCoolingLevel());
+                    shiftController.addStoreKeeperRequirement(requiredDate, branch.getAddress());
+                }catch (Exception e){};
+               // delivery.setSource(this.logisticCenterController.getLogisticCenter());//LC is sourced
                 delivery.addUnHandledBranch(branch, filesCounter++);
                 addDelivery(delivery);
                 addDeliveryToDate(requiredDate,delivery,true);

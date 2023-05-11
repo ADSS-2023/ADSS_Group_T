@@ -1,7 +1,9 @@
 package DataLayer.HR_T_DAL.DAOs;
 
-import BusinessLayer.Transport.Delivery;
-import DataLayer.HR_T_DAL.DTOs.*;
+import DataLayer.HR_T_DAL.DTOs.DateToDeliveryDTO;
+import DataLayer.HR_T_DAL.DTOs.DateToTruckDTO;
+import DataLayer.HR_T_DAL.DTOs.DeliveryDTO;
+import DataLayer.HR_T_DAL.DTOs.ProductDTO;
 import DataLayer.Util.DAO;
 import DataLayer.Util.DTO;
 
@@ -77,12 +79,45 @@ public class DeliveryDAO extends DAO {
     }
 
 
+
+    public ArrayList<ProductDTO> findAllProductsOfSupplier(String supplierAddress, Class<ProductDTO> productDTOClass) throws SQLException {
+        ArrayList<ProductDTO> results = new ArrayList<>();
+        String sql = "SELECT p.* FROM SupplierToProducts sp "
+                + "JOIN Product p ON sp.productName = p.productName "
+                + "WHERE sp.supplierAddress = " +  "'" + supplierAddress  + "'";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            ResultSet resultSet = statement.executeQuery();
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            int columnCount = metaData.getColumnCount();
+            while (resultSet.next()) {
+                ProductDTO dto = (ProductDTO.class).getDeclaredConstructor().newInstance();
+                dto.setTableName("Product");
+                for (int i = 1; i <= columnCount; i++) {
+                    String columnName = metaData.getColumnName(i);
+                    Object value = resultSet.getObject(i);
+                    Field field = dto.getClass().getDeclaredField(columnName);
+                    field.setAccessible(true);
+                    field.set(dto, value);
+                }
+                results.add(dto);
+            }
+        } catch (ReflectiveOperationException | SQLException e) {
+            throw new SQLException("Error creating DTO instance", e);
+        }
+        return results;
+    }
+
+
+
+
+
     public <T extends DTO> ArrayList<T> findAllCategorySitesForDelivery(String tableName, Class<T> dtoClass, int deliveryId, String type) throws SQLException {
         ArrayList<T> results = new ArrayList<>();
         String sql = "SELECT d.deliveryId, d.siteAddress, d.productName, d.fileId, d.amount\n" +
                 "FROM " + tableName + " d\n" +
                 "INNER JOIN Site s ON d.siteAddress = s.siteAddress\n" +
-                "WHERE d.deliveryId = " + deliveryId + " AND s.type = '" + "'" + type + "'" + "';\n";
+                "WHERE d.deliveryId = " + deliveryId + " AND s.type = '" + type + "';\n";
+
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
             ResultSetMetaData metaData = resultSet.getMetaData();
@@ -104,13 +139,6 @@ public class DeliveryDAO extends DAO {
         }
         return results;
     }
-
-
-
-
-
-
-
 
 
 }

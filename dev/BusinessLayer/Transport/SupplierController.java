@@ -60,8 +60,8 @@ public class SupplierController {
             return suppliers.get(supplierAddress);
     }
 
-    public String getSupplierProducts(String supplierAddress) throws SQLException {
-        return getSupplier(supplierAddress).getAllProducts().toString();
+    public LinkedHashMap<String, Product> getSupplierProducts(String supplierAddress) throws SQLException {
+        return getSupplier(supplierAddress).getAllProducts();
     }
 
     /**

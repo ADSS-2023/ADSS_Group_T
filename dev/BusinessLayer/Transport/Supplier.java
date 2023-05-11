@@ -47,6 +47,7 @@ public class Supplier extends Site {
 
     public LinkedHashMap<String, Product> getAllProducts() throws SQLException {
         products = dalDeliveryService.findAllProducts();
+        products = dalDeliveryService.findAllProductsOfSupplier(this.address);
         return products;
     }
 }

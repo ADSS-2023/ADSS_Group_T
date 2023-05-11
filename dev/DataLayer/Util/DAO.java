@@ -3,13 +3,8 @@ package DataLayer.Util;
 
 import java.lang.reflect.Field;
 import java.sql.*;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 
 public class DAO {
 
@@ -272,9 +267,6 @@ public class DAO {
 
         }
     }
-
-
-
 
 
 

@@ -5,7 +5,10 @@ import DataLayer.HR_T_DAL.DB_init.Data_init_HR;
 import Initialization.*;
 import ServiceLayer.HR.EmployeeService;
 import ServiceLayer.HR.ShiftService;
-import ServiceLayer.Transport.*;
+import ServiceLayer.Transport.BranchService;
+import ServiceLayer.Transport.DeliveryService;
+import ServiceLayer.Transport.LogisticCenterService;
+import ServiceLayer.Transport.SupplierService;
 import ServiceLayer.UserService;
 import UtilSuper.ServiceFactory;
 
@@ -46,7 +49,6 @@ public class MainPresentation {
         this.branchService = serviceFactory.getBranchService();
         this.supplierService = serviceFactory.getSupplierService();
         transportManagerPresentation = new TransportManagerPresentation(logisticCenterService,deliveryService,supplierService,branchService);
-        hrManagerPresentation = new HRManagerPresentation(shiftService,employeeService);
         serviceFactory.callbackEnterWeight(this.transportManagerPresentation::enterWeightFunction);
         serviceFactory.callbackEnterOverWeight(this.transportManagerPresentation::enterOverWeightAction);
     }

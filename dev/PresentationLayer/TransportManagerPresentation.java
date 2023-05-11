@@ -4,6 +4,8 @@ import ServiceLayer.Transport.BranchService;
 import ServiceLayer.Transport.DeliveryService;
 import ServiceLayer.Transport.LogisticCenterService;
 import ServiceLayer.Transport.SupplierService;
+import UtilSuper.Response;
+import UtilSuper.ResponseSerializer;
 
 import java.util.LinkedHashMap;
 import java.util.Scanner;
@@ -28,9 +30,16 @@ public class TransportManagerPresentation {
     private void mainWindow() {
         Scanner scanner = new Scanner(System.in);
         while (true) {
+
+            Response response = ResponseSerializer.deserializeFromJson(deliveryService.getCurrDate().toString());
+            if (response.isError()) {
+                System.out.println(response.getErrorMessage());
+            } else {
+            }
+
             System.out.println(" ");
             System.out.println("------ main window -------");
-            System.out.println("Current date: " + deliveryService.getCurrDate());
+            System.out.println("Current date: " + ResponseSerializer.deserializeFromJson(deliveryService.getCurrDate()));
             System.out.println("Please choose an option:");
             System.out.println("1. Skip day");
             System.out.println("2. Enter new delivery");
@@ -60,16 +69,21 @@ public class TransportManagerPresentation {
     }
 
 
-    // option 1
-    /**
-     * skip day and let user choose way of action in case of problem
-     */
     private void skipDay() {
-        System.out.println(deliveryService.getNextDayDetails());
-        System.out.println(deliveryService.skipDay());
-    }
+        Response nextDayDetailsResponse = ResponseSerializer.deserializeFromJson(deliveryService.getNextDayDetails());
+        if (nextDayDetailsResponse.isError()) {
+            System.out.println(nextDayDetailsResponse.getErrorMessage());
+        } else {
+            System.out.println(nextDayDetailsResponse.getReturnValue());
+        }
 
-    // option 2
+        Response skipDayResponse = ResponseSerializer.deserializeFromJson(deliveryService.skipDay());
+        if (skipDayResponse.isError()) {
+            System.out.println(skipDayResponse.getErrorMessage());
+        } else {
+            System.out.println(skipDayResponse.getReturnValue());
+        }
+    }
     /**
      * add New Delivery to the system
      */
@@ -77,15 +91,23 @@ public class TransportManagerPresentation {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter delivery details:");
         String destination = enterDeliveryDestination();
-        LinkedHashMap<String, LinkedHashMap<String, Integer>> suppliersAndProducts = enterSuppliersAndProducts(deliveryService);
-        String date = enterDeliveryDate(scanner);
-        System.out.println(deliveryService.orderDelivery(destination, suppliersAndProducts, date));
-
+        if(destination != null) {
+            LinkedHashMap<String, LinkedHashMap<String, Integer>> suppliersAndProducts = enterSuppliersAndProducts(deliveryService);
+            if (!suppliersAndProducts.isEmpty()){
+                String date = enterDeliveryDate(scanner);
+                Response response = ResponseSerializer.deserializeFromJson(deliveryService.orderDelivery(destination, suppliersAndProducts, date));
+                if (response.isError()) {
+                    System.out.println(response.getErrorMessage());
+                } else {
+                    System.out.println("Delivery added successfully!");
+                }
+            }
+        }
     }
-
     // option 3
     /**
-     * add new truck to the system
+
+     add new truck to the system
      */
     private void addNewTruck() {
         Scanner scanner = new Scanner(System.in);
@@ -99,12 +121,16 @@ public class TransportManagerPresentation {
         System.out.println("Please enter the truck's maximum weight:");
         int maxWeight = scanner.nextInt();
         int coolingIndex = enterCoolingLevel();
-        System.out.println(logisticCenterService.addTruck(licenseNumber, model, weight, maxWeight, coolingIndex));
+        Response response = ResponseSerializer.deserializeFromJson(logisticCenterService.addTruck(licenseNumber, model, weight, maxWeight, coolingIndex));
+        if (response.isError())
+            System.out.println(response.getErrorMessage());
+        else
+            System.out.println(response.getReturnValue());
     }
-
-    // option 4
+// option 4
     /**
-     * add new supplier to the system
+
+     add new supplier to the system
      */
     private void addNewSupplier() {
         Scanner scanner = new Scanner(System.in);
@@ -119,12 +145,16 @@ public class TransportManagerPresentation {
         int x = scanner.nextInt();
         System.out.print("Enter supplier Y coordinate: ");
         int y = scanner.nextInt();
-        System.out.println(supplierService.addSupplier(address, telNumber, contactName, x, y));
+        Response response = ResponseSerializer.deserializeFromJson(supplierService.addSupplier(address, telNumber, contactName, x, y));
+        if (response.isError())
+            System.out.println(response.getErrorMessage());
+        else
+            System.out.println(response.getReturnValue());
     }
-
-    // option 5
+// option 5
     /**
-     * add new branch to the system
+
+     add new branch to the system
      */
     private void addNewBranch() {
         Scanner scanner = new Scanner(System.in);
@@ -139,17 +169,34 @@ public class TransportManagerPresentation {
         int x = scanner.nextInt();
         System.out.print("Enter site Y coordinate: ");
         int y = scanner.nextInt();
-        System.out.println(branchService.addBranch(address, telNumber, contactName, x, y));
+        Response response = ResponseSerializer.deserializeFromJson(branchService.addBranch(address, telNumber, contactName, x, y));
+        if (response.isError())
+            System.out.println(response.getErrorMessage());
+        else {
+            System.out.println("Branch added successfully");
+        }
     }
+
+
 
     // option 6
     private void showProductsInStock() {
-        System.out.println(logisticCenterService.getProductsInStock());
+        Response response = ResponseSerializer.deserializeFromJson(logisticCenterService.getProductsInStock());
+        if (response.isError())
+            System.out.println(response.getErrorMessage());
+        else {
+            System.out.println("Branch added successfully");
+        }
     }
 
     //option 7
     private void showAllDeliveries() {
-        System.out.println(deliveryService.showAllDeliveries());
+        Response response = ResponseSerializer.deserializeFromJson(deliveryService.showAllDeliveries());
+        if (response.isError())
+            System.out.println(response.getErrorMessage());
+        else {
+            System.out.println(response.getReturnValue());
+        }
     }
 
     //option 8
@@ -157,9 +204,13 @@ public class TransportManagerPresentation {
         Scanner scanner = new Scanner(System.in);
         LinkedHashMap<String, Integer> products = new LinkedHashMap<>();
         System.out.println("Please enter supplier from the list:");
-        System.out.println(supplierService.getAllSuppliers());
+        Response response = ResponseSerializer.deserializeFromJson(supplierService.getAllSuppliers());
+        if (response.isError())
+            System.out.println(response.getErrorMessage());
+        else {
+            System.out.println(response.getReturnValue());
+        }
         String supplier = scanner.nextLine();
-
         int coolingLevel = 0;
         while (true) {
             System.out.print("Enter product name (enter 0 to finish): ");
@@ -182,7 +233,12 @@ public class TransportManagerPresentation {
             }
             products.put(productName, coolingLevel);
         }
-        System.out.println(supplierService.addProducts(supplier, products));
+        response = ResponseSerializer.deserializeFromJson(supplierService.addProducts(supplier, products));
+        if (response.isError())
+            System.out.println(response.getErrorMessage());
+        else {
+            System.out.println("Branch added successfully");
+        }
     }
 
     //enter Data from keyboard
@@ -198,10 +254,22 @@ public class TransportManagerPresentation {
     private String enterDeliveryDestination() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter delivery details:");
-        System.out.println("choose destination:");
-        System.out.println(logisticCenterService.getAddress());
-        System.out.println(branchService.getAllBranches() + "\n");
-        return scanner.next();
+        System.out.println("choose destination from the list:");
+        Response response = ResponseSerializer.deserializeFromJson(logisticCenterService.getAddress());
+        if (response.isError())
+            System.out.println(response.getErrorMessage());
+        else {
+            System.out.println(response.getReturnValue());
+            response = ResponseSerializer.deserializeFromJson(branchService.getAllBranches());
+            if (response.isError())
+                System.out.println(response.getErrorMessage());
+            else {
+                System.out.println(response.getReturnValue());
+                return scanner.next();
+            }
+
+        }
+        return null;
     }
 
 
@@ -216,13 +284,10 @@ public class TransportManagerPresentation {
      */
     private LinkedHashMap<String, LinkedHashMap<String, Integer>> enterSuppliersAndProducts(DeliveryService deliveryService) {
         Scanner scanner = new Scanner(System.in);
-        System.out.println();
         LinkedHashMap<String, LinkedHashMap<String, Integer>> suppliersAndProducts = new LinkedHashMap<>();
-
-        // Prompt user to choose between regular suppliers (1) or logistic center (2)
         int choice;
         while (true) {
-            System.out.print("Enter 1 for regular suppliers or 2 for the logistic center: ");
+            System.out.print("Enter 1 for choose products suppliers or 2 for choose products from logistic center: ");
             try {
                 choice = Integer.parseInt(scanner.nextLine());
                 if (choice == 1 || choice == 2) {
@@ -233,27 +298,35 @@ public class TransportManagerPresentation {
                 System.out.println("Invalid choice. Please enter 1 or 2.");
             }
         }
-
         // Get suppliers and products based on user's choice
         if (choice == 1) {
-            System.out.println(supplierService.getAllSuppliers());
-            while (true) {
-                System.out.print("Enter supplier name (or 0 to finish): ");
-                String supplier = scanner.nextLine();
-                if (supplier.equals("0") && !suppliersAndProducts.isEmpty()) {
-                    break;
+            Response response = ResponseSerializer.deserializeFromJson(supplierService.getAllSuppliers());
+            if (response.isError())
+                System.out.println(response.getErrorMessage());
+            else {
+                System.out.println(response.getReturnValue());
+                while (true) {
+                    System.out.print("Enter supplier name (or 0 to finish): ");
+                    String supplier = scanner.nextLine();
+                    if (supplier.equals("0") && !suppliersAndProducts.isEmpty()) {
+                        break;
+                    }
+                    if (suppliersAndProducts.containsKey(supplier)) {
+                        System.out.println("Supplier already selected. Please choose a different supplier.");
+                        continue;
+                    }
+                    suppliersAndProducts.put(supplier, enterSupplierProducts(supplier, deliveryService));
                 }
-                if (suppliersAndProducts.containsKey(supplier)) {
-                    System.out.println("Supplier already selected. Please choose a different supplier.");
-                    continue;
-                }
-                suppliersAndProducts.put(supplier, enterSupplierProducts(supplier, deliveryService));
             }
         } else {
             // Get products from logistic center
-            suppliersAndProducts.put("Logistic Center", enterSupplierProducts(logisticCenterService.getAddress(), deliveryService));
+            Response response = ResponseSerializer.deserializeFromJson(logisticCenterService.getAddress());
+            if (response.isError())
+                System.out.println(response.getErrorMessage());
+            else {
+                suppliersAndProducts.put("Logistic Center", enterSupplierProducts(response.getReturnValue().toString(), deliveryService));
+            }
         }
-
         return suppliersAndProducts;
     }
 
@@ -268,31 +341,43 @@ public class TransportManagerPresentation {
     private LinkedHashMap<String, Integer> enterSupplierProducts(String supplier, DeliveryService deliveryService) {
         Scanner scanner = new Scanner(System.in);
         LinkedHashMap<String, Integer> products = new LinkedHashMap<String, Integer>();
-        if(supplier.equals(logisticCenterService.getAddress()))
-            System.out.println(logisticCenterService.getProductsInStock());
-        else
-            System.out.println(supplierService.getSupplierProducts(supplier));
-
-        while (true) {
-            System.out.print("Enter product name (or 0 to finish): ");
-            String productName = scanner.nextLine();
-            if (productName.equals("0") && !products.isEmpty()) {
-                break;
+        Response response = ResponseSerializer.deserializeFromJson(logisticCenterService.getAddress());
+        if (response.isError())
+            System.out.println(response.getErrorMessage());
+        else {
+            if(supplier.equals(response.getReturnValue()))
+                System.out.println(response.getReturnValue());
+            else
+            {
+                response = ResponseSerializer.deserializeFromJson(supplierService.getSupplierProducts(supplier));
+                if (response.isError())
+                    System.out.println(response.getErrorMessage());
+                else {
+                    System.out.println(response.getReturnValue());
+                    while (true) {
+                        System.out.print("Enter product name (or 0 to finish): ");
+                        String productName = scanner.nextLine();
+                        if (productName.equals("0") && !products.isEmpty()) {
+                            break;
+                        }
+                        if (products.containsKey(productName)) {
+                            System.out.println("Product already selected. Please choose a different product.");
+                            continue;
+                        }
+                        System.out.print("Enter quantity: ");
+                        int quantity = scanner.nextInt();
+                        scanner.nextLine(); // consume the remaining newline character
+                        if (quantity <= 0) {
+                            System.out.println("Invalid quantity. Please enter a positive number.");
+                            continue;
+                        }
+                        products.put(productName, quantity);
+                    }
+                    return products;
+                }
             }
-            if (products.containsKey(productName)) {
-                System.out.println("Product already selected. Please choose a different product.");
-                continue;
-            }
-            System.out.print("Enter quantity: ");
-            int quantity = scanner.nextInt();
-            scanner.nextLine(); // consume the remaining newline character
-            if (quantity <= 0) {
-                System.out.println("Invalid quantity. Please enter a positive number.");
-                continue;
-            }
-            products.put(productName, quantity);
         }
-        return products;
+        return null;
     }
 
 
@@ -316,13 +401,20 @@ public class TransportManagerPresentation {
 
     //CallBack-Functions:
     public int enterWeightFunction(String address, int deliveryID) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("------- " + deliveryID + " -------");
-        System.out.println("the truck in:" + address + "." +
-                "\nthe folowing pruducts are loaded: " +
-                "\n" + deliveryService.getLoadedProducts(deliveryID, address) +
-                "\npls enter weight:");
-        return scanner.nextInt();//products weight
+        Response response = ResponseSerializer.deserializeFromJson(deliveryService.getLoadedProducts(deliveryID, address));
+        if (response.isError())
+            System.out.println(response.getErrorMessage());
+        else {
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("------- " + deliveryID + " -------");
+            System.out.println("the truck in:" + address + "." +
+                    "\nthe folowing pruducts are loaded: " +
+                    "\n" + response.getReturnValue() +
+                    "\npls enter weight:");
+            return scanner.nextInt();//products weight
+        }
+        return 0;
+
     }
 
     public int enterOverWeightAction(int deliveryID) {

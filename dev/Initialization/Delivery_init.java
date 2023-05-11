@@ -6,7 +6,7 @@ import java.util.LinkedHashMap;
 
 public class Delivery_init {
 
-    public static void init(DeliveryService deliveryService){
+    public static void initDelivery(DeliveryService deliveryService){
         // Delivery 1
         String branch1 = "branch1";
         LinkedHashMap<String, LinkedHashMap<String, Integer>> products1 = new LinkedHashMap<>();
