@@ -80,7 +80,6 @@ public class OrderController {
             inventory.get_item_by_id(item_id).manufacturer_name, quantity, null, -1,-1));
             ItemOrderdDTO item_dto = new ItemOrderdDTO(item_id,quantity);
             insert_items.add(item_dto);
-            special_orders_track.put(item_id,quantity);
         }
         if (!order_service.createSpecialOrder(list_to_order,isUrgent)) {
             throw new Exception("\u001B[31mOrder cannot be supplied\u001B[0m");
@@ -92,7 +91,7 @@ public class OrderController {
                 if(special_orders_track.containsKey(item_dto.getId())) {
                     Integer old_amount = special_orders_track.get(item_dto.getId());
                     inventoryDalController.update(new ItemOrderdDTO(item_dto.getId(),old_amount), item_dto);
-                    quantity += special_orders_track.get(item_dto.getQuantity());
+                    quantity += special_orders_track.get(item_dto.getId());
                 }
                 else
                     inventoryDalController.insert(item_dto);
