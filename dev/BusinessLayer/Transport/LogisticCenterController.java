@@ -73,7 +73,7 @@ public class LogisticCenterController {
     }
 
     public String getAddress() {
-        return this.getAddress();
+        return this.logisticCenter.getAddress();
     }
 }
 

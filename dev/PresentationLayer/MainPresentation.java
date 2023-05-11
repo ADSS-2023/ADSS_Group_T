@@ -1,10 +1,12 @@
 package PresentationLayer;
 
 import DataLayer.HR_T_DAL.DB_init.Data_init;
-import Initialization.*;
 import ServiceLayer.HR.EmployeeService;
 import ServiceLayer.HR.ShiftService;
-import ServiceLayer.Transport.*;
+import ServiceLayer.Transport.BranchService;
+import ServiceLayer.Transport.DeliveryService;
+import ServiceLayer.Transport.LogisticCenterService;
+import ServiceLayer.Transport.SupplierService;
 import ServiceLayer.UserService;
 import UtilSuper.ServiceFactory;
 
@@ -62,6 +64,8 @@ public class MainPresentation {
             loginWindow();
         if (choice == 2) {
             Data_init.initOldData(this.serviceFactory.getDAO());
+            Data_init.initSupplierProducts(supplierService);
+            Data_init.initDelivery(deliveryService);
             //HR_Initialization.init_data(shiftService,employeeService);
 //            LogisticCenter_init.init(logisticCenterService);
 //            Branch_init.init(branchService);

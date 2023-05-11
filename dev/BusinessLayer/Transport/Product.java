@@ -17,6 +17,7 @@ public class Product {
         this.coolingLevel = CoolingLevel.valueOf(dto.getCoolingLevel());
     }
 
+
     public String getName() {
         return this.name;
     }

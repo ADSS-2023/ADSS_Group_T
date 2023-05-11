@@ -114,18 +114,23 @@ public class Delivery {
             dalDeliveryService.updateCounter("file counter",fileCounter);
             dalDeliveryService.insertUnHandledSite(id,supplier.getAddress(),p.getName(),fileCounter - 1,amount);
         }
+        else if(!unHandledSuppliers.get(supplier).getProducts().containsKey(p)){
+            dalDeliveryService.insertUnHandledSite(id,supplier.getAddress(),p.getName(),fileCounter - 1,amount);
+        }
         else
             dalDeliveryService.updateUnHandledSite(id,supplier.getAddress(),p.getName(), unHandledSuppliers.get(supplier).getId() ,amount);
         unHandledSuppliers.get(supplier).addProduct(p, amount);
+        if (this.source == null)
+            setSource(supplier);
         return fileCounter;
     }
 
     public void addProductToUnHandledBranch(Branch branch, Product p, int amount) throws SQLException {
         File file = unHandledBranches.get(branch);
-        if (file.getProducts().isEmpty())
+        if (!file.getProducts().containsKey(p))
             dalDeliveryService.insertUnHandledSite(id,branch.getAddress(),p.getName(),file.getId(),amount);
         else
-            dalDeliveryService.updateUnHandledSite(id,branch.getAddress(),p.getName(), file.getId() ,amount);
+            dalDeliveryService.updateUnHandledSite(id,branch.getAddress(),p.getName(), file.getId() ,amount+file.getProducts().get(p));
         file.addProduct(p, amount);
     }
 
@@ -202,8 +207,12 @@ public class Delivery {
     }
 
     private DeliveryDTO createDeliveryDTO(){
+        String address = null;
+        if(this.source != null)
+            address = this.getSource().getAddress();
+
         return new DeliveryDTO(getId(),getDate().toString(),getDepartureTime().toString(), getTruckWeight(),
-                getSource().getAddress(),getDriverID(),getTruckNumber(),getShippingArea());
+                address,getDriverID(),getTruckNumber(),getShippingArea());
     }
 
     public LinkedHashMap<Branch, File> getHandledBranches() throws SQLException {
@@ -212,7 +221,7 @@ public class Delivery {
     }
 
     public LinkedHashMap<Supplier, File> getHandledSuppliers() throws SQLException {
-        handledSuppliers = dalDeliveryService.findAllUnHandledSuppliersForDelivery(id);
+        handledSuppliers = dalDeliveryService.findAllHandledSuppliersForDelivery(id);
         return handledSuppliers;
     }
 
@@ -265,9 +274,17 @@ public class Delivery {
     }
 
     public void setSource(Site source) throws SQLException {
-        DeliveryDTO oldDTO = createDeliveryDTO();
-        this.source = source;
-        dalDeliveryService.updateDelivery(oldDTO,createDeliveryDTO());
+        if (source!=null){
+            DeliveryDTO oldDTO = createDeliveryDTO();
+            this.source = source;
+            dalDeliveryService.updateDelivery(oldDTO,createDeliveryDTO());
+        }
+        else {
+            this.source = source;
+            dalDeliveryService.insertDelivery(this);
+        }
+
+
     }
 
     public void setTruckNumber(int truckNumber) throws SQLException {
