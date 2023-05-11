@@ -56,12 +56,15 @@ public class Shift {
 
 
     public void addEmployeeRequirements(LinkedHashMap<String, Integer> requirements) throws SQLException {
+        String s;
         for (Map.Entry<String, Integer> entry : requirements.entrySet()) {
             int amount = entry.getValue();
             String pos = entry.getKey();
             if (employeeRequirements.containsKey(pos)){
+                if(shiftType){s = "morning";}
+                else s = "evening";
                 amount = amount + employeeRequirements.get(pos);
-                dalShiftService.updateRequierement(branch, date, shiftType, pos, amount);
+                dalShiftService.updateRequierement(branch, date.toString(),s, pos, amount);
             }
             else
                 employeeRequirements.put(pos, amount);
@@ -273,16 +276,21 @@ public class Shift {
     }
 
     public boolean deleteRequirement(String positionType) throws SQLException {
+        String s;
         if (employeeRequirements.containsKey(positionType)) {
             int amount = employeeRequirements.get(positionType);
             //delete from cache
             if (amount > 1){
                 employeeRequirements.put(positionType, amount - 1);
-                dalShiftService.updateRequierement(branch, date, shiftType, positionType, amount-1);
+                if(shiftType){s = "morning";}
+                else s = "evening";
+                dalShiftService.updateRequierement(branch, date.toString(), s, positionType, amount-1);
             }
             else{
+                if(shiftType){s = "morning";}
+                else s = "evening";
                 employeeRequirements.remove(positionType);
-                dalShiftService.deleteRequierement(branch, date, shiftType, positionType);
+                dalShiftService.deleteRequierement(branch, date.toString(), s , positionType);
             }
             return true;
         }

@@ -33,6 +33,9 @@ public class ShiftController {
     public ShiftController(){
         shifts = new LinkedHashMap<>();
     }
+    public ShiftController(DriverController driverController, DalEmployeeService dalEmployeeService){
+        shifts = new LinkedHashMap<>();
+    }
 
     public void init(LinkedHashMap<Integer,Employee> employeesMapper, DriverController driverController, DalEmployeeService dalEmployeeService){
        this.employeesMapper = employeesMapper;
