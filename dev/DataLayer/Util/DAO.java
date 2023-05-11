@@ -51,7 +51,6 @@ public class DAO {
 
     /**
      * This function gets an old dto and updates the suitable row with new dto.
-     * @param connection sql connection
      * @param oldDto dto to be updated
      * @param newDto new value
      * @throws SQLException
@@ -64,6 +63,7 @@ public class DAO {
             if (!field.getName().equals("id")) {
                 sql += field.getName() + " = ?, ";
             }
+
         }
         sql = sql.substring(0, sql.length() - 2); // Remove trailing comma and space
         sql += " WHERE ";
@@ -152,7 +152,6 @@ public class DAO {
 
                 ResultSetMetaData metaData = resultSet.getMetaData();
                 int columnCount = metaData.getColumnCount();
-
                 for (int i = 1; i <= columnCount; i++) {
                     String columnName = metaData.getColumnName(i);
                     Object value = resultSet.getObject(i);

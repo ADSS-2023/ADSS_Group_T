@@ -27,6 +27,20 @@ public class ShiftService {
 //        return "succeed";
 //    }
 
+    public String getNotification (){
+        Response res = new Response();
+        try
+        {
+           HashMap<LocalDate,String> noti = shiftController.getNotifications();
+            for (LocalDate date : noti.keySet()) {
+
+            }
+        }
+        catch (Exception ex){
+            return ex.getMessage();
+        }
+        return "succeed";
+    }
 
 
 

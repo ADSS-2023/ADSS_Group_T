@@ -22,15 +22,19 @@ public class DalDriverService {
     private DalUserService dalUserService;
 
     private DriverDAO driverDAO;
-    public DalDriverService(Connection connection) {
+    public DalDriverService(Connection connection,DalUserService dalUserService) {
         this.connection = connection;
         this.driverDAO = new DriverDAO(connection);
+        this.dalUserService = dalUserService;
     }
 
     public Driver findDriverById(int driverId) throws SQLException {
         DriverDTO driverdto = driverDAO.find(driverId,"driverId","Driver",DriverDTO.class);
-        Driver driver = new Driver(driverdto ,dalUserService.findUserById(driverId) );
-        return driver;
+        if (driverdto != null){
+            Driver driver = new Driver(driverdto ,dalUserService.findUserById(driverId) );
+            return driver;
+        }
+       return null;
     }
 
 

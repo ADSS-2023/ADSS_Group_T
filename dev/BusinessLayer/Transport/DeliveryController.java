@@ -323,7 +323,9 @@ public class DeliveryController {
      *
      * @return List of the delivery ids that scheduled for the new day and have overweight problem
      */
-    public ArrayList<Delivery> skipDay() throws Exception {
+
+    public ArrayList<Delivery> skipDay() throws SQLException, NoSuchFieldException {
+
         this.currDate = this.currDate.plusDays(1);
         if (!deliveryInDate(currDate))
             return null;
@@ -471,6 +473,8 @@ public class DeliveryController {
         if(deliveries.containsKey(id))
             return deliveries.get(id);
         Delivery d = dalDeliveryService.findDelivery(id);
+        if(d==null)
+            throw new RuntimeException("there is no delivery with this id");
         deliveries.put(id,d);
         return d;
     }
@@ -487,7 +491,10 @@ public class DeliveryController {
     }
 
 
-    public void executeDelivery(Delivery delivery) throws Exception {
+
+    public void executeDelivery(Delivery delivery) throws SQLException, NoSuchFieldException {
+
+ 
         if (isDeliveryFromLC(delivery))
             executeDeliveryFromLC(delivery);
         else if (isDeliveryToLC(delivery))
@@ -521,8 +528,8 @@ public class DeliveryController {
             } else {
                 delivery.setTruckWeight(currentWeight + productsWeight);
                 File f = delivery.getUnHandledSuppliers().get(supplier);
-                delivery.getHandledSuppliers().put(supplier, f);
-                delivery.getUnHandledSuppliers().remove(supplier);
+                delivery.addHandledSupplier(supplier,f);
+                delivery.removeUnHandledSupplier(supplier,f);
             }
         }
         reScheduleDelivery(delivery.getUnHandledSuppliers(), delivery.getUnHandledBranches());
@@ -541,8 +548,8 @@ public class DeliveryController {
             } else {
                 delivery.setTruckWeight(currentWeight + productsWeight);
                 File f = delivery.getUnHandledSuppliers().get(supplier);
-                delivery.getHandledSuppliers().put(supplier, f);
-                delivery.getUnHandledSuppliers().remove(supplier);
+                delivery.addHandledSupplier(supplier,f);
+                delivery.removeUnHandledSupplier(supplier,f);
                 HashMap<Product, Integer> copyOfSupplierFileProducts = new HashMap<>(f.getProducts());
                 filesCounter = delivery.supplierHandled(filesCounter, copyOfSupplierFileProducts);
             }
@@ -550,7 +557,8 @@ public class DeliveryController {
         reScheduleDelivery(delivery.getUnHandledSuppliers(), delivery.getUnHandledBranches());
     }
 
-    private void reScheduleDelivery(LinkedHashMap<Supplier, File> suppliers, LinkedHashMap<Branch, File> branches) throws Exception {
+
+    private void reScheduleDelivery(LinkedHashMap<Supplier, File> suppliers, LinkedHashMap<Branch, File> branches) throws SQLException, NoSuchFieldException {
         boolean found = false;
         LocalDate newDeliveredDate = this.currDate.plusDays(2);
         CoolingLevel coolingLevel = CoolingLevel.non;
@@ -568,16 +576,15 @@ public class DeliveryController {
 
             Delivery newDelivery = new Delivery(deliveryCounter, newDeliveredDate, LocalTime.NOON, t.getWeight(), suppliers, branches,
                     suppliers.entrySet().iterator().next().getKey(), t.getLicenseNumber(), branches.entrySet().iterator().next().getKey().getShippingArea(),dalDeliveryService);
-            if (!date2deliveries.containsKey(newDeliveredDate))
-                date2deliveries.put(newDeliveredDate, new ArrayList<>());
-            date2deliveries.get(newDeliveredDate).add(newDelivery);
+            addDelivery(newDelivery);
+            deliveryInDate(newDeliveredDate);
+            addDeliveryToDate(newDeliveredDate,newDelivery,true);
             found = true;
         }
     }
 
     public File getLoadedProducts(int deliveryID, String address) throws SQLException {
-        LinkedHashMap<String, Supplier> suppliers = supplierController.getAllSuppliers();
-        return deliveries.get(deliveryID).getUnHandledSuppliers().get(suppliers.get(address));
+        return deliveries.get(deliveryID).getUnHandledSuppliers().get(supplierController.getSupplier(address));
     }
 
     public void setEnterWeightInterface(EnterWeightInterface enterWeightInterface) {
@@ -596,18 +603,20 @@ public class DeliveryController {
     }
 
 
+
+
     private ArrayList<Delivery> checkStoreKeeperForTomorrow() throws Exception {
         LocalDate tomorrow = this.currDate.plusDays(1);
         ArrayList<String> branchWithoutStoreKeeper = shiftController.getBranchesWithoutStoreKeeper(tomorrow);
-        ArrayList<Delivery> deliveriesTomorrow = new ArrayList<>(date2deliveries.get(tomorrow));
+        ArrayList<Delivery> deliveriesTomorrow = new ArrayList<>(getDeliveriesByDate(tomorrow));
         ArrayList<Delivery> deliveriesWithoutStoreKeeper = new ArrayList<>();
         for (Delivery delivery : deliveriesTomorrow) {
             LinkedHashSet<Branch> branchesOfDeliveries = new LinkedHashSet<>(delivery.getUnHandledBranches().keySet());
             for (Branch branch : branchesOfDeliveries) {
                 if (branchWithoutStoreKeeper.contains(branch.getAddress())) {
                     reScheduleDelivery(delivery.getUnHandledSuppliers(), delivery.getUnHandledBranches());
-                    date2deliveries.get(tomorrow).remove(deliveries.get(delivery.getId()));
-                    date2trucks.get(tomorrow).remove(logisticCenterController.getTruck(delivery.getTruckNumber()));
+                    removeDeliveryFromDate(tomorrow,getDelivery(delivery.getId()));
+                    removeTruckFromDate(tomorrow,logisticCenterController.getTruck(delivery.getTruckNumber()));
                     deliveriesWithoutStoreKeeper.add(delivery);
                     break;
                 }
@@ -673,8 +682,19 @@ public class DeliveryController {
         return dateDeliveries;
     }
 
+    private ArrayList<Truck> getTrucksByDate(LocalDate date) throws Exception {
+        ArrayList<Truck> dateTrucks = new ArrayList<>();
+        List<DateToTruckDTO> dateTrucksDTOs = dalDeliveryService.findAllTrucksByDate(date.toString());
+        for(DateToTruckDTO dto : dateTrucksDTOs){
+            Truck truck = logisticCenterController.getTruck(dto.getTruckId());
+            dateTrucks.add(truck);
+            addTruckToDate(date,truck,false);
+        }
+        return dateTrucks;
+    }
+
     private boolean deliveryInDate(LocalDate date) throws SQLException {
-        return date2deliveries.containsKey(date) || dalDeliveryService.findAllDeliveriesByDate(date.toString()) != null;
+        return (date2deliveries.containsKey(date) && !date2deliveries.get(date).isEmpty()) || dalDeliveryService.findAllDeliveriesByDate(date.toString()) != null;
     }
 
     private boolean specificTruckInDate(LocalDate date,Truck truck) throws SQLException {
@@ -685,9 +705,14 @@ public class DeliveryController {
         return date2trucks.containsKey(date) || dto != null;
     }
 
-    private void removeTruckFromDate(LocalDate date,Truck t) throws SQLException {
+    private void removeTruckFromDate(LocalDate date,Truck t) throws Exception {
         dalDeliveryService.deleteDateToTruck(date.toString(),t.getLicenseNumber());
-        date2trucks.get(date).remove(t);
+        getTrucksByDate(date).remove(t);
+    }
+
+    private void removeDeliveryFromDate(LocalDate date,Delivery d) throws SQLException {
+        dalDeliveryService.deleteDateToDelivery(date.toString(),d.getId());
+        getDeliveriesByDate(date).remove(d);
     }
 }
 
