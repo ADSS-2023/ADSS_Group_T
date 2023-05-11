@@ -85,4 +85,12 @@ public class ConstantSupplier extends SupplierBusiness {
     public List<DayOfWeek> getConstDeliveryDays() {
         return constDeliveryDays;
     }
+
+    public void deleteConstantDays() throws SQLException {
+        for (ConstDeliveryDaysDTO constDeliveryDay : constDeliveryDaysDTOS)  {
+            supplierDalController.delete(constDeliveryDay);
+        }
+        constDeliveryDays = new ArrayList<>();
+        constDeliveryDaysDTOS = new ArrayList<>();
+    }
 }
