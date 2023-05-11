@@ -575,6 +575,47 @@ public class OrderController {
             product.setOrderProductDTO(newOrderProductDTO);
         }
     }
+
+    /**
+     * delete all orders in the system
+     * @throws SQLException
+     */
+    public void deleteOrders() throws SQLException {
+        List<OrderBusiness> toRemove1 = new ArrayList<>();
+        for (OrderBusiness order : orders) {
+            order.deleteOrder();
+            orderDalController.delete(order.getOrderDTO());
+            toRemove1.add(order);
+        }
+
+        for (OrderBusiness remove : toRemove1) {
+            orders.remove(remove);
+        }
+
+        List<OrderBusiness> toRemove2 = new ArrayList<>();
+        for (OrderBusiness order : ordersNotSupplied) {
+            order.deleteOrder();
+            orderDalController.delete(order.getOrderDTO());
+            toRemove2.add(order);
+        }
+
+        for (OrderBusiness remove : toRemove2) {
+            ordersNotSupplied.remove(remove);
+        }
+
+        for (List<OrderBusiness> ListToDelete : dayToConstantOrders.values()) {
+            List<OrderBusiness> toRemove3 = new ArrayList<>();
+            for (OrderBusiness order : ListToDelete) {
+                order.deleteOrder();
+                orderDalController.delete(order.getOrderDTO());
+                toRemove3.add(order);
+            }
+            for (OrderBusiness remove : toRemove3) {
+                ListToDelete.remove(remove);
+            }
+            toRemove3 = new ArrayList<>();
+        }
+    }
 }
 
 

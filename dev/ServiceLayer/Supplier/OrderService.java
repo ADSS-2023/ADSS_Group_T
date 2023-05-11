@@ -109,6 +109,16 @@ public class OrderService {
         }
     }
 
+    public String deleteAllOrders(){
+        try {
+            oc.deleteOrders();
+        }
+        catch (Exception e){
+            return e.getMessage();
+        }
+        return "Deleted Successfully";
+    }
+
 
 
 }

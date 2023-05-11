@@ -5,8 +5,10 @@ import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.OrderDTO;
 import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.OrderProductDTO;
 import DataLayer.Inventory_Supplier_Dal.DalController.OrderDalController;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -145,4 +147,10 @@ public class OrderBusiness {
         this.orderNum = orderNum;
     }
 
+    public void deleteOrder() throws SQLException {
+        for (OrderProduct product:products) {
+            orderDalController.delete(product.getOrderProductDTO());
+        }
+        products=new ArrayList<>();
+    }
 }
