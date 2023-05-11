@@ -33,16 +33,18 @@ public class ShiftController {
     public ShiftController(){
         shifts = new LinkedHashMap<>();
     }
-    public ShiftController(DriverController driverController, DalEmployeeService dalEmployeeService){
+    public ShiftController(DriverController driverController, DalEmployeeService dalEmployeeService,DalShiftService dalShiftService){
         shifts = new LinkedHashMap<>();
+        this.driverController     = driverController;
+        this.dalEmployeeService = dalEmployeeService;
+        this.dalShiftService = dalShiftService;
     }
 
-    public void init(LinkedHashMap<Integer,Employee> employeesMapper, DriverController driverController, DalEmployeeService dalEmployeeService){
-       this.employeesMapper = employeesMapper;
-       this.driverController     = driverController;
-       this.dalEmployeeService = dalEmployeeService;
-    }
 
+
+    public void init(LinkedHashMap<Integer,Employee> employeesMapper, DriverController driverController, DalEmployeeService dalEmployeeService) {
+
+    }
 
 
     public void SkipDay(LocalDate date) throws SQLException {
@@ -62,9 +64,9 @@ public class ShiftController {
                 // Check if the current shift is legal
                 notification += String.format("Branch %s, Date %s, Shift Type %s: %s\n", shift.getBranch(), shift.getDate(), shift.getShiftType(), shift.isLegalShift());
                 this.notifications.put(date, notification);
-                }
             }
         }
+    }
 
 
 

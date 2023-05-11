@@ -71,7 +71,7 @@ public class DalShiftService {
 
     // TODO - israel
     public LinkedHashMap < String, HashMap<LocalDate, ArrayList<Shift>>> findFindAllShiftsByDate(String branch, LocalDate localDate) throws SQLException {
-    return  null;
+        return  null;
     }
 
     // TODO - israel
@@ -100,5 +100,3 @@ public class DalShiftService {
         shiftDAO.insert(shiftDTO);
     }
 }
-
-

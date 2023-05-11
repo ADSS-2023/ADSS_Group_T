@@ -85,7 +85,7 @@ public class ServiceFactory {
 
 
         driverController = new DriverController(dalDriverService);
-        shiftController = new ShiftController(driverController,dalEmployeeService);
+        shiftController = new ShiftController(driverController,dalEmployeeService,dalShiftService);
         shiftService = new ShiftService(shiftController);
         //TODO delete because error!:
         employeeController = new EmployeeController(dalEmployeeService,dalUserService);
