@@ -63,8 +63,10 @@ public class Shift {
                 amount = amount + employeeRequirements.get(pos);
                 dalShiftService.updateRequierement(branch, date, shiftType, pos, amount);
             }
-            else
+            else{
                 employeeRequirements.put(pos, amount);
+                dalShiftService.addRequierement(branch, date, shiftType, pos, amount);
+            }
         }
     }
 
