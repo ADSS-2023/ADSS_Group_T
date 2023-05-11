@@ -68,7 +68,6 @@ public class Data_init {
         dao.insert(new SiteDTO("s7", "000000017", "Contact S7", 30, 30, Location.getShippingArea(30, 30), "supplier"));
         dao.insert(new SiteDTO("s8", "000000018", "Contact S8", -20, -10, Location.getShippingArea(-20, -10), "supplier"));
         dao.insert(new SiteDTO("s9", "000000019", "Contact S9", 5, -5, Location.getShippingArea(5, -5), "supplier"));
-
     }
 
     public static void  initTrucks(DAO dao) throws SQLException {

@@ -6,7 +6,6 @@ import ServiceLayer.Transport.LogisticCenterService;
 import ServiceLayer.Transport.SupplierService;
 import UtilSuper.Response;
 import UtilSuper.ResponseSerializer;
-
 import java.util.LinkedHashMap;
 import java.util.Scanner;
 
@@ -77,7 +76,6 @@ public class TransportManagerPresentation {
         } else {
             System.out.println(nextDayDetailsResponse.getReturnValue());
         }
-
         Response skipDayResponse = ResponseSerializer.deserializeFromJson(deliveryService.skipDay());
         if (skipDayResponse.isError()) {
             System.out.println(skipDayResponse.getErrorMessage());
@@ -85,6 +83,7 @@ public class TransportManagerPresentation {
             System.out.println(skipDayResponse.getReturnValue());
         }
     }
+
     /**
      * add New Delivery to the system
      */
@@ -105,9 +104,9 @@ public class TransportManagerPresentation {
             }
         }
     }
+
     // option 3
     /**
-
      add new truck to the system
      */
     private void addNewTruck() {
@@ -128,6 +127,7 @@ public class TransportManagerPresentation {
         else
             System.out.println(response.getReturnValue());
     }
+
 // option 4
     /**
 
@@ -152,9 +152,9 @@ public class TransportManagerPresentation {
         else
             System.out.println(response.getReturnValue());
     }
+
 // option 5
     /**
-
      add new branch to the system
      */
     private void addNewBranch() {
@@ -177,8 +177,6 @@ public class TransportManagerPresentation {
             System.out.println("Branch added successfully");
         }
     }
-
-
 
     // option 6
     private void showProductsInStock() {
@@ -268,21 +266,10 @@ public class TransportManagerPresentation {
                 System.out.println(response.getReturnValue());
                 return scanner.next();
             }
-
         }
         return null;
     }
 
-
-
-
-    /**
-     * allow the user to select a supplier
-     *
-     * @param scanner
-     * @param selectedSuppliers - A list of suppliers from which the user has to choose one
-     * @return Supplier that the user choose
-     */
     private LinkedHashMap<String, LinkedHashMap<String, Integer>> enterSuppliersAndProducts(DeliveryService deliveryService) {
         Scanner scanner = new Scanner(System.in);
         LinkedHashMap<String, LinkedHashMap<String, Integer>> suppliersAndProducts = new LinkedHashMap<>();
@@ -331,14 +318,6 @@ public class TransportManagerPresentation {
         return suppliersAndProducts;
     }
 
-
-    /**
-     * allow the user to select Products
-     *
-     * @param scanner
-     * @param selectedSupplier - The supplier from which the user will choose products
-     * @return map of product as key and amount of the product as value
-     */
     private LinkedHashMap<String, Integer> enterSupplierProducts(String supplier, DeliveryService deliveryService) {
         Scanner scanner = new Scanner(System.in);
         LinkedHashMap<String, Integer> products = new LinkedHashMap<String, Integer>();
@@ -381,11 +360,9 @@ public class TransportManagerPresentation {
         return null;
     }
 
-
     /**
      * allow the user enter date for delivery
      *
-     * @param scanner
      * @return LocalDate
      */
     private String enterDeliveryDate(Scanner scanner) {
@@ -415,7 +392,6 @@ public class TransportManagerPresentation {
             return scanner.nextInt();//products weight
         }
         return 0;
-
     }
 
     public int enterOverWeightAction(int deliveryID) {
@@ -427,5 +403,4 @@ public class TransportManagerPresentation {
         System.out.println("3.unload products");
         return scanner.nextInt();//overweight action
     }
-
 }

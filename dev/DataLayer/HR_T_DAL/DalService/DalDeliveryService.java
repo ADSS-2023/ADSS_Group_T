@@ -14,8 +14,6 @@ import java.util.List;
 
 public class DalDeliveryService {
 
-    private Connection connection;
-
     private DalLogisticCenterService dalLogisticCenterService;
     private DeliveryDAO deliveryDAO;
 
@@ -23,7 +21,6 @@ public class DalDeliveryService {
     private DAO dao;
 
     public DalDeliveryService(Connection connection,DalLogisticCenterService dalLogisticCenterService) {
-        this.connection = connection;
         this.dalLogisticCenterService = dalLogisticCenterService;
         this.deliveryDAO = new DeliveryDAO(connection);
         this.dao = new DAO(connection);
@@ -206,11 +203,6 @@ public class DalDeliveryService {
         }
         return products;
     }
-
-
-
-
-
 
     public LinkedHashMap<String, Branch> findAllBranch() throws SQLException {
         ArrayList<SiteDTO> branchesDTOs =  siteDAO.findAllSite("branch");

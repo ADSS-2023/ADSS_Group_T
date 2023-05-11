@@ -14,7 +14,6 @@ public class SupplierController {
         this.dalDeliveryService = dalDeliveryService;
     }
 
-
     // without products
     public void addSupplier(String supplierAddress, String telNumber, String contactName, int x, int y) throws SQLException {
         if (suppliers.containsKey(supplierAddress) ||

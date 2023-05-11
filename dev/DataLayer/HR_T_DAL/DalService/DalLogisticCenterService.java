@@ -74,7 +74,6 @@ public class DalLogisticCenterService {
         return productsInStock;
     }
 
-
     public SiteDTO findLogisticCenter() throws SQLException {
         return dao.find("logistic center address","siteAddress","Site", SiteDTO.class);
     }

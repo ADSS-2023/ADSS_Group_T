@@ -2,7 +2,6 @@ package PresentationLayer;
 
 import DataLayer.HR_T_DAL.DB_init.Data_init;
 import DataLayer.HR_T_DAL.DB_init.Data_init_HR;
-import Initialization.*;
 import ServiceLayer.HR.EmployeeService;
 import ServiceLayer.HR.ShiftService;
 import ServiceLayer.Transport.BranchService;
@@ -17,10 +16,7 @@ import java.util.Scanner;
 
 public class MainPresentation {
 
-
-
     private ServiceFactory serviceFactory;
-
     private ShiftService shiftService;
     private EmployeeService employeeService;
     private LogisticCenterService logisticCenterService;
@@ -69,13 +65,7 @@ public class MainPresentation {
         }
         if (choice == 2) {
             Data_init.initOldData(this.serviceFactory.getDAO(),supplierService,deliveryService);
-            //Data_init_HR.initOldData(this.serviceFactory.getDAO());
-            //HR_Initialization.init_data(shiftService,employeeService);
-//            LogisticCenter_init.init(logisticCenterService);
-//            Branch_init.init(branchService);
-//            Suppliers_init.init(supplierService);
-//            Delivery_init.init(deliveryService);
-
+            Data_init_HR.initOldData(this.serviceFactory.getDAO());
         }
         loginWindow();
     }
@@ -85,7 +75,7 @@ public class MainPresentation {
      */
     public void loginWindow() {
         //TODO remove shortCut:
-        this.transportManagerPresentation.start();
+        //this.transportManagerPresentation.start();
        // this.hrManagerPresentation.start();
 
         Scanner scanner = new Scanner(System.in);
@@ -107,7 +97,6 @@ public class MainPresentation {
                     loginSuccess = true;
                 }
             }
-
             switch (result) {
                 case "employee": employeePresentation.start();
                 case "TransportManager": transportManagerPresentation.start();

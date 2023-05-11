@@ -9,9 +9,7 @@ import java.util.LinkedHashMap;
 
 public class LogisticCenterController {
 
-
     private final LogisticCenter logisticCenter;
-
 
     public LogisticCenterController(DalLogisticCenterService dalLogisticCenterService) throws Exception {
         SiteDTO siteDTO = dalLogisticCenterService.findLogisticCenter();
