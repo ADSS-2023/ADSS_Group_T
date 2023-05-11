@@ -238,7 +238,7 @@ public class TransportManagerPresentation {
         if (response.isError())
             System.out.println(response.getErrorMessage());
         else {
-            System.out.println("Branch added successfully");
+            System.out.println("Products added successfully");
         }
     }
 

@@ -69,7 +69,7 @@ public class ServiceFactory {
         connection = DriverManager.getConnection(testDBUrl);
 
         this.dao = new DAO(connection);
-        Data_init.initBasicData(dao);
+
         //Data_init_HR.initBasicData(dao);
 
 

@@ -132,7 +132,7 @@ public class DeliveryController {
                 if (truck == null) // in case there is no truck available for this delivery
                     continue;
                 Delivery delivery = new Delivery(deliveryCounter++, requiredDate, LocalTime.NOON, truck.getWeight(), new LinkedHashMap<>(),
-                        new LinkedHashMap<>(), null, truck.getLicenseNumber(), branch.getShippingArea(),dalDeliveryService);
+                        new LinkedHashMap<>(), this.logisticCenterController.getLogisticCenter(), truck.getLicenseNumber(), branch.getShippingArea(),dalDeliveryService);
                 dalDeliveryService.updateCounter("delivery counter",deliveryCounter);
                 try {
                     shiftController.addDirverRequirement(requiredDate, truck.getLicenseType(), truck.getCoolingLevel());

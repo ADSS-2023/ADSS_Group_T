@@ -60,10 +60,13 @@ public class MainPresentation {
         System.out.println("Please choose an option:");
         System.out.println("1. start new program");
         System.out.println("2. load old data");
+        System.out.println("3. continue from last save");
         int choice = scanner.nextInt();
         scanner.nextLine();
-        if (choice == 1)
-            loginWindow();
+        if (choice == 1){
+            Data_init.initBasicData(this.serviceFactory.getDAO());
+
+        }
         if (choice == 2) {
             Data_init.initOldData(this.serviceFactory.getDAO(),supplierService,deliveryService);
             //Data_init_HR.initOldData(this.serviceFactory.getDAO());
@@ -72,8 +75,9 @@ public class MainPresentation {
 //            Branch_init.init(branchService);
 //            Suppliers_init.init(supplierService);
 //            Delivery_init.init(deliveryService);
-            loginWindow();
+
         }
+        loginWindow();
     }
 
     /**

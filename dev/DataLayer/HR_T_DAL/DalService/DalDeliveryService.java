@@ -54,13 +54,13 @@ public class DalDeliveryService {
 
     public void insertSupplier(Supplier supplier) throws SQLException {
         SiteDTO dto = new SiteDTO(supplier.getAddress(),supplier.getTelNumber(),
-                supplier.getContactName(),supplier.getLocation().getX(),supplier.getLocation().getY(),supplier.getShippingArea(),"Supplier");
+                supplier.getContactName(),supplier.getLocation().getX(),supplier.getLocation().getY(),supplier.getShippingArea(),"supplier");
         dao.insert(dto);
     }
 
     public void insertBranch(Branch branch) throws SQLException {
         SiteDTO dto = new SiteDTO(branch.getAddress(),branch.getTelNumber(),
-                branch.getContactName(),branch.getLocation().getX(),branch.getLocation().getY(),branch.getShippingArea(),"Branch");
+                branch.getContactName(),branch.getLocation().getX(),branch.getLocation().getY(),branch.getShippingArea(),"branch");
         dao.insert(dto);
     }
 
@@ -134,20 +134,20 @@ public class DalDeliveryService {
     }
 
     public Supplier findSupplier(String supplierAddress) throws SQLException {
-        SiteDTO dto = dao.find(supplierAddress,"SiteAddress","Site",SiteDTO.class);
+        SiteDTO dto = dao.find(supplierAddress,SiteDTO.getPKNameStatic(),SiteDTO.getTableNameStatic(),SiteDTO.class);
         if(dto == null)
-            throw new RuntimeException("there is no supplier with address: " + supplierAddress);
+            return null;
         return new Supplier(dto,this);
     }
 
     public Branch findBranch(String branchAddress) throws SQLException {
-        SiteDTO dto = dao.find(branchAddress,"siteAddress","Site", SiteDTO.class);
+        SiteDTO dto = dao.find(branchAddress,SiteDTO.getPKNameStatic(),SiteDTO.getTableNameStatic(), SiteDTO.class);
         if(dto == null)
             return null;
         return new Branch(dto);
     }
     public Site findSite(String siteAddress) throws SQLException{
-        SiteDTO dto = dao.find(siteAddress,"siteAddress","Site", SiteDTO.class);
+        SiteDTO dto = dao.find(siteAddress,SiteDTO.getPKNameStatic(),SiteDTO.getTableNameStatic(), SiteDTO.class);
         if(dto.getType().equals("Branch"))
             return new Branch(dto);
         else if(dto.getType().equals("Supplier"))
@@ -170,7 +170,7 @@ public class DalDeliveryService {
     }
 
     public DeliveryUnHandledSitesDTO findDeliveryUnHandledSites(LinkedHashMap<String,Object> pk) throws SQLException {
-        return dao.find(pk,"DeliveryUnHandledSites",DeliveryUnHandledSitesDTO.class);
+        return dao.find(pk,DeliveryUnHandledSitesDTO.getTableNameStatic(),DeliveryUnHandledSitesDTO.class);
     }
 
     public DeliveryHandledSitesDTO findDeliveryHandledSites(LinkedHashMap<String,Object> pk) throws SQLException {
@@ -178,7 +178,7 @@ public class DalDeliveryService {
     }
 
     public DateToTruckDTO findSpecificTruckInDate(LinkedHashMap<String,Object> pk) throws SQLException {
-        return dao.find(pk,"DateToTruck",DateToTruckDTO.class);
+        return dao.find(pk,DateToTruckDTO.getTableNameStatic(),DateToTruckDTO.class);
     }
     public LinkedHashMap<String, Supplier> findAllSupplier() throws SQLException {
         ArrayList<SiteDTO> suppliersDTOs =  siteDAO.findAllSite("supplier");
@@ -190,7 +190,7 @@ public class DalDeliveryService {
     }
 
     public LinkedHashMap<String, Product> findAllProducts() throws SQLException {
-        ArrayList<ProductDTO> ProductDTOs =  dao.findAll("Product", ProductDTO.class);
+        ArrayList<ProductDTO> ProductDTOs =  dao.findAll(ProductDTO.getTableNameStatic(), ProductDTO.class);
         LinkedHashMap<String, Product> products = new LinkedHashMap<>();
         for(ProductDTO p : ProductDTOs){
             products.put(p.getProductName(),new Product(p));
