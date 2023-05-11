@@ -111,9 +111,9 @@ public class SupplierManager {
             System.out.println("16.Show all discounts of a certain product's supplier.");
             System.out.println("17.Show all general discounts of a certain supplier.");
             System.out.println("18.Go back to main menu.");
-            System.out.println("19.loadOrders.");
+            System.out.println("19.Load Data.");
 
-            int choice = getInteger(scanner, "Please select an integer between 1 to 19.", 1, 30);
+            int choice = getInteger(scanner, "Please select an integer between 1 to 19.", 1, 19);
             switch (choice) {
                 case 1:
                     addSupplier();
@@ -170,7 +170,7 @@ public class SupplierManager {
                     goBack();
                     break;
                 case 19:
-                    loadOrders();
+                    loadData();
                     break;
             }
         }
@@ -579,7 +579,8 @@ public class SupplierManager {
         }
         return input;
     }
-    public void loadOrders()  {
+    public void loadData()  {
+        serviceFactory.supplierService.loadSuppliers();
         serviceFactory.orderService.loadOrders();
     }
     public void setPreviousCallBack(PreviousCallBack previousCallBack) {

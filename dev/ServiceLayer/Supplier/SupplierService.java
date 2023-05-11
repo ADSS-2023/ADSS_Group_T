@@ -23,6 +23,15 @@ public class SupplierService {
         this.oc=oc;
     }
 
+    public String loadSuppliers(){
+        try {
+            sc.loadSuppliers();
+        }
+        catch (Exception e){
+            return e.getMessage();
+        }
+        return "suppliers successfully loaded ";
+    }
     public String addSupplier(String name, String address, int supplierNum, int bankAccountNum, int daysToDeliver, HashMap<String, String> contacts, List<DayOfWeek> constDeliveryDays, boolean selfDelivery, PaymentTerms paymentTerms){
         try{
             sc.addSupplier(name,address,supplierNum,bankAccountNum,contacts,constDeliveryDays, selfDelivery, paymentTerms, daysToDeliver);

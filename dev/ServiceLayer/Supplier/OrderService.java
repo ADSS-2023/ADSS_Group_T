@@ -20,6 +20,7 @@ public class OrderService {
         }
         public void loadOrders()  {
         try {
+            sc.loadSuppliers();
             oc.loadOrders();
         }
         catch (Exception e){
