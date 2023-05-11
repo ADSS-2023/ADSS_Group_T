@@ -143,9 +143,27 @@ public class DAO {
         statement.executeUpdate();
     }
 
-    public void deleteAll(Connection connection, String tableName) throws SQLException {
-        String sql = "DELETE FROM " + tableName;
+    public void deleteAll(Connection connection) throws SQLException {
+        String sql = "DELETE FROM \"supplier_const_delivery_days\"";
         PreparedStatement statement = connection.prepareStatement(sql);
+        statement.executeUpdate();
+        sql = "DELETE FROM \"supplier_discount\"";
+        statement = connection.prepareStatement(sql);
+        statement.executeUpdate();
+        sql = "DELETE FROM \"supplier_order\"";
+        statement = connection.prepareStatement(sql);
+        statement.executeUpdate();
+        sql = "DELETE FROM \"supplier_order_product\"";
+        statement = connection.prepareStatement(sql);
+        statement.executeUpdate();
+        sql = "DELETE FROM \"supplier_supplier_contact\"";
+        statement = connection.prepareStatement(sql);
+        statement.executeUpdate();
+        sql = "DELETE FROM \"supplier_supplier\"";
+        statement = connection.prepareStatement(sql);
+        statement.executeUpdate();
+        sql = "DELETE FROM \"supplier_supplier_product\"";
+        statement = connection.prepareStatement(sql);
         statement.executeUpdate();
     }
 
