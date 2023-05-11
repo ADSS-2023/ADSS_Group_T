@@ -90,26 +90,7 @@ public class SupplierService {
         }
     }
 
-    public List<ItemToOrder> getAllProducts() {
-        List<ItemToOrder> items = new LinkedList<>();
-        ConcurrentHashMap<Integer, SupplierProductBusiness> products = new ConcurrentHashMap<>();
-        try {
-            ConcurrentHashMap<Integer, SupplierBusiness> suppliers=sc.getSuppliers();
-            for (Map.Entry<Integer, SupplierBusiness> entry : suppliers.entrySet()) {
-                products = entry.getValue().getProducts();
-                for (Map.Entry<Integer, SupplierProductBusiness> entry2 : products.entrySet())
-                    items.add(new ItemToOrder(entry2.getValue().getName(),
-                            entry2.getValue().getManufacturer(),entry2.getValue().getMaxAmount(),
-                            null,-1,entry2.getValue().getPrice()));
-            }
-        }
-        catch (Exception e){
-            return null;
-        }
-        finally {
-            return items;
-        }
-    }
+
 
     public String addProduct(int supplierNum, int productNum, String productName, String manufacturer, int price, int maxAmount, LocalDate expiryDate){
         try {
