@@ -351,9 +351,13 @@ public class StockUI {
         }
     }
 
-    public void loadData()  {
+    public void setUpData()  {
         sf.inventoryService.setUp();
         sf.manageOrderService.set_up();
+    }
+
+    public void loadData(){
+        sf.inventoryService.loadData();
     }
 
     public void setPreviousCallBack(PreviousCallBack previousCallBack) {
@@ -373,7 +377,7 @@ public class StockUI {
     }
 
     public void deleteData() {
-        this.sf.makeEmptyDB();
+        //this.sf.makeEmptyDB();
         this.sf.deleteAllData();
     }
 }
