@@ -189,7 +189,7 @@ public class Inventory {
         this.add_item(".0.0",2,"yellow cheese",5,"Emeck",10.2);
         this.add_item(".0.1",1 , "1.5% milk" , 2 , "IDO LTD",  3.5);
         this.add_item(".0.1", 0,"3% milk" , 5 , "IDO LTD",  3.5);
-        this.add_item(".1" , 5  , "Beef Sausage",15,"Zogloveck",10.05);
+        this.add_item(".1.0" , 5  , "Beef Sausage",15,"Zogloveck",10.05);
         receive_order(155,0,20,"ile 5 shelf 10",Util.stringToDate("2023-05-20"),2.15);
         receive_order(120,1,10,"ile 5 shelf 11",Util.stringToDate("2023-05-23"),2.55);
         receive_order(20,2,6,"ile 2 shelf 3",Util.stringToDate("2023-10-25"),5.3);
