@@ -5,12 +5,9 @@ import DataLayer.HR_T_DAL.DAOs.DeliveryDAO;
 import DataLayer.HR_T_DAL.DAOs.SiteDAO;
 import DataLayer.HR_T_DAL.DTOs.*;
 import DataLayer.Util.DAO;
-import DataLayer.Util.DTO;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.SQLException;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -34,15 +31,19 @@ public class DalDeliveryService {
     }
 
     public void insertDelivery(Delivery delivery) throws SQLException {
+        Site site = delivery.getSource();
+        String address = null;
+        if (site != null)
+            address = site.getAddress();
         DeliveryDTO dto = new DeliveryDTO(delivery.getId(),delivery.getDate().toString(),
                 delivery.getDepartureTime().toString(),delivery.getTruckWeight(),
-                delivery.getSource().getAddress(),delivery.getDriverID(),delivery.getTruckNumber(),
+                address,delivery.getDriverID(),delivery.getTruckNumber(),
                 delivery.getShippingArea());
        dao.insert(dto);
     }
 
     public void insertUnHandledSite(int deliveryId, String siteAddress, String productName, int fileId, int amount) throws SQLException {
-        DeliveryHandledSitesDTO dto = new DeliveryHandledSitesDTO(deliveryId,siteAddress,productName,fileId,amount);
+        DeliveryUnHandledSitesDTO dto = new DeliveryUnHandledSitesDTO(deliveryId,siteAddress,productName,fileId,amount);
         dao.insert(dto);
     }
 
@@ -142,7 +143,7 @@ public class DalDeliveryService {
     public Branch findBranch(String branchAddress) throws SQLException {
         SiteDTO dto = dao.find(branchAddress,"siteAddress","Site", SiteDTO.class);
         if(dto == null)
-            throw new RuntimeException("there is no branch with address: " + branchAddress);
+            return null;
         return new Branch(dto);
     }
     public Site findSite(String siteAddress) throws SQLException{
@@ -164,7 +165,7 @@ public class DalDeliveryService {
     public Delivery findDelivery(int deliveryId) throws SQLException {
         DeliveryDTO dto = dao.find(deliveryId,"id","Delivery",DeliveryDTO.class);
         if(dto == null)
-            throw new RuntimeException("there is no delivery with id: " + deliveryId);
+            return null;
         return new Delivery(dto,this);
     }
 
@@ -197,8 +198,22 @@ public class DalDeliveryService {
         return products;
     }
 
+    public LinkedHashMap<String, Product> findAllProductsOfSupplier(String supplierAddress) throws SQLException {
+        ArrayList<ProductDTO> ProductDTOs =  deliveryDAO.findAllProductsOfSupplier(supplierAddress, ProductDTO.class);
+        LinkedHashMap<String, Product> products = new LinkedHashMap<>();
+        for(ProductDTO p : ProductDTOs){
+            products.put(p.getProductName(),new Product(p));
+        }
+        return products;
+    }
+
+
+
+
+
+
     public LinkedHashMap<String, Branch> findAllBranch() throws SQLException {
-        ArrayList<SiteDTO> branchesDTOs =  siteDAO.findAllSite("Branch");
+        ArrayList<SiteDTO> branchesDTOs =  siteDAO.findAllSite("branch");
         LinkedHashMap<String, Branch> branches = new LinkedHashMap<>();
         for(SiteDTO b : branchesDTOs){
             branches.put(b.getSiteAddress(),new Branch(b));
@@ -220,7 +235,7 @@ public class DalDeliveryService {
 
     public LinkedHashMap<Supplier, File> findAllUnHandledSuppliersForDelivery(int deliveryId) throws SQLException {
         ArrayList<DeliveryUnHandledSitesDTO> DTOs = deliveryDAO.findAllCategorySitesForDelivery("DeliveryUnHandledSites",
-                DeliveryUnHandledSitesDTO.class,deliveryId,"Supplier");
+                DeliveryUnHandledSitesDTO.class,deliveryId,"supplier");
         LinkedHashMap<Supplier, File> suppliers = new LinkedHashMap<>();
         for(DeliveryUnHandledSitesDTO dto : DTOs){
             Supplier s = findSupplier(dto.getSiteAddress());
@@ -234,7 +249,7 @@ public class DalDeliveryService {
 
     public LinkedHashMap<Supplier, File> findAllHandledSuppliersForDelivery(int deliveryId) throws SQLException {
         ArrayList<DeliveryHandledSitesDTO> DTOs = deliveryDAO.findAllCategorySitesForDelivery("DeliveryHandledSites",
-                DeliveryHandledSitesDTO.class,deliveryId,"Supplier");
+                DeliveryHandledSitesDTO.class,deliveryId,"supplier");
         LinkedHashMap<Supplier, File> suppliers = new LinkedHashMap<>();
         for(DeliveryHandledSitesDTO dto : DTOs){
             Supplier s = findSupplier(dto.getSiteAddress());
@@ -248,7 +263,7 @@ public class DalDeliveryService {
 
     public LinkedHashMap<Branch, File> findAllUnHandledBranchesForDelivery(int deliveryId) throws SQLException {
         ArrayList<DeliveryUnHandledSitesDTO> DTOs = deliveryDAO.findAllCategorySitesForDelivery("DeliveryUnHandledSites",
-                DeliveryUnHandledSitesDTO.class,deliveryId,"Branch");
+                DeliveryUnHandledSitesDTO.class,deliveryId,"branch");
         LinkedHashMap<Branch, File> branches = new LinkedHashMap<>();
         for(DeliveryUnHandledSitesDTO dto : DTOs){
             Branch b = findBranch(dto.getSiteAddress());
@@ -262,7 +277,7 @@ public class DalDeliveryService {
 
     public LinkedHashMap<Branch, File> findAllHandledBranchesForDelivery(int deliveryId) throws SQLException {
         ArrayList<DeliveryHandledSitesDTO> DTOs = deliveryDAO.findAllCategorySitesForDelivery("DeliveryHandledSites",
-                DeliveryHandledSitesDTO.class,deliveryId,"Branch");
+                DeliveryHandledSitesDTO.class,deliveryId,"branch");
         LinkedHashMap<Branch, File> branches = new LinkedHashMap<>();
         for(DeliveryHandledSitesDTO dto : DTOs){
             Branch b = findBranch(dto.getSiteAddress());
@@ -285,4 +300,20 @@ public class DalDeliveryService {
     public CounterDTO findDeliveryCounter() throws SQLException {
         return dao.find("delivery counter",CounterDTO.getPKStatic(),CounterDTO.getTableNameStatic(), CounterDTO.class);
     }
+
+    public LinkedHashMap<Integer, Delivery> findAllDeliveries() throws SQLException {
+        ArrayList<DeliveryDTO> deliveryDTOS = dao.findAll(DeliveryDTO.getTableNameStatic(),DeliveryDTO.class);
+        LinkedHashMap<Integer,Delivery> result = new LinkedHashMap<>();
+        for (DeliveryDTO deliveryDTO: deliveryDTOS){
+            result.put(deliveryDTO.getId(),new Delivery(deliveryDTO,this));
+            result.get(deliveryDTO.getId()).setUnHandledSuppliers(findAllUnHandledSuppliersForDelivery(deliveryDTO.getId()));
+            result.get(deliveryDTO.getId()).setUnHandledBranches(findAllUnHandledBranchesForDelivery(deliveryDTO.getId()));
+            result.get(deliveryDTO.getId()).setHandledSuppliers(findAllHandledSuppliersForDelivery(deliveryDTO.getId()));
+            result.get(deliveryDTO.getId()).setHandledBranches(findAllHandledBranchesForDelivery(deliveryDTO.getId()));
+        }
+
+     return result;
+    }
+
+
 }

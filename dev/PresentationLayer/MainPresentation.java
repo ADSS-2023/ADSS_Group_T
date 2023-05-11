@@ -5,7 +5,10 @@ import DataLayer.HR_T_DAL.DB_init.Data_init_HR;
 import Initialization.*;
 import ServiceLayer.HR.EmployeeService;
 import ServiceLayer.HR.ShiftService;
-import ServiceLayer.Transport.*;
+import ServiceLayer.Transport.BranchService;
+import ServiceLayer.Transport.DeliveryService;
+import ServiceLayer.Transport.LogisticCenterService;
+import ServiceLayer.Transport.SupplierService;
 import ServiceLayer.UserService;
 import UtilSuper.ServiceFactory;
 
@@ -46,7 +49,6 @@ public class MainPresentation {
         this.branchService = serviceFactory.getBranchService();
         this.supplierService = serviceFactory.getSupplierService();
         transportManagerPresentation = new TransportManagerPresentation(logisticCenterService,deliveryService,supplierService,branchService);
-        hrManagerPresentation = new HRManagerPresentation(shiftService,employeeService);
         serviceFactory.callbackEnterWeight(this.transportManagerPresentation::enterWeightFunction);
         serviceFactory.callbackEnterOverWeight(this.transportManagerPresentation::enterOverWeightAction);
     }
@@ -63,8 +65,8 @@ public class MainPresentation {
         if (choice == 1)
             loginWindow();
         if (choice == 2) {
-            Data_init.initOldData(this.serviceFactory.getDAO());
-            Data_init_HR.initOldData(this.serviceFactory.getDAO());
+            Data_init.initOldData(this.serviceFactory.getDAO(),supplierService,deliveryService);
+            //Data_init_HR.initOldData(this.serviceFactory.getDAO());
             //HR_Initialization.init_data(shiftService,employeeService);
 //            LogisticCenter_init.init(logisticCenterService);
 //            Branch_init.init(branchService);
@@ -79,8 +81,8 @@ public class MainPresentation {
      */
     public void loginWindow() {
         //TODO remove shortCut:
-        //this.transportManagerPresentation.start();
-        this.hrManagerPresentation.start();
+        this.transportManagerPresentation.start();
+       // this.hrManagerPresentation.start();
 
         Scanner scanner = new Scanner(System.in);
         System.out.println(" ");

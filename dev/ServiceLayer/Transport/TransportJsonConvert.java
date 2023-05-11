@@ -16,12 +16,12 @@ public class TransportJsonConvert {
     public String deliveryToString(Delivery delivery) throws SQLException {
         StringBuilder sb = new StringBuilder();
         // Append delivery details to the string builder
-        sb.append("Delivery ID: ").append(delivery.getId()).append("\n");
+        sb.append("\nDelivery ID: ").append(delivery.getId()).append("\n");
         sb.append("Date: ").append(delivery.getDate()).append("\n");
         sb.append("Truck Weight: ").append(delivery.getTruckWeight()).append("\n");
-        sb.append("UnHandledSuppliers\n");
+        sb.append("\nUnHandledSuppliers:\n");
         sb.append(suppliersAndProductsToString(delivery.getUnHandledSuppliers()));
-        sb.append("HandledSuppliers\n");
+        sb.append("\nHandledSuppliers\n");
         sb.append(suppliersAndProductsToString(delivery.getHandledSuppliers()));
 
 
@@ -100,7 +100,7 @@ public class TransportJsonConvert {
         return sb.toString();
     }
 
-    public String productsToString(Collection<Product> products) {
+    public static String productsToString(Collection<Product> products) {
         StringBuilder sb = new StringBuilder();
         for (Product product : products) {
             sb.append(product.getName()).append("\n");
@@ -112,6 +112,7 @@ public class TransportJsonConvert {
     public String deliveryListToString(Collection<Delivery> deliveryList) throws SQLException {
         StringBuilder sb = new StringBuilder();
         for (Delivery delivery : deliveryList) {
+            sb.append("\n---------------------------------------\n");
             sb.append(deliveryToString(delivery)).append("\n\n");
         }
         return sb.toString();

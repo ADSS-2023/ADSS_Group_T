@@ -11,10 +11,19 @@ import DataLayer.HR_T_DAL.DAOs.TruckDAO;
 import DataLayer.HR_T_DAL.DB_init.Data_init;
 import DataLayer.HR_T_DAL.DB_init.Data_init_HR;
 import DataLayer.HR_T_DAL.DalService.*;
+import BusinessLayer.Transport.BranchController;
+import BusinessLayer.Transport.DeliveryController;
+import BusinessLayer.Transport.LogisticCenterController;
+import BusinessLayer.Transport.SupplierController;
+import DataLayer.HR_T_DAL.DalService.DalDeliveryService;
+import DataLayer.HR_T_DAL.DalService.DalLogisticCenterService;
 import DataLayer.Util.DAO;
 import ServiceLayer.HR.EmployeeService;
 import ServiceLayer.HR.ShiftService;
-import ServiceLayer.Transport.*;
+import ServiceLayer.Transport.BranchService;
+import ServiceLayer.Transport.DeliveryService;
+import ServiceLayer.Transport.LogisticCenterService;
+import ServiceLayer.Transport.SupplierService;
 import ServiceLayer.UserService;
 import org.junit.Before;
 
@@ -26,6 +35,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class ServiceFactory {
+
     private ShiftController shiftController;
     private ShiftService shiftService;
     private EmployeeController employeeController;
@@ -60,24 +70,25 @@ public class ServiceFactory {
 
         this.dao = new DAO(connection);
         Data_init.initBasicData(dao);
-        Data_init_HR.initBasicData(dao);
-
+        //Data_init_HR.initBasicData(dao);
 
 
 
         dalLogisticCenterService = new DalLogisticCenterService(connection);
         dalDeliveryService = new DalDeliveryService(connection,dalLogisticCenterService);
-        dalUserService = new DalUserService(connection);
-        dalDriverService = new DalDriverService(connection,dalUserService);
-        dalEmployeeService = new DalEmployeeService(connection,dalUserService);
+
+//        dalUserService = new DalUserService(connection);
+//        dalDriverService = new DalDriverService(connection,dalUserService);
+//        dalEmployeeService = new DalEmployeeService(connection,dalUserService);
 
 
-
-        shiftController = new ShiftController();
-        shiftService = new ShiftService(shiftController);
-        employeeController = new EmployeeController(dalEmployeeService,dalUserService);
-        driverController = new DriverController(dalDriverService);
-        employeeService = new EmployeeService(employeeController,driverController);
+//
+//        shiftController = new ShiftController();
+//        shiftService = new ShiftService(shiftController);
+        //TODO delete because error!:
+        //employeeController = new EmployeeController(dalEmployeeService,dalUserService);
+//        driverController = new DriverController(dalDriverService);
+//        employeeService = new EmployeeService(employeeController,driverController);
 
 
         logisticCenterController = new LogisticCenterController(dalLogisticCenterService);
@@ -85,10 +96,10 @@ public class ServiceFactory {
         dalDeliveryService = new DalDeliveryService(connection,dalLogisticCenterService);
 
         //TODO //
-        User HRuser = new User(1,"HRManeger","123456","cool",1000,null,"1", UserType.HRManager);
-        User TRuser = new User(2,"TrManeger","123456","cool",1000,null,"2", UserType.TransportManager);
-        userController = new UserController(employeeController,TRuser,driverController,HRuser);
-        userService = new UserService(userController);
+//        User HRuser = new User(1,"HRManeger","123456","cool",1000,null,"1", UserType.HRManager);
+//        User TRuser = new User(2,"TrManeger","123456","cool",1000,null,"2", UserType.TransportManager);
+//        userController = new UserController(employeeController,TRuser,driverController,HRuser);
+//        userService = new UserService(userController);
         branchController = new BranchController(dalDeliveryService);
         branchService = new BranchService(branchController);
         supplierController = new SupplierController(dalDeliveryService);

@@ -7,6 +7,7 @@ import BusinessLayer.HR.User.UserType;
 import UtilSuper.Time;
 
 import java.time.LocalDate;
+import UtilSuper.Response;
 
 public class EmployeeService {
     private EmployeeController employeeController;
@@ -30,29 +31,6 @@ public class EmployeeService {
 //        }
 //        return null;
 //    }
-
-    public String addNewEmployee(int id, String employeeName, String bankAccount, String description, int salary, LocalDate joiningDay, String password) {
-        Response res = new Response();
-        try {
-            employeeController.addNewEmployee(id, employeeName, bankAccount, description, salary, joiningDay, password, UserType.employee );
-        } catch (Exception ex) {
-            return ex.getMessage();
-        }
-        return null;
-    }
-   ;
-
-    public String addNewDriver(int id, String employeeName, String bankAccount, String description, int salary, String joiningDay, String password, String  licenseType, int coolingLevel) {
-        Response res = new Response();
-        try {
-
-            driverController.addDriver(id, employeeName, bankAccount,null, description, salary, joiningDay,password, UserType.employee, licenseType, coolingLevel );
-        } catch (Exception ex) {
-            return ex.getMessage();
-        }
-        return null;
-    }
-
 
 
 

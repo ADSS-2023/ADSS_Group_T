@@ -12,6 +12,9 @@ public class ProductDTO extends DTO {
         this.productName = productName;
         this.coolingLevel = coolingLevel;
     }
+    public ProductDTO(){
+        super("Product");
+    }
 
     public static String getPKStatic(){return "productName";}
     public static String getTableNameStatic(){return "Product";}
