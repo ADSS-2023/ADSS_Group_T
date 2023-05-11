@@ -1,13 +1,25 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
 package ServiceLayer.Supplier_Stock;
 
 import BusinessLayer.Supplier.OrderController;
+import ServiceLayer.Supplier.OrderService;
 import BusinessLayer.Supplier.SupplierController;
 import BusinessLayer.Supplier_Stock.Util_Supplier_Stock;
+import DataLayer.Inventory_Supplier_Dal.DalController.*;
+//import DataLayer.Inventory_Supplier_Dal.DalController.ItemDalController;
+import DataLayer.Util.DAO;
+import ServiceLayer.Stock.CategoryService;
+import ServiceLayer.Stock.DamagedService;
+import ServiceLayer.Stock.InventoryService;
+import ServiceLayer.Stock.ItemService;
+import ServiceLayer.Stock.ManageOrderService;
+import DataLayer.Inventory_Supplier_Dal.DalController.InventoryDalController;
+import DataLayer.Util.DAO;
+import ServiceLayer.Stock.CategoryService;
+import ServiceLayer.Stock.DamagedService;
+import ServiceLayer.Stock.InventoryService;
+import ServiceLayer.Stock.ItemService;
+import ServiceLayer.Stock.ManageOrderService;
+import DataLayer.Inventory_Supplier_Dal.DalController.InventoryDalController;
 import DataLayer.Inventory_Supplier_Dal.DalController.InventoryDalController;
 import DataLayer.Inventory_Supplier_Dal.DalController.ItemDalController;
 import DataLayer.Util.DAO;
@@ -33,6 +45,7 @@ import java.sql.*;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.util.Collections;
 
 public class ServiceFactory {
     public SupplierController sc;
@@ -45,21 +58,25 @@ public class ServiceFactory {
     public ItemService itemService;
     public ManageOrderService manageOrderService;
     public InventoryDalController inventoryDalController;
+    public SupplierDalController supplierDalController;
+    public OrderDalController orderDalController;
+
     public Connection connection;
     public Util_Supplier_Stock uss;
 
-    public ServiceFactory(){
+    public ServiceFactory()  {
+        this.connection = makeCon();
         this.inventoryService = new InventoryService();
         this.categoryService = new CategoryService(this.inventoryService.get_inventory());
         this.damagedService = new DamagedService(this.inventoryService.get_inventory());
         this.itemService = new ItemService(this.inventoryService.get_inventory());
         this.manageOrderService = new ManageOrderService();
-        this.sc = new SupplierController();
-        this.oc = new OrderController(this.sc, this.manageOrderService);
         this.supplierService = new SupplierService(this.sc, this.oc);
         this.orderService = new OrderService(this.oc, this.sc);
-
-        connection = makeCon();
+        this.supplierDalController = new SupplierDalController(connection);
+        this.orderDalController = new OrderDalController(connection);
+        this.sc = new SupplierController(connection, supplierDalController);
+        this.oc = new OrderController(this.sc, this.manageOrderService, connection, orderDalController);
         inventoryDalController = new InventoryDalController(connection);
         this.manageOrderService.setOrderController(this.inventoryService.get_inventory(), this.orderService,inventoryDalController);
         this.inventoryService.get_inventory().setInventoryDalController(inventoryDalController);
@@ -71,6 +88,23 @@ public class ServiceFactory {
             System.out.println(e.getMessage());
         }
         //this.deleteAllData();
+        this.supplierDalController = new SupplierDalController(connection);
+        this.orderDalController = new OrderDalController(connection);
+        this.sc = new SupplierController(connection, supplierDalController);
+        this.oc = new OrderController(this.sc, this.manageOrderService, connection, orderDalController);
+        this.supplierService = new SupplierService(this.sc, this.oc);
+        this.orderService = new OrderService(this.oc, this.sc);
+        try {
+            uss = new Util_Supplier_Stock(inventoryDalController);
+        }
+        catch (Exception e){
+
+        }
+        //inventoryDalController = new InventoryDalController(connection);
+        //this.manageOrderService.setOrderController(this.inventoryService.get_inventory(), this.orderService,inventoryDalController);
+        //this.inventoryService.get_inventory().setInventoryDalController(inventoryDalController);
+        //inventoryService.get_inventory().setItemDalController(new ItemDalController(connection));
+        /*this.deleteAllData();*/
     }
 
     private Connection makeCon() {
@@ -99,18 +133,18 @@ public class ServiceFactory {
         }
     }
 
-    public void dataSetUp() throws Exception {
-        //need to clean the data manually!
-        inventoryService.get_inventory().add_category("", "milk-product");
-        itemService.addItem(".0",3, "Milky", 3, "Liran LTD", 2.0);
-        this.oc = new OrderController(this.sc, this.manageOrderService);
-        this.supplierService = new SupplierService(this.sc, this.oc);
-        this.orderService = new OrderService(this.oc, this.sc);
-        DAO dao = new DAO();
-        this.manageOrderService.setOrderController(this.inventoryService.get_inventory(), this.orderService,inventoryDalController);
-        this.inventoryDalController = new InventoryDalController(this.connection);
-        this.inventoryService.get_inventory().setInventoryDalController(this.inventoryDalController);
-    }
+//    public void dataSetUp() throws Exception {
+//        //need to clean the data manually!
+//        inventoryService.get_inventory().add_category("", "milk-product");
+//        itemService.addItem(".0",3, "Milky", 3, "Liran LTD", 2.0);
+//        this.oc = new OrderController(this.sc, this.manageOrderService);
+//        this.supplierService = new SupplierService(this.sc, this.oc);
+//        this.orderService = new OrderService(this.oc, this.sc);
+//        DAO dao = new DAO();
+//        this.manageOrderService.setOrderController(this.inventoryService.get_inventory(), this.orderService,inventoryDalController);
+//        this.inventoryDalController = new InventoryDalController(this.connection);
+//        this.inventoryService.get_inventory().setInventoryDalController(this.inventoryDalController);
+//    }
 
 
     public String nextDay() {
@@ -121,6 +155,7 @@ public class ServiceFactory {
             return var2.getMessage();
         }
     }
+
 
     private Connection makeEmptyCon() {
         try {

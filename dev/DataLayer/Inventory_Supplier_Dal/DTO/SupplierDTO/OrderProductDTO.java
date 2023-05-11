@@ -4,6 +4,7 @@ import DataLayer.Util.DTO;
 
 public class OrderProductDTO extends DTO {
     private int orderID;
+    private String productName;
     private  String manufacturer;
     private String expiryDate;
     private int productNumber;
@@ -12,7 +13,6 @@ public class OrderProductDTO extends DTO {
     private float discount;
 
     private float finalPrice;
-    private String productName;
 
     public float getFinalPrice() {
         return finalPrice;
@@ -61,5 +61,8 @@ public class OrderProductDTO extends DTO {
         this.discount = discount;
         this.productName = productName;
         this.finalPrice = finalPrice;
+    }
+    public OrderProductDTO() {
+        super("supplier_order_product");
     }
 }

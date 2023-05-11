@@ -7,6 +7,7 @@ import ServiceLayer.Supplier_Stock.ServiceFactory;
 import BusinessLayer.Supplier.Supplier_Util.Discounts;
 import BusinessLayer.Supplier.Supplier_Util.PaymentTerms;
 
+import java.sql.SQLException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.regex.Pattern;
@@ -24,69 +25,82 @@ public class SupplierManager {
         HashMap<String, String> contactsSupplier1 = new HashMap<>();
         contactsSupplier1.put("yossi", "052284621");
         serviceFactory.supplierService.addSupplier("Sapak1", "Shoham 43, Tel Aviv",
-                5018475, 1199922,-1, contactsSupplier1,
+                1, 1199922,-1, contactsSupplier1,
                 List.of(new DayOfWeek[]{DayOfWeek.MONDAY}), true, PaymentTerms.SHOTEF_PLUS_30);
 
         HashMap<String, String> contactsSupplier2 = new HashMap<>();
         contactsSupplier2.put("menash", "18726312");
         serviceFactory.supplierService.addSupplier("Sapak2", "Golani 2, Ashkelon",
-                4810203, 947182,-1, contactsSupplier2, List.of(new DayOfWeek[]{DayOfWeek.WEDNESDAY}),
+                2, 947182,-1, contactsSupplier2, List.of(new DayOfWeek[]{DayOfWeek.WEDNESDAY}),
                 true, PaymentTerms.SHOTEF_PLUS_30);
 
         HashMap<String, String> contactsSupplier3 = new HashMap<>();
         contactsSupplier3.put("Yagil", "052275937");
         serviceFactory.supplierService.addSupplier("Sapak3", "Rabin 95, Tel Aviv",
-                4810203, 947182,10, contactsSupplier3, null,
+                3, 947182,10, contactsSupplier3, null,
                 true, PaymentTerms.SHOTEF_PLUS_30);
 
 
-        serviceFactory.supplierService.addProduct(5018475, 982673, "Bamba",
-                "Osem", 6, 500, Util_Supplier_Stock.getCurrDay().plusMonths(1));
+        serviceFactory.supplierService.addProduct(1, 12, "Bamba",
+                "Osem", 6, 1000, Util_Supplier_Stock.getCurrDay().plusMonths(1));
 
-        serviceFactory.supplierService.addProduct(5018475, 1728439, "Click",
-                "Elite", 8, 300, Util_Supplier_Stock.getCurrDay().plusWeeks(2));
+        serviceFactory.supplierService.addProduct(1, 13, "Click",
+                "Elite", 8, 1000, Util_Supplier_Stock.getCurrDay().plusWeeks(2));
 
-        serviceFactory.supplierService.addProduct(4810203, 9812763, "Ketchup",
-                "Heinz", 10, 600, Util_Supplier_Stock.getCurrDay().plusMonths(1));
+        serviceFactory.supplierService.addProduct(1, 14, "yellow cheese",
+                "Emeck", 6, 1000, Util_Supplier_Stock.getCurrDay().plusMonths(1));
 
-        serviceFactory.supplierService.addProduct(4810203, 4918672, "Jasmin Rice",
-                "Sogat", 9, 400, Util_Supplier_Stock.getCurrDay().plusYears(1));
+        serviceFactory.supplierService.addProduct(1, 15, "1.5% milk",
+                "IDO LTD", 6, 1000, Util_Supplier_Stock.getCurrDay().plusMonths(1));
 
-        serviceFactory.supplierService.addProduct(4810203, 675980, "Bamba",
-                "Osem", 5, 200, Util_Supplier_Stock.getCurrDay().plusMonths(1));
+        serviceFactory.supplierService.addProduct(2, 21, "Ketchup",
+                "Heinz", 10, 1000, Util_Supplier_Stock.getCurrDay().plusMonths(1));
 
-        serviceFactory.supplierService.addProductDiscount(5018475, 982673, 100, 5, true);
-        serviceFactory.supplierService.addProductDiscount(5018475, 982673, 200, 100, false);
+        serviceFactory.supplierService.addProduct(2, 22, "Jasmin Rice",
+                "Sogat", 9, 1000, Util_Supplier_Stock.getCurrDay().plusYears(1));
 
-        serviceFactory.supplierService.addProductDiscount(5018475, 1728439, 50, 10, true);
-        serviceFactory.supplierService.addProductDiscount(5018475, 1728439, 100, 50, false);
+        serviceFactory.supplierService.addProduct(2, 23, "Bamba",
+                "Osem", 6, 1000, Util_Supplier_Stock.getCurrDay().plusMonths(1));
 
-        serviceFactory.supplierService.addProductDiscount(4810203, 9812763, 20, 5, true);
-        serviceFactory.supplierService.addProductDiscount(4810203, 9812763, 60, 50, false);
+        serviceFactory.supplierService.addProduct(2, 24, "1.5% milk",
+                "IDO LTD", 8, 1000, Util_Supplier_Stock.getCurrDay().plusMonths(1));
 
-        serviceFactory.supplierService.addProductDiscount(4810203, 4918672, 50, 10, true);
-        serviceFactory.supplierService.addProductDiscount(4810203, 4918672, 100, 50, false);
+        serviceFactory.supplierService.addProduct(3, 31, "Beef Sausage",
+                "Zogloveck", 7, 1000, Util_Supplier_Stock.getCurrDay().plusMonths(1));
 
-        serviceFactory.supplierService.addSupplierDiscount(5018475,Discounts.DISCOUNT_BY_TOTAL_QUANTITY,50,10,true);
-        serviceFactory.supplierService.addSupplierDiscount(5018475,Discounts.DISCOUNT_BY_TOTAL_PRICE,500,50,false);
 
-        serviceFactory.supplierService.addSupplierDiscount(4810203,Discounts.DISCOUNT_BY_TOTAL_QUANTITY,40,5,true);
-        serviceFactory.supplierService.addSupplierDiscount(4810203,Discounts.DISCOUNT_BY_TOTAL_PRICE,300,40,false);
+        serviceFactory.supplierService.addProductDiscount(1, 11, 100, 5, true);
+        serviceFactory.supplierService.addProductDiscount(1, 12, 200, 100, false);
 
-        ItemToOrder item1  = new ItemToOrder("Bamba","Osem",550,Util_Supplier_Stock.getCurrDay().plusMonths(1),-1,-1);
-        ItemToOrder item2  = new ItemToOrder("Ketchup","Heinz",50,Util_Supplier_Stock.getCurrDay().plusMonths(1),-1,-1);
-        //ItemToOrder item3  = new ItemToOrder("Click","Elite",175,Util_Supplier_Stock.getCurrDay().plusMonths(1),-1,-1);
-        List<ItemToOrder> itemsList = new LinkedList<>();
-        //itemsList.add(item1);
-       // itemsList.add(item2);
-       // itemsList.add(item3);
-        //System.out.println(serviceFactory.orderService.createSpecialOrder(itemsList,false));
-        ItemToOrder item4  = new ItemToOrder("Click","Elite",2,Util_Supplier_Stock.getCurrDay().plusMonths(1),-1,-1);
-        itemsList.add((item4));
-        serviceFactory.orderService.createRegularOrder(itemsList);
+        serviceFactory.supplierService.addProductDiscount(1, 13, 50, 10, true);
+        serviceFactory.supplierService.addProductDiscount(1, 14, 100, 50, false);
+
+        serviceFactory.supplierService.addProductDiscount(2, 21, 20, 5, true);
+        serviceFactory.supplierService.addProductDiscount(2, 22, 60, 50, false);
+
+        serviceFactory.supplierService.addProductDiscount(2, 23, 50, 10, true);
+        serviceFactory.supplierService.addProductDiscount(3, 31, 100, 50, false);
+
+        serviceFactory.supplierService.addSupplierDiscount(1,Discounts.DISCOUNT_BY_TOTAL_QUANTITY,50,10,true);
+        serviceFactory.supplierService.addSupplierDiscount(2,Discounts.DISCOUNT_BY_TOTAL_PRICE,500,50,false);
+
+        serviceFactory.supplierService.addSupplierDiscount(3,Discounts.DISCOUNT_BY_TOTAL_QUANTITY,40,5,true);
+        serviceFactory.supplierService.addSupplierDiscount(1,Discounts.DISCOUNT_BY_TOTAL_PRICE,300,40,false);
+
+//        ItemToOrder item1  = new ItemToOrder("Bamba","Osem",550,Util_Supplier_Stock.getCurrDay().plusMonths(1),-1,-1);
+//        ItemToOrder item2  = new ItemToOrder("Ketchup","Heinz",50,Util_Supplier_Stock.getCurrDay().plusMonths(1),-1,-1);
+//        //ItemToOrder item3  = new ItemToOrder("Click","Elite",175,Util_Supplier_Stock.getCurrDay().plusMonths(1),-1,-1);
+//        List<ItemToOrder> itemsList = new LinkedList<>();
+//        //itemsList.add(item1);
+//       // itemsList.add(item2);
+//       // itemsList.add(item3);
+//        //System.out.println(serviceFactory.orderService.createSpecialOrder(itemsList,false));
+//        ItemToOrder item4  = new ItemToOrder("Click","Elite",2,Util_Supplier_Stock.getCurrDay().plusMonths(1),-1,-1);
+//        itemsList.add((item4));
+//        serviceFactory.orderService.createRegularOrder(itemsList);
     }
 
-    public void start() {
+    public void start(){
         Scanner scanner = new Scanner(System.in);
         boolean over = false;
         while(!over) {
@@ -111,7 +125,10 @@ public class SupplierManager {
             System.out.println("16.Show all discounts of a certain product's supplier.");
             System.out.println("17.Show all general discounts of a certain supplier.");
             System.out.println("18.Go back to main menu.");
-            int choice = getInteger(scanner, "Please select an integer between 1 to 18.", 1, 18);
+            System.out.println("19.Load Data.");
+            System.out.println("20.Delete Data.");
+
+            int choice = getInteger(scanner, "Please select an integer between 1 to 20.", 1, 20);
             switch (choice) {
                 case 1:
                     addSupplier();
@@ -167,8 +184,26 @@ public class SupplierManager {
                 case 18:
                     goBack();
                     break;
+                case 19:
+                    loadData();
+                    break;
+                case 20:
+                    deleteAll();
             }
         }
+    }
+
+    private void deleteAll(){
+        try {
+            serviceFactory.supplierService.deleteAll();
+            serviceFactory.orderService.deleteAllOrders();
+
+            System.out.println("All the data deleted successfully.");
+        }
+        catch (Exception e){
+            System.out.println("The data cant be deleted.");
+        }
+
     }
 
     public void nextDay() {
@@ -574,7 +609,10 @@ public class SupplierManager {
         }
         return input;
     }
-
+    public void loadData()  {
+        serviceFactory.supplierService.loadSuppliers();
+        serviceFactory.orderService.loadOrders();
+    }
     public void setPreviousCallBack(PreviousCallBack previousCallBack) {
         this.previousCallBack = previousCallBack;
     }
