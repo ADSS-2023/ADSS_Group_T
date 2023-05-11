@@ -302,4 +302,9 @@ public class Item implements ProductCategoryManagement {
         }
     }
 
+    public ItemPerOrder getItemPerOrder(int orderId) throws Exception {
+        if (!items.containsKey(orderId))
+            throw new Exception("Illegal order id");
+        return items.get(orderId);
+    }
 }

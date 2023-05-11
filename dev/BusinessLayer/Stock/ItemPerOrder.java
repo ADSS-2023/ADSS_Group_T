@@ -50,6 +50,7 @@ public class ItemPerOrder {
         this.location = itemPerOrderDTO.getLocation();
         this.validity = Util.stringToDate(itemPerOrderDTO.getValidity());
         this.arrived_date = Util.stringToDate(itemPerOrderDTO.getArrivedDate());
+        this.orderId = itemPerOrderDTO.getOrderId();
         this.item_per_order_dto = itemPerOrderDTO;
     }
     /**
@@ -131,5 +132,9 @@ public class ItemPerOrder {
 
     public int getOrderId() {
         return orderId;
+    }
+
+    public LocalDate getArrived_date() {
+        return arrived_date;
     }
 }
