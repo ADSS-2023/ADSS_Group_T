@@ -62,7 +62,12 @@ public class Inventory {
      * @throws Exception
      */
     public String addDamagedItem(int item_id,int order_id,int amount,String description) throws Exception {
-        return damaged.addDamagedItem(items.get(item_id),order_id,amount,description);
+        if (!items.containsKey(item_id))
+            throw new Exception("Illegal index");
+        Item i = items.get(item_id);
+        ItemPerOrder ipo = i.getItemPerOrder(order_id);
+        return damaged.addDamagedItem(items.get(item_id),order_id,amount,
+                description+"\narrived in: "+ipo.getArrived_date().toString());
     }
 
     /**
