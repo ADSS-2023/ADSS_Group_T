@@ -315,4 +315,16 @@ public class OrderController {
         }
     }
 
+    public String show_new_items() {
+        String toReturn= "";
+        for (ItemToOrder itemToOrder : order_service.getAllProducts()){
+            toReturn += String.format("name: %s , manufacture: %s, amount: %d"
+                    ,itemToOrder.getProductName(),
+                    itemToOrder.getManufacturer(),
+                    itemToOrder.getQuantity());
+        }
+        if(toReturn == "")
+            toReturn =  "No item to supply";
+        return toReturn;
+    }
 }

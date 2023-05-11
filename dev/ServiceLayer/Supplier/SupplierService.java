@@ -8,6 +8,7 @@ import BusinessLayer.Supplier.SupplierController;
 import BusinessLayer.Supplier.SupplierProductBusiness;
 import BusinessLayer.Supplier.Supplier_Util.Discounts;
 import BusinessLayer.Supplier.Supplier_Util.PaymentTerms;
+import BusinessLayer.Supplier_Stock.ItemToOrder;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -89,25 +90,7 @@ public class SupplierService {
         }
     }
 
-    public List<String> getAllProducts() {
-        List<String> productsStrings = new LinkedList<>();
-        ConcurrentHashMap<Integer, SupplierProductBusiness> products = new ConcurrentHashMap<>();
-        try {
-            ConcurrentHashMap<Integer, SupplierBusiness> suppliers=sc.getSuppliers();
-            for (Map.Entry<Integer, SupplierBusiness> entry : suppliers.entrySet()) {
-                products = entry.getValue().getProducts();
-                for (Map.Entry<Integer, SupplierProductBusiness> entry2 : products.entrySet())
-                    productsStrings.add(entry2.getValue().toString() + '\n');
-            }
-        }
-        catch (Exception e){
-            productsStrings = new LinkedList<>();
-            productsStrings.add(e.getMessage());
-        }
-        finally {
-            return productsStrings;
-        }
-    }
+
 
     public String addProduct(int supplierNum, int productNum, String productName, String manufacturer, int price, int maxAmount, LocalDate expiryDate){
         try {
