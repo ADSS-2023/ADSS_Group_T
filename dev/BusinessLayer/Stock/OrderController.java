@@ -333,7 +333,7 @@ public class OrderController {
                 itemId = "id: " + inventory.itemToOrder_to_item(itemToOrder).item_id;
             }
             catch (Exception e){
-                itemId = "Item is not in the system";
+                itemId ="\u001B[31mItem is not in the system\u001B[0m";
             }
             toReturn += String.format("name: %s , manufacture: %s, amount: %d, %s\n"
                     ,itemToOrder.getProductName(),
