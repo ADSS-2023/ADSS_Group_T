@@ -22,7 +22,7 @@ public class SupplierController {
     private ConcurrentHashMap<Integer, SupplierBusiness> suppliers;
     private Connection connection;
     private SupplierDalController supplierDalController;
-    public SupplierController(Connection connection, SupplierDalController supplierDalController) throws Exception {
+    public SupplierController(Connection connection, SupplierDalController supplierDalController)  {
         suppliers = new ConcurrentHashMap<>();
         this.connection = connection;
         this.supplierDalController = supplierDalController;
