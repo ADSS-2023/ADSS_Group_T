@@ -2,9 +2,7 @@ package BusinessLayer.Supplier;
 import BusinessLayer.Supplier.Discounts.Discount;
 import BusinessLayer.Supplier.Discounts.PercentDiscount;
 import BusinessLayer.Supplier.Discounts.NumberDiscount;
-import DataLayer.Inventory_Supplier_Dal.DAO.SupplierDAO.ProductDiscountDAO;
-import DataLayer.Inventory_Supplier_Dal.DAO.SupplierDAO.SupplierProductDAO;
-import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.ProductDiscountDTO;
+import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.DiscountDTO;
 import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.SupplierProductDTO;
 import DataLayer.Inventory_Supplier_Dal.DalController.SupplierDalController;
 
@@ -26,7 +24,7 @@ public class SupplierProductBusiness {
 
     protected SupplierDalController supplierDalController;
 
-    public SupplierProductBusiness(int supplierNum, String name, int productNum, String manufacturer, float price, int maxAmount, LocalDate expiryDate) throws SQLException {
+    public SupplierProductBusiness(int supplierNum, String name, int productNum, String manufacturer, float price, int maxAmount, LocalDate expiryDate, SupplierDalController supplierDalController) throws SQLException {
         this.supplierNum = supplierNum;
         this.name = name;
         this.productNum = productNum;
@@ -35,8 +33,22 @@ public class SupplierProductBusiness {
         this.maxAmount = maxAmount;
         this.quantitiesAgreement = new ArrayList<>();
         this.expiryDate = expiryDate;
+        this.supplierDalController = supplierDalController;
         this.supplierProductDTO = new SupplierProductDTO(supplierNum, productNum, name, manufacturer, price, maxAmount, expiryDate.toString());
         supplierDalController.insert(supplierProductDTO);
+    }
+
+    public SupplierProductBusiness(SupplierProductDTO supplierProductDTO, SupplierDalController supplierDalController){
+        this.quantitiesAgreement = new ArrayList<>();
+        this.supplierNum = supplierProductDTO.getSupplierNum();
+        this.name = supplierProductDTO.getName();
+        this.productNum = supplierProductDTO.getProductNum();
+        this.manufacturer = supplierProductDTO.getManufacturer();
+        this.price = supplierProductDTO.getPrice();
+        this.maxAmount = supplierProductDTO.getMaxAmount();
+        this.supplierDalController = supplierDalController;
+        this.supplierProductDTO = supplierProductDTO;
+        this.expiryDate = LocalDate.parse(supplierProductDTO.getExpiryDate());
     }
 
     private boolean isDiscountExists(int productAmount, boolean isPercentage){
@@ -66,7 +78,12 @@ public class SupplierProductBusiness {
         for (Discount dis : quantitiesAgreement) {
                 if (dis.isPercentage() == isPercentage && dis.getAmount() == productAmount) {
                     dis.editDiscount(productAmount, newDiscount);
-                    ProductDiscountDTO newDTO = new ProductDiscountDTO(supplierNum, productAmount, newDiscount, isPercentage, productNum);
+                    DiscountDTO newDTO=null;
+                    if(isPercentage)
+                            newDTO=new DiscountDTO(supplierNum, productAmount, newDiscount, "true","false","false", productNum);
+                    else
+                            newDTO=new DiscountDTO(supplierNum, productAmount, newDiscount, "false","false","false", productNum);
+
                     supplierDalController.update(dis.getDiscountDTO(), newDTO);
                     dis.setDiscountDTO(newDTO);
                 }
@@ -79,13 +96,26 @@ public class SupplierProductBusiness {
             throw new Exception("Discount already exists");
         if(!isDiscountValid(productAmount, discount, isPercentage))
             throw new Exception("Discount details are not valid");
-            if (isPercentage)
-                quantitiesAgreement.add(new PercentDiscount(productAmount, discount, true, supplierDalController,
-                        new ProductDiscountDTO(supplierNum, productAmount, discount, isPercentage, productNum)));
-            else
-                quantitiesAgreement.add(new NumberDiscount(productAmount, discount, false, supplierDalController,
-                        new ProductDiscountDTO(supplierNum, productAmount, discount, isPercentage, productNum)));
+        DiscountDTO newone=null;
+            if (isPercentage){
+                newone =new DiscountDTO(supplierNum, productAmount, discount, "true","false",
+                        "false",productNum);
+                quantitiesAgreement.add(new PercentDiscount(productAmount, discount, true, supplierDalController,newone));
+                supplierDalController.insert(newone);
+            }
+            else {
+                 newone = new DiscountDTO(supplierNum, productAmount, discount, "false","false","false", productNum);
+                quantitiesAgreement.add(new NumberDiscount(productAmount, discount, false, supplierDalController,newone));
+                supplierDalController.insert(newone);
 
+            }
+    }
+
+    public void addProductDiscount(DiscountDTO productDiscountDTO) throws SQLException {
+        if(productDiscountDTO.isPercentage().equals("true"))
+            quantitiesAgreement.add(new PercentDiscount(productDiscountDTO, supplierDalController));
+        else
+            quantitiesAgreement.add(new NumberDiscount(productDiscountDTO, supplierDalController));
     }
 
     public void deleteProductDiscount(int productAmount, float discount, boolean isPercentage) throws Exception {

@@ -10,6 +10,18 @@ public class NumberDiscount extends Discount{
     public NumberDiscount(int amount, float discount, boolean isPercentage, SupplierDalController supplierDalController, DiscountDTO dto) throws SQLException {
         super(amount, discount,isPercentage, supplierDalController, dto);
         this.discountDTO = dto;
+
+    }
+
+    public NumberDiscount(DiscountDTO discountDTO, SupplierDalController supplierDalController) throws SQLException {
+        this.amount = discountDTO.getAmount();
+        this.discount = discountDTO.getDiscount();
+        if(discountDTO.isPercentage().equals("true"))
+            this.isPercentage=true;
+        else
+            this.isPercentage=false;
+        this.supplierDalController = supplierDalController;
+        this.discountDTO = discountDTO;
     }
 
     @Override

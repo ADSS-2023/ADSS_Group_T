@@ -197,7 +197,7 @@ public class DAO {
 
         return result;
     }
-    public <T extends DTO> ArrayList<T> findAllOfCondition(String tableName, String conditionKey,Object conditionValue,Class<T> classDTo,Connection connection) throws SQLException {
+    public <T extends DTO> ArrayList<T> findAllOfCondition(String tableName, String conditionKey,Object conditionValue,Class<T> classDTO,Connection connection) throws SQLException {
         ArrayList<T> results = new ArrayList<>();
         String sql = "SELECT * FROM "+tableName+" where "+conditionKey+ " = " +conditionValue.toString();
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -205,7 +205,7 @@ public class DAO {
             ResultSetMetaData metaData = resultSet.getMetaData();
             int columnCount = metaData.getColumnCount();
             while (resultSet.next()) {
-                T dto = classDTo.getDeclaredConstructor().newInstance();
+                T dto = classDTO.getDeclaredConstructor().newInstance();
                 dto.setTableName(tableName);
                 for (int i = 1; i <= columnCount; i++) {
                     String columnName = metaData.getColumnName(i);

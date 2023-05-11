@@ -16,19 +16,21 @@ import BusinessLayer.Supplier_Stock.Util_Supplier_Stock;
 import java.sql.SQLException;
 import java.util.*;
 import java.time.LocalDate;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public abstract class  SupplierBusiness {
-    private String supplierName;
-    private String address;
-    private int supplierNum;
-    private int bankAccountNum;
-    private HashMap<String, String> contacts;
-    private boolean selfDelivery;
-    private PaymentTerms paymentTerms;
+    protected String supplierName;
+    protected String address;
+    protected int supplierNum;
+    protected int bankAccountNum;
+    protected HashMap<String, String> contacts;
+    protected boolean selfDelivery;
+    protected PaymentTerms paymentTerms;
 
-    private HashMap<Integer, SupplierProductBusiness> products;
+    protected ConcurrentHashMap<Integer, SupplierProductBusiness> products;
 
-    private List<Discount> discountPerTotalQuantity;
+    protected List<Discount> discountPerTotalQuantity;
 
     protected List<Discount> discountPerTotalPrice;
 
@@ -36,16 +38,17 @@ public abstract class  SupplierBusiness {
 
     protected List<SupplierContactDTO> contactDTOS;
 
-    private SupplierDalController supplierDalController;
+    protected SupplierDalController supplierDalController;
 
     public SupplierBusiness(String supplierName, String address, int supplierNum,int bankAccountNum, HashMap<String, String> contacts, boolean selfDelivery,PaymentTerms paymentTerms, SupplierDalController supplierDalController) throws SQLException {
+        contactDTOS = new LinkedList<>();
         this.supplierName = supplierName;
         this.address = address;
         this.supplierNum = supplierNum;
         this.bankAccountNum = bankAccountNum;
         this.contacts = contacts;
         this.selfDelivery = selfDelivery;
-        this.products = new HashMap<>();
+        this.products = new ConcurrentHashMap<>();
         this.discountPerTotalQuantity = new ArrayList<>();
         this.discountPerTotalPrice = new ArrayList<>();
         this.paymentTerms=paymentTerms;
@@ -55,6 +58,41 @@ public abstract class  SupplierBusiness {
             supplierDalController.insert(supplierContactDTO);
             contactDTOS.add(supplierContactDTO);
         }
+    }
+
+    public SupplierBusiness(){}
+
+//    public SupplierBusiness(SupplierDTO supplierDTO, HashMap<String, String> contacts, boolean selfDelivery, PaymentTerms paymentTerms, SupplierDalController supplierDalController){
+//        contactDTOS = new LinkedList<>();
+//        this.supplierName = supplierDTO.getSupplierName();
+//        this.address = supplierDTO.getAddress();
+//        this.supplierNum = supplierDTO.getSupplierNum();
+//        this.bankAccountNum = supplierDTO.getBankAccountNum();
+//        this.contacts = contacts;
+//        this.selfDelivery = selfDelivery;
+//        this.products = new HashMap<>();
+//        this.discountPerTotalQuantity = new ArrayList<>();
+//        this.discountPerTotalPrice = new ArrayList<>();
+//        this.paymentTerms=paymentTerms;
+//        this.supplierDalController = supplierDalController;
+//        for (Map.Entry<String, String> entry : contacts.entrySet()) {
+//            SupplierContactDTO supplierContactDTO = new SupplierContactDTO(supplierNum, entry.getKey(), entry.getValue());
+//            supplierDalController.insert(supplierContactDTO);
+//            contactDTOS.add(supplierContactDTO);
+//        }
+//    }
+    public SupplierBusiness(SupplierDTO supplierDTO){
+
+    };
+    public void editSupplier(String supplierName, String address, int bankAccountNum, boolean selfDelivery,PaymentTerms paymentTerms) throws SQLException {
+        this.supplierName = supplierName;
+        this.address = address;
+        this.bankAccountNum = bankAccountNum;
+        this.selfDelivery = selfDelivery;
+        this.paymentTerms=paymentTerms;
+        SupplierDTO newSupplierDTO = new SupplierDTO(supplierNum, supplierName, address, bankAccountNum, String.valueOf(selfDelivery), this.supplierDTO.getDaysToDeliver(), paymentTerms.toString());
+        supplierDalController.update(this.supplierDTO, newSupplierDTO);
+        this.supplierDTO = newSupplierDTO;
     }
 
     public SupplierProductBusiness getProduct(String productName, String manufacturer) {
@@ -78,7 +116,7 @@ public abstract class  SupplierBusiness {
         else if(expiryDate.isBefore(Util_Supplier_Stock.getCurrDay()))
             throw new Exception("expiry date has passed.");
         else
-            products.put(productNum, new SupplierProductBusiness( supplierNum,productName,productNum, manufacturer, price, maxAmount, expiryDate));
+            products.put(productNum, new SupplierProductBusiness(supplierNum,productName,productNum, manufacturer, price, maxAmount, expiryDate, supplierDalController));
     }
 
     public void editProduct(String productName, String manufacturer, int price, int maxAmount, LocalDate expiryDate) throws Exception {
@@ -102,12 +140,12 @@ public abstract class  SupplierBusiness {
             throw new Exception("product is not exists.");
         //delete first all of product's discounts
         SupplierProductBusiness sp = products.get(productNum);
-            for (Discount dis:sp.getQuantitiesAgreement()){
+        List<Discount> discountsCopy = new ArrayList<>(sp.getQuantitiesAgreement());
+        for (Discount dis:discountsCopy){
                sp.deleteProductDiscount(dis.getAmount(),dis.getDiscount(),dis.isPercentage());
             }
             products.remove(productNum);
             supplierDalController.delete(sp.getSupplierProductDTO());
-
     }
 
     public void deleteContacts () throws SQLException {
@@ -115,13 +153,13 @@ public abstract class  SupplierBusiness {
             supplierDalController.delete(contactDTO);
         }
         contacts=new HashMap<>();
+        contactDTOS = new ArrayList<>();
     }
 
     public void editProductDiscount(int productNum, int productAmount, int discount, boolean isPercentage) throws Exception {
         if(getSupplierProduct(productNum) == null)
             throw new Exception("product doesn't exist.");
         getSupplierProduct(productNum).editProductDiscount(productAmount, discount, isPercentage);
-
     }
 
     public void addProductDiscount(int productNum, int productAmount, int discount, boolean isPercentage) throws Exception {
@@ -140,25 +178,51 @@ public abstract class  SupplierBusiness {
         if(!isDiscountExist(discountEnum,amount,isPercentage))
             throw new Exception("No such discount");
         getDiscount(discountEnum,amount,isPercentage).editDiscount(amount,discountToChange);
+        DiscountDTO discountDTO =null;
+       DiscountDTO oldDTO = getDiscount(discountEnum,amount,isPercentage).getDiscountDTO();
+        if(discountEnum == Discounts.DISCOUNT_BY_TOTAL_QUANTITY) {
+            if (isPercentage)
+                discountDTO = new DiscountDTO(supplierNum, amount, discountToChange, "true", "true", "true", -1);
+            else
+                discountDTO = new DiscountDTO(supplierNum, amount, discountToChange, "false", "true", "true", -1);
+        }
+        else{
+            if (isPercentage)
+                discountDTO = new DiscountDTO(supplierNum, amount, discountToChange, "true", "false", "true", -1);
+            else
+                discountDTO = new DiscountDTO(supplierNum, amount, discountToChange, "false", "false", "true", -1);
+        }
+        supplierDalController.update(oldDTO,discountDTO);
     }
 
     public void addSupplierDiscount(Discounts discountEnum, int amount, int discount,boolean isPercentage) throws Exception {
         if(isDiscountExist(discountEnum,amount,isPercentage))
             throw new Exception("Discount is already exists");
+        DiscountDTO discountDTO=null;
         switch(discountEnum){
             case DISCOUNT_BY_TOTAL_PRICE :
-                if(isPercentage)
-                     discountPerTotalPrice.add(new PercentDiscount(amount,discount,true, supplierDalController,
-                             new SupplierDiscountDTO(supplierNum, amount, discount, isPercentage, true)));
-                else
-                    discountPerTotalPrice.add(new NumberDiscount(amount,discount,false, supplierDalController,
-                            new SupplierDiscountDTO(supplierNum, amount, discount, isPercentage, true)));
+                if(isPercentage) {
+                    discountDTO = new DiscountDTO(supplierNum, amount, discount, "true", "false","true",-1);
+                    discountPerTotalPrice.add(new PercentDiscount(amount, discount, true, supplierDalController, discountDTO));
+                    supplierDalController.insert(discountDTO);
+                }
+                else{
+                    discountDTO = new DiscountDTO(supplierNum, amount, discount, "false", "false","true",-1);
+                    discountPerTotalPrice.add(new NumberDiscount(amount, discount, false, supplierDalController, discountDTO));
+                    supplierDalController.insert(discountDTO);
+                }
                 break;
             case DISCOUNT_BY_TOTAL_QUANTITY:
-                if(isPercentage)
-                    discountPerTotalQuantity.add(new PercentDiscount(amount,discount,true, supplierDalController, new SupplierDiscountDTO(supplierNum, amount, discount, isPercentage, false)));
-                else
-                    discountPerTotalQuantity.add(new NumberDiscount(amount,discount, false, supplierDalController, new SupplierDiscountDTO(supplierNum, amount, discount, isPercentage, false)));
+                if(isPercentage) {
+                    discountDTO = new DiscountDTO(supplierNum, amount, discount, "true", "true","true",-1);
+                    discountPerTotalQuantity.add(new PercentDiscount(amount, discount, true, supplierDalController, discountDTO));
+                    supplierDalController.insert(discountDTO);
+                }
+                else{
+                    discountDTO = new DiscountDTO(supplierNum, amount, discount, "false", "true","true",-1);
+                    discountPerTotalQuantity.add(new NumberDiscount(amount, discount, false, supplierDalController, discountDTO));
+                    supplierDalController.insert(discountDTO);
+                }
                 break;
         }
     }
@@ -166,21 +230,19 @@ public abstract class  SupplierBusiness {
     public void deleteSupplierDiscount(Discounts discountEnum, int amount, boolean isPercentage) throws Exception {
         if(!isDiscountExist(discountEnum,amount,isPercentage))
             throw new Exception("Discount doesn't Exist");
+        Discount dis = getDiscount(discountEnum,amount,isPercentage);
         switch (discountEnum) {
             case DISCOUNT_BY_TOTAL_PRICE:
-                for (Discount dis : discountPerTotalPrice) {
-                    if (dis.getAmount() == amount && dis.isPercentage() == isPercentage)
                         discountPerTotalPrice.remove(dis);
-                }
+                        supplierDalController.delete(dis.getDiscountDTO());
                 break;
             case DISCOUNT_BY_TOTAL_QUANTITY:
-                for (Discount dis : discountPerTotalQuantity) {
-                    if (dis.getAmount() == amount&& dis.isPercentage() == isPercentage)
                         discountPerTotalQuantity.remove(dis);
-                    break;
+                        supplierDalController.delete(dis.getDiscountDTO());
+                break;
                 }
         }
-    }
+
 
     public boolean isDiscountExist(Discounts discountEnum,int amount, boolean isPercentage) {
         switch(discountEnum){
@@ -189,6 +251,7 @@ public abstract class  SupplierBusiness {
                     if (dis.getAmount() == amount && dis.isPercentage() == isPercentage)
                         return true;
                 }
+
                 break;
             case DISCOUNT_BY_TOTAL_QUANTITY:
                 for (Discount dis : discountPerTotalQuantity) {
@@ -238,15 +301,6 @@ public abstract class  SupplierBusiness {
                return true;
         }
         return false;
-    }
-
-    public void editSupplier(String supplierName, String address, int bankAccountNum, boolean selfDelivery,PaymentTerms paymentTerms){
-        this.supplierName = supplierName;
-        this.address = address;
-        this.bankAccountNum = bankAccountNum;
-        this.selfDelivery = selfDelivery;
-        this.paymentTerms=paymentTerms;
-
     }
 
     //this function gets products number in the order, and old total price and returns new price
@@ -309,7 +363,7 @@ public abstract class  SupplierBusiness {
         return selfDelivery;
     }
 
-    public HashMap<Integer, SupplierProductBusiness> getProducts() {
+    public ConcurrentHashMap<Integer, SupplierProductBusiness> getProducts() {
         return products;
     }
 
@@ -324,4 +378,18 @@ public abstract class  SupplierBusiness {
                 '}';
     }
 
+    public void setProducts(ConcurrentHashMap<Integer, SupplierProductBusiness> products) {
+        this.products = products;
+    }
+
+    public abstract void deleteConstantDays() throws SQLException;
+
+    public void deleteGeneralDiscounts() throws SQLException {
+        for(Discount discount : discountPerTotalPrice)
+            supplierDalController.delete(discount.getDiscountDTO());
+        for(Discount discount : discountPerTotalQuantity)
+            supplierDalController.delete(discount.getDiscountDTO());
+        this.discountPerTotalPrice = new ArrayList<>();
+        this.discountPerTotalQuantity = new ArrayList<>();
+    }
 }
