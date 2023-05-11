@@ -3,8 +3,10 @@ package ServiceLayer.Stock;
 import BusinessLayer.Stock.Inventory;
 import BusinessLayer.Stock.OrderController;
 import BusinessLayer.Supplier_Stock.ItemToOrder;
+import DataLayer.Inventory_Supplier_Dal.DalController.InventoryDalController;
 import ServiceLayer.Supplier.OrderService;
 
+import java.sql.SQLException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
@@ -127,12 +129,20 @@ public class ManageOrderService {
             return e.getMessage();
         }
     }
-    public void set_up(){
-        orderController.set_up_waiting_items();
+    public void set_up()  {
+        try {
+            orderController.loadWaitingItems();
+            orderController.loadOrderedItems();
+            //orderController.set_up_waiting_items();
+        }
+        catch (Exception e){
+            e.getMessage();
+        }
     }
 
-    public void setOrderController(Inventory inv,OrderService orderService) {
-        this.orderController = new OrderController(inv,orderService);
+    public void setOrderController(Inventory inv, OrderService orderService, InventoryDalController inventoryDalController) {
+        this.orderController = new OrderController(inv,orderService,inventoryDalController);
+        orderController.setInventoryDalController(inventoryDalController);
     }
 
     public String show_all_orders() {
@@ -142,5 +152,9 @@ public class ManageOrderService {
         catch(Exception e){
             return e.getMessage();
         }
+    }
+
+    public OrderController getStockOrderController() {
+        return orderController;
     }
 }

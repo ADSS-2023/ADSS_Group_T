@@ -1,5 +1,8 @@
 package BusinessLayer.Stock;
 
+import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.DamagedItemDTO;
+import DataLayer.Inventory_Supplier_Dal.DalController.InventoryDalController;
+
 import java.util.LinkedList;
 import java.util.List;
 /*
@@ -8,8 +11,10 @@ import java.util.List;
  */
 public class Damaged {
     protected List<DamagedItem> damagedItems;
+    protected InventoryDalController inventoryDalController;
 
-    public Damaged(){
+    public Damaged(InventoryDalController inventoryDalController){
+        this.inventoryDalController = inventoryDalController;
         damagedItems = new LinkedList<>();
     }
 
@@ -22,10 +27,14 @@ public class Damaged {
      * @param description
      */
     public String addDamagedItem(Item item ,int order_id, int amount , String description) throws Exception {
-        damagedItems.add(new DamagedItem(item , amount , description));
+        DamagedItem new_damaged_item = new DamagedItem(item , amount , description);
+        damagedItems.add(new_damaged_item);
+        this.inventoryDalController.insert(new_damaged_item.getDto());
         return item.reduce(order_id,amount);
     }
-
+    public void addDamagedItem(Item item, DamagedItemDTO damagedItemDTO){
+        damagedItems.add(new DamagedItem(damagedItemDTO,item));
+    }
     /**
      *  This function called from ___Service when there is a requirement to produce
      *  a damaged items report , and return list of strings for each damaged item.
