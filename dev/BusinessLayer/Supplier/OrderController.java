@@ -108,7 +108,6 @@ public class OrderController {
                 float discountPerProducts = (product.getFinalPrice() / totalorderPrice) * (totalorderPrice - finalTotalPrice);
                 product.setDiscount(discountPerProducts + product.getDiscount());
                 product.setFinalPrice(product.getFinalPrice() - discountPerProducts);
-                product.setOrderProductDTO(new OrderProductDTO(orderCounter, product.getManufacturer(), product.getExpiryDate().toString(), product.getProductNumber(), product.getQuantity(), product.getInitialPrice(), product.getDiscount(), product.getFinalPrice(), product.getProductName()));
             }
             int daysToSupplied = -1;
             if (!isRegular) {
@@ -128,10 +127,14 @@ public class OrderController {
                 DayOfWeek lastDay = orderDay.plus(diff);
                 OrderBusiness order = new OrderBusiness(orderCounter++, Util_Supplier_Stock.getCurrDay(), supplier.getAddress(),
                         "SuperLi", supplier.getSupplierNum(), contactName, contactNum, products, daysToSupplied, false, -1, lastDay.name(), orderDalController);
+                for(OrderProduct product : order.getProducts())
+                    product.setOrderProductDTO(new OrderProductDTO(order.getOrderNum(), product.getManufacturer(), product.getExpiryDate().toString(), product.getProductNumber(), product.getQuantity(), product.getInitialPrice(), product.getDiscount(), product.getFinalPrice(), product.getProductName()));
                 dayToConstantOrders.get(orderDay).add(order);
             } else {
                 OrderBusiness order = new OrderBusiness(orderCounter++, Util_Supplier_Stock.getCurrDay(), supplier.getAddress(),
                         "SuperLi", supplier.getSupplierNum(), contactName, contactNum, products, daysToSupplied, false, daysToSupplied, null, orderDalController);
+                for(OrderProduct product : order.getProducts())
+                    product.setOrderProductDTO(new OrderProductDTO(order.getOrderNum(), product.getManufacturer(), product.getExpiryDate().toString(), product.getProductNumber(), product.getQuantity(), product.getInitialPrice(), product.getDiscount(), product.getFinalPrice(), product.getProductName()));
                 ordersNotSupplied.add(order);
             }
         }
