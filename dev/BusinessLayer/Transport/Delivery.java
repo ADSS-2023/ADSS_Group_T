@@ -157,6 +157,7 @@ public class Delivery {
             unHandledSuppliers.put(supplier, new File(fileCounter++));
             dalDeliveryService.updateCounter("file counter",fileCounter);
             dalDeliveryService.insertUnHandledSite(id,supplier.getAddress(),p.getName(),fileCounter - 1,amount);
+
         }
         else if(!unHandledSuppliers.get(supplier).getProducts().containsKey(p)){
             dalDeliveryService.insertUnHandledSite(id,supplier.getAddress(),p.getName(),fileCounter - 1,amount);
@@ -414,18 +415,13 @@ public class Delivery {
     }
 
     public void setSource(Site source) throws SQLException {
-        if (source!=null){
-            DeliveryDTO oldDTO = createDeliveryDTO();
-            this.source = source;
-            dalDeliveryService.updateDelivery(oldDTO,createDeliveryDTO());
-        }
-        else {
-            this.source = source;
-            dalDeliveryService.insertDelivery(this);
-        }
-
-
+        DeliveryDTO oldDTO = createDeliveryDTO();
+        this.source = source;
+        dalDeliveryService.updateDelivery(oldDTO,createDeliveryDTO());
     }
+
+
+
 
     public void setTruckNumber(int truckNumber) throws SQLException {
         DeliveryDTO oldDTO = createDeliveryDTO();
@@ -445,5 +441,21 @@ public class Delivery {
 
     public File getFromLogisticsCenterFile() {
         return fromLogisticsCenterFile;
+    }
+
+    public void setUnHandledSuppliers(LinkedHashMap<Supplier, File> allUnHandledSuppliersForDelivery) {
+        this.unHandledSuppliers = allUnHandledSuppliersForDelivery;
+    }
+
+    public void setUnHandledBranches(LinkedHashMap<Branch, File> allUnHandledBranchesForDelivery) {
+        this.unHandledBranches = allUnHandledBranchesForDelivery;
+    }
+
+    public void setHandledSuppliers(LinkedHashMap<Supplier, File> allHandledSuppliersForDelivery) {
+        this.handledSuppliers = allHandledSuppliersForDelivery;
+    }
+
+    public void setHandledBranches(LinkedHashMap<Branch, File> allHandledBranchesForDelivery) {
+        this.handledBranches = allHandledBranchesForDelivery;
     }
 }

@@ -65,8 +65,8 @@ public class MainPresentation {
         if (choice == 1)
             loginWindow();
         if (choice == 2) {
-            Data_init.initOldData(this.serviceFactory.getDAO());
-            Data_init_HR.initOldData(this.serviceFactory.getDAO());
+            Data_init.initOldData(this.serviceFactory.getDAO(),supplierService,deliveryService);
+            //Data_init_HR.initOldData(this.serviceFactory.getDAO());
             //HR_Initialization.init_data(shiftService,employeeService);
 //            LogisticCenter_init.init(logisticCenterService);
 //            Branch_init.init(branchService);
@@ -81,8 +81,8 @@ public class MainPresentation {
      */
     public void loginWindow() {
         //TODO remove shortCut:
-        //this.transportManagerPresentation.start();
-        this.hrManagerPresentation.start();
+        this.transportManagerPresentation.start();
+       // this.hrManagerPresentation.start();
 
         Scanner scanner = new Scanner(System.in);
         System.out.println(" ");

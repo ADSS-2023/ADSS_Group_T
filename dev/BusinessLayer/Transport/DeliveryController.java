@@ -22,7 +22,7 @@ public class DeliveryController {
     private final ShiftController shiftController;
     private final SupplierController supplierController;
     private final BranchController branchController;
-    private final LinkedHashMap<Integer, Delivery> deliveries;
+    private LinkedHashMap<Integer, Delivery> deliveries;
     private final LinkedHashMap<LocalDate, ArrayList<Truck>> date2trucks;
     private final LinkedHashMap<LocalDate, ArrayList<Delivery>> date2deliveries;
     private LogisticCenterController logisticCenterController;
@@ -138,7 +138,6 @@ public class DeliveryController {
                     shiftController.addDirverRequirement(requiredDate, truck.getLicenseType(), truck.getCoolingLevel());
                     shiftController.addStoreKeeperRequirement(requiredDate, branch.getAddress());
                 }catch (Exception e){};
-               // delivery.setSource(this.logisticCenterController.getLogisticCenter());//LC is sourced
                 delivery.addUnHandledBranch(branch, filesCounter++);
                 addDelivery(delivery);
                 addDeliveryToDate(requiredDate,delivery,true);
@@ -350,7 +349,6 @@ public class DeliveryController {
      * @return List of the delivery ids that scheduled for the new day and have overweight problem
      */
     public ArrayList<Delivery> skipDay() throws Exception {
-
         this.currDate = this.currDate.plusDays(1);
         if (!deliveryInDate(currDate))
             return null;
@@ -623,6 +621,8 @@ public class DeliveryController {
     }
 
 
+
+
     /**
      * reschedule delivery for products that could not be schedule in their required date
      * @param suppliers the supplier and their files
@@ -711,7 +711,9 @@ public class DeliveryController {
         return deliveriesWithoutStoreKeeper;
     }
 
-    public Collection<Delivery> getAllDeliveries() {
+
+    public Collection<Delivery> getAllDeliveries() throws SQLException {
+        this.deliveries = dalDeliveryService.findAllDeliveries();
         return deliveries.values();
     }
 

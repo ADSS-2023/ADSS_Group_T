@@ -300,4 +300,20 @@ public class DalDeliveryService {
     public CounterDTO findDeliveryCounter() throws SQLException {
         return dao.find("delivery counter",CounterDTO.getPKStatic(),CounterDTO.getTableNameStatic(), CounterDTO.class);
     }
+
+    public LinkedHashMap<Integer, Delivery> findAllDeliveries() throws SQLException {
+        ArrayList<DeliveryDTO> deliveryDTOS = dao.findAll(DeliveryDTO.getTableNameStatic(),DeliveryDTO.class);
+        LinkedHashMap<Integer,Delivery> result = new LinkedHashMap<>();
+        for (DeliveryDTO deliveryDTO: deliveryDTOS){
+            result.put(deliveryDTO.getId(),new Delivery(deliveryDTO,this));
+            result.get(deliveryDTO.getId()).setUnHandledSuppliers(findAllUnHandledSuppliersForDelivery(deliveryDTO.getId()));
+            result.get(deliveryDTO.getId()).setUnHandledBranches(findAllUnHandledBranchesForDelivery(deliveryDTO.getId()));
+            result.get(deliveryDTO.getId()).setHandledSuppliers(findAllHandledSuppliersForDelivery(deliveryDTO.getId()));
+            result.get(deliveryDTO.getId()).setHandledBranches(findAllHandledBranchesForDelivery(deliveryDTO.getId()));
+        }
+
+     return result;
+    }
+
+
 }
