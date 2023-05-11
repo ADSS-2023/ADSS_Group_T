@@ -22,7 +22,7 @@ public class OrderProduct {
 
     private OrderDalController orderDalController;
 
-    public OrderProduct(String productName, int productNumber, int quantity, float initialPrice, float discount, float finalPrice, String manufacturer, LocalDate expiryDate, OrderProductDTO orderProductDTO) {
+    public OrderProduct(String productName, int productNumber, int quantity, float initialPrice, float discount, float finalPrice, String manufacturer, LocalDate expiryDate, OrderProductDTO orderProductDTO, OrderDalController orderDalController) {
         this.productName = productName;
         this.manufacturer = manufacturer;
         this.expiryDate = expiryDate;
@@ -32,9 +32,10 @@ public class OrderProduct {
         this.discount = discount;
         this.finalPrice = finalPrice;
         this.orderProductDTO = orderProductDTO;
+        this.orderDalController=orderDalController;
     }
 
-    public OrderProduct(OrderProductDTO orderProductDTO) {
+    public OrderProduct(OrderProductDTO orderProductDTO, OrderDalController orderDalController) {
         this.productName = orderProductDTO.getProductName();
         this.manufacturer = orderProductDTO.getManufacturer();
 
@@ -50,14 +51,14 @@ public class OrderProduct {
     }
 
     public void setOrderProductDTO(OrderProductDTO orderProductDTO) throws SQLException {
-        this.orderDalController.update(orderProductDTO, orderProductDTO);
+        this.orderDalController.insert( orderProductDTO);
         this.orderProductDTO = orderProductDTO;
     }
 
     public OrderProduct clone(){
         return new OrderProduct(
                 productName, productNumber, quantity, initialPrice, discount, finalPrice,
-                manufacturer, expiryDate, orderProductDTO);
+                manufacturer, expiryDate, orderProductDTO,orderDalController);
     }
 
     public LocalDate getExpiryDate() {

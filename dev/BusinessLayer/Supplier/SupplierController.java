@@ -16,13 +16,14 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.DayOfWeek;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class SupplierController {
-    private HashMap<Integer, SupplierBusiness> suppliers;
+    private ConcurrentHashMap<Integer, SupplierBusiness> suppliers;
     private Connection connection;
     private SupplierDalController supplierDalController;
     public SupplierController(Connection connection, SupplierDalController supplierDalController) throws Exception {
-        suppliers = new HashMap<>();
+        suppliers = new ConcurrentHashMap<>();
         this.connection = connection;
         this.supplierDalController = supplierDalController;
         //loadSuppliers();
@@ -310,11 +311,12 @@ public class SupplierController {
         return null;
     }
 
-    public HashMap<Integer, SupplierBusiness> getSuppliers(){return suppliers;}
+    public ConcurrentHashMap<Integer, SupplierBusiness> getSuppliers(){return suppliers;}
 
     public void deleteAll() throws Exception {
-        for (Map.Entry<Integer, SupplierBusiness> entry : suppliers.entrySet())
-            deleteSupplier(entry.getKey());
-        suppliers = null;
+        ConcurrentHashMap <Integer, SupplierBusiness> maps = suppliers;
+        for (SupplierBusiness sp : maps.values())
+            deleteSupplier(sp.getSupplierNum());
+        suppliers = new ConcurrentHashMap<>();
     }
 }

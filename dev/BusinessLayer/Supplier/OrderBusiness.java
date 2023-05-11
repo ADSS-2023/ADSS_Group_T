@@ -17,7 +17,6 @@ public class OrderBusiness {
 
 
     private int orderNum;
-    private String supplierName;
     private LocalDate orderDate;
     private String supplierAddress;
     private String destinationAddress;
@@ -31,14 +30,13 @@ public class OrderBusiness {
 
     private OrderDalController orderDalController;
 
-    public OrderBusiness(int orderNum, String supplierName, LocalDate  orderDate,
+    public OrderBusiness(int orderNum, LocalDate  orderDate,
                          String supplierAddress, String destinationAddress
             , int supplierNum, String contactName, String contactNumber,
                          List<OrderProduct> products, int daysToSupplied,
                          boolean orderSupplied, int daysTodeliver, String constantDay,
-                            OrderDalController orderDalController){
+                            OrderDalController orderDalController) throws SQLException {
         this.orderNum = orderNum;
-        this.supplierName = supplierName;
         this.orderDate = orderDate;
         this.supplierAddress = supplierAddress;
         this.destinationAddress = destinationAddress;
@@ -54,10 +52,10 @@ public class OrderBusiness {
         else
             this.orderDTO = new OrderDTO(orderNum, supplierNum, contactName, contactNumber, orderDate.toString(),
                     supplierAddress, destinationAddress, "true", daysTodeliver, constantDay);
+        orderDalController.insert(this.orderDTO);
     }
     public OrderBusiness (OrderDTO orderDTO, List<OrderProduct> orderProduct,String supplierName, OrderDalController orderDalController ){
         this.orderNum = orderDTO.getOrderNum();
-        this.supplierName = supplierName;
         this.supplierAddress = orderDTO.getSupplierAddress();
         this.destinationAddress = orderDTO.getDestinationAddress();
         this.supplierNum = orderDTO.getSupplierNum();
@@ -103,16 +101,13 @@ public class OrderBusiness {
         return daysToSupplied;
     }
 
-    public OrderBusiness clone(int newOrderNum){ // clone past order
+    public OrderBusiness clone(int newOrderNum) throws SQLException { // clone past order
         List<OrderProduct> clonedProducts = new LinkedList<>();
         for (OrderProduct product:products)
             clonedProducts.add(product.clone());
         return new OrderBusiness(
-                newOrderNum, supplierName, Util_Supplier_Stock.getCurrDay(), supplierAddress, destinationAddress,
+                newOrderNum, Util_Supplier_Stock.getCurrDay(), supplierAddress, destinationAddress,
                 supplierNum,contactName,contactNumber,clonedProducts,daysToSupplied, true, -1, null,orderDalController);
-    }
-    public String getSupplierName() {
-        return supplierName;
     }
 
     public LocalDate getOrderDate() {

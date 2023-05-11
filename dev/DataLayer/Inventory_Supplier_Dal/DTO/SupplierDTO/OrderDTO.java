@@ -8,7 +8,6 @@ import java.sql.SQLException;
 public class OrderDTO extends DTO {
     private int orderNum;
     private int supplierNum;
-    private String supplierName;
     private String contactName;
     private String contactNumber;
     private String orderDate;

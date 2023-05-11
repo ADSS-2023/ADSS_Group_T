@@ -126,11 +126,11 @@ public class OrderController {
                 int diff = DayOfWeek.SUNDAY.getValue() - orderDay.getValue();
                 // Get the last day of the week
                 DayOfWeek lastDay = orderDay.plus(diff);
-                OrderBusiness order = new OrderBusiness(orderCounter++, supplier.getName(), Util_Supplier_Stock.getCurrDay(), supplier.getAddress(),
+                OrderBusiness order = new OrderBusiness(orderCounter++, Util_Supplier_Stock.getCurrDay(), supplier.getAddress(),
                         "SuperLi", supplier.getSupplierNum(), contactName, contactNum, products, daysToSupplied, false, -1, lastDay.name(), orderDalController);
                 dayToConstantOrders.get(orderDay).add(order);
             } else {
-                OrderBusiness order = new OrderBusiness(orderCounter++, supplier.getName(), Util_Supplier_Stock.getCurrDay(), supplier.getAddress(),
+                OrderBusiness order = new OrderBusiness(orderCounter++, Util_Supplier_Stock.getCurrDay(), supplier.getAddress(),
                         "SuperLi", supplier.getSupplierNum(), contactName, contactNum, products, daysToSupplied, false, daysToSupplied, null, orderDalController);
                 ordersNotSupplied.add(order);
             }
@@ -164,7 +164,7 @@ public class OrderController {
         List<OrderProductDTO> orderProductDTOS = orderDalController.findAllOfCondition(
                 "supplier_order_product", "orderId", orderId, OrderProductDTO.class);
         for (OrderProductDTO orderProductDTO : orderProductDTOS) {
-            orderProducts.add(new OrderProduct(orderProductDTO));
+            orderProducts.add(new OrderProduct(orderProductDTO,orderDalController));
         }
         return orderProducts;
     }
@@ -200,7 +200,7 @@ public class OrderController {
         float discount = initialPrice - product.getPriceByQuantity(quantity);
         float finalPrice = initialPrice - discount;
         OrderProduct orderProduct = new OrderProduct(product.getName(), productNumber, quantity, initialPrice, discount, finalPrice, product.getManufacturer(), product.getExpiryDate(),
-                new OrderProductDTO(orderCounter, product.getManufacturer(), product.getExpiryDate().toString(), productNumber, quantity, initialPrice, discount, finalPrice, product.getName()));
+                new OrderProductDTO(orderCounter, product.getManufacturer(), product.getExpiryDate().toString(), productNumber, quantity, initialPrice, discount, finalPrice, product.getName()),orderDalController);
         //update the suppliers shopping list
         if (!shoppingLists.containsKey(supplierNum))
             shoppingLists.put(supplierNum, new LinkedList());

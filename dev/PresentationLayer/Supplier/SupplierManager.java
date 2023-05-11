@@ -113,7 +113,7 @@ public class SupplierManager {
             System.out.println("17.Show all general discounts of a certain supplier.");
             System.out.println("18.Go back to main menu.");
             System.out.println("19.Load Data.");
-            System.out.println("20.delete all the data.");
+            System.out.println("20.Delete Data.");
 
             int choice = getInteger(scanner, "Please select an integer between 1 to 20.", 1, 20);
             switch (choice) {

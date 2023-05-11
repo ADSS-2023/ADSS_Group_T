@@ -12,6 +12,7 @@ import BusinessLayer.Supplier.Supplier_Util.PaymentTerms;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class SupplierService {
     private SupplierController sc;
@@ -92,7 +93,7 @@ public class SupplierService {
         List<String> productsStrings = new LinkedList<>();
         HashMap<Integer, SupplierProductBusiness> products = new HashMap<>();
         try {
-            HashMap<Integer, SupplierBusiness> suppliers=sc.getSuppliers();
+            ConcurrentHashMap<Integer, SupplierBusiness> suppliers=sc.getSuppliers();
             for (Map.Entry<Integer, SupplierBusiness> entry : suppliers.entrySet()) {
                 products = entry.getValue().getProducts();
                 for (Map.Entry<Integer, SupplierProductBusiness> entry2 : products.entrySet())
@@ -209,7 +210,7 @@ public class SupplierService {
     public List<String> getSuppliers(){
        List<String> suppliersStrings = new LinkedList<>();
         try {
-            HashMap<Integer, SupplierBusiness> suppliers = sc.getSuppliers();
+            ConcurrentHashMap<Integer, SupplierBusiness> suppliers = sc.getSuppliers();
             for (Map.Entry<Integer, SupplierBusiness> entry : suppliers.entrySet()) {
                 suppliersStrings.add(entry.getValue().toString()+"\n");
             }
