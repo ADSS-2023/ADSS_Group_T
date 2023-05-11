@@ -77,10 +77,7 @@ public class OrderController {
             Integer item_id = entry.getKey();
             Integer quantity = entry.getValue();
             list_to_order.addLast(new ItemToOrder(inventory.get_item_by_id(item_id).get_name(),
-                    inventory.get_item_by_id(item_id).manufacturer_name, quantity, null, -1,-1));
-            if(special_orders_track.containsKey(item_id)){
-                quantity += special_orders_track.get(item_id);
-            }
+            inventory.get_item_by_id(item_id).manufacturer_name, quantity, null, -1,-1));
             ItemOrderdDTO item_dto = new ItemOrderdDTO(item_id,quantity);
             insert_items.add(item_dto);
             special_orders_track.put(item_id,quantity);
@@ -91,7 +88,15 @@ public class OrderController {
         else{
             // only if success!
             for (ItemOrderdDTO item_dto :  insert_items) {
-                inventoryDalController.insert(item_dto);
+                int quantity = item_dto.getQuantity();
+                if(special_orders_track.containsKey(item_dto.getId())) {
+                    Integer old_amount = special_orders_track.get(item_dto.getId());
+                    inventoryDalController.update(new ItemOrderdDTO(item_dto.getId(),old_amount), item_dto);
+                    quantity += special_orders_track.get(item_dto.getQuantity());
+                }
+                else
+                    inventoryDalController.insert(item_dto);
+                special_orders_track.put(item_dto.getId(), quantity);
             }
         }
 
@@ -321,11 +326,20 @@ public class OrderController {
      */
     public String show_new_items() {
         String toReturn= "";
+
         for (ItemToOrder itemToOrder : order_service.getAllProducts()){
-            toReturn += String.format("name: %s , manufacture: %s, amount: %d\n"
+            String itemId = "";
+            try {
+                itemId = "id: " + inventory.itemToOrder_to_item(itemToOrder).item_id;
+            }
+            catch (Exception e){
+                itemId ="\u001B[31mItem is not in the system\u001B[0m";
+            }
+            toReturn += String.format("name: %s , manufacture: %s, amount: %d, %s\n"
                     ,itemToOrder.getProductName(),
                     itemToOrder.getManufacturer(),
-                    itemToOrder.getQuantity());
+                    itemToOrder.getQuantity(),
+                    itemId);
         }
         if(toReturn == "")
             toReturn =  "No item to supply";

@@ -1,6 +1,7 @@
 package DataLayer.Inventory_Supplier_Dal.DalController;
 
 import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.CategoryDTO;
+import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.ItemOrderdDTO;
 import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.ItemToOrderDTO;
 import DataLayer.Util.DAO;
 import DataLayer.Util.DTO;
@@ -58,4 +59,6 @@ public class InventoryDalController{
     public <T extends DTO> ArrayList<T> findAllCategories(String tableName, Class<T> dtoClass) throws SQLException {
         return category_DAO.findAll(tableName,dtoClass,connection);
     }
+
+
 }
