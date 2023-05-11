@@ -5,7 +5,6 @@ import BusinessLayer.Supplier_Stock.ItemToOrder;
 import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.*;
 import DataLayer.Inventory_Supplier_Dal.DalController.InventoryDalController;
 import DataLayer.Inventory_Supplier_Dal.DalController.ItemDalController;
-import DataLayer.Util.DTO;
 
 import java.sql.SQLException;
 import java.time.DayOfWeek;
@@ -309,6 +308,25 @@ public class Inventory {
 
     }
 
+    private void receive_order(ItemPerOrderDTO itemPerOrderDTO) throws Exception {
+        String to_return="";
+        int amount_warehouse = itemPerOrderDTO.getAmountWarehouse();
+        int amount_store = itemPerOrderDTO.getAmountStore();
+        //check if exist
+        if(items.containsKey(itemPerOrderDTO.getItemId())) {
+            Item cur_item = items.get(itemPerOrderDTO.getItemId());
+            to_return =  cur_item.recive_order(new ItemPerOrder(itemPerOrderDTO));
+            if (shortage_list.contains(cur_item)) {
+                if (cur_item.current_amount() >= cur_item.min_amount)
+                    shortage_list.remove(cur_item);
+            }
+        }
+        else{
+            throw new Exception("illegal item id");
+        }
+
+
+    }
     /**
      * This functions returns a specific Item by an id as a parameter.
      * @param id
@@ -367,11 +385,14 @@ public class Inventory {
     public void loadItemPerOrder() throws Exception{
         List<ItemPerOrderDTO> itemPerOrder = itemDalController.findAll("inventory_item_per_order", ItemPerOrderDTO.class);
         for (ItemPerOrderDTO itemPerOrderDto:itemPerOrder) {
-            items.get(itemPerOrderDto.getItemId()).recive_order(new ItemPerOrder(itemPerOrderDto));
+            receive_order(itemPerOrderDto);
         }
         loadDicounts();
 
     }
+
+
+
     public void loadDicounts() throws Exception{
         List<DiscountDTO> discountDTOList = inv_dal_controller.findAll("inventory_discount", DiscountDTO.class);
         for (DiscountDTO discountDTO : discountDTOList){

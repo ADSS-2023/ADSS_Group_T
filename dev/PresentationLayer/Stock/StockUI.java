@@ -358,6 +358,7 @@ public class StockUI {
 
     public void loadData(){
         sf.inventoryService.loadData();
+        sf.manageOrderService.loadData();
     }
 
     public void setPreviousCallBack(PreviousCallBack previousCallBack) {

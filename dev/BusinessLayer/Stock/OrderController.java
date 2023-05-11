@@ -57,12 +57,12 @@ public class OrderController {
         if(!order_service.createRegularOrder(list_to_order)){
             throw new Exception("\u001B[31mOrder cannot be supplied\u001B[0m");
         }
-        else{
+        /*else{
             // only if success!
             for (ItemOrderdDTO item_dto :  insert_items) {
                 inventoryDalController.insert(item_dto);
             }
-        }
+        }*/
     }
 
     /**
@@ -90,7 +90,8 @@ public class OrderController {
                 int quantity = item_dto.getQuantity();
                 if(special_orders_track.containsKey(item_dto.getId())) {
                     Integer old_amount = special_orders_track.get(item_dto.getId());
-                    inventoryDalController.update(new ItemOrderdDTO(item_dto.getId(),old_amount), item_dto);
+                    inventoryDalController.update(new ItemOrderdDTO(item_dto.getId(),old_amount),
+                            new ItemOrderdDTO(item_dto.getId(),item_dto.getQuantity()+old_amount));
                     quantity += special_orders_track.get(item_dto.getId());
                 }
                 else
@@ -132,6 +133,9 @@ public class OrderController {
                         }
                     }
                 }
+            }
+            else{
+                found = true;
             }
             if(!found){ // if there is no item that comes at curDay make add it to the map
                 item_to_order_map.put(item.getItem_id() , (int)(amount_to_order*1.3)); // need to check how much should double it.
@@ -208,13 +212,13 @@ public class OrderController {
         inventoryDalController.delete(new ItemToOrderDTO(
                 "inventory_waiting_list",tempItem.getProductName(),tempItem.getManufacturer(),
                 tempItem.getQuantity(),tempItem.getExpiryDate().toString(),tempItem.getCostPrice(),tempItem.getOrderId()));
-        inventory.itemToOrder_to_item(tempItem).recive_order(
+        inventory.receive_order( inventory.itemToOrder_to_item(tempItem).item_id,
                 tempItem.getOrderId(),
-                (int)Math.floor(tempItem.getQuantity()/2),
-                (int)Math.ceil(tempItem.getQuantity()/2),
-                tempItem.getCostPrice(),
+                tempItem.getQuantity(),
                 location,
-                tempItem.getExpiryDate());
+                tempItem.getExpiryDate(),
+                tempItem.getCostPrice()
+                );
         items_to_place.remove(index-1);
     }
 
@@ -343,5 +347,18 @@ public class OrderController {
         if(toReturn == "")
             toReturn =  "No item to supply";
         return toReturn;
+    }
+    public  void loadData() throws SQLException {
+        List<ItemOrderdDTO> list = inventoryDalController.findAll("inventory_item_ordered",ItemOrderdDTO.class);
+        for (ItemOrderdDTO i:list
+             ) {
+            special_orders_track.put(i.getId(),i.getQuantity());
+        }
+        List<ItemToOrderDTO> list2 = inventoryDalController.findAll("inventory_waiting_list",ItemToOrderDTO.class);
+        for (ItemToOrderDTO i:list2
+        ) {
+            items_to_place.add(new ItemToOrder(i));
+        }
+
     }
 }
