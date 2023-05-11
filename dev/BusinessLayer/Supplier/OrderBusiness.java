@@ -46,8 +46,12 @@ public class OrderBusiness {
         this.products = products;
         this.daysToSupplied = daysToSupplied;
         this.orderDalController=orderDalController;
-        this.orderDTO = new OrderDTO(orderNum, supplierNum, contactName, contactNumber, orderDate.toString(),
-                supplierAddress, destinationAddress, orderSupplied, daysTodeliver, constantDay);
+        if(orderSupplied)
+            this.orderDTO = new OrderDTO(orderNum, supplierNum, contactName, contactNumber, orderDate.toString(),
+                    supplierAddress, destinationAddress, "true", daysTodeliver, constantDay);
+        else
+            this.orderDTO = new OrderDTO(orderNum, supplierNum, contactName, contactNumber, orderDate.toString(),
+                    supplierAddress, destinationAddress, "true", daysTodeliver, constantDay);
     }
     public OrderBusiness (OrderDTO orderDTO, List<OrderProduct> orderProduct,String supplierName, OrderDalController orderDalController ){
         this.orderNum = orderDTO.getOrderNum();
