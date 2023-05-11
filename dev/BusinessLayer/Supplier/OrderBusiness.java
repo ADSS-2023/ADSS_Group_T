@@ -2,10 +2,13 @@ package BusinessLayer.Supplier;
 
 import BusinessLayer.Supplier_Stock.Util_Supplier_Stock;
 import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.OrderDTO;
+import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.OrderProductDTO;
 import DataLayer.Inventory_Supplier_Dal.DalController.OrderDalController;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,7 +17,6 @@ public class OrderBusiness {
 
 
     private int orderNum;
-    private String supplierName;
     private LocalDate orderDate;
     private String supplierAddress;
     private String destinationAddress;
@@ -28,12 +30,13 @@ public class OrderBusiness {
 
     private OrderDalController orderDalController;
 
-    public OrderBusiness(int orderNum, String supplierName, LocalDate  orderDate,
+    public OrderBusiness(int orderNum, LocalDate  orderDate,
                          String supplierAddress, String destinationAddress
             , int supplierNum, String contactName, String contactNumber,
-                         List<OrderProduct> products, int daysToSupplied) {
+                         List<OrderProduct> products, int daysToSupplied,
+                         boolean orderSupplied, int daysTodeliver, String constantDay,
+                            OrderDalController orderDalController) throws SQLException {
         this.orderNum = orderNum;
-        this.supplierName = supplierName;
         this.orderDate = orderDate;
         this.supplierAddress = supplierAddress;
         this.destinationAddress = destinationAddress;
@@ -42,7 +45,27 @@ public class OrderBusiness {
         this.contactNumber = contactNumber;
         this.products = products;
         this.daysToSupplied = daysToSupplied;
-        this.orderDTO = new OrderDTO(orderNum, supplierNum, contactName, contactNumber, orderDate.toString(), supplierAddress, destinationAddress, orderSupplied, daysTodeliver, constantDay);
+        this.orderDalController=orderDalController;
+        if(orderSupplied)
+            this.orderDTO = new OrderDTO(orderNum, supplierNum, contactName, contactNumber, orderDate.toString(),
+                    supplierAddress, destinationAddress, "true", daysTodeliver, constantDay);
+        else
+            this.orderDTO = new OrderDTO(orderNum, supplierNum, contactName, contactNumber, orderDate.toString(),
+                    supplierAddress, destinationAddress, "true", daysTodeliver, constantDay);
+        orderDalController.insert(this.orderDTO);
+    }
+    public OrderBusiness (OrderDTO orderDTO, List<OrderProduct> orderProduct,String supplierName, OrderDalController orderDalController ){
+        this.orderNum = orderDTO.getOrderNum();
+        this.supplierAddress = orderDTO.getSupplierAddress();
+        this.destinationAddress = orderDTO.getDestinationAddress();
+        this.supplierNum = orderDTO.getSupplierNum();
+        this.contactName = orderDTO.getContactName();
+        this.contactNumber = orderDTO.getContactNumber();
+        this.products = orderProduct;
+        this.daysToSupplied = orderDTO.getDaysToDeliver();
+        this.orderDalController=orderDalController;
+        this.orderDTO = orderDTO;
+
     }
 
     public int getOrderNum() {
@@ -78,16 +101,13 @@ public class OrderBusiness {
         return daysToSupplied;
     }
 
-    public OrderBusiness clone(int newOrderNum){
+    public OrderBusiness clone(int newOrderNum) throws SQLException { // clone past order
         List<OrderProduct> clonedProducts = new LinkedList<>();
         for (OrderProduct product:products)
             clonedProducts.add(product.clone());
         return new OrderBusiness(
-                newOrderNum, supplierName, Util_Supplier_Stock.getCurrDay(), supplierAddress, destinationAddress,
-                supplierNum,contactName,contactNumber,clonedProducts,daysToSupplied, true, -1, -1);
-    }
-    public String getSupplierName() {
-        return supplierName;
+                newOrderNum, Util_Supplier_Stock.getCurrDay(), supplierAddress, destinationAddress,
+                supplierNum,contactName,contactNumber,clonedProducts,daysToSupplied, true, -1, null,orderDalController);
     }
 
     public LocalDate getOrderDate() {
@@ -122,4 +142,10 @@ public class OrderBusiness {
         this.orderNum = orderNum;
     }
 
+    public void deleteOrder() throws SQLException {
+        for (OrderProduct product:products) {
+            orderDalController.delete(product.getOrderProductDTO());
+        }
+        products=new ArrayList<>();
+    }
 }

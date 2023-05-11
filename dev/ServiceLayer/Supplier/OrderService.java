@@ -5,6 +5,7 @@ import BusinessLayer.Supplier.OrderController;
 import BusinessLayer.Supplier.SupplierController;
 import BusinessLayer.Supplier_Stock.ItemToOrder;
 
+import java.rmi.server.ExportException;
 import java.time.DayOfWeek;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,7 +18,15 @@ public class OrderService {
          this.oc = oc;
          this.sc=sc;
         }
-
+        public void loadOrders()  {
+        try {
+            sc.loadSuppliers();
+            oc.loadOrders();
+        }
+        catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+        }
     public boolean nextDay(){
         try {
             oc.executeTodayOrders();
@@ -27,7 +36,6 @@ public class OrderService {
             return false;
         }
     }
-
     public boolean createRegularOrder(List<ItemToOrder> items) {
         try {
             if (items.size() == 0)
@@ -84,6 +92,7 @@ public class OrderService {
         }
     }
 
+
     public List<String> getOrders(){
         List<String>  orders = new LinkedList<>();
         try{//TODO:change implementation to display both types of order.
@@ -99,5 +108,17 @@ public class OrderService {
             return orders;
         }
     }
+
+    public String deleteAllOrders(){
+        try {
+            oc.deleteOrders();
+        }
+        catch (Exception e){
+            return e.getMessage();
+        }
+        return "Deleted Successfully";
+    }
+
+
 
 }
