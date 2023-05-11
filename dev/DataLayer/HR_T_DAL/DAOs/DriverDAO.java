@@ -61,38 +61,38 @@ public class DriverDAO extends DAO {
     }
 
 
-    public List<DriverRequirementDTO> findRequirementsByDate(LocalDate date) throws SQLException {
-        List<DriverRequirementDTO> results = new ArrayList<>();
-        String sql = "SELECT * FROM DriverRequirements WHERE date = ?";
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setObject(1, date);
-            ResultSet resultSet = statement.executeQuery();
-
-            while (resultSet.next()) {
-                DriverRequirementDTO result = new DriverRequirementDTO(
-                        resultSet.getString("date"),
-                        resultSet.getString("licenseType"),
-                        resultSet.getString("coolingLevel"),
-                        resultSet.getInt("coolingLevel")
-                );
-                result.setTableName("DriverRequirements");
-                ResultSetMetaData metaData = resultSet.getMetaData();
-                int columnCount = metaData.getColumnCount();
-                for (int i = 1; i <= columnCount; i++) {
-                    String columnName = metaData.getColumnName(i);
-                    Object value = resultSet.getObject(i);
-                    Field field = result.getClass().getDeclaredField(columnName);
-                    field.setAccessible(true);
-                    field.set(result, value);
-                }
-
-                results.add(result);
-            }
-        } catch (ReflectiveOperationException e) {
-            throw new SQLException("Error creating DTO instance", e);
-        }
-        return results;
-    }
+//    public List<DriverRequirementDTO> findRequirementsByDate(LocalDate date) throws SQLException {
+//        List<DriverRequirementDTO> results = new ArrayList<>();
+//        String sql = "SELECT * FROM DriverRequirements WHERE date = ?";
+//        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+//            statement.setObject(1, date);
+//            ResultSet resultSet = statement.executeQuery();
+//
+//            while (resultSet.next()) {
+//                DriverRequirementDTO result = new DriverRequirementDTO(
+//                        resultSet.getString("date"),
+//                        resultSet.getString("licenseType"),
+//                        resultSet.getString("coolingLevel"),
+//                        resultSet.getInt("coolingLevel")
+//                );
+//                result.setTableName("DriverRequirements");
+//                ResultSetMetaData metaData = resultSet.getMetaData();
+//                int columnCount = metaData.getColumnCount();
+//                for (int i = 1; i <= columnCount; i++) {
+//                    String columnName = metaData.getColumnName(i);
+//                    Object value = resultSet.getObject(i);
+//                    Field field = result.getClass().getDeclaredField(columnName);
+//                    field.setAccessible(true);
+//                    field.set(result, value);
+//                }
+//
+//                results.add(result);
+//            }
+//        } catch (ReflectiveOperationException e) {
+//            throw new SQLException("Error creating DTO instance", e);
+//        }
+//        return results;
+//    }
 
     public List<DriverDTO> getDriversByDate(String date) throws SQLException {
         List<DriverDTO> drivers = new ArrayList<>();
