@@ -1,11 +1,11 @@
 package DataLayer.HR_T_DAL.DalService;
 
 import BusinessLayer.HR.Driver;
-import BusinessLayer.HR.Employee;
 import BusinessLayer.HR.User.User;
 import BusinessLayer.HR.User.UserType;
 import DataLayer.HR_T_DAL.DAOs.DriverDAO;
 import DataLayer.HR_T_DAL.DTOs.DriverDTO;
+import DataLayer.HR_T_DAL.DTOs.DriverRequirementDTO;
 import DataLayer.HR_T_DAL.DTOs.UserDTO;
 import UtilSuper.Pair;
 
@@ -13,7 +13,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -50,22 +50,31 @@ public class DalDriverService {
          else return null;
     }
 
-//TODO - israel
 
     // TODO - israel
     public LinkedHashMap<Driver, Boolean>  findAllSubmissionByDate(LocalDate date) throws SQLException {
         return null;
     }
 
-    // TODO - israel
-    public LinkedHashMap<Pair<Driver.LicenseType, Driver.CoolingLevel> , Integer>  findAllRequirementsByDate(LocalDate date) throws SQLException {
-        return null;
+
+    public LinkedHashMap<Pair<Driver.LicenseType, Driver.CoolingLevel>, Integer> findAllRequirementsByDate(LocalDate date) throws SQLException {
+        LinkedHashMap<Pair<Driver.LicenseType, Driver.CoolingLevel>, Integer> requirements = new LinkedHashMap<>();
+        ArrayList<DriverRequirementDTO> driverRequirements = driverDAO.findAll("DriverRequirements", date.toString(), DriverRequirementDTO.class );
+
+        for (DriverRequirementDTO requirement : driverRequirements) {
+            Driver.LicenseType licenseType = Driver.LicenseType.valueOf(requirement.getLicenseType());
+            Driver.CoolingLevel coolingLevel = Driver.CoolingLevel.valueOf(requirement.getCoolingLevel());
+            int amount = requirement.getAmount();
+
+            Pair<Driver.LicenseType, Driver.CoolingLevel> key = new Pair<>(licenseType, coolingLevel);
+
+            requirements.put(key, amount);
+        }
+
+        return requirements;
     }
 
-    // TODO - israel
-    public ArrayList<Pair<Driver.LicenseType, Driver.CoolingLevel>> findRequirementsByDate(LocalDate date) throws SQLException {
-        return null;
-    }
+
 
 
     // TODO - israel

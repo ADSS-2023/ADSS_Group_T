@@ -25,6 +25,8 @@ public class DriverController {
     public DriverController(DalDriverService dalDriverService) {
         drivers = new LinkedHashMap<Integer, Driver>();
         this.dalDriverService = dalDriverService;
+        this.driversRequirements = new LinkedHashMap<>();
+        this.date2driversSubmission = new LinkedHashMap<>();
     }
 
 public Driver lazyLoadDriver (int id) throws SQLException {
