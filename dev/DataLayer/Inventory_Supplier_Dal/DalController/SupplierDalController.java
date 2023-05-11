@@ -41,6 +41,10 @@ public class SupplierDalController {
         dao.delete(connection, dto);
     }
 
+    public void deleteAll() throws SQLException {
+        dao.deleteAll(connection);
+    }
+
     public <T extends DTO> T find(LinkedHashMap<String,Object> pk,String tableName, Class<T> dtoClass) throws SQLException {
         return dao.find(pk, tableName,dtoClass, connection);
     }

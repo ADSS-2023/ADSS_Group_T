@@ -39,6 +39,7 @@ public class SupplierProductBusiness {
     }
 
     public SupplierProductBusiness(SupplierProductDTO supplierProductDTO, SupplierDalController supplierDalController){
+        this.quantitiesAgreement = new ArrayList<>();
         this.supplierNum = supplierProductDTO.getSupplierNum();
         this.name = supplierProductDTO.getName();
         this.productNum = supplierProductDTO.getProductNum();

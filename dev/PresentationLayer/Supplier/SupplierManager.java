@@ -7,6 +7,7 @@ import ServiceLayer.Supplier_Stock.ServiceFactory;
 import BusinessLayer.Supplier.Supplier_Util.Discounts;
 import BusinessLayer.Supplier.Supplier_Util.PaymentTerms;
 
+import java.sql.SQLException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.regex.Pattern;
@@ -86,7 +87,7 @@ public class SupplierManager {
         serviceFactory.orderService.createRegularOrder(itemsList);
     }
 
-    public void start() {
+    public void start(){
         Scanner scanner = new Scanner(System.in);
         boolean over = false;
         while(!over) {
@@ -111,9 +112,11 @@ public class SupplierManager {
             System.out.println("16.Show all discounts of a certain product's supplier.");
             System.out.println("17.Show all general discounts of a certain supplier.");
             System.out.println("18.Go back to main menu.");
+            System.out.println("19.load Orders.");
+            System.out.println("20.delete all the data.");
             System.out.println("19.Load Data.");
 
-            int choice = getInteger(scanner, "Please select an integer between 1 to 19.", 1, 19);
+            int choice = getInteger(scanner, "Please select an integer between 1 to 20.", 1, 20);
             switch (choice) {
                 case 1:
                     addSupplier();
@@ -172,8 +175,21 @@ public class SupplierManager {
                 case 19:
                     loadData();
                     break;
+                case 20:
+                    deleteAll();
             }
         }
+    }
+
+    private void deleteAll(){
+        try {
+            serviceFactory.supplierDalController.deleteAll();
+            System.out.println("All the data deleted successfully.");
+        }
+        catch (Exception e){
+            System.out.println("The data cant be deleted.");
+        }
+
     }
 
     public void nextDay() {
