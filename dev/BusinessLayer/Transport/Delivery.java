@@ -285,15 +285,21 @@ public class Delivery {
 //    }
 
     /**
-     *
-     * @param fileCounter
-     * @throws SQLException
+     * create a new file for delivery to the logistic center
+     * @param fileCounter the current file counter
+     * @throws SQLException query error
      */
     public void addLogisticCenterDestination(int fileCounter) throws SQLException {
         toLogisticsCenterFile = new File(fileCounter);
         dalDeliveryService.updateCounter("file counter",fileCounter);
     }
 
+    /**
+     * add supplier file to the map of the handled suppliers after collecting his items
+     * @param supplier the supplier that handled
+     * @param f the supplier file
+     * @throws SQLException query error
+     */
     public void addHandledSupplier(Supplier supplier, File f) throws SQLException {
         LinkedHashMap<Product,Integer> products = f.getProducts();
         for(Product p : products.keySet()){
@@ -302,6 +308,12 @@ public class Delivery {
         handledSuppliers.put(supplier, f);
     }
 
+    /**
+     * add branch file to the map of the handled branches after collecting the items he ordered
+     * @param branch the branch
+     * @param f the branch file
+     * @throws SQLException query error
+     */
     public void addHandledBranch(Branch branch, File f) throws SQLException {
         LinkedHashMap<Product,Integer> products = f.getProducts();
         for(Product p : products.keySet()){
@@ -310,6 +322,10 @@ public class Delivery {
         handledBranches.put(branch, f);
     }
 
+    /**
+     * create delivery DTO with the delivery current details
+     * @return the suitable delivery DTO
+     */
     private DeliveryDTO createDeliveryDTO(){
         String address = null;
         if(this.source != null)
@@ -319,21 +335,41 @@ public class Delivery {
                 address,getDriverID(),getTruckNumber(),getShippingArea());
     }
 
+    /**
+     * get all the branches with their files that their orders already collected from the suppliers
+     * @return all the branches that their orders already collected from the suppliers
+     * @throws SQLException query error
+     */
     public LinkedHashMap<Branch, File> getHandledBranches() throws SQLException {
         handledBranches = dalDeliveryService.findAllHandledBranchesForDelivery(id);
         return handledBranches;
     }
 
+    /**
+     * get all the suppliers with their files that already collected
+     * @return all the suppliers with their files that already collected
+     * @throws SQLException query error
+     */
     public LinkedHashMap<Supplier, File> getHandledSuppliers() throws SQLException {
         handledSuppliers = dalDeliveryService.findAllHandledSuppliersForDelivery(id);
         return handledSuppliers;
     }
 
+    /**
+     * get all the suppliers with their files that does not collected yet
+     * @return all the suppliers with their files that does not collected yet
+     * @throws SQLException query error
+     */
     public LinkedHashMap<Supplier, File> getUnHandledSuppliers() throws SQLException {
         unHandledSuppliers = dalDeliveryService.findAllUnHandledSuppliersForDelivery(id);
         return unHandledSuppliers;
     }
 
+    /**
+     * get all the branches with their files that their orders does not collected yet from the suppliers
+     * @return all the branches that their orders already collected from the suppliers
+     * @throws SQLException query error
+     */
     public LinkedHashMap<Branch, File> getUnHandledBranches() throws SQLException {
         unHandledBranches = dalDeliveryService.findAllUnHandledBranchesForDelivery(id);
         return unHandledBranches;

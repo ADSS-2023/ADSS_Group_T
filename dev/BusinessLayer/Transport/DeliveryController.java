@@ -54,11 +54,14 @@ public class DeliveryController {
 
         this.filesCounter = Integer.parseInt(dalDeliveryService.findFilesCounter().getCount());
         this.deliveryCounter = Integer.parseInt(dalDeliveryService.findDeliveryCounter().getCount());
-        loadData();
-
-
     }
 
+    /**
+     * receive a map of suppliers and their products with amounts in primitive objects and convert it to map with objects
+     * @param suppliersString - the map received
+     * @return suitable map with the relevant objects
+     * @throws SQLException query error
+     */
     private LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> getSuppliersAndProducts(LinkedHashMap<String, LinkedHashMap<String, Integer>> suppliersString) throws SQLException {
         LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> suppliers = new LinkedHashMap<>();
         for (String supplierAddress : suppliersString.keySet()) {
@@ -78,16 +81,14 @@ public class DeliveryController {
 
     /**
      * handle the request for a new delivery
-     * <p>
-     * //* @param branch       - the branch to deliver the products to
-     * //* @param suppliers    - the products ordered from each supplier
-     * //* @param requiredDate - required date for delivery
-     *
-     * @return map of the suppliers products that have not been schedule for delivery due to lack of drivers/trucks in that date
+     * @param destinationString the branch that made the order
+     * @param suppliersString the requested products and their suppliers
+     * @param requiredDateString the requested date for the delivery
+     * @return map with all the requested products that did not schedule for delivery
+     * @throws Exception query error
      */
     public LinkedHashMap<? extends Site,LinkedHashMap<Product, Integer>> orderDelivery(String destinationString, LinkedHashMap<String, LinkedHashMap<String, Integer>> suppliersString,
                                                                                   String requiredDateString) throws Exception {
-
         LocalDate requiredDate = Time.stringToLocalDate(requiredDateString);
         boolean isDestinationIsLogisticCenter = destinationString.equals(logisticCenterController.getAddress());
         boolean isSupplierIsLogisticCenter = suppliersString.containsKey(logisticCenterController.getAddress());
@@ -159,6 +160,14 @@ public class DeliveryController {
         return suppliers;
     }
 
+    /**
+     * handle the request for a new delivery from the logistic center
+     * @param branchAddress the address of the branch made the order
+     * @param logisticCenterFile the products and amounts ordered from the logistic center
+     * @param requiredDate the requested date for the delivery
+     * @return map with all the requested products that did not schedule for delivery
+     * @throws Exception error while schedule delivery
+     */
     private LinkedHashMap<LogisticCenter,LinkedHashMap<Product, Integer>> orderDeliveryFromLogisticCenter(String branchAddress,
             LinkedHashMap<String,Integer> logisticCenterFile,LocalDate requiredDate) throws Exception {
         Branch branch = this.branchController.getBranch(branchAddress);
@@ -210,6 +219,12 @@ public class DeliveryController {
         return logisticCenterFileLeft;
     }
 
+    /**
+     * received map with products and amounts in primitive objects and convert it to the suitable map with objects
+     * @param logisticCenterFile - the products and amounts
+     * @return suitable map with objects
+     * @throws SQLException query error
+     */
     private LinkedHashMap<Product, Integer> getProducts(LinkedHashMap<String, Integer> logisticCenterFile) throws SQLException {
         LinkedHashMap<Product,Integer> products = new LinkedHashMap<>();
         for(String productName : logisticCenterFile.keySet()){
@@ -218,6 +233,13 @@ public class DeliveryController {
         return products;
     }
 
+    /**
+     * handle the request for a new delivery from the logistic center
+     * @param suppliersString the requested products and their suppliers
+     * @param requiredDate the required date for the delivery
+     * @return map with all the requested products that did not schedule for delivery
+     * @throws Exception error while schedule delivery
+     */
     private LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> orderDeliveryToLogisticCenter(LinkedHashMap<String, LinkedHashMap<String, Integer>> suppliersString, LocalDate requiredDate) throws Exception {
         LinkedHashMap<Supplier, LinkedHashMap<Product, Integer>> suppliers = getSuppliersAndProducts(suppliersString);//convert the string
         if (deliveryInDate(requiredDate)) { // there is delivery in this date
@@ -276,10 +298,10 @@ public class DeliveryController {
 
     /**
      * schedule an available truck to a delivery
-     *
-     * @param date         - the delivery date
-     * @param coolingLevel - the cooling level required for this delivery
+     * @param date the delivery date
+     * @param coolingLevel the cooling level required for this delivery
      * @return the Truck that scheduled for the delivery if exist , null otherwise
+     * @throws Exception error while schedule truck
      */
     public Truck scheduleTruck(LocalDate date, CoolingLevel coolingLevel) throws Exception {
         if (logisticCenterController.getAllTrucks() != null) {
@@ -296,7 +318,6 @@ public class DeliveryController {
 
     /**
      * the function gathered the cooling levels that new delivery should be opened for them
-     *
      * @param suppliers - map that holds the products who steel need a delivery for each supplier
      * @return Set with the cooling levels founds
      */
@@ -307,6 +328,12 @@ public class DeliveryController {
         return s;
     }
 
+    /**
+     * the function gathered the cooling levels that new delivery should be opened for them
+     * @param products the products to check
+     * @param s set of the cooling levels gathered
+     * @return set of the cooling levels gathered
+     */
     public Set<CoolingLevel> countCoolingOptions(LinkedHashMap<Product, Integer> products,Set<CoolingLevel> s) {
         for (Product product : products.keySet())
             s.add(product.getCoolingLevel());
@@ -320,11 +347,9 @@ public class DeliveryController {
 
     /**
      * advanced to the next day and checks if there are deliveries with overweight problem in this day
-     *
      * @return List of the delivery ids that scheduled for the new day and have overweight problem
      */
-
-    public ArrayList<Delivery> skipDay() throws SQLException, NoSuchFieldException {
+    public ArrayList<Delivery> skipDay() throws Exception {
 
         this.currDate = this.currDate.plusDays(1);
         if (!deliveryInDate(currDate))
@@ -335,6 +360,11 @@ public class DeliveryController {
         return null; //TODO: why returning null?
     }
 
+    /**
+     * schedule drivers for the deliveries that should execute tomorrow
+     * @return the deliveries that no driver was schedule for them
+     * @throws Exception error while schedule driver
+     */
     private ArrayList<Delivery> scheduleDriversForTomorrow() throws Exception {
         LocalDate tomorrow = this.currDate.plusDays(1);
         ArrayList<Driver> driversTomorrow = sortDriversByLicenseLevel(driverController.getDriversAssignedByDate(tomorrow));
@@ -355,6 +385,12 @@ public class DeliveryController {
         return deliveriesWithoutDrivers;
     }
 
+    /**
+     * sorted array of deliveries according to their weight
+     * @param deliveries the deliveries to sort
+     * @return the deliveries sorted by weight
+     * @throws Exception error while
+     */
     public ArrayList<Delivery> sortDeliveriesByTruckWeight(ArrayList<Delivery> deliveries)throws Exception {
         deliveries.sort(new Comparator<Delivery>() {
             public int compare(Delivery d1, Delivery d2) {
@@ -377,6 +413,11 @@ public class DeliveryController {
     }
 
 
+    /**
+     * receive a list of drivers and sort them according to their license level
+     * @param drivers the drivers to sort
+     * @return a list of the sorted drivers
+     */
     public ArrayList<Driver> sortDriversByLicenseLevel(ArrayList<Driver> drivers) {
         drivers.sort(new Comparator<Driver>() {
             public int compare(Driver d1, Driver d2) {
@@ -389,7 +430,6 @@ public class DeliveryController {
 
     /**
      * replace a truck for a delivery
-     *
      * @param deliveryID - the delivery who needed a truck replacement
      * @return true if the truck was replaced, false otherwise(there is no available truck)
      */
@@ -413,8 +453,10 @@ public class DeliveryController {
 
     /**
      * unload products from the delivery due to overweight
-     *
      * @param deliveryID the delivery id to unload products from
+     * @param weight the weight of the products should be collected from the supplier
+     * @param supplierAddress the address of the supplier where the delivery currently at
+     * @throws Exception error while unloading products
      */
     public void unloadProducts(int deliveryID, int weight, String supplierAddress) throws Exception {
         LinkedHashMap<String, Supplier> suppliers = supplierController.getAllSuppliers();
@@ -450,9 +492,11 @@ public class DeliveryController {
 
     /**
      * handle the required action for the overweight problem for specific delivery
-     *
-     * @param deliveryID - the id of the delivery that has overweight
-     * @param action     - the action required
+     * @param deliveryID the id of the delivery that has overweight
+     * @param action the action required
+     * @param address the address of the site where the delivery currently at
+     * @param weight the weight of the products should be collected from the supplier
+     * @throws Exception error while handling over weight
      */
     public void overWeightAction(int deliveryID, int action, String address, int weight) throws Exception {
         //if (action == 1)
@@ -468,7 +512,12 @@ public class DeliveryController {
             unloadProducts(deliveryID, weight, address);
     }
 
-
+    /**
+     * get delivery according to id
+     * @param id the id of the requested delivery
+     * @return the delivery with the id received
+     * @throws SQLException query error
+     */
     public Delivery getDelivery(int id) throws SQLException {
         if(deliveries.containsKey(id))
             return deliveries.get(id);
@@ -482,7 +531,6 @@ public class DeliveryController {
 
     /**
      * the function checks if the received date is after the current date
-     *
      * @param date - the date to check
      * @return true if the received date is after the current date, false otherwise
      */
@@ -491,10 +539,12 @@ public class DeliveryController {
     }
 
 
-
-    public void executeDelivery(Delivery delivery) throws SQLException, NoSuchFieldException {
-
- 
+    /**
+     * execute delivery
+     * @param delivery the delivery to execute
+     * @throws Exception error while executing delivery
+     */
+    public void executeDelivery(Delivery delivery) throws Exception {
         if (isDeliveryFromLC(delivery))
             executeDeliveryFromLC(delivery);
         else if (isDeliveryToLC(delivery))
@@ -503,6 +553,11 @@ public class DeliveryController {
             executeDeliveryRegular(delivery);
     }
 
+    /**
+     * execute delivery from the logistic center
+     * @param delivery the delivery to execute
+     * @throws Exception error while executing delivery
+     */
     private void executeDeliveryFromLC(Delivery delivery) throws Exception {
         int productsWeight = enterWeightInterface.enterWeightFunction(logisticCenterController.getAddress(), delivery.getId());
         int currentWeight = delivery.getTruckWeight();
@@ -515,6 +570,11 @@ public class DeliveryController {
     }
 
 
+    /**
+     * execute delivery to the logistic center
+     * @param delivery the delivery to execute
+     * @throws Exception error while executing delivery
+     */
     private void executeDeliveryToLC(Delivery delivery) throws Exception {
         ArrayList<Supplier> suppliersTmp = new ArrayList<>(delivery.getUnHandledSuppliers().keySet());
         for (Supplier supplier : suppliersTmp) {
@@ -535,6 +595,11 @@ public class DeliveryController {
         reScheduleDelivery(delivery.getUnHandledSuppliers(), delivery.getUnHandledBranches());
     }
 
+    /**
+     * execute delivery that does not involve the logistic center
+     * @param delivery the delivery to execute
+     * @throws Exception error while executing delivery
+     */
     private void executeDeliveryRegular(Delivery delivery) throws Exception {
         ArrayList<Supplier> suppliersTmp = new ArrayList<>(delivery.getUnHandledSuppliers().keySet());
         for (Supplier supplier : suppliersTmp) {
@@ -558,7 +623,13 @@ public class DeliveryController {
     }
 
 
-    private void reScheduleDelivery(LinkedHashMap<Supplier, File> suppliers, LinkedHashMap<Branch, File> branches) throws SQLException, NoSuchFieldException {
+    /**
+     * reschedule delivery for products that could not be schedule in their required date
+     * @param suppliers the supplier and their files
+     * @param branches the branches to deliver to
+     * @throws Exception error while reschedule delivery
+     */
+    private void reScheduleDelivery(LinkedHashMap<Supplier, File> suppliers, LinkedHashMap<Branch, File> branches) throws Exception {
         boolean found = false;
         LocalDate newDeliveredDate = this.currDate.plusDays(2);
         CoolingLevel coolingLevel = CoolingLevel.non;
@@ -583,6 +654,13 @@ public class DeliveryController {
         }
     }
 
+    /**
+     * get the products in the current supplier in specific delivery
+     * @param deliveryID the delivery
+     * @param address the address of the supplier
+     * @return the products in the current supplier in specific delivery
+     * @throws SQLException query error
+     */
     public File getLoadedProducts(int deliveryID, String address) throws SQLException {
         return deliveries.get(deliveryID).getUnHandledSuppliers().get(supplierController.getSupplier(address));
     }
@@ -595,6 +673,11 @@ public class DeliveryController {
         this.overweightAction = overweightAction;
     }
 
+    /**
+     * get the details of tomorrow to present to the user
+     * @return the details of tomorrow to present to the user
+     * @throws Exception when receiving details
+     */
     public ArrayList<Delivery> getNextDayDeatails() throws Exception {
         ArrayList<Delivery> deliveriesThatReScheduleDelivery = new ArrayList<>();
         deliveriesThatReScheduleDelivery.addAll(checkStoreKeeperForTomorrow());
@@ -603,8 +686,11 @@ public class DeliveryController {
     }
 
 
-
-
+    /**
+     * checks for the deliveries that should execute tomorrow that storekeeper has been schedule for them
+     * @return the deliveries that no storekeeper was schedule for them
+     * @throws Exception error while checking
+     */
     private ArrayList<Delivery> checkStoreKeeperForTomorrow() throws Exception {
         LocalDate tomorrow = this.currDate.plusDays(1);
         ArrayList<String> branchWithoutStoreKeeper = shiftController.getBranchesWithoutStoreKeeper(tomorrow);
@@ -625,9 +711,6 @@ public class DeliveryController {
         return deliveriesWithoutStoreKeeper;
     }
 
-
-
-
     public Collection<Delivery> getAllDeliveries() {
         return deliveries.values();
     }
@@ -636,6 +719,11 @@ public class DeliveryController {
         return this.currDate;
     }
 
+    /**
+     * add delivery to the deliveries map and DB
+     * @param delivery the delivery to add
+     * @throws SQLException wuery error
+     */
     public void addDelivery(Delivery delivery) throws SQLException {
         if(deliveries.containsKey(delivery.getId()) ||
         dalDeliveryService.findDelivery(delivery.getId()) != null)
@@ -644,6 +732,13 @@ public class DeliveryController {
         deliveries.put(delivery.getId(), delivery);
     }
 
+    /**
+     * add delivery to the deliveries in specific date
+     * @param requiredDate the date to add to
+     * @param delivery the delivery to add
+     * @param saveToData save to DB if true
+     * @throws SQLException query error
+     */
     private void addDeliveryToDate(LocalDate requiredDate, Delivery delivery,boolean saveToData) throws SQLException {
         if (!date2deliveries.containsKey(requiredDate))
             date2deliveries.put(requiredDate, new ArrayList<>());
@@ -652,6 +747,13 @@ public class DeliveryController {
         date2deliveries.get(requiredDate).add(delivery);
     }
 
+    /**
+     * add truck to the trucks in specific date
+     * @param requiredDate the date to add to
+     * @param truck the truck to add
+     * @param saveToData save to DB if true
+     * @throws SQLException query error
+     */
     private void addTruckToDate(LocalDate requiredDate, Truck truck,boolean saveToData) throws SQLException {
         if (!date2trucks.containsKey(requiredDate))
             date2trucks.put(requiredDate, new ArrayList<>());
@@ -660,17 +762,28 @@ public class DeliveryController {
         date2trucks.get(requiredDate).add(truck);
     }
 
-    private void loadData(){
-
-//        ArrayList<DateToDeliveryDTO> dateToDeliveryDTOs = dalDeliveryService.findAllDateToDeliveries();
-//        for (DateToDeliveryDTO dateToDeliveryDTO: dateToDeliveryDTOs){
-//            addDeliveryToDate(dateToDeliveryDTO.getShiftDate(),new Delivery(dateToDeliveryDTO),false);
-//        }
-
-    }
+    /**
+     * check if the delivery is from the logistic center
+     * @param delivery the delivery to check
+     * @return true if the delivery is from the logistic center
+     * @throws SQLException query error
+     */
     private boolean isDeliveryFromLC(Delivery delivery) throws SQLException {return delivery.getUnHandledSuppliers()==null;}
+
+    /**
+     * check if the delivery is to the logistic center
+     * @param delivery the delivery to check
+     * @return true if the delivery is to the logistic center
+     * @throws SQLException query error
+     */
     private boolean isDeliveryToLC(Delivery delivery) throws SQLException {return delivery.getHandledBranches()==null;}
 
+    /**
+     * get all the deliveries in the required date
+     * @param date the required date
+     * @return list of deliveries in the required date
+     * @throws SQLException query error
+     */
     private ArrayList<Delivery> getDeliveriesByDate(LocalDate date) throws SQLException {
         ArrayList<Delivery> dateDeliveries = new ArrayList<>();
         List<DateToDeliveryDTO> dateDeliveriesDTOs = dalDeliveryService.findAllDeliveriesByDate(date.toString());
@@ -682,6 +795,12 @@ public class DeliveryController {
         return dateDeliveries;
     }
 
+    /**
+     * get all the trucks in the required date
+     * @param date the required date
+     * @return list of deliveries in the required date
+     * @throws SQLException query error
+     */
     private ArrayList<Truck> getTrucksByDate(LocalDate date) throws Exception {
         ArrayList<Truck> dateTrucks = new ArrayList<>();
         List<DateToTruckDTO> dateTrucksDTOs = dalDeliveryService.findAllTrucksByDate(date.toString());
@@ -693,10 +812,23 @@ public class DeliveryController {
         return dateTrucks;
     }
 
+    /**
+     * check if there is delivery schedule for the date received
+     * @param date the date to check
+     * @return true if there is delivery in this date, false otherwise
+     * @throws SQLException query error
+     */
     private boolean deliveryInDate(LocalDate date) throws SQLException {
         return (date2deliveries.containsKey(date) && !date2deliveries.get(date).isEmpty()) || dalDeliveryService.findAllDeliveriesByDate(date.toString()) != null;
     }
 
+    /**
+     * check if the truck received is scheduled to delivery in the received date
+     * @param date the date to check
+     * @param truck the truck to check
+     * @return true if the truck scheduled for delivery in the received date, false otherwise
+     * @throws SQLException query error
+     */
     private boolean specificTruckInDate(LocalDate date,Truck truck) throws SQLException {
         LinkedHashMap<String,Object> pk = new LinkedHashMap<>();
         pk.put("shiftDate",date);
@@ -705,11 +837,23 @@ public class DeliveryController {
         return date2trucks.containsKey(date) || dto != null;
     }
 
+    /**
+     * remove truck from the trucks scheduled to the received date
+     * @param date the date
+     * @param t the truck to remove
+     * @throws Exception query error
+     */
     private void removeTruckFromDate(LocalDate date,Truck t) throws Exception {
         dalDeliveryService.deleteDateToTruck(date.toString(),t.getLicenseNumber());
         getTrucksByDate(date).remove(t);
     }
 
+    /**
+     * remove truck from the trucks scheduled to the received date
+     * @param date the date
+     * @param d the delivery to remove
+     * @throws SQLException query error
+     */
     private void removeDeliveryFromDate(LocalDate date,Delivery d) throws SQLException {
         dalDeliveryService.deleteDateToDelivery(date.toString(),d.getId());
         getDeliveriesByDate(date).remove(d);
