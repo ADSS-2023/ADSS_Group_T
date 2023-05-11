@@ -11,6 +11,7 @@ import DataLayer.Inventory_Supplier_Dal.DalController.SupplierDalController;
 import java.sql.SQLException;
 import java.time.DayOfWeek;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class OccasionalSupplier extends SupplierBusiness {
 
@@ -33,10 +34,10 @@ public class OccasionalSupplier extends SupplierBusiness {
         this.daysToDeliver=daysToDeliver;
     }
 
-    public OccasionalSupplier(SupplierDTO supplierDTO, HashMap<String, String> contacts, HashMap<Integer, SupplierProductBusiness> products, int daysToDeliver, SupplierDalController supplierDalController, List<Discount> discountPerTotalQuantity, List<Discount> discountPerTotalPrice) throws SQLException {
+    public OccasionalSupplier(SupplierDTO supplierDTO, HashMap<String, String> contacts, ConcurrentHashMap<Integer, SupplierProductBusiness> products, int daysToDeliver, SupplierDalController supplierDalController, List<Discount> discountPerTotalQuantity, List<Discount> discountPerTotalPrice) throws SQLException {
         super();
         this.contactDTOS = new LinkedList<>();
-        this.products = new HashMap<>();
+        this.products = new ConcurrentHashMap<>();
         this.discountPerTotalQuantity = new ArrayList<>();
         this.discountPerTotalPrice = new ArrayList<>();
         this.supplierName = supplierDTO.getSupplierName();
