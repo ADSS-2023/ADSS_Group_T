@@ -149,6 +149,7 @@ public abstract class  SupplierBusiness {
             supplierDalController.delete(contactDTO);
         }
         contacts=new HashMap<>();
+        contactDTOS = new ArrayList<>();
     }
 
     public void editProductDiscount(int productNum, int productAmount, int discount, boolean isPercentage) throws Exception {
@@ -375,5 +376,16 @@ public abstract class  SupplierBusiness {
 
     public void setProducts(HashMap<Integer, SupplierProductBusiness> products) {
         this.products = products;
+    }
+
+    public abstract void deleteConstantDays() throws SQLException;
+
+    public void deleteGeneralDiscounts() throws SQLException {
+        for(Discount discount : discountPerTotalPrice)
+            supplierDalController.delete(discount.getDiscountDTO());
+        for(Discount discount : discountPerTotalQuantity)
+            supplierDalController.delete(discount.getDiscountDTO());
+        this.discountPerTotalPrice = new ArrayList<>();
+        this.discountPerTotalQuantity = new ArrayList<>();
     }
 }

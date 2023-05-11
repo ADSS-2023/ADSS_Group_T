@@ -19,6 +19,10 @@ public class OccasionalSupplier extends SupplierBusiness {
         return daysToDeliver;
     }
 
+    @Override
+    public void deleteConstantDays() throws SQLException {
+    }
+
     private int daysToDeliver;
 
 

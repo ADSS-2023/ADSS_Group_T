@@ -52,6 +52,16 @@ public class SupplierService {
         }
     }
 
+    public String deleteAll(){
+        try {
+            sc.deleteAll();
+            return "Suppliers data deleted successfully";
+        }
+        catch (Exception e){
+            return e.getMessage();
+        }
+    }
+
     public String editSupplier(String name, String address, int supplierNum, int bankAccountNum, boolean selfDelivery, PaymentTerms paymentTerms){
         try {
             sc.getSupplier(supplierNum).editSupplier(name, address, bankAccountNum, selfDelivery,paymentTerms);
