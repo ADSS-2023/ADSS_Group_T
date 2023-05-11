@@ -29,6 +29,7 @@ public class SiteDTO extends DTO {
     public static String getTableNameStatic() {
         return "Site";
     }
+    public static String getPKNameStatic(){return "siteAddress";}
 
     public String getType() {
         return type;

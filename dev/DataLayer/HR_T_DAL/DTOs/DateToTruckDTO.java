@@ -15,6 +15,11 @@ public class DateToTruckDTO extends DTO {
     public DateToTruckDTO() {
     }
 
+    public static String getTableNameStatic() {
+        return "DateToTruck";
+    }
+
+
     public String getShiftDate() {
         return shiftDate;
     }

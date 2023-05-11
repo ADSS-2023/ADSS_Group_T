@@ -74,11 +74,11 @@ public class ServiceFactory {
         Data_init_HR.initBasicData(dao);
 
 
-
         dalLogisticCenterService = new DalLogisticCenterService(connection);
         dalDeliveryService = new DalDeliveryService(connection,dalLogisticCenterService);
 
         dalUserService = new DalUserService(connection);
+
         dalShiftService = new DalShiftService(connection);
         dalDriverService = new DalDriverService(connection,dalUserService);
         dalEmployeeService = new DalEmployeeService(connection,dalUserService);

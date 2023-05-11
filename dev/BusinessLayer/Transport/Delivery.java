@@ -165,7 +165,7 @@ public class Delivery {
         else
             dalDeliveryService.updateUnHandledSite(id,supplier.getAddress(),p.getName(), unHandledSuppliers.get(supplier).getId() ,amount);
         unHandledSuppliers.get(supplier).addProduct(p, amount);
-        if (this.source == null)
+        if (this.source.address.equals("logistic center address"))
             setSource(supplier);
         return fileCounter;
     }

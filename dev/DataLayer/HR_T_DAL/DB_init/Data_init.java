@@ -21,13 +21,12 @@ public class Data_init {
     }
     public static void initBasicData(DAO dao) throws SQLException {
 
-     dao.deleteAllDataFromDatabase();
+        dao.deleteAllDataFromDatabase();
+
         SiteDTO logisticCenter = new SiteDTO("logistic center address","0000000000","logistic center contact",0,0,0,"logistic center");
-      dao.deleteTableDataWithDTO(logisticCenter);
         dao.insert(logisticCenter);
 
         CounterDTO dateCounter = new CounterDTO("date counter", LocalDate.now().toString());
-    dao.deleteTableDataWithDTO(dateCounter);
         dao.insert(dateCounter);
 
         CounterDTO fileCounter = new CounterDTO("file counter","0");
@@ -37,17 +36,16 @@ public class Data_init {
         dao.insert(deliveryCounter);
 
 
-
-
-
-
     }
     public static void initOldData(DAO dao,SupplierService supplierService,DeliveryService deliveryService) throws SQLException {
+        initBasicData(dao);
         initSites(dao);
         initTrucks(dao);
         initSupplierProducts(supplierService);
         initDelivery(deliveryService);
     }
+
+
 
     public static void initSites(DAO dao) throws SQLException {
 
@@ -70,7 +68,6 @@ public class Data_init {
         dao.insert(new SiteDTO("s7", "000000017", "Contact S7", 30, 30, Location.getShippingArea(30, 30), "supplier"));
         dao.insert(new SiteDTO("s8", "000000018", "Contact S8", -20, -10, Location.getShippingArea(-20, -10), "supplier"));
         dao.insert(new SiteDTO("s9", "000000019", "Contact S9", 5, -5, Location.getShippingArea(5, -5), "supplier"));
-
     }
 
     public static void  initTrucks(DAO dao) throws SQLException {
