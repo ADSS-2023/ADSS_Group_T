@@ -224,7 +224,7 @@ public class OrderController {
                         product.getExpiryDate(), order.getOrderNum(), product.getFinalPrice()));
             }
             if (!order.getProducts().isEmpty()) {
-                OrderBusiness clonedOrder = order.clone(orderCounter++);
+                OrderBusiness clonedOrder = order.clone(++orderCounter);
                 orders.add(clonedOrder);
             }
         }
