@@ -13,39 +13,11 @@ import ServiceLayer.Stock.InventoryService;
 import ServiceLayer.Stock.ItemService;
 import ServiceLayer.Stock.ManageOrderService;
 import DataLayer.Inventory_Supplier_Dal.DalController.InventoryDalController;
-import DataLayer.Util.DAO;
-import ServiceLayer.Stock.CategoryService;
-import ServiceLayer.Stock.DamagedService;
-import ServiceLayer.Stock.InventoryService;
-import ServiceLayer.Stock.ItemService;
-import ServiceLayer.Stock.ManageOrderService;
-import DataLayer.Inventory_Supplier_Dal.DalController.InventoryDalController;
-import DataLayer.Inventory_Supplier_Dal.DalController.InventoryDalController;
 import DataLayer.Inventory_Supplier_Dal.DalController.ItemDalController;
-import DataLayer.Util.DAO;
-import ServiceLayer.Stock.CategoryService;
-import ServiceLayer.Stock.DamagedService;
-import ServiceLayer.Stock.InventoryService;
-import ServiceLayer.Stock.ItemService;
-import ServiceLayer.Stock.ManageOrderService;
-import DataLayer.Inventory_Supplier_Dal.DalController.InventoryDalController;
-import DataLayer.Util.DAO;
-import ServiceLayer.Stock.CategoryService;
-import ServiceLayer.Stock.DamagedService;
-import ServiceLayer.Stock.InventoryService;
-import ServiceLayer.Stock.ItemService;
-import ServiceLayer.Stock.ManageOrderService;
-import DataLayer.Inventory_Supplier_Dal.DalController.InventoryDalController;
-import DataLayer.Util.DAO;
-import ServiceLayer.Stock.*;
-import ServiceLayer.Supplier.OrderService;
 import ServiceLayer.Supplier.SupplierService;
-
 import java.sql.*;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.util.Collections;
 
 public class ServiceFactory {
     public SupplierController sc;
@@ -71,12 +43,12 @@ public class ServiceFactory {
         this.damagedService = new DamagedService(this.inventoryService.get_inventory());
         this.itemService = new ItemService(this.inventoryService.get_inventory());
         this.manageOrderService = new ManageOrderService();
-        this.supplierService = new SupplierService(this.sc, this.oc);
-        this.orderService = new OrderService(this.oc, this.sc);
         this.supplierDalController = new SupplierDalController(connection);
         this.orderDalController = new OrderDalController(connection);
         this.sc = new SupplierController(connection, supplierDalController);
         this.oc = new OrderController(this.sc, this.manageOrderService, connection, orderDalController);
+        this.supplierService = new SupplierService(this.sc, this.oc);
+        this.orderService = new OrderService(this.oc, this.sc);
         inventoryDalController = new InventoryDalController(connection);
         this.manageOrderService.setOrderController(this.inventoryService.get_inventory(), this.orderService,inventoryDalController);
         this.inventoryService.get_inventory().setInventoryDalController(inventoryDalController);
@@ -88,12 +60,6 @@ public class ServiceFactory {
             System.out.println(e.getMessage());
         }
         //this.deleteAllData();
-        this.supplierDalController = new SupplierDalController(connection);
-        this.orderDalController = new OrderDalController(connection);
-        this.sc = new SupplierController(connection, supplierDalController);
-        this.oc = new OrderController(this.sc, this.manageOrderService, connection, orderDalController);
-        this.supplierService = new SupplierService(this.sc, this.oc);
-        this.orderService = new OrderService(this.oc, this.sc);
         try {
             uss = new Util_Supplier_Stock(inventoryDalController);
         }
@@ -123,7 +89,9 @@ public class ServiceFactory {
     public void deleteAllData(){
         String[] table_names = {"inventory_categories" , "inventory_item", "inventory_item_ordered"
                 , "inventory_item_per_order" , "inventory_damaged_items" , "inventory_discount",
-                "inventory_waiting_list"};
+                "inventory_waiting_list" , "supplier_const_delivery_days" ,
+                "supplier_discount" , "supplier_order" , "supplier_order_product" , "supplier_supplier" ,
+                "supplier_supplier_contact" ,"supplier_supplier_product"};
         for(int i = 0 ; i < table_names.length ; i++) {
             try {
                 inventoryDalController.getDAO().deleteAll(connection, table_names[i]);

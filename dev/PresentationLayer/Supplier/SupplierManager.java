@@ -180,7 +180,7 @@ public class SupplierManager {
         }
     }
 
-    private void deleteAll(){
+    public void deleteAll(){
         try {
             serviceFactory.supplierService.deleteAll();
             serviceFactory.orderService.deleteAllOrders();
