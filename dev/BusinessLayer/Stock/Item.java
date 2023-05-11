@@ -1,5 +1,14 @@
 package BusinessLayer.Stock;
 
+
+import BusinessLayer.Supplier_Stock.Util_Supplier_Stock;
+import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.CategoryDTO;
+import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.ItemDTO;
+import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.ItemPerOrderDTO;
+import DataLayer.Inventory_Supplier_Dal.DalController.ItemDalController;
+import DataLayer.Util.DTO;
+
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -18,6 +27,8 @@ public class Item implements ProductCategoryManagement {
     protected double original_price;
     protected List<Discount> discount_list;
     private OnAlertCallBack onAlertCallBack;
+    protected ItemDTO item_dto;
+    protected ItemDalController itemDalController;
 
     /**
      * Item constructor
@@ -28,16 +39,28 @@ public class Item implements ProductCategoryManagement {
      * @param original_price
      */
     public Item(int item_id, String name, int min_amount,
-                String manufacturer_name, double original_price) {
+                String manufacturer_name, double original_price,ItemDalController itemDalController, String category_index) throws SQLException {
         this.item_id = item_id;
         this.name = name;
         this.min_amount = min_amount;
         this.manufacturer_name = manufacturer_name;
         this.original_price = original_price;
-
         items = new Hashtable<>();
         discount_list = new LinkedList<>();
-
+        this.item_dto = new ItemDTO(item_id, name, min_amount, manufacturer_name, original_price, category_index);
+        this.itemDalController = itemDalController;
+        itemDalController.insert(item_dto);
+    }
+    public Item(ItemDTO dto,ItemDalController itemDalController){
+        this.item_id = dto.getItemId();
+        this.name = dto.getName();
+        this.min_amount = dto.getMinAmount();
+        this.manufacturer_name = dto.getManufacturerName();
+        this.original_price = dto.getOriginalPrice();
+        items = new Hashtable<>();
+        discount_list = new LinkedList<>();
+        this.item_dto = dto;
+        this.itemDalController = itemDalController;
     }
 
     /**
@@ -56,6 +79,11 @@ public class Item implements ProductCategoryManagement {
         return name;
     }
 
+    @Override
+    public DTO getDto() {
+        return item_dto;
+    }
+
     /**
      * Overrides a function only for abstraction , doesn't have an implement.
      * @param index
@@ -65,6 +93,12 @@ public class Item implements ProductCategoryManagement {
     public void add_item(String index, Item item) {
         //do nothing
     }
+
+    @Override
+    public void add_product(CategoryDTO categoryDTO, String next_index) {
+
+    }
+
     /**
      * This function return the minimum amount of the current item.
      * @return
@@ -79,10 +113,13 @@ public class Item implements ProductCategoryManagement {
      * @param min_amount
      * @return
      */
-    public String setMin_amount(int min_amount) {
+    public String setMin_amount(int min_amount) throws SQLException {
         String returnString = "";
         if (current_amount() < min_amount)
             returnString = alert() + "\n";
+        ItemDTO temp = item_dto.clone();
+        item_dto.setMinAmount(min_amount);
+        itemDalController.update(temp,item_dto);
         this.min_amount = min_amount;
         returnString += name+" new minimal amount:"+min_amount;
         return returnString;
@@ -180,6 +217,11 @@ public class Item implements ProductCategoryManagement {
         if(items.get(orderId).amount()<amount)
             throw new IllegalArgumentException("not enough items in inventory");
         items.get(orderId).reduce(amount);
+        ItemPerOrderDTO old_dto = this.items.get(orderId).getDto();
+        ItemPerOrderDTO new_dto = old_dto.clone();
+        new_dto.setAmountWarehouse(items.get(orderId).getAmount_warehouse());
+        new_dto.setAmountStore(items.get(orderId).getAmount_store());
+        itemDalController.update(old_dto , new_dto);
         if (current_amount()<=min_amount)
             return alert();
         return "The operation was carried out successfully";
@@ -198,13 +240,21 @@ public class Item implements ProductCategoryManagement {
      * @param location
      * @param validity
      */
-    public String recive_order(int orderId,int amount_warehouse,int amount_store,double cost_price,String location, LocalDate validity){
-        items.put(orderId,new ItemPerOrder(orderId,amount_warehouse,amount_store,cost_price,location, validity));
+    public String recive_order(int orderId,int amount_warehouse,int amount_store,double cost_price,String location, LocalDate validity) throws SQLException {
+        items.put(orderId,new ItemPerOrder(orderId,amount_warehouse,amount_store,cost_price,location, validity, Util_Supplier_Stock.getCurrDay()));
+        ItemPerOrderDTO new_dto = items.get(orderId).getDto();
+        new_dto.setItemId(item_id);
+        itemDalController.insert(new_dto);
         if (current_amount()<=min_amount)
             return alert();
         return "";
     }
-
+    public String recive_order(ItemPerOrder i) throws SQLException {
+        items.put(i.getOrderId(),i);
+        if (current_amount()<=min_amount)
+            return alert();
+        return "";
+    }
     /**
      * This function return the amount of this specific item at the warehouse.
      * @return
@@ -230,9 +280,10 @@ public class Item implements ProductCategoryManagement {
         return amount;
     }
 
-    public void move_items_to_store(int amount) {
+    public void move_items_to_store(int amount) throws SQLException {
         for (Map.Entry<Integer, ItemPerOrder> entry : items.entrySet()) {
             ItemPerOrder itemPerOrder = entry.getValue();
+            ItemPerOrderDTO old_dto = itemPerOrder.getDto().clone();
             if (amount == 0)
                 return;
             if (itemPerOrder.getAmount_warehouse()>amount){
@@ -244,7 +295,16 @@ public class Item implements ProductCategoryManagement {
                 itemPerOrder.move_to_store(real_amount);
                 amount -=real_amount;
             }
-
+            ItemPerOrderDTO new_dto = itemPerOrder.getDto();
+            new_dto.setAmountStore(itemPerOrder.getAmount_store());
+            new_dto.setAmountWarehouse(itemPerOrder.getAmount_warehouse());
+            itemDalController.update(old_dto , new_dto);
         }
+    }
+
+    public ItemPerOrder getItemPerOrder(int orderId) throws Exception {
+        if (!items.containsKey(orderId))
+            throw new Exception("Illegal order id");
+        return items.get(orderId);
     }
 }

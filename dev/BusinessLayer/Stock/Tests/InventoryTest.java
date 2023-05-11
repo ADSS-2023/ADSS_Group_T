@@ -5,6 +5,7 @@ import ServiceLayer.Stock.CategoryService;
 import ServiceLayer.Stock.DamagedService;
 import ServiceLayer.Stock.InventoryService;
 import ServiceLayer.Stock.ItemService;
+import ServiceLayer.Supplier_Stock.ServiceFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,19 +19,22 @@ class InventoryTest {
     public static DamagedService damagedService;
     public static ItemService itemService;
     private Inventory inventory;
+    public static ServiceFactory serviceFactory;
 
     @BeforeEach
-    public void setUp() {
+    public void setUp(){
+        serviceFactory = new ServiceFactory();
+        inventory = serviceFactory.inventoryService.get_inventory();
+        damagedService = serviceFactory.damagedService;
+        categoryService = serviceFactory.categoryService;
+        inventoryService = serviceFactory.inventoryService;
+        itemService = serviceFactory.itemService;
         try {
-            inventoryService = new InventoryService();
-            categoryService = new CategoryService(inventoryService.get_inventory());
-            damagedService = new DamagedService(inventoryService.get_inventory());
-            itemService = new ItemService(inventoryService.get_inventory());
-            inventory = inventoryService.get_inventory();
+            //serviceFactory.dataSetUp();
             inventory.setUp();
         }
         catch (Exception e){
-
+            System.out.println(e.getMessage());
         }
     }
 
@@ -45,12 +49,16 @@ class InventoryTest {
                 "\n" +
                 "\tCategory : Cheese\n" +
                 "\n" +
-                "\t\tproduct:yellow cheese manufacturer:Emeck amount in store:3 amount in warehouse:2\n" +
+                "\t\tid:2, product:yellow cheese, manufacturer:Emeck, amount in store:3, amount in warehouse:3\n" +
                 "\n" +
                 "\tCategory : bottle milk\n" +
                 "\n" +
-                "\t\tproduct:3% manufacturer:IDO LTD amount in store:20 amount in warehouse:20\n" +
-                "\t\tproduct:1.5% manufacturer:IDO LTD amount in store:10 amount in warehouse:10\n" +
+                "\t\tid:1, product:1.5% milk, manufacturer:IDO LTD, amount in store:5, amount in warehouse:5\n" +
+                "\t\tid:0, product:3% milk, manufacturer:IDO LTD, amount in store:10, amount in warehouse:10\n" +
+                "\n" +
+                "\tCategory : chocolate\n" +
+                "\n" +
+                "\t\tid:4, product:Click, manufacturer:Elite, amount in store:10, amount in warehouse:10\n" +
                 "\n";
 
         String result = inventoryService.produce_inventory_report(indexes);
@@ -67,7 +75,7 @@ class InventoryTest {
             assertEquals(preCost * 0.9, afterCost);
         }
         catch (Exception e){
-
+            System.out.println(e.getMessage());
         }
     }
 
@@ -76,9 +84,7 @@ class InventoryTest {
         itemService.setMinimalAmount(1 , 300);
         String result = inventoryService.produce_shortage_report();
         String expected = "1.5% milk, IDO LTD\n" +
-                " minimal amount: 300\n" +
-                "current amount: 20\n" +
-                "amount to order: 280\n" +
+                " minimal amount: 300, current amount: 10, amount to order: 290\n" +
                 "-------------------------------------------\n";
         assertEquals(expected , result);
     }
@@ -86,11 +92,12 @@ class InventoryTest {
     @Test
     void add_item() {
         try {
-            itemService.addItem(".0.0",5, "Milky", 3, "Liran LTD", 2.0);
-            assertEquals(inventory.get_item_by_id(5).get_name() , "Milky");
+            itemService.addItem(".0.0", 3, "Milky", 3, "Liran LTD", 2.0);
+            assertEquals(inventory.get_item_by_id(3).get_name(), "Milky");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
-        catch (Exception e){
+    }
 
-        }
-        }
+
 }

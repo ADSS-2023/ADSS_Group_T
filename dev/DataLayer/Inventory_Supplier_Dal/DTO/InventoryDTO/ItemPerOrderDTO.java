@@ -1,17 +1,22 @@
 package DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO;
 
+import DataLayer.Util.DTO;
+
 import java.time.LocalDate;
 
-public class ItemPerOrderDTO {
-    private int amountWarehouse;
-    private int amountStore;
-    private double costPrice;
-    private String location;
-    private String validity;
-    private int orderId;
+public class ItemPerOrderDTO extends DTO {
     private int itemId;
+    private int orderId;
+    private String validity;
+    private String location;
+    private double costPrice;
+    private int amountStore;
+    private int amountWarehouse;
+    private String arrivedDate;
 
-    public ItemPerOrderDTO(int amountWarehouse, int amountStore, double costPrice, String location, String validity, int orderId , int itemId) {
+
+    public ItemPerOrderDTO(int amountWarehouse, int amountStore, double costPrice, String location, String validity, int orderId , int itemId,String arrivedDate) {
+        super("inventory_item_per_order");
         this.amountWarehouse = amountWarehouse;
         this.amountStore = amountStore;
         this.costPrice = costPrice;
@@ -19,8 +24,11 @@ public class ItemPerOrderDTO {
         this.validity = validity;
         this.orderId = orderId;
         this.itemId = itemId;
+        this.arrivedDate = arrivedDate;
     }
-
+    public ItemPerOrderDTO(){
+        super("inventory_item_per_order");
+    }
     public int getItemId() {
         return itemId;
     }
@@ -44,7 +52,13 @@ public class ItemPerOrderDTO {
         return location;
     }
 
+    public ItemPerOrderDTO clone () {return new ItemPerOrderDTO(amountWarehouse , amountStore , costPrice
+            ,location , validity, orderId , itemId,arrivedDate);}
 
+
+    public void setItemId(int itemId){
+        this.itemId = itemId;
+    }
     public String getValidity() {
         return validity;
     }
@@ -53,4 +67,15 @@ public class ItemPerOrderDTO {
         return orderId;
     }
 
+    public void setAmountStore(int new_amount){
+        this.amountStore = new_amount;
+    }
+
+    public void setAmountWarehouse(int new_amount){
+        this.amountWarehouse = new_amount;
+    }
+
+    public String getArrivedDate() {
+        return arrivedDate;
+    }
 }

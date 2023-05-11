@@ -1,39 +1,123 @@
 package BusinessLayer.Supplier;
 
+import BusinessLayer.Supplier.Discounts.Discount;
+import BusinessLayer.Supplier.Discounts.NumberDiscount;
+import BusinessLayer.Supplier.Discounts.PercentDiscount;
+import BusinessLayer.Supplier.Supplier_Util.PaymentTerms;
 import BusinessLayer.Supplier.Suppliers.ConstantSupplier;
 import BusinessLayer.Supplier.Suppliers.OccasionalSupplier;
 import BusinessLayer.Supplier.Suppliers.SupplierBusiness;
 import BusinessLayer.Supplier_Stock.ItemToOrder;
-import BusinessLayer.Supplier.Supplier_Util.PaymentTerms;
+import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.*;
+import DataLayer.Inventory_Supplier_Dal.DTO.SupplierDTO.SupplierDTO;
+import DataLayer.Inventory_Supplier_Dal.DalController.SupplierDalController;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.time.DayOfWeek;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class SupplierController {
-    HashMap<Integer, SupplierBusiness> suppliers;
-
-    public SupplierController(){
-        suppliers = new HashMap<>();
+    private ConcurrentHashMap<Integer, SupplierBusiness> suppliers;
+    private Connection connection;
+    private SupplierDalController supplierDalController;
+    public SupplierController(Connection connection, SupplierDalController supplierDalController)  {
+        suppliers = new ConcurrentHashMap<>();
+        this.connection = connection;
+        this.supplierDalController = supplierDalController;
+        //loadSuppliers();
     }
+
+    public void loadSuppliers() throws Exception {
+        List<SupplierDTO> supplierDTOS = supplierDalController.findAll("supplier_supplier", SupplierDTO.class);
+        for (SupplierDTO supplierDTO : supplierDTOS) {
+            List<SupplierContactDTO> supplierContactDTOS = loadSupplierContacts(supplierDTO.getSupplierNum());
+            HashMap<String, String> contacts = new HashMap<>();
+            for(SupplierContactDTO contactDTO : supplierContactDTOS)
+                contacts.put(contactDTO.getContactName(), contactDTO.getContactNumber());
+            List<ConstDeliveryDaysDTO> constDeliveryDaysDTOS = loadConstDeliveryDays(supplierDTO.getSupplierNum());
+            List<DayOfWeek> days = new ArrayList<>();
+            for(ConstDeliveryDaysDTO constDeliveryDaysDTO : constDeliveryDaysDTOS)
+                days.add(DayOfWeek.of(constDeliveryDaysDTO.getDay()));
+            List<SupplierProductDTO> productDTOS = loadSupplierProducts(supplierDTO.getSupplierNum());
+            ConcurrentHashMap<Integer, SupplierProductBusiness> products = new ConcurrentHashMap<>();
+            for(SupplierProductDTO supplierProductDTO :  productDTOS){
+                products.put(supplierProductDTO.getProductNum(), new SupplierProductBusiness(supplierProductDTO, supplierDalController));
+            }
+            List<DiscountDTO> productDiscountDTOS = loadDiscounts(supplierDTO.getSupplierNum());
+            for(DiscountDTO productDiscountDTO : productDiscountDTOS)
+                if(!Boolean.parseBoolean(productDiscountDTO.IsSupplierDiscount()))
+                    products.get(productDiscountDTO.getProductNum()).addProductDiscount(productDiscountDTO);
+            List<DiscountDTO> supplierDiscountDTOS = loadDiscounts(supplierDTO.getSupplierNum());
+            List<Discount> discountPerTotalQuantity = new ArrayList<>();
+            List<Discount> discountPerTotalPrice = new ArrayList<>();
+            for(DiscountDTO supplierDiscountDTO : supplierDiscountDTOS) {
+                if (Boolean.parseBoolean(supplierDiscountDTO.IsSupplierDiscount())){
+                    if (Boolean.parseBoolean(supplierDiscountDTO.getIsTotalAmount())) {
+                        if (Boolean.parseBoolean(supplierDiscountDTO.isPercentage()))
+                            discountPerTotalQuantity.add(new PercentDiscount(supplierDiscountDTO, supplierDalController));
+                        else
+                            discountPerTotalQuantity.add(new NumberDiscount(supplierDiscountDTO, supplierDalController));
+                    } else {
+                        if (Boolean.parseBoolean(supplierDiscountDTO.isPercentage()))
+                            discountPerTotalPrice.add(new PercentDiscount(supplierDiscountDTO, supplierDalController));
+                        else
+                            discountPerTotalPrice.add(new NumberDiscount(supplierDiscountDTO, supplierDalController));
+                    }
+                }
+            }
+            if(supplierDTO.getDaysToDeliver() == -1)
+                suppliers.put(supplierDTO.getSupplierNum(), new ConstantSupplier(supplierDTO,contacts, products, days, supplierDalController, discountPerTotalQuantity, discountPerTotalPrice));
+            else
+                suppliers.put(supplierDTO.getSupplierNum(), new OccasionalSupplier(supplierDTO, contacts, products, supplierDTO.getDaysToDeliver(), supplierDalController, discountPerTotalQuantity, discountPerTotalPrice));
+        }
+    }
+
+    public List<SupplierContactDTO> loadSupplierContacts(int supplierNum) throws SQLException {
+        return supplierDalController.findAllOfCondition("supplier_supplier_contact", "supplierNum", supplierNum, SupplierContactDTO.class);
+    }
+
+    public List<ConstDeliveryDaysDTO> loadConstDeliveryDays(int supplierNum) throws SQLException {
+        return supplierDalController.findAllOfCondition("supplier_const_delivery_days", "supplierNum", supplierNum, ConstDeliveryDaysDTO.class);
+    }
+
+    public List<SupplierProductDTO> loadSupplierProducts(int supplierNum) throws SQLException {
+        return supplierDalController.findAllOfCondition("supplier_supplier_product", "supplierNum", supplierNum, SupplierProductDTO.class);
+    }
+
+    public List<DiscountDTO> loadDiscounts(int supplierNum) throws SQLException {
+        return supplierDalController.findAllOfCondition("supplier_discount", "supplierNum", supplierNum, DiscountDTO.class);
+    }
+
 
     public void addSupplier(String name, String address, int supplierNum, int bankAccountNum, HashMap<String, String> contacts, List<DayOfWeek> constDeliveryDays, boolean selfDelivery, PaymentTerms paymentTerms, int daysToDeliver) throws Exception {
         if(isSupplierExists(supplierNum))
             throw new Exception("supplier number is already exists.");
-        if(constDeliveryDays.isEmpty())
-            suppliers.put(supplierNum, new OccasionalSupplier(name, address, supplierNum, bankAccountNum, contacts, daysToDeliver, selfDelivery, paymentTerms));
+        if(constDeliveryDays.isEmpty()) {
+            suppliers.put(supplierNum, new OccasionalSupplier(name, address, supplierNum, bankAccountNum, contacts, daysToDeliver, selfDelivery, paymentTerms, supplierDalController));
+        }
         else{
-            suppliers.put(supplierNum, new ConstantSupplier(name, address, supplierNum, bankAccountNum, contacts, constDeliveryDays, selfDelivery, paymentTerms));
+            suppliers.put(supplierNum, new ConstantSupplier(name, address, supplierNum, bankAccountNum, contacts, constDeliveryDays, selfDelivery, paymentTerms, supplierDalController));
         }
     }
 
     public void deleteSupplier(int supplierNum) throws Exception {
         if(!isSupplierExists(supplierNum))
             throw new Exception("supplier number doesn't exist.");
+        SupplierBusiness sp = getSupplier(supplierNum);
+        sp.deleteContacts();
+        sp.deleteConstantDays();
+        sp.deleteGeneralDiscounts();
+        ConcurrentHashMap<Integer, SupplierProductBusiness> products_ = sp.getProducts();
+        for (Map.Entry<Integer, SupplierProductBusiness> entry : sp.getProducts().entrySet())
+            sp.deleteProduct(entry.getKey());
+        supplierDalController.delete(getSupplier(supplierNum).getSupplierDTO());
         suppliers.remove(supplierNum);
-
     }
 
-    public HashMap<Integer, SupplierProductBusiness> getProducts(int supplierNum) throws Exception {
+
+    public ConcurrentHashMap<Integer, SupplierProductBusiness> getProducts(int supplierNum) throws Exception {
         if(!isSupplierExists(supplierNum))
             throw new Exception("Supplier doesn't exist.");
         return suppliers.get(supplierNum).getProducts();
@@ -212,9 +296,28 @@ public class SupplierController {
         if(!isSupplierExists(supplierNum))
             throw new Exception("Supplier Does Not Exists");
         return suppliers.get(supplierNum);
-
     }
 
-    public HashMap<Integer, SupplierBusiness> getSuppliers(){return suppliers;}
+    public static PaymentTerms stringToPaymentTerms(String paymentTerms){
+        switch (paymentTerms){
+            case "SHOTEF_PLUS_30":
+                return PaymentTerms.SHOTEF_PLUS_30;
+            case "SHOTEF_PLUS_45":
+                return PaymentTerms.SHOTEF_PLUS_45;
+            case "SHOTEF_PLUS_60":
+                return PaymentTerms.SHOTEF_PLUS_60;
+            case "SHOTEF_PLUS_90":
+                return PaymentTerms.SHOTEF_PLUS_90;
+        }
+        return null;
+    }
 
+    public ConcurrentHashMap<Integer, SupplierBusiness> getSuppliers(){return suppliers;}
+
+    public void deleteAll() throws Exception {
+        ConcurrentHashMap<Integer, SupplierBusiness> suppliers_ = suppliers;
+        for (Map.Entry<Integer, SupplierBusiness> entry : suppliers_.entrySet())
+            deleteSupplier(entry.getKey());
+        suppliers = new ConcurrentHashMap<>();
+    }
 }

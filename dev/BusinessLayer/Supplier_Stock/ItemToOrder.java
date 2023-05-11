@@ -1,5 +1,7 @@
 package BusinessLayer.Supplier_Stock;
 
+import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.ItemToOrderDTO;
+
 import java.time.LocalDate;
 
 /**
@@ -12,6 +14,7 @@ public class ItemToOrder {
     private LocalDate expiryDate;
     private double costPrice;
     private int orderId;
+    private ItemToOrderDTO item_to_order_DTO;
 
     public ItemToOrder(String productName, String manufacturer, int quantity, LocalDate expiryDate, int orderId , double costPrice) {
         this.expiryDate = expiryDate;
@@ -20,6 +23,26 @@ public class ItemToOrder {
         this.quantity = quantity;
         this.costPrice = costPrice;
         this.orderId = orderId;
+        if(expiryDate == null)
+            this.item_to_order_DTO = new ItemToOrderDTO("inventory_waiting_list" , productName , manufacturer,
+                            quantity , "" , costPrice , orderId);
+        else {
+            this.item_to_order_DTO = new ItemToOrderDTO("inventory_waiting_list", productName, manufacturer,
+                    quantity, expiryDate.toString(), costPrice, orderId);
+        }
+    }
+
+    public ItemToOrder(ItemToOrderDTO i) {
+        this.expiryDate = i.getExpiryDate();
+        this.manufacturer = i.getManufacturer();
+        this.productName = i.getProductName();
+        this.quantity = i.getQauntity();
+        this.costPrice = i.getCostPrice();
+        this.orderId = i.getOrderId();
+    }
+
+    public ItemToOrderDTO getItemToOrderDTO(){
+        return this.item_to_order_DTO;
     }
 
     public String getProductName() {

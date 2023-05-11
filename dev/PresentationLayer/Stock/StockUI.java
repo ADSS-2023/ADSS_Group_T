@@ -5,6 +5,7 @@ import ServiceLayer.Stock.*;
 import ServiceLayer.Supplier.OrderService;
 import ServiceLayer.Supplier_Stock.ServiceFactory;
 
+import java.sql.SQLException;
 import java.time.DayOfWeek;
 
 import java.util.HashMap;
@@ -32,7 +33,6 @@ public class StockUI {
         System.out.println("\u001B[32m11.Move item to store\u001B[0m");
         System.out.println("\u001B[32m12.Orders menu\u001B[0m");
         System.out.println("\u001B[32m13.Back to start menu\u001B[0m");
-
     }
 
     public  String presentCategories(){
@@ -211,12 +211,22 @@ public class StockUI {
                 break;
             case "25":
                 show_all_orders();
+                break;
             case "26":
+                show_new_items();
+                break;
+            case "27":
                 run();
                 break;
             case "logout":
                 break;
         }
+    }
+
+    private void show_new_items() {
+        System.out.println(sf.manageOrderService.show_new_items());
+        System.out.println("If you wish to order an item that does not exist in the system,\n " +
+                "first, add new item to the system, with the corresponding names");
     }
 
     private void show_all_orders() {
@@ -295,7 +305,8 @@ public class StockUI {
         System.out.println("\u001B[32m3.Create special order\u001B[0m");
         System.out.println("\u001B[32m4.Place waiting items\u001B[0m");
         System.out.println("\u001B[32m5.Show all orders for the next week\u001B[0m");
-        System.out.println("\u001B[32m6.Go back to inventory menu\u001B[0m");
+        System.out.println("\u001B[32m6.Show all optional items to be supplied\u001B[0m");
+        System.out.println("\u001B[32m7.Go back to inventory menu\u001B[0m");
 
     }
 
@@ -340,9 +351,13 @@ public class StockUI {
         }
     }
 
-    public void loadData() {
+    public void setUpData()  {
         sf.inventoryService.setUp();
         sf.manageOrderService.set_up();
+    }
+
+    public void loadData(){
+        sf.inventoryService.loadData();
     }
 
     public void setPreviousCallBack(PreviousCallBack previousCallBack) {
@@ -359,5 +374,10 @@ public class StockUI {
         System.out.println("Insert amount to move");
         int amount = scanner.nextInt();
         sf.itemService.move_items_to_store(id,amount);
+    }
+
+    public void deleteData() {
+        //this.sf.makeEmptyDB();
+        this.sf.deleteAllData();
     }
 }

@@ -3,7 +3,12 @@ package BusinessLayer.Stock;
 import BusinessLayer.Stock.Util.Util;
 import BusinessLayer.Supplier_Stock.ItemToOrder;
 import BusinessLayer.Supplier_Stock.Util_Supplier_Stock;
+import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.ItemOrderdDTO;
+import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.ItemToOrderDTO;
+import DataLayer.Inventory_Supplier_Dal.DalController.InventoryDalController;
 import ServiceLayer.Supplier.OrderService;
+
+import java.sql.SQLException;
 import java.time.DayOfWeek;
 
 import java.util.*;
@@ -18,12 +23,18 @@ public class OrderController {
      * buy yet to be received.
      */
     private Map<Integer,Integer> special_orders_track;
+    private InventoryDalController inventoryDalController;
 
-    public OrderController(Inventory inventory, OrderService orderService) {
+    public OrderController(Inventory inventory, OrderService orderService,InventoryDalController inventoryDalController) {
         this.inventory = inventory;
         this.order_service = orderService;
         items_to_place = new LinkedList<>();
         special_orders_track = new HashMap<>();
+        this.inventoryDalController = inventoryDalController;
+    }
+
+    public void setInventoryDalController(InventoryDalController inv){
+        inventoryDalController = inv;
     }
 
     /**
@@ -31,15 +42,26 @@ public class OrderController {
      * @param items_quantity a map that maps item id to the desired amount
      */
     public void createRegularOrder(Map<Integer, Integer> items_quantity) throws Exception {
+        LinkedList<ItemOrderdDTO> insert_items = new LinkedList<>();
         LinkedList<ItemToOrder> list_to_order = new LinkedList<>();
         for (Map.Entry<Integer, Integer> entry : items_quantity.entrySet()) {
             Integer item_id = entry.getKey();
             Integer quantity = entry.getValue();
-            list_to_order.addLast(new ItemToOrder(inventory.get_item_by_id(item_id).get_name(),
-                    inventory.get_item_by_id(item_id).manufacturer_name, quantity, null, -1,-1));
+            ItemToOrder new_item = new ItemToOrder(inventory.get_item_by_id(item_id).get_name(),
+                    inventory.get_item_by_id(item_id).manufacturer_name, quantity, null, -1,-1);
+            list_to_order.addLast(new_item);
+            ItemOrderdDTO item_dto = new ItemOrderdDTO(item_id,quantity);
+            insert_items.add(item_dto);
         }
+
         if(!order_service.createRegularOrder(list_to_order)){
             throw new Exception("\u001B[31mOrder cannot be supplied\u001B[0m");
+        }
+        else{
+            // only if success!
+            for (ItemOrderdDTO item_dto :  insert_items) {
+                inventoryDalController.insert(item_dto);
+            }
         }
     }
 
@@ -49,6 +71,7 @@ public class OrderController {
      * @param isUrgent boolean flag to indicate whether the order priority is arrival.
      */
     public void createSpecialOrder(Map<Integer, Integer> items_quantity,boolean isUrgent) throws Exception {
+        LinkedList<ItemOrderdDTO> insert_items = new LinkedList<>();
         LinkedList<ItemToOrder> list_to_order = new LinkedList<>();
         for (Map.Entry<Integer, Integer> entry : items_quantity.entrySet()) {
             Integer item_id = entry.getKey();
@@ -58,11 +81,19 @@ public class OrderController {
             if(special_orders_track.containsKey(item_id)){
                 quantity += special_orders_track.get(item_id);
             }
+            ItemOrderdDTO item_dto = new ItemOrderdDTO(item_id,quantity);
+            insert_items.add(item_dto);
             special_orders_track.put(item_id,quantity);
-
         }
-        if (!order_service.createSpecialOrder(list_to_order,isUrgent))
+        if (!order_service.createSpecialOrder(list_to_order,isUrgent)) {
             throw new Exception("\u001B[31mOrder cannot be supplied\u001B[0m");
+        }
+        else{
+            // only if success!
+            for (ItemOrderdDTO item_dto :  insert_items) {
+                inventoryDalController.insert(item_dto);
+            }
+        }
 
     }
 
@@ -127,7 +158,13 @@ public class OrderController {
      * receive new order that arrived to the store
      * @param newOrder order id,item
      */
-    public void receiveOrders(List<ItemToOrder> newOrder){
+    public void receiveOrders(List<ItemToOrder> newOrder) throws SQLException {
+        for (ItemToOrder ito:newOrder) {
+            //int num = this.inventory.name_to_id.get(ito.getProductName() + ito.getProductName());
+            inventoryDalController.insert(new ItemToOrderDTO(
+                    "inventory_waiting_list",ito.getProductName(),ito.getManufacturer(),
+                    ito.getQuantity(),ito.getExpiryDate().toString(),ito.getCostPrice(),ito.getOrderId()));
+        }
         items_to_place.addAll(newOrder);
         handle_special_order_track(newOrder);
     }
@@ -136,15 +173,19 @@ public class OrderController {
      * Gets the new arrivals, and check the special order track to see if update is needed
      * @param newOrder
      */
-    private void handle_special_order_track(List<ItemToOrder> newOrder){
+    private void handle_special_order_track(List<ItemToOrder> newOrder) throws SQLException {
         for (ItemToOrder itemToOrder : newOrder){
             int item_id = inventory.itemToOrder_to_item(itemToOrder).item_id;
             if(special_orders_track.containsKey(item_id)){
                 int amount = special_orders_track.get(item_id);
-                if(itemToOrder.getQuantity()>= amount)
+                if(itemToOrder.getQuantity()>= amount) {
+                    inventoryDalController.delete(new ItemOrderdDTO(item_id, itemToOrder.getQuantity()));
                     special_orders_track.remove(item_id);
+                }
                 else {
                     amount -= itemToOrder.getQuantity();
+                    inventoryDalController.update(new ItemOrderdDTO(item_id, itemToOrder.getQuantity()),
+                            new ItemOrderdDTO(item_id, amount));
                     special_orders_track.put(item_id,amount);
                 }
             }
@@ -160,6 +201,9 @@ public class OrderController {
         if(index > items_to_place.size())
             throw new Exception("Illegal index");
         ItemToOrder tempItem = items_to_place.get(index-1);
+        inventoryDalController.delete(new ItemToOrderDTO(
+                "inventory_waiting_list",tempItem.getProductName(),tempItem.getManufacturer(),
+                tempItem.getQuantity(),tempItem.getExpiryDate().toString(),tempItem.getCostPrice(),tempItem.getOrderId()));
         inventory.itemToOrder_to_item(tempItem).recive_order(
                 tempItem.getOrderId(),
                 (int)Math.floor(tempItem.getQuantity()/2),
@@ -215,9 +259,9 @@ public class OrderController {
     /**
      * Set up function to test place items functionality
      */
-    public void set_up_waiting_items(){
+    public void set_up_waiting_items() throws SQLException {
         ItemToOrder milk_3 = new ItemToOrder("3% milk","IDO LTD",40, Util.stringToDate("2023-05-10"),12,1.2);
-        ItemToOrder beef_sausage = new ItemToOrder("Beef Sausage","Zogloveck",15,Util.stringToDate("2023-10-01"),1005,10.05);
+        ItemToOrder beef_sausage = new ItemToOrder("Beef Sausage","Zogloveck",16,Util.stringToDate("2023-10-01"),1005,10.05);
         receiveOrders(Arrays.asList(milk_3,beef_sausage));
     }
 
@@ -232,6 +276,7 @@ public class OrderController {
         }
         return to_return;
     }
+
     private String show_special_orders(DayOfWeek cur_day){
         String toReturn = "";
         List<ItemToOrder> special_orders = order_service.getSpecialOrder(cur_day);
@@ -249,6 +294,37 @@ public class OrderController {
             toReturn+=String.format("Item id: %s, item name and manufacturer name: %s, amount: %s\n"
                     ,inventory.name_to_id.get(entry.getKey()),entry.getKey(),entry.getValue());
         }
+        return toReturn;
+    }
+
+    public List<ItemToOrder> getItems_to_place(){
+        return items_to_place;
+    }
+
+    public void loadWaitingItems() throws Exception{
+        List<ItemToOrderDTO> item_to_order_DTOS = inventoryDalController.findAll("inventory_waiting_list", ItemToOrderDTO.class);
+        for (ItemToOrderDTO i:item_to_order_DTOS) {
+            this.items_to_place.add(new ItemToOrder(i));
+        }
+    }
+
+    public void loadOrderedItems() throws Exception{
+        List<ItemOrderdDTO> item_to_order_DTOS = inventoryDalController.findAll("inventory_item_ordered", ItemOrderdDTO.class);
+        for (ItemOrderdDTO i:item_to_order_DTOS) {
+            this.special_orders_track.put(i.getId() , i.getQuantity());
+        }
+    }
+
+    public String show_new_items() {
+        String toReturn= "";
+        for (ItemToOrder itemToOrder : order_service.getAllProducts()){
+            toReturn += String.format("name: %s , manufacture: %s, amount: %d"
+                    ,itemToOrder.getProductName(),
+                    itemToOrder.getManufacturer(),
+                    itemToOrder.getQuantity());
+        }
+        if(toReturn == "")
+            toReturn =  "No item to supply";
         return toReturn;
     }
 }
