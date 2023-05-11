@@ -77,13 +77,9 @@ public class OrderController {
             Integer item_id = entry.getKey();
             Integer quantity = entry.getValue();
             list_to_order.addLast(new ItemToOrder(inventory.get_item_by_id(item_id).get_name(),
-                    inventory.get_item_by_id(item_id).manufacturer_name, quantity, null, -1,-1));
-            if(special_orders_track.containsKey(item_id)){
-                quantity += special_orders_track.get(item_id);
-            }
+            inventory.get_item_by_id(item_id).manufacturer_name, quantity, null, -1,-1));
             ItemOrderdDTO item_dto = new ItemOrderdDTO(item_id,quantity);
             insert_items.add(item_dto);
-            special_orders_track.put(item_id,quantity);
         }
         if (!order_service.createSpecialOrder(list_to_order,isUrgent)) {
             throw new Exception("\u001B[31mOrder cannot be supplied\u001B[0m");
@@ -91,7 +87,15 @@ public class OrderController {
         else{
             // only if success!
             for (ItemOrderdDTO item_dto :  insert_items) {
-                inventoryDalController.insert(item_dto);
+                int quantity = item_dto.getQuantity();
+                if(special_orders_track.containsKey(item_dto.getId())) {
+                    Integer old_amount = special_orders_track.get(item_dto.getId());
+                    inventoryDalController.update(new ItemOrderdDTO(item_dto.getId(),old_amount), item_dto);
+                    quantity += special_orders_track.get(item_dto.getQuantity());
+                }
+                else
+                    inventoryDalController.insert(item_dto);
+                special_orders_track.put(item_dto.getId(), quantity);
             }
         }
 
