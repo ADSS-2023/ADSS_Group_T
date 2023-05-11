@@ -20,8 +20,11 @@ public abstract class Discount {
         this.isPercentage = isPercentage;
         this.supplierDalController = supplierDalController;
         this.discountDTO = dto;
-        supplierDalController.insert(dto);
     }
+
+    public Discount(){
+    }
+
     public void editDiscount(int amount, float discount){
         this.discount=discount;
         this.amount=amount;

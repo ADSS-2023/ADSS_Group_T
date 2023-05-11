@@ -12,6 +12,7 @@ import BusinessLayer.Supplier.Supplier_Util.PaymentTerms;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class SupplierService {
     private SupplierController sc;
@@ -23,6 +24,15 @@ public class SupplierService {
         this.oc=oc;
     }
 
+    public String loadSuppliers(){
+        try {
+            sc.loadSuppliers();
+        }
+        catch (Exception e){
+            return e.getMessage();
+        }
+        return "suppliers successfully loaded ";
+    }
     public String addSupplier(String name, String address, int supplierNum, int bankAccountNum, int daysToDeliver, HashMap<String, String> contacts, List<DayOfWeek> constDeliveryDays, boolean selfDelivery, PaymentTerms paymentTerms){
         try{
             sc.addSupplier(name,address,supplierNum,bankAccountNum,contacts,constDeliveryDays, selfDelivery, paymentTerms, daysToDeliver);
@@ -43,6 +53,16 @@ public class SupplierService {
         }
     }
 
+    public String deleteAll(){
+        try {
+            sc.deleteAll();
+            return "Suppliers data deleted successfully";
+        }
+        catch (Exception e){
+            return e.getMessage();
+        }
+    }
+
     public String editSupplier(String name, String address, int supplierNum, int bankAccountNum, boolean selfDelivery, PaymentTerms paymentTerms){
         try {
             sc.getSupplier(supplierNum).editSupplier(name, address, bankAccountNum, selfDelivery,paymentTerms);
@@ -56,7 +76,7 @@ public class SupplierService {
     public List<String> getProducts(int supplierNum) {
         List<String> products = new LinkedList<>();
         try {
-            HashMap<Integer, SupplierProductBusiness> productMap = sc.getProducts(supplierNum);
+            ConcurrentHashMap<Integer, SupplierProductBusiness> productMap = sc.getProducts(supplierNum);
             for (Map.Entry<Integer, SupplierProductBusiness> entry : productMap.entrySet())
                 products.add(entry.getValue().toString() + '\n');
         }
@@ -71,9 +91,9 @@ public class SupplierService {
 
     public List<String> getAllProducts() {
         List<String> productsStrings = new LinkedList<>();
-        HashMap<Integer, SupplierProductBusiness> products = new HashMap<>();
+        ConcurrentHashMap<Integer, SupplierProductBusiness> products = new ConcurrentHashMap<>();
         try {
-            HashMap<Integer, SupplierBusiness> suppliers=sc.getSuppliers();
+            ConcurrentHashMap<Integer, SupplierBusiness> suppliers=sc.getSuppliers();
             for (Map.Entry<Integer, SupplierBusiness> entry : suppliers.entrySet()) {
                 products = entry.getValue().getProducts();
                 for (Map.Entry<Integer, SupplierProductBusiness> entry2 : products.entrySet())
@@ -190,7 +210,7 @@ public class SupplierService {
     public List<String> getSuppliers(){
        List<String> suppliersStrings = new LinkedList<>();
         try {
-            HashMap<Integer, SupplierBusiness> suppliers = sc.getSuppliers();
+            ConcurrentHashMap<Integer, SupplierBusiness> suppliers = sc.getSuppliers();
             for (Map.Entry<Integer, SupplierBusiness> entry : suppliers.entrySet()) {
                 suppliersStrings.add(entry.getValue().toString()+"\n");
             }

@@ -16,4 +16,16 @@ public class ConstDeliveryDaysDTO extends DTO {
         this.day = day;
     }
 
+    public ConstDeliveryDaysDTO(){
+        super("supplier_const_delivery_days");
+    }
+
+    public int getSupplierNum() {
+        return supplierNum;
+    }
+
+    public int getDay() {
+        return day;
+    }
+
 }
