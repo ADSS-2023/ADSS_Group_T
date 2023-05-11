@@ -147,10 +147,14 @@ public class ShiftController {
         if (branchShifts == null)
             throw new NoSuchFieldException("there is no such branch exist");
         ArrayList<Shift> branchShiftsByDate =  branchShifts.get(requiredDate);
+        String s;
         for (Shift shift : branchShiftsByDate){
             LinkedHashMap <String, Integer> storeKeeperRequirment = new LinkedHashMap<>();
             storeKeeperRequirment.put(PositionType.storekeeper.name(), 1);
             shift.addEmployeeRequirements(storeKeeperRequirment);
+            if(shift.getShiftType()){s = "morning";}
+            else s = "evening";
+            dalShiftService.addRequierement(branch,requiredDate.toString(),s ,PositionType.storekeeper.toString(),1);
         }
     }
 

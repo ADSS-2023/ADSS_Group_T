@@ -167,10 +167,13 @@ public class Shift {
 
 
     public void makeSureThereIsStorekeeperRequirement() throws Exception {
+        String s;
         lazyLoadFindRequiermentsBtDateAndShiftType();
         if (!employeeRequirements.containsKey(PositionType.storekeeper.name()) || employeeRequirements.get(PositionType.storekeeper.name()) < 1) {
             employeeRequirements.put(PositionType.storekeeper.name(), 1);
-            dalShiftService.addRequierement(branch, date, shiftType, PositionType.storekeeper.name(), 1);
+            if(shiftType){s = "morning";}
+            else s = "evening";
+            dalShiftService.addRequierement(branch, date.toString(), s, PositionType.storekeeper.name(), 1);
         }
     }
 
