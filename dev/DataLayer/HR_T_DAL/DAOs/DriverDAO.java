@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 public class DriverDAO extends DAO {
@@ -62,5 +63,27 @@ public class DriverDAO extends DAO {
         }
         return result;
     }
+
+    public LinkedList<DriverDTO> findAllSubmissionByDate(String date) throws SQLException {
+        LinkedList<DriverDTO> result = new LinkedList<DriverDTO>();
+        String sql = "SELECT d.driverId, d.licenseType, d.coolingLevel, dt.isAssigned FROM drivers d INNER JOIN DateToDriver dt ON d.driverId = dt.driverId WHERE dt.date = ? AND dt.isAssigned = 'true'";
+
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(2, date);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                DriverDTO driver = new DriverDTO(
+                        resultSet.getInt("driverId"),
+                        resultSet.getString("licenseType"),
+                        resultSet.getString("coolingLevel")
+                );
+                driver.setTableName("Driver");
+                result.add(driver);
+            }
+        }
+        return result;
+    }
+
 
 }

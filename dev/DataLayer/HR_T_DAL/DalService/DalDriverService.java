@@ -12,50 +12,60 @@ import UtilSuper.Pair;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 public class DalDriverService {
     private Connection connection;
     private DalUserService dalUserService;
 
     private DriverDAO driverDAO;
-    public DalDriverService(Connection connection,DalUserService dalUserService) {
+
+    public DalDriverService(Connection connection, DalUserService dalUserService) {
         this.connection = connection;
         this.driverDAO = new DriverDAO(connection);
         this.dalUserService = dalUserService;
     }
 
     public Driver findDriverById(int driverId) throws SQLException {
-        DriverDTO driverdto = driverDAO.find(driverId,"driverId","Driver",DriverDTO.class);
-        if (driverdto != null){
-            Driver driver = new Driver(driverdto ,dalUserService.findUserById(driverId) );
+        DriverDTO driverdto = driverDAO.find(driverId, "driverId", "Driver", DriverDTO.class);
+        if (driverdto != null) {
+            Driver driver = new Driver(driverdto, dalUserService.findUserById(driverId));
             return driver;
         }
-       return null;
+        return null;
     }
 
 
     public LinkedHashMap<Driver, Boolean> findSubmissionByIdAndDate(int driverId, LocalDate date) throws SQLException { // the boolean is if assigned or not
-         Pair result = driverDAO.getDriverAndIfIsAssigned(driverId,date.toString());
-         LinkedHashMap<Driver, Boolean> ret = new LinkedHashMap<>();
-         if(result.getFirst() != null && result.getSecond() != null ) {
-             DriverDTO dd = (DriverDTO) result.getFirst();
-             Driver driver = new Driver(dd, dalUserService.findUserById(driverId));
-             ret.put(driver,true);
-             return ret;
-         }
-         else return null;
+        Pair result = driverDAO.getDriverAndIfIsAssigned(driverId, date.toString());
+        LinkedHashMap<Driver, Boolean> ret = new LinkedHashMap<>();
+        if (result.getFirst() != null && result.getSecond() != null) {
+            DriverDTO dd = (DriverDTO) result.getFirst();
+            Driver driver = new Driver(dd, dalUserService.findUserById(driverId));
+            ret.put(driver, true);
+            return ret;
+        } else return null;
     }
 
 //TODO - israel
 
     // TODO - israel
-    public LinkedHashMap<Driver, Boolean>  findAllSubmissionByDate(LocalDate date) throws SQLException {
-        return null;
+    public LinkedList<Driver> findAllSubmissionByDate(LocalDate date) throws SQLException {
+        LinkedList<DriverDTO> listDriverDTO = driverDAO.findAllSubmissionByDate(date.toString());
+        LinkedList<Driver> listDriver = new LinkedList<Driver>();
+        for (DriverDTO d : listDriverDTO) {
+            if (d != null) {
+                User u = dalUserService.findUserById(d.getDriverId());
+                if (u != null) {
+                    Driver driver = new Driver(d, u);
+                    listDriver.add(driver);
+                }
+            }
+        }
+        return listDriver;
     }
+
+
 
     // TODO - israel
     public LinkedHashMap<Pair<Driver.LicenseType, Driver.CoolingLevel> , Integer>  findAllRequirementsByDate(LocalDate date) throws SQLException {
