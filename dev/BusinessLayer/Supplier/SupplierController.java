@@ -16,13 +16,14 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.DayOfWeek;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class SupplierController {
-    private HashMap<Integer, SupplierBusiness> suppliers;
+    private ConcurrentHashMap<Integer, SupplierBusiness> suppliers;
     private Connection connection;
     private SupplierDalController supplierDalController;
     public SupplierController(Connection connection, SupplierDalController supplierDalController) throws Exception {
-        suppliers = new HashMap<>();
+        suppliers = new ConcurrentHashMap<>();
         this.connection = connection;
         this.supplierDalController = supplierDalController;
         //loadSuppliers();
@@ -40,7 +41,7 @@ public class SupplierController {
             for(ConstDeliveryDaysDTO constDeliveryDaysDTO : constDeliveryDaysDTOS)
                 days.add(DayOfWeek.of(constDeliveryDaysDTO.getDay()));
             List<SupplierProductDTO> productDTOS = loadSupplierProducts(supplierDTO.getSupplierNum());
-            HashMap<Integer, SupplierProductBusiness> products = new HashMap<>();
+            ConcurrentHashMap<Integer, SupplierProductBusiness> products = new ConcurrentHashMap<>();
             for(SupplierProductDTO supplierProductDTO :  productDTOS){
                 products.put(supplierProductDTO.getProductNum(), new SupplierProductBusiness(supplierProductDTO, supplierDalController));
             }
@@ -108,6 +109,7 @@ public class SupplierController {
         sp.deleteContacts();
         sp.deleteConstantDays();
         sp.deleteGeneralDiscounts();
+        ConcurrentHashMap<Integer, SupplierProductBusiness> products_ = sp.getProducts();
         for (Map.Entry<Integer, SupplierProductBusiness> entry : sp.getProducts().entrySet())
             sp.deleteProduct(entry.getKey());
         supplierDalController.delete(getSupplier(supplierNum).getSupplierDTO());
@@ -115,7 +117,7 @@ public class SupplierController {
     }
 
 
-    public HashMap<Integer, SupplierProductBusiness> getProducts(int supplierNum) throws Exception {
+    public ConcurrentHashMap<Integer, SupplierProductBusiness> getProducts(int supplierNum) throws Exception {
         if(!isSupplierExists(supplierNum))
             throw new Exception("Supplier doesn't exist.");
         return suppliers.get(supplierNum).getProducts();
@@ -310,11 +312,12 @@ public class SupplierController {
         return null;
     }
 
-    public HashMap<Integer, SupplierBusiness> getSuppliers(){return suppliers;}
+    public ConcurrentHashMap<Integer, SupplierBusiness> getSuppliers(){return suppliers;}
 
     public void deleteAll() throws Exception {
-        for (Map.Entry<Integer, SupplierBusiness> entry : suppliers.entrySet())
+        ConcurrentHashMap<Integer, SupplierBusiness> suppliers_ = suppliers;
+        for (Map.Entry<Integer, SupplierBusiness> entry : suppliers_.entrySet())
             deleteSupplier(entry.getKey());
-        suppliers = null;
+        suppliers = new ConcurrentHashMap<>();
     }
 }

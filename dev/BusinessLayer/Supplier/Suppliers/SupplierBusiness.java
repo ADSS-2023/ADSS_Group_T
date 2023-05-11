@@ -16,6 +16,8 @@ import BusinessLayer.Supplier_Stock.Util_Supplier_Stock;
 import java.sql.SQLException;
 import java.util.*;
 import java.time.LocalDate;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public abstract class  SupplierBusiness {
     protected String supplierName;
@@ -26,7 +28,7 @@ public abstract class  SupplierBusiness {
     protected boolean selfDelivery;
     protected PaymentTerms paymentTerms;
 
-    protected HashMap<Integer, SupplierProductBusiness> products;
+    protected ConcurrentHashMap<Integer, SupplierProductBusiness> products;
 
     protected List<Discount> discountPerTotalQuantity;
 
@@ -46,7 +48,7 @@ public abstract class  SupplierBusiness {
         this.bankAccountNum = bankAccountNum;
         this.contacts = contacts;
         this.selfDelivery = selfDelivery;
-        this.products = new HashMap<>();
+        this.products = new ConcurrentHashMap<>();
         this.discountPerTotalQuantity = new ArrayList<>();
         this.discountPerTotalPrice = new ArrayList<>();
         this.paymentTerms=paymentTerms;
@@ -136,12 +138,12 @@ public abstract class  SupplierBusiness {
             throw new Exception("product is not exists.");
         //delete first all of product's discounts
         SupplierProductBusiness sp = products.get(productNum);
-            for (Discount dis:sp.getQuantitiesAgreement()){
+        List<Discount> discountsCopy = new ArrayList<>(sp.getQuantitiesAgreement());
+        for (Discount dis:discountsCopy){
                sp.deleteProductDiscount(dis.getAmount(),dis.getDiscount(),dis.isPercentage());
             }
             products.remove(productNum);
             supplierDalController.delete(sp.getSupplierProductDTO());
-
     }
 
     public void deleteContacts () throws SQLException {
@@ -359,7 +361,7 @@ public abstract class  SupplierBusiness {
         return selfDelivery;
     }
 
-    public HashMap<Integer, SupplierProductBusiness> getProducts() {
+    public ConcurrentHashMap<Integer, SupplierProductBusiness> getProducts() {
         return products;
     }
 
@@ -374,7 +376,7 @@ public abstract class  SupplierBusiness {
                 '}';
     }
 
-    public void setProducts(HashMap<Integer, SupplierProductBusiness> products) {
+    public void setProducts(ConcurrentHashMap<Integer, SupplierProductBusiness> products) {
         this.products = products;
     }
 

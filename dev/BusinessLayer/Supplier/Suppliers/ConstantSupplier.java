@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ConstantSupplier extends SupplierBusiness {
 
@@ -33,11 +34,11 @@ public class ConstantSupplier extends SupplierBusiness {
         this.constDeliveryDays =constDeliveryDays;
     }
 
-    public ConstantSupplier(SupplierDTO supplierDTO, HashMap<String, String> contacts, HashMap<Integer, SupplierProductBusiness> products, List<DayOfWeek> days, SupplierDalController supplierDalController, List<Discount> discountPerTotalQuantity, List<Discount> discountPerTotalPrice) throws SQLException {
+    public ConstantSupplier(SupplierDTO supplierDTO, HashMap<String, String> contacts, ConcurrentHashMap<Integer, SupplierProductBusiness> products, List<DayOfWeek> days, SupplierDalController supplierDalController, List<Discount> discountPerTotalQuantity, List<Discount> discountPerTotalPrice) throws SQLException {
         super();
         this.contactDTOS = new LinkedList<>();
         this.constDeliveryDaysDTOS = new LinkedList<>();
-        this.products = new HashMap<>();
+        this.products = new ConcurrentHashMap<>();
         this.discountPerTotalQuantity = new ArrayList<>();
         this.discountPerTotalPrice = new ArrayList<>();
         this.supplierName = supplierDTO.getSupplierName();
