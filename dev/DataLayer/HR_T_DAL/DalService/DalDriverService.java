@@ -80,10 +80,6 @@ public class DalDriverService {
 
 
 
-    // TODO - israel
-    public LinkedHashMap<Pair<Driver.LicenseType, Driver.CoolingLevel> , Integer>  findAllRequirementsByDate(LocalDate date) throws SQLException {
-        return null;
-    }
 
 
     public LinkedHashMap<Pair<Driver.LicenseType, Driver.CoolingLevel>, Integer> findAllRequirementsByDate(LocalDate date) throws SQLException {
