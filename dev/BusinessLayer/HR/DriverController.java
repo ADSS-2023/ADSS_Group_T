@@ -18,7 +18,6 @@ public class DriverController {
     private LinkedHashMap<Integer, Driver> drivers;
     private LinkedHashMap<LocalDate, LinkedHashMap<Pair<Driver.LicenseType, Driver.CoolingLevel> , Integer>> driversRequirements; // date, amount
     private LinkedHashMap<LocalDate, LinkedHashMap<Driver, Boolean>> date2driversSubmission; // date, driver. isAssigned
-
     private DalDriverService dalDriverService;
 
 
