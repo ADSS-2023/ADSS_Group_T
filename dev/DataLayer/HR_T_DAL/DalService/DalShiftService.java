@@ -5,6 +5,7 @@ import BusinessLayer.HR.Shift;
 import BusinessLayer.HR.User.PositionType;
 import DataLayer.HR_T_DAL.DAOs.ShiftDAO;
 import DataLayer.HR_T_DAL.DTOs.ShiftDTO;
+import DataLayer.HR_T_DAL.DTOs.ShiftRequirementsDTO;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -30,18 +31,22 @@ public class DalShiftService {
 
 
     // TODO - israel
-    public void addRequierement(String branch, LocalDate date, boolean shiftType, String positionType, int amount) throws SQLException {
+    public void addRequierement(String branch, String date, String shiftType, String positionType, int amount) throws SQLException {
+        ShiftRequirementsDTO shiftRequirementsDTO = new ShiftRequirementsDTO(date,shiftType,positionType,amount);
+        shiftDAO.insert(shiftRequirementsDTO);
 
     }
 
     // TODO - israel
-    public void updateRequierement(String branch,  LocalDate date, boolean shiftType, String positionType, int amount) throws SQLException {
-
+    public void updateRequierement(String branch, String date, String shiftType, String positionType, int amount) throws SQLException {
+        ShiftRequirementsDTO shiftRequirementsDTO = new ShiftRequirementsDTO(date,shiftType,positionType,amount);
+        shiftDAO.update(shiftRequirementsDTO , shiftRequirementsDTO);
     }
 
     // TODO - israel
-    public void deleteRequierement(String branch, LocalDate date, boolean shiftType, String positionType) throws SQLException {
-
+    public void deleteRequierement(String branch, String date, String shiftType, String positionType) throws SQLException {
+        ShiftRequirementsDTO shiftRequirementsDTO = new ShiftRequirementsDTO(date,shiftType,positionType,0);
+        shiftDAO.delete(shiftRequirementsDTO);
     }
 
     // TODO - israel

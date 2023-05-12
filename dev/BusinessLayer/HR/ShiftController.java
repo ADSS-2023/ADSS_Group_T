@@ -33,6 +33,9 @@ public class ShiftController {
     public ShiftController(){
         shifts = new LinkedHashMap<>();
     }
+    public ShiftController(DriverController driverController, DalEmployeeService dalEmployeeService){
+        shifts = new LinkedHashMap<>();
+    }
 
     public void init(LinkedHashMap<Integer,Employee> employeesMapper, DriverController driverController, DalEmployeeService dalEmployeeService){
        this.employeesMapper = employeesMapper;
@@ -145,11 +148,16 @@ public class ShiftController {
         if (branchShifts == null)
             throw new NoSuchFieldException("there is no such branch exist");
         ArrayList<Shift> branchShiftsByDate =  branchShifts.get(requiredDate);
+        String s;
         for (Shift shift : branchShiftsByDate){
             LinkedHashMap <String, Integer> storeKeeperRequirment = new LinkedHashMap<>();
             storeKeeperRequirment.put(PositionType.storekeeper.name(), 1);
             shift.addEmployeeRequirements(storeKeeperRequirment);
+            if(shift.getShiftType()){s = "morning";}
+            else s = "evening";
+            dalShiftService.addRequierement(branch,requiredDate.toString(),s ,PositionType.storekeeper.toString(),1);
         }
+
     }
 
     public ArrayList<String> getBranchesWithoutStoreKeeper(LocalDate date) throws Exception {

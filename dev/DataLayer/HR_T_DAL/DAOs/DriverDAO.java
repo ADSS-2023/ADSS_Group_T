@@ -9,8 +9,13 @@ import UtilSuper.Pair;
 import java.lang.reflect.Field;
 import java.sql.*;
 import java.time.LocalDate;
+
 import java.util.ArrayLis;
 import java.util.LinkedHashMap;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -62,6 +67,7 @@ public class DriverDAO extends DAO {
     }
 
 
+
 //    public List<DriverRequirementDTO> findRequirementsByDate(LocalDate date) throws SQLException {
 //        List<DriverRequirementDTO> results = new ArrayList<>();
 //        String sql = "SELECT * FROM DriverRequirements WHERE date = ?";
@@ -94,6 +100,7 @@ public class DriverDAO extends DAO {
 //        }
 //        return results;
 //    }
+
 
 
 
@@ -139,6 +146,7 @@ public class DriverDAO extends DAO {
 
 
 
+
 //    public List<DriverDTO> getDriversByDate(String date) throws SQLException {
 //        List<DriverDTO> drivers = new ArrayList<>();
 //        String sql = "SELECT d.driverId, d.licenseType, d.coolingLevel FROM drivers d INNER JOIN DateToDriver dt ON d.driverId = dt.driverId WHERE dt.date = ?";
@@ -159,7 +167,6 @@ public class DriverDAO extends DAO {
 //        }
 //        return drivers;
 //    }
-
 
 
 

@@ -150,9 +150,13 @@ public Driver lazyLoadDriver (int id) throws SQLException {
     }
 
     public LinkedHashMap<Driver, Boolean> lazyLoadAllDriverSubmitionByDate(LocalDate date) throws SQLException {
-        LinkedHashMap<Driver, Boolean> allDriversInDate = dalDriverService.findAllSubmissionByDate(date);
-        date2driversSubmission.put(date, allDriversInDate);
-        return  allDriversInDate;
+        LinkedList<Driver> allDriversInDate = dalDriverService.findAllSubmissionByDate(date);
+        LinkedHashMap<Driver, Boolean> map = new LinkedHashMap<>();
+        for (Driver d : allDriversInDate) {
+            map.put(d,true);
+        }
+        date2driversSubmission.put(date, map);
+        return  map;
     }
 
     public LinkedHashMap<Pair<Driver.LicenseType, Driver.CoolingLevel> , Integer> lazyLoadAllRequierementsForDate(LocalDate date) throws SQLException {

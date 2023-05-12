@@ -56,6 +56,7 @@ public class ServiceFactory {
     private DalUserService dalUserService;
     private DalEmployeeService dalEmployeeService;
 
+    private DalShiftService dalShiftService;
     private DalDriverService dalDriverService;
     private DAO dao;
 
@@ -69,21 +70,26 @@ public class ServiceFactory {
         connection = DriverManager.getConnection(testDBUrl);
 
         this.dao = new DAO(connection);
+        Data_init.initBasicData(dao);
+        Data_init_HR.initBasicData(dao);
+
 
         dalLogisticCenterService = new DalLogisticCenterService(connection);
         dalDeliveryService = new DalDeliveryService(connection,dalLogisticCenterService);
 
         dalUserService = new DalUserService(connection);
+
+        dalShiftService = new DalShiftService(connection);
         dalDriverService = new DalDriverService(connection,dalUserService);
         dalEmployeeService = new DalEmployeeService(connection,dalUserService);
 
 
-
-        shiftController = new ShiftController();
+        driverController = new DriverController(dalDriverService);
+        shiftController = new ShiftController(driverController,dalEmployeeService);
         shiftService = new ShiftService(shiftController);
         //TODO delete because error!:
-        //employeeController = new EmployeeController(dalEmployeeService,dalUserService);
-        driverController = new DriverController(dalDriverService);
+        employeeController = new EmployeeController(dalEmployeeService,dalUserService);
+
         employeeService = new EmployeeService(employeeController,driverController);
 
 
