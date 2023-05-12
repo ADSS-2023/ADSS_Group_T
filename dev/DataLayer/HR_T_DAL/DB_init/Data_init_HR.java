@@ -39,22 +39,22 @@ public class Data_init_HR {
         dao.insert(employee1);
 
 
-
-        DriverDTO driver1 = new DriverDTO(10,"C", "non");
-        dao.insert(driver1);
-
-        DriverDTO driver2 = new DriverDTO(20,"C", "non");
-        dao.insert(driver2);
-
-
-
-
-        DateToDriverDTO d2d1 = new DateToDriverDTO(Time.localDateToString(LocalDate.now().plusDays(1)),10);
-        DateToDriverDTO d2d2 = new DateToDriverDTO(Time.localDateToString(LocalDate.now().plusDays(1)),20);
-        DateToDriverDTO d2d21 = new DateToDriverDTO(Time.localDateToString(LocalDate.now().plusDays(2)),20);
-        dao.insert(d2d1);
-        dao.insert(d2d2);
-        dao.insert(d2d21);
+//
+//        DriverDTO driver1 = new DriverDTO(10,"C", "non");
+//        dao.insert(driver1);
+//
+//        DriverDTO driver2 = new DriverDTO(20,"C", "non");
+//        dao.insert(driver2);
+//
+//
+//
+//
+//        DateToDriverDTO d2d1 = new DateToDriverDTO(Time.localDateToString(LocalDate.now().plusDays(1)),10);
+//        DateToDriverDTO d2d2 = new DateToDriverDTO(Time.localDateToString(LocalDate.now().plusDays(1)),20);
+//        DateToDriverDTO d2d21 = new DateToDriverDTO(Time.localDateToString(LocalDate.now().plusDays(2)),20);
+//        dao.insert(d2d1);
+//        dao.insert(d2d2);
+//        dao.insert(d2d21);
 
 
     }

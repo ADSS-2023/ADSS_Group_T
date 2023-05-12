@@ -368,19 +368,24 @@ public class DeliveryController {
         ArrayList<Driver> driversTomorrow = sortDriversByLicenseLevel(driverController.getDriversAssignedByDate(tomorrow));
         ArrayList<Delivery> deliveriesTomorrow = sortDeliveriesByTruckWeight(getDeliveriesByDate(tomorrow));
         ArrayList<Delivery> deliveriesWithoutDrivers = new ArrayList<>();
-        for (Delivery delivery : deliveriesTomorrow) {
-            Truck truck = logisticCenterController.getTruck(delivery.getTruckNumber());
-            for (Driver driver : driversTomorrow) {
-                if (driver.getLicenseLevel().ordinal()>= truck.getLicenseType().ordinal()) {
-                    if (driver.getCoolingLevel().ordinal() >= truck.getCoolingLevel().ordinal()) {
-                        delivery.setDriver(driver);
-                        break;
+        if(driversTomorrow != null) {
+            for (Delivery delivery : deliveriesTomorrow) {
+                Truck truck = logisticCenterController.getTruck(delivery.getTruckNumber());
+                for (Driver driver : driversTomorrow) {
+                    if (driver.getLicenseLevel().ordinal() >= truck.getLicenseType().ordinal()) {
+                        if (driver.getCoolingLevel().ordinal() >= truck.getCoolingLevel().ordinal()) {
+                            delivery.setDriver(driver);
+                            break;
+                        }
                     }
                 }
+                deliveriesWithoutDrivers.add(delivery);
             }
-            deliveriesWithoutDrivers.add(delivery);
+            return deliveriesWithoutDrivers;
         }
-        return deliveriesWithoutDrivers;
+        else
+            return deliveriesTomorrow;
+
     }
 
     /**
@@ -417,11 +422,13 @@ public class DeliveryController {
      * @return a list of the sorted drivers
      */
     public ArrayList<Driver> sortDriversByLicenseLevel(ArrayList<Driver> drivers) {
-        drivers.sort(new Comparator<Driver>() {
-            public int compare(Driver d1, Driver d2) {
-                return d1.compareTo(d2);
-            }
-        });
+        if(drivers != null) {
+            drivers.sort(new Comparator<Driver>() {
+                public int compare(Driver d1, Driver d2) {
+                    return d1.compareTo(d2);
+                }
+            });
+        }
         return drivers;
     }
 
@@ -699,7 +706,7 @@ public class DeliveryController {
         for (Delivery delivery : deliveriesTomorrow) {
             LinkedHashSet<Branch> branchesOfDeliveries = new LinkedHashSet<>(delivery.getUnHandledBranches().keySet());
             for (Branch branch : branchesOfDeliveries) {
-                if (branchWithoutStoreKeeper.contains(branch.getAddress())) {
+                if (branchWithoutStoreKeeper != null && branchWithoutStoreKeeper.contains(branch.getAddress())) {
                     reScheduleDelivery(delivery.getUnHandledSuppliers(), delivery.getUnHandledBranches());
                     removeDeliveryFromDate(tomorrow,getDelivery(delivery.getId()));
                     removeTruckFromDate(tomorrow,logisticCenterController.getTruck(delivery.getTruckNumber()));
