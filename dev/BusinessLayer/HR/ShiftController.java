@@ -49,7 +49,7 @@ public class ShiftController {
 
     public void SkipDay(LocalDate date) throws SQLException {
         // Retrieve all shifts for the given date and group them by branch
-        LinkedHashMap<String, HashMap<LocalDate, ArrayList<Shift>>> shiftsByDateInAllBranch = dalShiftService.findAllShifsByDate(date);
+        LinkedHashMap<String, HashMap<LocalDate, ArrayList<Shift>>> shiftsByDateInAllBranch = dalShiftService.findAllShifsByDateInAllBranches(date);
 
         // Initialize a notification string to collect information about illegal shifts
         String notification = "";
@@ -167,7 +167,7 @@ public class ShiftController {
     public ArrayList<String> getBranchesWithoutStoreKeeper(LocalDate date) throws Exception {
         ArrayList<String> branchesWithoutStoreKeeper = new ArrayList<>();
         // Iterate over all the shifts for the specified date and all the branches
-        LinkedHashMap<String, HashMap<LocalDate, ArrayList<Shift>>> shiftsByDateInAllBranch = dalShiftService.findAllShifsByDate(date);
+        LinkedHashMap<String, HashMap<LocalDate, ArrayList<Shift>>> shiftsByDateInAllBranch = dalShiftService.findAllShifsByDateInAllBranches(date);
         for (String branch : shiftsByDateInAllBranch.keySet()) {
             // Get the shifts for the specified date and branch
             ArrayList<Shift> shiftsForDateInBranch = shiftsByDateInAllBranch.get(branch).get(date);

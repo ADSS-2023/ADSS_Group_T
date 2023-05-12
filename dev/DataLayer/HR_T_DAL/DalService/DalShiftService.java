@@ -1,11 +1,14 @@
 package DataLayer.HR_T_DAL.DalService;
 
 import BusinessLayer.HR.Constraint;
+import BusinessLayer.HR.Driver;
 import BusinessLayer.HR.Shift;
 import BusinessLayer.HR.User.PositionType;
 import DataLayer.HR_T_DAL.DAOs.ShiftDAO;
+import DataLayer.HR_T_DAL.DTOs.DriverRequirementDTO;
 import DataLayer.HR_T_DAL.DTOs.ShiftDTO;
 import DataLayer.HR_T_DAL.DTOs.ShiftRequirementsDTO;
+import UtilSuper.Pair;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -69,19 +72,16 @@ public class DalShiftService {
 
     }
 
-    // TODO - israel
-    public LinkedHashMap < String, HashMap<LocalDate, ArrayList<Shift>>> findFindAllShiftsByDate(String branch, LocalDate localDate) throws SQLException {
-    return  null;
-    }
 
     // TODO - israel
     public LinkedHashMap<LocalDate, ArrayList<Shift>> findAllShifsByBranch(String branch) throws SQLException {
-        return  null;
+        LinkedHashMap<LocalDate, ArrayList<Shift>> shifsByBranch = new LinkedHashMap<>();
+        ArrayList<ShiftDTO> shifsByBranchDto = shiftDAO.findAll("Shift", date.toString(), DriverRequirementDTO.class );
     }
 
     // TODO - israel
-    public LinkedHashMap < String,  HashMap<LocalDate, ArrayList<Shift>>> findAllShifsByDate(LocalDate date) throws SQLException {
-        return  null;
+    public LinkedHashMap < String,  HashMap<LocalDate, ArrayList<Shift>>> findAllShifsByDateInAllBranches(LocalDate date) throws SQLException {
+        LinkedHashMap<Pair<Driver.LicenseType, Driver.CoolingLevel>, Integer> shifsByDateInAllBranches = new LinkedHashMap<>();
     }
 
 

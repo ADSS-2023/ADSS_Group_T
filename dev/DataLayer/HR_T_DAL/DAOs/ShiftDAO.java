@@ -33,7 +33,8 @@ import java.util.List;
                     ShiftDTO shift = new ShiftDTO(
                             resultSet.getString("shiftDate"),
                             resultSet.getString("shiftType"),
-                            resultSet.getInt("managerId")
+                            resultSet.getInt("managerId"),
+                            resultSet.getString("branch")
                     );
                     shift.setTableName("Shift");
                     result.add(shift);
