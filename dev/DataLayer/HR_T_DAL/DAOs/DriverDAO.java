@@ -9,8 +9,9 @@ import UtilSuper.Pair;
 import java.lang.reflect.Field;
 import java.sql.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.ArrayLis;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 public class DriverDAO extends DAO {
@@ -94,12 +95,17 @@ public class DriverDAO extends DAO {
 //        return results;
 //    }
 
-    public List<DriverDTO> getDriversByDate(String date) throws SQLException {
-        List<DriverDTO> drivers = new ArrayList<>();
-        String sql = "SELECT d.driverId, d.licenseType, d.coolingLevel FROM drivers d INNER JOIN DateToDriver dt ON d.driverId = dt.driverId WHERE dt.date = ?";
+
+
+
+
+
+    public LinkedList<DriverDTO> findAllSubmissionByDate(String date) throws SQLException {
+        LinkedList<DriverDTO> result = new LinkedList<DriverDTO>();
+        String sql = "SELECT d.driverId, d.licenseType, d.coolingLevel, dt.isAssigned FROM drivers d INNER JOIN DateToDriver dt ON d.driverId = dt.driverId WHERE dt.date = ? AND dt.isAssigned = 'true'";
 
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, date);
+            statement.setString(2, date);
             ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
@@ -109,11 +115,50 @@ public class DriverDAO extends DAO {
                         resultSet.getString("coolingLevel")
                 );
                 driver.setTableName("Driver");
-                drivers.add(driver);
+                result.add(driver);
             }
         }
-        return drivers;
+        return result;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//    public List<DriverDTO> getDriversByDate(String date) throws SQLException {
+//        List<DriverDTO> drivers = new ArrayList<>();
+//        String sql = "SELECT d.driverId, d.licenseType, d.coolingLevel FROM drivers d INNER JOIN DateToDriver dt ON d.driverId = dt.driverId WHERE dt.date = ?";
+//
+//        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+//            statement.setString(1, date);
+//            ResultSet resultSet = statement.executeQuery();
+//
+//            while (resultSet.next()) {
+//                DriverDTO driver = new DriverDTO(
+//                        resultSet.getInt("driverId"),
+//                        resultSet.getString("licenseType"),
+//                        resultSet.getString("coolingLevel")
+//                );
+//                driver.setTableName("Driver");
+//                drivers.add(driver);
+//            }
+//        }
+//        return drivers;
+//    }
 
 
 
