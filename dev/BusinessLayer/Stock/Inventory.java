@@ -195,6 +195,7 @@ public class Inventory {
         receive_order(20,2,6,"ile 2 shelf 3",Util.stringToDate("2023-10-25"),5.3);
         receive_order(155,4,20,"ile 5 shelf 10",Util.stringToDate("2023-05-20"),2.15);
         receive_order(345,5,15,"ile 6 shelf 2",Util.stringToDate("2023-10-20"),12.25);
+        inv_dal_controller.insert(new DiscountCounterDTO(0));
     }
 
     /**
