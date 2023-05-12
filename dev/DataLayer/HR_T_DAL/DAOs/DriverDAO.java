@@ -108,10 +108,10 @@ public class DriverDAO extends DAO {
 
     public LinkedList<DriverDTO> findAllSubmissionByDate(String date) throws SQLException {
         LinkedList<DriverDTO> result = new LinkedList<DriverDTO>();
-        String sql = "SELECT d.driverId, d.licenseType, d.coolingLevel, dt.isAssigned FROM drivers d INNER JOIN DateToDriver dt ON d.driverId = dt.driverId WHERE dt.date = ? AND dt.isAssigned = 'true'";
+        String sql = "SELECT d.driverId, d.licenseType, d.coolingLevel, dt.isAssigned FROM Driver d INNER JOIN DateToDriver dt ON d.driverId = dt.driverId WHERE dt.shiftDate = ? AND dt.isAssigned = 'true'";
 
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(2, date);
+            statement.setString(1, date);
             ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
