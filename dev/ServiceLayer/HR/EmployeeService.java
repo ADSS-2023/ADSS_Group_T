@@ -1,5 +1,6 @@
 package ServiceLayer.HR;
 
+import BusinessLayer.HR.Driver;
 import BusinessLayer.HR.DriverController;
 import BusinessLayer.HR.Employee;
 import BusinessLayer.HR.EmployeeController;
@@ -18,55 +19,39 @@ public class EmployeeService {
         this.employeeController = ec;
     }
 
-
-//    public String addRestrictionToEmployee( int id, String branchId, String date, String type) {
-//        Response res = new Response();
-//        try {
-//            Employee employee = employeeController.getEmployee(id);
-//            boolean bool = true;
-//            if (type.equals("e"))
-//                bool = false;
-//            employeeController.addRestriction(id, branchId,  date, bool);
-//        } catch (Exception ex) {
-//        }
-//        return null;
-//    }
-
-
-
-
-
-//    public String updateEmployeeDetails(int id, String employeeName, String bankAccount, String description, int salary, String joiningDay, String password) {
-//        Response res = new Response();
-//        try {
-//            employeeController.addNewEmployee(id, employeeName, bankAccount, description, salary, joiningDay, password, UserType.employee, licenseType, coolingLevel );
-//        } catch (Exception ex) {
-//        }
-//        return null;
-//    }
-
-//    public String updateDriverDetails(String bankAccount, String description, int salary,  String password, String  licenseType, int coolingLevel) {
-//        Response res = new Response();
-//        try {
-//            employeeController.addNewEmployee(id, employeeName, bankAccount, description, salary, joiningDay, password, UserType.employee, licenseType, coolingLevel );
-//        } catch (Exception ex) {
-//        }
-//        return null;
-//    }
-
-
+    public String addNewEmployee(int id, String employeeName, String bankAccount, String description, int salary, String joiningDay, String password) {
+      Response res = new Response();
+       try {
+           employeeController.addNewEmployee(id, employeeName, bankAccount, description, salary, Time.stringToLocalDate(joiningDay), password, UserType.employee );
+           return "employee added";
+       }
+       catch (Exception ex) {
+           return ex.getMessage();
+      }
+   }
 
     public String addQualification(int id, String quali) {
         Response res = new Response();
         try {
             employeeController.addQualification(id,quali);
+            return "Qualification added";
         }
         catch (Exception ex) {
+            return ex.getMessage();
         }
-        return null;
-
     }
 
+    public String addNewDriver(int id, String employeeName, String bankAccount, String description, int salary, String joiningDay, String password, String  licenseType, int coolingLevel) {
+        Response res = new Response();
+        try {
+
+            driverController.addDriver(id, employeeName, bankAccount, description, salary, joiningDay, password, UserType.employee, licenseType, coolingLevel);
+            return "driver added";
+        }
+        catch (Exception ex) {
+                return ex.getMessage();
+        }
+    }
 
 //    public String getListOfSubmittion(int id) {
 //        Response res = new Response();

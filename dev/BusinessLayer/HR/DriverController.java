@@ -237,7 +237,6 @@ public Driver lazyLoadDriver (int id) throws SQLException {
      * @param id           - the id of the driver
      * @param employeeName - the name of the driver
      * @param bankAccount  - the bank account of the driver
-     * @param qualifiedPositions - a list of positions the driver is qualified for
      * @param description  - a description of the driver
      * @param salary       - the salary of the driver
      * @param joiningDay   - the joining date of the driver
@@ -247,14 +246,14 @@ public Driver lazyLoadDriver (int id) throws SQLException {
      * @param coolingLevel - the cooling level to which the driver is qualified
      * @return true if the driver added successfully , and false otherwise
      */
-    public boolean addDriver(int id, String employeeName, String bankAccount, List<PositionType> qualifiedPositions,
+    public boolean addDriver(int id, String employeeName, String bankAccount,
                              String description, int salary, String joiningDay, String password, UserType userType,
                              String licenseType, int coolingLevel) throws SQLException {
         Driver driver = lazyLoadDriver(id);
         if (driver != null)
             throw new IllegalArgumentException("Driver already exists.");
         else {
-            driver = new Driver(id, employeeName, bankAccount, qualifiedPositions, description, salary,
+            driver = new Driver(id, employeeName, bankAccount,description, salary,
                     Time.stringToLocalDate(joiningDay), password, userType, getByString(licenseType), get(coolingLevel));
             dalDriverService.addDriver(driver);
             this.drivers.put(id, driver);
