@@ -122,11 +122,9 @@ public class OrderController {
                 //the next line produces an error
                 DayOfWeek orderDay = futureDay.getDayOfWeek();
                 // Calculate the difference between the orderDay and the last day of the week (Sunday)
-                int diff = DayOfWeek.SUNDAY.getValue() - orderDay.getValue();
-                // Get the last day of the week
-                DayOfWeek lastDay = orderDay.plus(diff);
+
                 OrderBusiness order = new OrderBusiness(orderCounter++, Util_Supplier_Stock.getCurrDay(), supplier.getAddress(),
-                        "SuperLi", supplier.getSupplierNum(), contactName, contactNum, products, daysToSupplied, false, -1, lastDay.name(), orderDalController);
+                        "SuperLi", supplier.getSupplierNum(), contactName, contactNum, products, daysToSupplied, false, -1, orderDay.name(), orderDalController);
                 for(OrderProduct product : order.getProducts())
                     product.setOrderProductDTO(new OrderProductDTO(order.getOrderNum(), product.getManufacturer(), product.getExpiryDate().toString(), product.getProductNumber(), product.getQuantity(), product.getInitialPrice(), product.getDiscount(), product.getFinalPrice(), product.getProductName()));
                 dayToConstantOrders.get(orderDay).add(order);
@@ -154,7 +152,7 @@ public class OrderController {
                 orders.add(order);
             else if (orderDTO.getDaysToDeliver() != -1) //if the order is special order
                 ordersNotSupplied.add(order);
-            else { // if the orderis a regular order
+            else { // if the order is a regular order
                 DayOfWeek dayOfWeek = DayOfWeek.valueOf(orderDTO.getConstantDay().toUpperCase());
                 dayToConstantOrders.get(dayOfWeek).add(order);
             }
