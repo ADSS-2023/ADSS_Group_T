@@ -37,7 +37,6 @@ public class ShiftTest {
         cashier3.addQualification(PositionType.cashier.name());
         storeKeeper1.addQualification(PositionType.storekeeper.name());
         storeKeeper2.addQualification(PositionType.storekeeper.name());
-
     }
 
 
@@ -52,7 +51,6 @@ public class ShiftTest {
         expectedRequirements.put("cashier", 2);
         assertEquals(expectedRequirements, shift.getEmployeeRequirements());
     }
-
 
     @Test
     public void testAddEmployeeRequirements2() throws SQLException {
