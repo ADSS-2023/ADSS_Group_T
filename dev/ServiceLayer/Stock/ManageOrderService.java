@@ -157,4 +157,23 @@ public class ManageOrderService {
     public OrderController getStockOrderController() {
         return orderController;
     }
+
+    public String show_new_items() {
+        try {
+            return orderController.show_new_items();
+        }
+        catch (Exception e){
+            return e.getMessage();
+        }
+    }
+    public String loadData(){
+        try {
+            orderController.loadData();
+            return "Action succeeded";
+        }
+        catch (Exception e){
+           return e.getMessage();
+        }
+
+    }
 }

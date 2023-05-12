@@ -47,15 +47,24 @@ public class UI_General {
         Scanner scanner = new Scanner(System.in);
         System.out.println("\033[1mWelcome to Superly inventory and supplier system\033[0m\n\u001B[32m" +
                 "Would you like to load data or continue on an empty system?\n" +
-                "1.Load data\n2.Empty system\u001B[0m");
+                "1.Load data\n2.Empty system\n3.Set data to the system\u001B[0m");
         int action = scanner.nextInt();
         scanner.nextLine();
         if(action==1) {
+            //read from DB
             stockUI.loadData();
-            supplierManager.setUpData();
+            supplierManager.loadData();
         }
         else if(action == 2){
+            //delete all the DB
+            supplierManager.deleteAll();
             stockUI.deleteData();
+        }
+        else if(action == 3){
+            supplierManager.deleteAll();
+            stockUI.deleteData();
+            stockUI.setUpData();
+            supplierManager.setUpData();
         }
         run(stockUI,supplierManager,sf);
     }

@@ -3,12 +3,16 @@ package ServiceLayer.Supplier;
 import BusinessLayer.Supplier.OrderBusiness;
 import BusinessLayer.Supplier.OrderController;
 import BusinessLayer.Supplier.SupplierController;
+import BusinessLayer.Supplier.SupplierProductBusiness;
+import BusinessLayer.Supplier.Suppliers.SupplierBusiness;
 import BusinessLayer.Supplier_Stock.ItemToOrder;
 
 import java.rmi.server.ExportException;
 import java.time.DayOfWeek;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class OrderService {
     private OrderController oc;
@@ -119,6 +123,26 @@ public class OrderService {
         return "Deleted Successfully";
     }
 
+    public List<ItemToOrder> getAllProducts() {
+        List<ItemToOrder> items = new LinkedList<>();
+        ConcurrentHashMap<Integer, SupplierProductBusiness> products = new ConcurrentHashMap<>();
+        try {
+            ConcurrentHashMap<Integer, SupplierBusiness> suppliers=sc.getSuppliers();
+            for (Map.Entry<Integer, SupplierBusiness> entry : suppliers.entrySet()) {
+                products = entry.getValue().getProducts();
+                for (Map.Entry<Integer, SupplierProductBusiness> entry2 : products.entrySet())
+                    items.add(new ItemToOrder(entry2.getValue().getName(),
+                            entry2.getValue().getManufacturer(),entry2.getValue().getMaxAmount(),
+                            null,-1,entry2.getValue().getPrice()));
+            }
+        }
+        catch (Exception e){
+            return null;
+        }
+        finally {
+            return items;
+        }
+    }
 
 
 }
