@@ -139,6 +139,7 @@ public class ShiftController {
 
 
     public void addDirverRequirement(LocalDate requiredDate, Driver.LicenseType licenseType, Driver.CoolingLevel coolingLevel) throws SQLException {
+
         driverController.addDriverRequirement(requiredDate,licenseType,coolingLevel);
     }
 
