@@ -235,11 +235,12 @@ public class DAO {
         return results;
     }
 
-    public <T extends DTO> ArrayList<T> findAll(String tableName, String where, Class<T> dtoClass) throws SQLException {
+    public <T extends DTO> ArrayList<T> findAll(String tableName, String fieldName, Object value, Class<T> dtoClass) throws SQLException {
         ArrayList<T> results = new ArrayList<>();
-        String sql = "SELECT * FROM " + tableName + " WHERE " + where;
+        String sql = "SELECT * FROM " + tableName + " WHERE " + fieldName + " = ?";
 
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setObject(1, value);
             ResultSet resultSet = statement.executeQuery();
             ResultSetMetaData metaData = resultSet.getMetaData();
             int columnCount = metaData.getColumnCount();
@@ -250,10 +251,10 @@ public class DAO {
 
                 for (int i = 1; i <= columnCount; i++) {
                     String columnName = metaData.getColumnName(i);
-                    Object value = resultSet.getObject(i);
+                    Object columnValue = resultSet.getObject(i);
                     Field field = dto.getClass().getDeclaredField(columnName);
                     field.setAccessible(true);
-                    field.set(dto, value);
+                    field.set(dto, columnValue);
                 }
 
                 results.add(dto);
@@ -265,7 +266,8 @@ public class DAO {
         return results;
     }
 
-    public <T extends DTO> ArrayList<T> findAll(String tableName, Class<T> dtoClass, Map<String, Object> whereConditions) throws SQLException {
+
+    public <T extends DTO> ArrayList<T> findAll(String tableName,  Map<String, Object> whereConditions, Class<T> dtoClass) throws SQLException {
         ArrayList<T> results = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT * FROM " + tableName);
 
@@ -309,6 +311,7 @@ public class DAO {
 
         return results;
     }
+
 
     public void deleteTableDataWithDTO(DTO dto) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement("DELETE FROM " + dto.getTableName())) {

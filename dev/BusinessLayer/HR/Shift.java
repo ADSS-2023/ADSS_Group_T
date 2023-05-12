@@ -24,13 +24,14 @@ public class Shift {
 
 
 
-    public Shift(String branch, LocalDate date, boolean shiftType) {
+    public Shift(String branch, LocalDate date, boolean shiftType, LinkedHashMap <String, Integer>  shiftRequirements,
+    LinkedHashMap<String, LinkedHashMap<Employee, Boolean>>  submittedPositionByEmployees, int shiftManagerId ) {
         this.branch = branch;
         this.date = date;
         this.shiftType = shiftType;
-        employeeRequirements = new LinkedHashMap<>();
-        submittedPositionByEmployees = new LinkedHashMap<>();
-        this.shiftManagerId = -1;
+        this.employeeRequirements = shiftRequirements;
+        this.submittedPositionByEmployees = submittedPositionByEmployees;
+        this.shiftManagerId = shiftManagerId;
     }
 
 

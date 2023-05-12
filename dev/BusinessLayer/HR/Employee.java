@@ -31,6 +31,8 @@ public class Employee extends User {
         description = null;
     }
 
+
+
     public Employee(UserDTO userDTO) {
         super(userDTO);
         this.qualifiedPositions = new ArrayList<>();

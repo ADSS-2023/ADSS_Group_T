@@ -49,7 +49,7 @@ public class ShiftController {
 
     public void SkipDay(LocalDate date) throws SQLException {
         // Retrieve all shifts for the given date and group them by branch
-        LinkedHashMap<String, HashMap<LocalDate, ArrayList<Shift>>> shiftsByDateInAllBranch = dalShiftService.findAllShifsByDate(date);
+        LinkedHashMap<String, HashMap<LocalDate, ArrayList<Shift>>> shiftsByDateInAllBranch = dalShiftService.findAllShiftsByDateInAllBranches(date);
 
         // Initialize a notification string to collect information about illegal shifts
         String notification = "";
@@ -71,7 +71,7 @@ public class ShiftController {
 
 
     public LinkedHashMap<LocalDate, ArrayList<Shift>> lazyLoadFindShifsByBranch(String branch) throws SQLException {
-        LinkedHashMap<LocalDate, ArrayList<Shift>> branchShifts = dalShiftService.findAllShifsByBranch(branch);
+        LinkedHashMap<LocalDate, ArrayList<Shift>> branchShifts = dalShiftService.findAllShiftsByBranch(branch);
         shifts.put(branch, branchShifts);
         return branchShifts;
     }
@@ -151,32 +151,42 @@ public class ShiftController {
         HashMap<LocalDate, ArrayList<Shift>> branchShifts = lazyLoadFindShifsByBranch(branch);
         if (branchShifts == null)
             throw new NoSuchFieldException("there is no such branch exist");
-        ArrayList<Shift> branchShiftsByDate =  branchShifts.get(requiredDate);
-        String s;
-        for (Shift shift : branchShiftsByDate){
-            LinkedHashMap <String, Integer> storeKeeperRequirment = new LinkedHashMap<>();
-            storeKeeperRequirment.put(PositionType.storekeeper.name(), 1);
-            shift.addEmployeeRequirements(storeKeeperRequirment);
-            if(shift.getShiftType()){s = "morning";}
-            else s = "evening";
-            dalShiftService.addRequierement(branch,requiredDate.toString(),s ,PositionType.storekeeper.toString(),1);
+        if (branchShifts != null){
+            ArrayList<Shift> branchShiftsByDate =  branchShifts.get(requiredDate);
+            String s;
+            if (branchShiftsByDate != null){
+                for (Shift shift : branchShiftsByDate){
+                    LinkedHashMap <String, Integer> storeKeeperRequirment = new LinkedHashMap<>();
+                    storeKeeperRequirment.put(PositionType.storekeeper.name(), 1);
+                    shift.addEmployeeRequirements(storeKeeperRequirment);
+                    if(shift.getShiftType()){s = "morning";}
+                    else s = "evening";
+                    dalShiftService.addRequierement(branch,requiredDate.toString(),s ,PositionType.storekeeper.toString(),1);
+                }
+            }
+
         }
+
+
 
     }
 
     public ArrayList<String> getBranchesWithoutStoreKeeper(LocalDate date) throws Exception {
         ArrayList<String> branchesWithoutStoreKeeper = new ArrayList<>();
         // Iterate over all the shifts for the specified date and all the branches
-        LinkedHashMap<String, HashMap<LocalDate, ArrayList<Shift>>> shiftsByDateInAllBranch = dalShiftService.findAllShifsByDate(date);
-        for (String branch : shiftsByDateInAllBranch.keySet()) {
-            // Get the shifts for the specified date and branch
-            ArrayList<Shift> shiftsForDateInBranch = shiftsByDateInAllBranch.get(branch).get(date);
-            // Check if there is a storekeeper assigned to any of the shifts for the specified date and branch
-            for (Shift shift : shiftsForDateInBranch) {
-                if (!shift.isThereAnyStoreKeeperReuirement())
-                    branchesWithoutStoreKeeper.add(branch);
+        LinkedHashMap<String, HashMap<LocalDate, ArrayList<Shift>>> shiftsByDateInAllBranch = dalShiftService.findAllShiftsByDateInAllBranches(date);
+        if (shiftsByDateInAllBranch != null){
+            for (String branch : shiftsByDateInAllBranch.keySet()) {
+                // Get the shifts for the specified date and branch
+                ArrayList<Shift> shiftsForDateInBranch = shiftsByDateInAllBranch.get(branch).get(date);
+                // Check if there is a storekeeper assigned to any of the shifts for the specified date and branch
+                for (Shift shift : shiftsForDateInBranch) {
+                    if (!shift.isThereAnyStoreKeeperReuirement())
+                        branchesWithoutStoreKeeper.add(branch);
+                }
             }
         }
+
         return branchesWithoutStoreKeeper;
     }
 
