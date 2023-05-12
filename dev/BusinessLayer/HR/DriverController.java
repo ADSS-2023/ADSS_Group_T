@@ -25,6 +25,8 @@ public class DriverController {
     public DriverController(DalDriverService dalDriverService) {
         drivers = new LinkedHashMap<Integer, Driver>();
         this.dalDriverService = dalDriverService;
+        this.driversRequirements = new LinkedHashMap<>();
+        this.date2driversSubmission = new LinkedHashMap<>();
     }
 
 public Driver lazyLoadDriver (int id) throws SQLException {
@@ -130,7 +132,7 @@ public Driver lazyLoadDriver (int id) throws SQLException {
              if (amount == 1)
                  dalDriverService.deleterequieremnt(date, requirement.getFirst().name(), requirement.getSecond().name());
              else
-                 dalDriverService.updateAmountOfRequierement(date, requirement.getFirst().name(), requirement.getSecond().name(), amount-1);
+                 dalDriverService.updateAmountOfRequirement(date, requirement.getFirst().name(), requirement.getSecond().name(), amount ,amount-1);
             return true;
         } else {
             return false;
@@ -310,7 +312,7 @@ public Driver lazyLoadDriver (int id) throws SQLException {
         if (requirements.containsKey(requirement)) {
             amount = requirements.get(requirement);
             requirements.put(requirement, amount + 1);
-            dalDriverService.updateAmountOfRequierement(requiredDate, licenseType.name(), coolingLevel.name(), amount);
+            dalDriverService.updateAmountOfRequirement(requiredDate, licenseType.name(), coolingLevel.name(), amount, amount+1);
         } else {
             // Requirement doesn't exist, add a new entry
             amount = 1;
