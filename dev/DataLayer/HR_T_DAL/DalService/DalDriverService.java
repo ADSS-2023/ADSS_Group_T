@@ -84,7 +84,7 @@ public class DalDriverService {
 
     public LinkedHashMap<Pair<Driver.LicenseType, Driver.CoolingLevel>, Integer> findAllRequirementsByDate(LocalDate date) throws SQLException {
         LinkedHashMap<Pair<Driver.LicenseType, Driver.CoolingLevel>, Integer> requirements = new LinkedHashMap<>();
-        ArrayList<DriverRequirementDTO> driverRequirements = driverDAO.findAll("DriverRequirements", date.toString(), DriverRequirementDTO.class );
+        ArrayList<DriverRequirementDTO> driverRequirements = driverDAO.findAll("DriverRequirements", "date",  date.toString(), DriverRequirementDTO.class );
 
         for (DriverRequirementDTO requirement : driverRequirements) {
             Driver.LicenseType licenseType = Driver.LicenseType.valueOf(requirement.getLicenseType());

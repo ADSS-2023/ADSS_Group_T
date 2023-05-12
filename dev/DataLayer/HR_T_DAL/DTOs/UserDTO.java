@@ -39,6 +39,11 @@ public class UserDTO extends DTO {
         this.userType = user.getUserType().toString();
         this.userName = user.getEmployeeName();
         this.password = user.getPassword();
+        this.id =user.getId();
+        this.bankAccount = user.getBankAccount();
+        this.joiningDay = user.getPassword();
+        this.salary = user.getSalary();
+
     }
     public UserDTO(Employee employee) {
         super("User");
