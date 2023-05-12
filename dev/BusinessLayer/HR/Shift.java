@@ -68,7 +68,8 @@ public class Shift {
             }
             else{
                 employeeRequirements.put(pos, amount);
-                dalShiftService.addRequierement(branch, date, shiftType, pos, amount);
+                String sht = shiftType ? "true"  : "false" ;
+                dalShiftService.addRequierement(branch, date.toString(),  sht , pos, amount);
             }
         }
     }
