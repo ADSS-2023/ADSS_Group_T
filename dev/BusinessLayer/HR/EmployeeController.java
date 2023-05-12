@@ -7,11 +7,12 @@ import DataLayer.HR_T_DAL.DalService.DalUserService;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.NoSuchElementException;
 
 
 public class EmployeeController {
-    private HashMap<Integer,Employee> employeesMapper;
+    private LinkedHashMap<Integer,Employee> employeesMapper;
     public ShiftController shiftController;
     public DalEmployeeService dalEmployeeService;
     public DalUserService dalUserService;
@@ -19,7 +20,7 @@ public class EmployeeController {
 
 
     public EmployeeController(DalEmployeeService dalEmployeeService , DalUserService dalUserService){
-        employeesMapper = new HashMap<Integer,Employee>();
+        employeesMapper = new LinkedHashMap<Integer,Employee>();
         this.dalEmployeeService = dalEmployeeService;
         this.dalUserService = dalUserService;
     }
@@ -63,7 +64,7 @@ public class EmployeeController {
         dalEmployeeService.addQualification(id,position);
     }
 
-    public HashMap<Integer, Employee> getEmployeesMapper(){
+    public LinkedHashMap<Integer, Employee> getEmployeesMapper(){
         return employeesMapper;
     }
 

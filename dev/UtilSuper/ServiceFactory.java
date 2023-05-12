@@ -83,12 +83,12 @@ public class ServiceFactory {
         dalDriverService = new DalDriverService(connection,dalUserService);
         dalEmployeeService = new DalEmployeeService(connection,dalUserService);
 
-
+        employeeController = new EmployeeController(dalEmployeeService,dalUserService);
         driverController = new DriverController(dalDriverService);
-        shiftController = new ShiftController(driverController,dalEmployeeService,dalShiftService);
+        shiftController = new ShiftController(driverController,dalEmployeeService,dalShiftService,employeeController.getEmployeesMapper());
         shiftService = new ShiftService(shiftController);
         //TODO delete because error!:
-        employeeController = new EmployeeController(dalEmployeeService,dalUserService);
+
 
         employeeService = new EmployeeService(employeeController,driverController);
 
