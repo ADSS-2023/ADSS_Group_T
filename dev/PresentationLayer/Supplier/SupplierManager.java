@@ -41,16 +41,16 @@ public class SupplierManager {
                 true, PaymentTerms.SHOTEF_PLUS_30);
 
 
-        serviceFactory.supplierService.addProduct(1, 12, "Bamba",
+        serviceFactory.supplierService.addProduct(1, 11, "Bamba",
                 "Osem", 6, 1000, Util_Supplier_Stock.getCurrDay().plusMonths(1));
 
-        serviceFactory.supplierService.addProduct(1, 13, "Click",
+        serviceFactory.supplierService.addProduct(1, 12, "Click",
                 "Elite", 8, 1000, Util_Supplier_Stock.getCurrDay().plusWeeks(2));
 
-        serviceFactory.supplierService.addProduct(1, 14, "yellow cheese",
+        serviceFactory.supplierService.addProduct(1, 13, "yellow cheese",
                 "Emeck", 6, 1000, Util_Supplier_Stock.getCurrDay().plusMonths(1));
 
-        serviceFactory.supplierService.addProduct(1, 15, "1.5% milk",
+        serviceFactory.supplierService.addProduct(1, 14, "1.5% milk",
                 "IDO LTD", 6, 1000, Util_Supplier_Stock.getCurrDay().plusMonths(1));
 
         serviceFactory.supplierService.addProduct(2, 21, "Ketchup",
@@ -73,12 +73,12 @@ public class SupplierManager {
         serviceFactory.supplierService.addProductDiscount(1, 12, 200, 100, false);
 
         serviceFactory.supplierService.addProductDiscount(1, 13, 50, 10, true);
-        serviceFactory.supplierService.addProductDiscount(1, 14, 100, 50, false);
+        serviceFactory.supplierService.addProductDiscount(2, 21, 100, 50, false);
 
-        serviceFactory.supplierService.addProductDiscount(2, 21, 20, 5, true);
-        serviceFactory.supplierService.addProductDiscount(2, 22, 60, 50, false);
+        serviceFactory.supplierService.addProductDiscount(2, 22, 20, 5, true);
+        serviceFactory.supplierService.addProductDiscount(2, 23, 60, 50, false);
 
-        serviceFactory.supplierService.addProductDiscount(2, 23, 50, 10, true);
+        serviceFactory.supplierService.addProductDiscount(2, 24, 50, 10, true);
         serviceFactory.supplierService.addProductDiscount(3, 31, 100, 50, false);
 
         serviceFactory.supplierService.addSupplierDiscount(1,Discounts.DISCOUNT_BY_TOTAL_QUANTITY,50,10,true);

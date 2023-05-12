@@ -12,15 +12,24 @@ public class Util_Supplier_Stock {
     private InventoryDalController inventoryDalController;
     public Util_Supplier_Stock(InventoryDalController inventoryDalController) throws SQLException {
         this.inventoryDalController = inventoryDalController;
-        currDay = Util.stringToDate(inventoryDalController.find("currDate","name", "inventory_constants",CurrDateDTO.class).getDate());
+       // currDay = Util.stringToDate(inventoryDalController.find("currDate","name", "inventory_constants",CurrDateDTO.class).getDate());
     }
     public static LocalDate getCurrDay(){
         return currDay;
     }
+
     public void nextDay() throws SQLException {
         inventoryDalController.update(new CurrDateDTO(currDay.toString()),new CurrDateDTO(currDay.plusDays(1).toString()));
         currDay = currDay.plusDays(1);
 
+    }
+    public void loadDate() throws SQLException{
+        currDay = Util.stringToDate(inventoryDalController.find("currDate","name", "inventory_constants",CurrDateDTO.class).getDate());
+    }
+    public void setUpDate() throws SQLException{
+        CurrDateDTO setDate = new CurrDateDTO("2023-09-17");
+       inventoryDalController.insert(setDate);
+        currDay=Util.stringToDate("2023-09-17");
     }
 }
 
