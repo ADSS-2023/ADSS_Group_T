@@ -33,14 +33,18 @@ public class ShiftController {
     public ShiftController(){
         shifts = new LinkedHashMap<>();
     }
-    public ShiftController(DriverController driverController, DalEmployeeService dalEmployeeService){
+    public ShiftController(DriverController driverController, DalEmployeeService dalEmployeeService,DalShiftService dalShiftService){
         shifts = new LinkedHashMap<>();
+        this.driverController     = driverController;
+        this.dalEmployeeService = dalEmployeeService;
+        this.dalShiftService = dalShiftService;
     }
 
-    public void init(LinkedHashMap<Integer,Employee> employeesMapper, DriverController driverController, DalEmployeeService dalEmployeeService){
+    public void init(LinkedHashMap<Integer,Employee> employeesMapper, DriverController driverController, DalEmployeeService dalEmployeeService,DalShiftService dalShiftService){
        this.employeesMapper = employeesMapper;
        this.driverController     = driverController;
        this.dalEmployeeService = dalEmployeeService;
+       this.dalShiftService = dalShiftService;
     }
 
     public void SkipDay(LocalDate date) throws SQLException {
