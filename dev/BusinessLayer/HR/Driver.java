@@ -14,7 +14,7 @@ public class Driver extends User {
     //    private Map<LocalDate, boolean > submittedShifts; // TODO- impliment:  submit shift, assignShift and assignAll
 
 
-    public Driver(int id, String employeeName, String bankAccount, List<PositionType> qualifiedPositions, String description, int salary, LocalDate joiningDay, String password, UserType userType, LicenseType licenseType, CoolingLevel coolingLevel) {
+    public Driver(int id, String employeeName, String bankAccount, String description, int salary, LocalDate joiningDay, String password, UserType userType, LicenseType licenseType, CoolingLevel coolingLevel) {
         super(id, employeeName, bankAccount, description, salary, joiningDay, password, userType);
         this.licenseType = licenseType;
         this.coolingLevel = coolingLevel;

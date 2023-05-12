@@ -31,56 +31,66 @@ public class HRManagerPresentation {
                                 " \n 3.add employee qualification " +
                                 " \n 4.show shift status" +
                                 " \n 5.add new driver" +
-                                " \n 6.update employee" +
-                                " \n 7.update driver" +
-                                " \n 8.manage assign Employee for shift" +
-                                " \n 9.submit shift for employee" +
-                                " \n 10.submit shift for driver" +
-                                " \n 11.add shift requirements" +
-                                " \n 12.exit ");
+                                " \n 6.manage assign Employee for shift" +
+                                " \n 7.submit shift for employee" +
+                                " \n 8.submit shift for driver" +
+                                " \n 9.add shift requirements" +
+                                " \n 10.exit ");
             int choice = scanner.nextInt();
             scanner.nextLine(); // Consume the newline character
             switch (choice) {
                 case 1 -> {addNewEmployee();}
                 case 2 -> {notification();}
                 case 3 -> {addQualification();}
-                case 4 -> {ShowShiftStatus1();}
+                case 4 -> {ShowShiftStatus();}
                 case 5 -> {addNewDriver();}
-                case 6 -> {updateEmployeeDetails1();}
-                case 7 -> {updateDriverDetails1();}
-                case 8 -> {}
-                case 9 -> {assignEmployeeForShift1();}
-                case 10 -> {assignEmployeeForShift1();}
-                case 11 -> {addShiftRequirements1();}
-                case 12 -> {return;}//exit
+                case 6 -> {}
+                case 7 -> {assignEmployeeForShift();}
+                case 8 -> {assignEmployeeForShift();}
+                case 9 -> {addShiftRequirements();}
+                case 10 -> {return;}//exit
                 default -> System.out.println("Invalid choice. Please try again.");
             }
         }
     }
 
     private void notification() {
+
         shiftService.getNotification();
     }
 
-    private void assignEmployeeForShift1() {
+    private void assignEmployeeForShift() {
 
     }
 
-    private void addShiftRequirements1() {
+    private void addShiftRequirements() {
+        System.out.println("Add shift requirements");
+        System.out.println("Please enter the employee details:");
+        System.out.println("Please enter the employee ID:");
+
+//
+//        System.out.println("add shift requirements - choose shift date");
+//        String ans_date_6 = input.next();
+//        System.out.println("add shift requirements - enter morning(m)/evening(e)");
+//        String ans_mORe_6 = input.next();
+//        System.out.println("add shift requirements - shift :"+ans_date_6+ " , " + ans_mORe_6);
+//        HashMap<String,Integer> howMany = new HashMap<>();
+//        for (PositionType p : PositionType.values()) {
+//            System.out.println("how many "+ p.name() + " for that shift ?" );
+//            int ans_quantity = input.nextInt();
+//            howMany.put(p.name(),ans_quantity);
+//        }
+//        System.out.println(shiftService.addShiftRequirements(howMany,ans_date_6,ans_mORe_6));
+
+
     }
 
-    private void updateDriverDetails1() {
-    }
-
-    private void updateEmployeeDetails1() {
-
-    }
-
-    private void ShowShiftStatus1() {
+    private void ShowShiftStatus() {
     }
 
     private void addQualification() {
         Scanner scanner = new Scanner(System.in);
+        System.out.println("Add qualification to employee");
         System.out.println("Please enter the employee details:");
         System.out.println("Please enter the employee ID:");
         int employeeId = scanner.nextInt();
@@ -88,7 +98,7 @@ public class HRManagerPresentation {
         System.out.println("Please enter the employee new Qualification from those options:" +
                 "\n"+"cashier, storekeeper, security, cleaning, orderly, general_worker, shiftManager");
         String quali = scanner.nextLine();
-        employeeService.addQualification(employeeId,quali);
+        System.out.println(employeeService.addQualification(employeeId,quali));
     }
 
     private void addNewEmployee() {
@@ -110,7 +120,7 @@ public class HRManagerPresentation {
         System.out.println("Please enter the employee salary:");
         int salary = scanner.nextInt();
 
-        //employeeService.addNewEmployee(employeeId,employeeName,employeebank,description,salary, Time.stringToLocalDate(joiningDay),password);
+        System.out.println(employeeService.addNewEmployee(employeeId,employeeName,employeebank,description,salary, joiningDay ,password));
     }
 
     // option 3
@@ -141,6 +151,6 @@ public class HRManagerPresentation {
         scanner.nextLine();
         System.out.println("Please enter the driver license type : C1 , C , E " );
         String licenseType = scanner.nextLine();
-        //employeeService.addNewDriver(id,Name,bank,description,salary,joiningDay,password,licenseType,coolinglevel);
+        employeeService.addNewDriver(id,Name,bank,description,salary,joiningDay,password,licenseType,coolinglevel);
     }
 }
