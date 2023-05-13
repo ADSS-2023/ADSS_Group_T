@@ -51,7 +51,7 @@ public class Data_init {
     public static void initSites(DAO dao) throws SQLException {
 
         dao.insert(new ShiftDTO(LocalDate.now().toString(),  "m", -1, "b1"));
-        dao.insert(new ShiftRequirementsDTO(LocalDate.now().toString(),  "m", PositionType.cashier.name(), 5));
+        dao.insert(new ShiftRequirementsDTO("super",LocalDate.now().toString(),  "m", PositionType.cashier.name(), 5));
         dao.insert(new UserDTO("User", "100", "100", "employee", 100, "123456", "2021-05-14", "good worker", 10000));
         dao.insert(new ShiftToEmployeeDTO(LocalDate.now().toString(), "m", 100, PositionType.cashier.name(), "false", "b1") );
         dao.insert(new SiteDTO("b1", "000000001", "Contact B1", 1, 30, Location.getShippingArea(1,30),"branch"));

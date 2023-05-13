@@ -1,10 +1,12 @@
 package PresentationLayer;
 
+import BusinessLayer.HR.User.PositionType;
 import ServiceLayer.HR.EmployeeService;
 import ServiceLayer.HR.ShiftService;
 import UtilSuper.Time;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Scanner;
 import UtilSuper.Response;
 public class HRManagerPresentation {
@@ -12,12 +14,15 @@ public class HRManagerPresentation {
     private ShiftService shiftService;
     private EmployeeService employeeService;
 
+    private String branch;
+
     public HRManagerPresentation(ShiftService shiftService, EmployeeService employeeService){
         this.shiftService = shiftService;
         this.employeeService = employeeService;
     }
 
-    public void start() {
+    public void start(String branch) {
+        this.branch = branch;
         mainWindow();
     }
     private void mainWindow() {
@@ -44,9 +49,9 @@ public class HRManagerPresentation {
                 case 3 -> {addQualification();}
                 case 4 -> {ShowShiftStatus();}
                 case 5 -> {addNewDriver();}
-                case 6 -> {}
-                case 7 -> {assignEmployeeForShift();}
-                case 8 -> {assignEmployeeForShift();}
+                case 6 -> {manageAssignEmployeeForShift();}
+                case 7 -> {}
+                case 8 -> {}
                 case 9 -> {addShiftRequirements();}
                 case 10 -> {return;}//exit
                 default -> System.out.println("Invalid choice. Please try again.");
@@ -55,37 +60,66 @@ public class HRManagerPresentation {
     }
 
     private void notification() {
-
+        System.out.println("notification : ");
         shiftService.getNotification();
     }
 
-    private void assignEmployeeForShift() {
+    private void manageAssignEmployeeForShift() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("assign employee for shift : ");
+        System.out.println("Please enter the shift details:");
+        System.out.println("assign employee for shift - choose shift date");
+        String date = scanner.nextLine();
+        System.out.println("assign employee for shift - enter morning(m)/evening(e)");
+        String shiftType = scanner.nextLine();
+        shiftService.ShowShiftStatus(branch,date,shiftType);
+        System.out.println("assign employee for shift - would you like to approve all? y/n");
+        String ansForApproveAll = scanner.nextLine();
+        if(ansForApproveAll.equals("y")){
+            shiftService.assignAll(branch,date,shiftType);
+        }
 
+        else {
+            while(true){
+                System.out.println("assign employee for shift - Please enter the employee ID:");
+                int employeeId = scanner.nextInt();
+                System.out.println("assign employee for shift - choose position foe employee : "+employeeId);
+                String position = scanner.nextLine();
+                shiftService.assignEmployeeForShift(branch,employeeId,date,shiftType,position);
+                System.out.println("assign employee for shift - would you like to assign more? y/n");
+                String ansForContinue = scanner.nextLine();
+                if (ansForContinue.equals("n")){return;}
+            }
+        }
     }
 
     private void addShiftRequirements() {
+        Scanner scanner = new Scanner(System.in);
         System.out.println("Add shift requirements");
-        System.out.println("Please enter the employee details:");
-        System.out.println("Please enter the employee ID:");
-
-//
-//        System.out.println("add shift requirements - choose shift date");
-//        String ans_date_6 = input.next();
-//        System.out.println("add shift requirements - enter morning(m)/evening(e)");
-//        String ans_mORe_6 = input.next();
-//        System.out.println("add shift requirements - shift :"+ans_date_6+ " , " + ans_mORe_6);
-//        HashMap<String,Integer> howMany = new HashMap<>();
-//        for (PositionType p : PositionType.values()) {
-//            System.out.println("how many "+ p.name() + " for that shift ?" );
-//            int ans_quantity = input.nextInt();
-//            howMany.put(p.name(),ans_quantity);
-//        }
-//        System.out.println(shiftService.addShiftRequirements(howMany,ans_date_6,ans_mORe_6));
-
-
+        System.out.println("Please enter the shift details:");
+        System.out.println("add shift requirements - choose shift date");
+        String date = scanner.nextLine();
+        System.out.println("add shift requirements - enter morning(m)/evening(e)");
+        String shiftType = scanner.nextLine();
+        System.out.println("add shift requirements - shift :" +date+ " , " + shiftType);
+        LinkedHashMap<String,Integer> howMany = new LinkedHashMap<>();
+        for (PositionType p : PositionType.values()) {
+            System.out.println("how many "+ p.name() + " for that shift ?" );
+            int ans_quantity = scanner.nextInt();
+            howMany.put(p.name(),ans_quantity);
+        }
+        System.out.println(shiftService.addShiftRequirements("super",howMany,date,shiftType));
     }
 
     private void ShowShiftStatus() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("shift status");
+        System.out.println("Please enter the shift details:");
+        System.out.println("shift status - choose shift date");
+        String date = scanner.nextLine();
+        System.out.println("shift status - enter morning(m)/evening(e)");
+        String shiftType = scanner.nextLine();
+        System.out.println(shiftService.ShowShiftStatus("super",date,shiftType));
     }
 
     private void addQualification() {
@@ -119,7 +153,6 @@ public class HRManagerPresentation {
         String password = scanner.nextLine();
         System.out.println("Please enter the employee salary:");
         int salary = scanner.nextInt();
-
         System.out.println(employeeService.addNewEmployee(employeeId,employeeName,employeebank,description,salary, joiningDay ,password));
     }
 

@@ -51,17 +51,15 @@ public class EmployeeController {
 
     public void addQualification(int id,  String position) throws SQLException {
         Employee employee = employeesMapper.get(id);
+        Employee employee2 =  null;
         if (employee == null){
-            Employee employee2 = dalEmployeeService.findEmployeeById(id);
+            employee2 = dalEmployeeService.findEmployeeById(id);
             if(employee2 != null){
-                employeesMapper.put(id, employee);
+                employeesMapper.put(id, employee2);
+                dalEmployeeService.addQualification(id,position);
             }
+            else throw new IllegalArgumentException("there is no such employee with this id");
         }
-
-        if (employee == null)
-            throw new IllegalArgumentException("there is no such employee with this id");
-        employee.addQualification(position);
-        dalEmployeeService.addQualification(id,position);
     }
 
     public LinkedHashMap<Integer, Employee> getEmployeesMapper(){

@@ -4,6 +4,7 @@ import BusinessLayer.HR.User.PositionType;
 import DataLayer.HR_T_DAL.DalService.DalEmployeeService;
 import DataLayer.HR_T_DAL.DalService.DalShiftService;
 import ServiceLayer.HR.EmployeeService;
+import UtilSuper.Time;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -79,7 +80,7 @@ public class ShiftController {
     public String showShiftStatus(String branchId, LocalDate date, boolean shiftType) throws SQLException {
         LinkedHashMap<LocalDate, ArrayList<Shift>> branchShifts = lazyLoadFindShifsByBranch(branchId);
         Shift shift = shiftType ? branchShifts.get(date).get(0) : branchShifts.get(date).get(1);
-        return shift.showShiftStatus();
+        return shift.showShiftStatus(dalShiftService);
     }
 
     public Employee lazyLoadFindEmployeeByid(int id) throws SQLException {
@@ -99,10 +100,6 @@ public class ShiftController {
         }
         return "submit shift has failed";
     }
-
-
-
-
 
     public String assignEmployeeForShift(String branch, int id, LocalDate date, boolean shiftType, String positionType) throws Exception {
         HashMap<LocalDate, ArrayList<Shift>> branchShifts = lazyLoadFindShifsByBranch(branch);
@@ -127,10 +124,15 @@ public class ShiftController {
 
     public void addRequirements(String branch, LocalDate shiftDate, boolean shiftType, LinkedHashMap<String, Integer> requirements) throws IllegalArgumentException, SQLException {
         HashMap<LocalDate, ArrayList<Shift>> branchShifts = lazyLoadFindShifsByBranch(branch);
+        String shiftT= "e";
         if (branchShifts != null) {
             if (branchShifts.containsKey(shiftDate)) {
                 ArrayList<Shift> shiftList = branchShifts.get(shiftDate);
                 Shift shift = shiftList.get(shiftType ? 0 : 1);
+                if(shiftType) shiftT = "m";
+                for (String positionT : requirements.keySet()) {
+                    dalShiftService.addRequierement(branch, Time.localDateToString(shiftDate),shiftT,positionT,requirements.get(positionT));
+                }
                 shift.addEmployeeRequirements(requirements);
             } else {
                 throw new IllegalArgumentException("No shifts available for the given date");
