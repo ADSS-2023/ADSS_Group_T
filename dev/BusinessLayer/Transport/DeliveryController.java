@@ -421,7 +421,7 @@ public class DeliveryController {
      * @param drivers the drivers to sort
      * @return a list of the sorted drivers
      */
-    public ArrayList<Driver> sortDriversByLicenseLevel(ArrayList<Driver> drivers) {
+    private ArrayList<Driver> sortDriversByLicenseLevel(ArrayList<Driver> drivers) {
         if(drivers != null) {
             drivers.sort(new Comparator<Driver>() {
                 public int compare(Driver d1, Driver d2) {
@@ -550,82 +550,85 @@ public class DeliveryController {
      * @throws Exception error while executing delivery
      */
     public void executeDelivery(Delivery delivery) throws Exception {
-        if (isDeliveryFromLC(delivery))
-            executeDeliveryFromLC(delivery);
-        else if (isDeliveryToLC(delivery))
-            executeDeliveryToLC(delivery);
-        else
-            executeDeliveryRegular(delivery);
-    }
-
-    /**
-     * execute delivery from the logistic center
-     * @param delivery the delivery to execute
-     * @throws Exception error while executing delivery
-     */
-    private void executeDeliveryFromLC(Delivery delivery) throws Exception {
-        int productsWeight = enterWeightInterface.enterWeightFunction(logisticCenterController.getAddress(), delivery.getId());
-        int currentWeight = delivery.getTruckWeight();
-        int maxWeight = logisticCenterController.getAllTrucks().get(delivery.getTruckNumber()).getMaxWeight();
-        if (maxWeight < currentWeight + productsWeight) {
-            overWeightAction(delivery.getId(), overweightAction.EnterOverweightAction(delivery.getId()), logisticCenterController.getAddress(), productsWeight);
-        }
-        logisticCenterController.removeFileFromStock(delivery.getFromLogisticsCenterFile());
-        delivery.setTruckWeight(currentWeight + productsWeight);
-    }
-
-
-    /**
-     * execute delivery to the logistic center
-     * @param delivery the delivery to execute
-     * @throws Exception error while executing delivery
-     */
-    private void executeDeliveryToLC(Delivery delivery) throws Exception {
-        ArrayList<Supplier> suppliersTmp = new ArrayList<>(delivery.getUnHandledSuppliers().keySet());
-        for (Supplier supplier : suppliersTmp) {
-            int productsWeight = enterWeightInterface.enterWeightFunction(supplier.getAddress(), delivery.getId());
+        if (isDeliveryFromLC(delivery)) {
+            int productsWeight = enterWeightInterface.enterWeightFunction(logisticCenterController.getAddress(), delivery.getId());
             int currentWeight = delivery.getTruckWeight();
             int maxWeight = logisticCenterController.getAllTrucks().get(delivery.getTruckNumber()).getMaxWeight();
             if (maxWeight < currentWeight + productsWeight) {
-                overWeightAction(delivery.getId(), overweightAction.EnterOverweightAction(delivery.getId()), supplier.getAddress(), productsWeight);
-                if (delivery.getTruckWeight() == logisticCenterController.getAllTrucks().get(delivery.getTruckNumber()).getMaxWeight())
-                    break;
-            } else {
-                delivery.setTruckWeight(currentWeight + productsWeight);
-                File f = delivery.getUnHandledSuppliers().get(supplier);
-                delivery.addHandledSupplier(supplier,f);
-                delivery.removeUnHandledSupplier(supplier,f);
+                overWeightAction(delivery.getId(), overweightAction.EnterOverweightAction(delivery.getId()), logisticCenterController.getAddress(), productsWeight);
             }
+            logisticCenterController.removeFileFromStock(delivery.getFromLogisticsCenterFile());
+            delivery.setTruckWeight(currentWeight + productsWeight);
         }
-        reScheduleDelivery(delivery.getUnHandledSuppliers(), delivery.getUnHandledBranches());
+        else if (isDeliveryToLC(delivery)) {
+            ArrayList<Supplier> suppliersTmp = new ArrayList<>(delivery.getUnHandledSuppliers().keySet());
+            for (Supplier supplier : suppliersTmp) {
+                int productsWeight = enterWeightInterface.enterWeightFunction(supplier.getAddress(), delivery.getId());
+                int currentWeight = delivery.getTruckWeight();
+                int maxWeight = logisticCenterController.getAllTrucks().get(delivery.getTruckNumber()).getMaxWeight();
+                if (maxWeight < currentWeight + productsWeight) {
+                    overWeightAction(delivery.getId(), overweightAction.EnterOverweightAction(delivery.getId()), supplier.getAddress(), productsWeight);
+                    if (delivery.getTruckWeight() == logisticCenterController.getAllTrucks().get(delivery.getTruckNumber()).getMaxWeight())
+                        break;
+                } else {
+                    delivery.setTruckWeight(currentWeight + productsWeight);
+                    File f = delivery.getUnHandledSuppliers().get(supplier);
+                    delivery.addHandledSupplier(supplier,f);
+                    delivery.removeUnHandledSupplier(supplier,f);
+                }
+            }
+            reScheduleDelivery(delivery.getUnHandledSuppliers(), delivery.getUnHandledBranches());
+        }
+        else {
+            ArrayList<Supplier> suppliersTmp = new ArrayList<>(delivery.getUnHandledSuppliers().keySet());
+            for (Supplier supplier : suppliersTmp) {
+                int productsWeight = enterWeightInterface.enterWeightFunction(supplier.getAddress(), delivery.getId());
+                int currentWeight = delivery.getTruckWeight();
+                int maxWeight = logisticCenterController.getAllTrucks().get(delivery.getTruckNumber()).getMaxWeight();
+                if (maxWeight < currentWeight + productsWeight) {
+                    overWeightAction(delivery.getId(), overweightAction.EnterOverweightAction(delivery.getId()), supplier.getAddress(), productsWeight);
+                    if (delivery.getTruckWeight() == logisticCenterController.getAllTrucks().get(delivery.getTruckNumber()).getMaxWeight())
+                        break;
+                } else {
+                    delivery.setTruckWeight(currentWeight + productsWeight);
+                    File f = delivery.getUnHandledSuppliers().get(supplier);
+                    delivery.addHandledSupplier(supplier,f);
+                    delivery.removeUnHandledSupplier(supplier,f);
+                    HashMap<Product, Integer> copyOfSupplierFileProducts = new HashMap<>(f.getProducts());
+                    filesCounter = delivery.supplierHandled(filesCounter, copyOfSupplierFileProducts);
+                }
+            }
+            reScheduleDelivery(delivery.getUnHandledSuppliers(), delivery.getUnHandledBranches());
+        }
     }
 
-    /**
-     * execute delivery that does not involve the logistic center
-     * @param delivery the delivery to execute
-     * @throws Exception error while executing delivery
-     */
-    private void executeDeliveryRegular(Delivery delivery) throws Exception {
-        ArrayList<Supplier> suppliersTmp = new ArrayList<>(delivery.getUnHandledSuppliers().keySet());
-        for (Supplier supplier : suppliersTmp) {
-            int productsWeight = enterWeightInterface.enterWeightFunction(supplier.getAddress(), delivery.getId());
-            int currentWeight = delivery.getTruckWeight();
-            int maxWeight = logisticCenterController.getAllTrucks().get(delivery.getTruckNumber()).getMaxWeight();
-            if (maxWeight < currentWeight + productsWeight) {
-                overWeightAction(delivery.getId(), overweightAction.EnterOverweightAction(delivery.getId()), supplier.getAddress(), productsWeight);
-                if (delivery.getTruckWeight() == logisticCenterController.getAllTrucks().get(delivery.getTruckNumber()).getMaxWeight())
-                    break;
-            } else {
-                delivery.setTruckWeight(currentWeight + productsWeight);
-                File f = delivery.getUnHandledSuppliers().get(supplier);
-                delivery.addHandledSupplier(supplier,f);
-                delivery.removeUnHandledSupplier(supplier,f);
-                HashMap<Product, Integer> copyOfSupplierFileProducts = new HashMap<>(f.getProducts());
-                filesCounter = delivery.supplierHandled(filesCounter, copyOfSupplierFileProducts);
-            }
-        }
-        reScheduleDelivery(delivery.getUnHandledSuppliers(), delivery.getUnHandledBranches());
-    }
+//    /**
+//     * execute delivery from the logistic center
+//     * @param delivery the delivery to execute
+//     * @throws Exception error while executing delivery
+//     */
+//    private void executeDeliveryFromLC(Delivery delivery) throws Exception {
+//
+//    }
+
+
+//    /**
+//     * execute delivery to the logistic center
+//     * @param delivery the delivery to execute
+//     * @throws Exception error while executing delivery
+//     */
+//    private void executeDeliveryToLC(Delivery delivery) throws Exception {
+//
+//    }
+
+//    /**
+//     * execute delivery that does not involve the logistic center
+//     * @param delivery the delivery to execute
+//     * @throws Exception error while executing delivery
+//     */
+//    private void executeDeliveryRegular(Delivery delivery) throws Exception {
+//
+//    }
 
 
 
