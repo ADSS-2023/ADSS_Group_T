@@ -6,12 +6,12 @@ import java.time.LocalDate;
 
 public class SubmittedShiftDTO extends DTO {
     private int employeeId;
-    private String branchAdress;
+    private String branch;
     private String date;
     private String shiftType;
     public SubmittedShiftDTO(int emloyeeId, String branchAdress, String date, String shiftType) {
         super("SubmittedShift");
-        this.branchAdress = branchAdress;
+        this.branch = branchAdress;
         this.shiftType = shiftType;
         this.employeeId = emloyeeId;
         this.date = date;
@@ -23,15 +23,15 @@ public class SubmittedShiftDTO extends DTO {
         return employeeId;
     }
 
-    public String getBranchAdress() {
-        return branchAdress;
-    }
-
     public String getDate() {
         return date;
     }
 
     public String getShiftType() {
         return shiftType;
+    }
+
+    public String getBranch() {
+        return branch;
     }
 }

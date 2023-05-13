@@ -101,10 +101,6 @@ public class ShiftController {
         return "submit shift has failed";
     }
 
-
-
-
-
     public String assignEmployeeForShift(String branch, int id, LocalDate date, boolean shiftType, String positionType) throws Exception {
         HashMap<LocalDate, ArrayList<Shift>> branchShifts = lazyLoadFindShifsByBranch(branch);
         Employee employee =  lazyLoadFindEmployeeByid(id);
@@ -128,11 +124,15 @@ public class ShiftController {
 
     public void addRequirements(String branch, LocalDate shiftDate, boolean shiftType, LinkedHashMap<String, Integer> requirements) throws IllegalArgumentException, SQLException {
         HashMap<LocalDate, ArrayList<Shift>> branchShifts = lazyLoadFindShifsByBranch(branch);
+        String shiftT= "e";
         if (branchShifts != null) {
             if (branchShifts.containsKey(shiftDate)) {
                 ArrayList<Shift> shiftList = branchShifts.get(shiftDate);
                 Shift shift = shiftList.get(shiftType ? 0 : 1);
-                //dalShiftService.addRequierement(branch, Time.localDateToString(shiftDate),,);
+                if(shiftType) shiftT = "m";
+                for (String positionT : requirements.keySet()) {
+                    dalShiftService.addRequierement(branch, Time.localDateToString(shiftDate),shiftT,positionT,requirements.get(positionT));
+                }
                 shift.addEmployeeRequirements(requirements);
             } else {
                 throw new IllegalArgumentException("No shifts available for the given date");

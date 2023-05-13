@@ -77,12 +77,18 @@ public class Shift {
     }
 
     public void  lazyLoadFindRequiermentsBtDateAndShiftType() throws SQLException {
-        employeeRequirements = dalShiftService.findRequiermentsBtDateAndShiftType(branch, date, shiftType);
+        String s ;
+        if(shiftType) s = "m";
+        else s = "e";
+        employeeRequirements = dalShiftService.findRequiermentsByDateAndShiftType(branch, date, s);
     }
 
 
     public void  lazyLoadFindAllSubmissionByDateShiftType() throws SQLException {
-        employeeRequirements = dalShiftService.findAllSubmissionByDateAndShiftType(branch, date, shiftType);
+        String s ;
+        if(shiftType) s = "m";
+        else s = "e";
+        employeeRequirements = dalShiftService.findAllSubmissionByDateAndShiftType(branch, date, s);
     }
 
     public String isLegalShift() throws SQLException {

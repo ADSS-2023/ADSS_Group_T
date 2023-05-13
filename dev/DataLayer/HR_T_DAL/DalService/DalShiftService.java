@@ -8,7 +8,9 @@ import BusinessLayer.HR.User.PositionType;
 import BusinessLayer.HR.User.User;
 import DataLayer.HR_T_DAL.DAOs.ShiftDAO;
 import DataLayer.HR_T_DAL.DTOs.*;
+import DataLayer.Util.DTO;
 import UtilSuper.Pair;
+import UtilSuper.Time;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -33,29 +35,52 @@ public class DalShiftService {
     }
 
     public void addRequierement(String branch, String date, String shiftType, String positionType, int amount) throws SQLException {
-        ShiftRequirementsDTO shiftRequirementsDTO = new ShiftRequirementsDTO(date,shiftType,positionType,amount);
+        ShiftRequirementsDTO shiftRequirementsDTO = new ShiftRequirementsDTO(branch,date,shiftType,positionType,amount);
         shiftDAO.insert(shiftRequirementsDTO);
     }
 
     public void updateRequierement(String branch, String date, String shiftType, String positionType, int amount) throws SQLException {
-        ShiftRequirementsDTO shiftRequirementsDTO = new ShiftRequirementsDTO(date,shiftType,positionType,amount);
+        ShiftRequirementsDTO shiftRequirementsDTO = new ShiftRequirementsDTO(branch,date,shiftType,positionType,amount);
         shiftDAO.update(shiftRequirementsDTO , shiftRequirementsDTO);
     }
 
     public void deleteRequierement(String branch, String date, String shiftType, String positionType) throws SQLException {
-        ShiftRequirementsDTO shiftRequirementsDTO = new ShiftRequirementsDTO(date,shiftType,positionType,0);
+        ShiftRequirementsDTO shiftRequirementsDTO = new ShiftRequirementsDTO(branch,date,shiftType,positionType,0);
         shiftDAO.delete(shiftRequirementsDTO);
     }
 
-    // TODO - israel
-    public LinkedHashMap<String, Integer> findRequiermentsBtDateAndShiftType(String branch, LocalDate localDate, boolean shiftType) throws SQLException {
-        return null;
+    public LinkedHashMap<String, Integer> findRequiermentsByDateAndShiftType(String branch, LocalDate localDate, String shiftType) throws SQLException {
+        LinkedHashMap<String,Integer> ret = new LinkedHashMap<>();
+        HashMap<String, Object> wherecond = new HashMap<>();
+        wherecond.put("branch",branch);
+        wherecond.put("shiftDate", Time.localDateToString(localDate));
+        wherecond.put("shiftType",shiftType);
+        ArrayList<ShiftRequirementsDTO> req = shiftDAO.findAll("ShiftRequirements",wherecond,ShiftRequirementsDTO.class);
+        if (req!= null && !req.isEmpty()){
+            for (ShiftRequirementsDTO shiftReq: req) {
+                ret.put(shiftReq.getPositionName(),shiftReq.getAmount());
+            }
+            return ret;
+        }
+        else return null;
     }
 
-    // TODO - israel
-    public LinkedHashMap<String, Integer> findAllSubmissionByDateAndShiftType(String branch, LocalDate localDate, boolean shiftType) throws SQLException {
-        return null;
+    public LinkedHashMap<String, Integer> findAllSubmissionByDateAndShiftType(String branch, LocalDate localDate, String shiftType) throws SQLException {
+        LinkedHashMap<String,Integer> ret = new LinkedHashMap<>();
+        HashMap<String, Object> wherecond = new HashMap<>();
+        wherecond.put("branch",branch);
+        wherecond.put("shiftDate", Time.localDateToString(localDate));
+        wherecond.put("shiftType",shiftType);
+        ArrayList<SubmittedShiftDTO> req = shiftDAO.findAll("ShiftRequirements",wherecond,SubmittedShiftDTO.class);
+        if (req!= null && !req.isEmpty()){
+            for (SubmittedShiftDTO submittedShiftDTO: req) {
+                //ret.put(submittedShiftDTO,submittedShiftDTO);
+            }
+            return ret;
+        }
+        else return null;
     }
+
 
     // TODO - israel do not throwe Exeption
     public void addEmployeeToShift(String branch, LocalDate localDate, boolean shiftTpe, int id, String position, boolean isAssined) throws SQLException {
@@ -79,8 +104,7 @@ public class DalShiftService {
             Map<String, Object> fieldsForShiftRequirements = new HashMap<>();
             fieldsForShiftRequirements.put("shiftDate", shiftDTO.getShiftDate());
             fieldsForShiftRequirements.put("shiftType", shiftDTO.getShiftType());
-            //ToDo- add branch to ShiftRequirements
-           // fieldsForShiftRequirements.put("branch", shiftDTO.getBranch());
+           fieldsForShiftRequirements.put("branch", shiftDTO.getBranch());
 
             // Retrieve the ShiftRequirements objects for the current ShiftDTO
             ArrayList<ShiftRequirementsDTO> shiftRequirementsByDateShiftTypeAndBranchDTO = shiftDAO.findAll("ShiftRequirements",
