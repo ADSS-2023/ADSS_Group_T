@@ -18,7 +18,7 @@ public class OrderProduct {
     private float discount;
     private float finalPrice;
 
-    private OrderProductDTO orderProductDTO;
+    public OrderProductDTO orderProductDTO;
 
     private OrderDalController orderDalController;
 
