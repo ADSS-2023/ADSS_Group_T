@@ -391,8 +391,6 @@ public class OrderController {
      * @throws Exception
      */
 
-    //go over all the order products and  modify to the max quantity can be supplied
-    //update order product and all order
     public void editRegularItem(ItemToOrder item, DayOfWeek day) throws Exception {
         int newQuantity = item.getQuantity();
         if (newQuantity == 0) {
@@ -429,9 +427,7 @@ public class OrderController {
                     if (quantityToChange > 0) { // if there is a need to add - if an existing supplier has enough to add
                         if (spProduct.hasEnoughQuantity(product.getQuantity() + quantityToChange)) {
                             OrderProductDTO oldOrderProductDTO = product.getOrderProductDTO();
-                            OrderProductDTO newOrderProductDTO = new OrderProductDTO(oldOrderProductDTO.getOrderID(), oldOrderProductDTO.getManufacturer(), oldOrderProductDTO.getExpiryDate(), oldOrderProductDTO.getProductNumber(), product.getQuantity() + quantityToChange, oldOrderProductDTO.getInitialPrice(), oldOrderProductDTO.getDiscount(), oldOrderProductDTO.getFinalPrice(), oldOrderProductDTO.getProductName());
-                            orderDalController.update(oldOrderProductDTO, newOrderProductDTO);
-                            product.setOrderProductDTO(newOrderProductDTO);
+
                             product.setQuantity(product.getQuantity() + quantityToChange);
                             updateRegularItem(product, product.getProductName(), product.getManufacturer(), spProduct.getSupplierNum());
                             updateRegularOrder(order);
@@ -439,12 +435,9 @@ public class OrderController {
                             return;
                         }
                     } else if (quantityToChange < 0) {//if there is a need to reduce
-                        // if the current product has the whole amount to be reduced
+                        // if the current product has the  amount to be reduced
                         if (product.getQuantity() >= Math.abs(quantityToChange)) {
                             OrderProductDTO oldOrderProductDTO = product.getOrderProductDTO();
-                            OrderProductDTO newOrderProductDTO = new OrderProductDTO(oldOrderProductDTO.getOrderID(), oldOrderProductDTO.getManufacturer(), oldOrderProductDTO.getExpiryDate(), oldOrderProductDTO.getProductNumber(), product.getQuantity() - Math.abs(quantityToChange), oldOrderProductDTO.getInitialPrice(), oldOrderProductDTO.getDiscount(), oldOrderProductDTO.getFinalPrice(), oldOrderProductDTO.getProductName());
-                            orderDalController.update(oldOrderProductDTO, newOrderProductDTO);
-                            product.setOrderProductDTO(newOrderProductDTO);
                             product.setQuantity(product.getQuantity() - Math.abs(quantityToChange));
                             updateRegularItem(product, product.getProductName(), product.getManufacturer(), spProduct.getSupplierNum());
                             updateRegularOrder(order);
@@ -513,19 +506,22 @@ public class OrderController {
                 if (product.getProductName().equals(item.getProductName()) &&
                         product.getManufacturer().equals(item.getManufacturer())) {
                     toRemove.add(product);
+                    found=true;
                 }
             }
             for (OrderProduct deletedProduct : toRemove) {
                 orderDalController.delete(deletedProduct.getOrderProductDTO());
                 order.getProducts().remove(deletedProduct);
             }
-            if (toRemove.size() > 0) {
+            if(order.getProducts().isEmpty())
+                orderDalController.delete(order.getOrderDTO());
+           else if (toRemove.size() > 0) {
                 toRemove = new LinkedList<>();
                 updateRegularOrder(order);
             }
         }
-
-        throw new Exception("no such item has been found");
+        if(!found)
+            throw new Exception("no such item has been found");
     }
 
     /**
@@ -545,7 +541,7 @@ public class OrderController {
         OrderProductDTO oldOrderProductDTO = product.getOrderProductDTO();
         OrderProductDTO newOrderProductDTO = new OrderProductDTO(oldOrderProductDTO.getOrderID(), oldOrderProductDTO.getManufacturer(), oldOrderProductDTO.getExpiryDate(), oldOrderProductDTO.getProductNumber(), product.getQuantity(), product.getInitialPrice(), product.getDiscount(), product.getFinalPrice(), product.getProductName());
         orderDalController.update(oldOrderProductDTO, newOrderProductDTO);
-        product.setOrderProductDTO(newOrderProductDTO);
+        product.orderProductDTO=newOrderProductDTO;
     }
 
     /**
@@ -573,7 +569,7 @@ public class OrderController {
             OrderProductDTO oldOrderProductDTO = product.getOrderProductDTO();
             OrderProductDTO newOrderProductDTO = new OrderProductDTO(oldOrderProductDTO.getOrderID(), oldOrderProductDTO.getManufacturer(), oldOrderProductDTO.getExpiryDate(), oldOrderProductDTO.getProductNumber(), product.getQuantity(), product.getInitialPrice(), product.getDiscount(), product.getFinalPrice(), product.getProductName());
             orderDalController.update(oldOrderProductDTO, newOrderProductDTO);
-            product.setOrderProductDTO(newOrderProductDTO);
+            product.orderProductDTO=newOrderProductDTO;
         }
     }
 
