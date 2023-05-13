@@ -99,6 +99,7 @@ public class MainPresentation {
                 } else {
                     loginSuccess = true;
                 }
+
             }
             switch (result) {
                 case "employee": employeePresentation.start();
