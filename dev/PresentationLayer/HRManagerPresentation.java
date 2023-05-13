@@ -14,12 +14,15 @@ public class HRManagerPresentation {
     private ShiftService shiftService;
     private EmployeeService employeeService;
 
+    private String branch;
+
     public HRManagerPresentation(ShiftService shiftService, EmployeeService employeeService){
         this.shiftService = shiftService;
         this.employeeService = employeeService;
     }
 
-    public void start() {
+    public void start(String branch) {
+        this.branch = branch;
         mainWindow();
     }
     private void mainWindow() {
@@ -46,9 +49,9 @@ public class HRManagerPresentation {
                 case 3 -> {addQualification();}
                 case 4 -> {ShowShiftStatus();}
                 case 5 -> {addNewDriver();}
-                case 6 -> {}
-                case 7 -> {assignEmployeeForShift();}
-                case 8 -> {assignEmployeeForShift();}
+                case 6 -> {manageAssignEmployeeForShift();}
+                case 7 -> {}
+                case 8 -> {}
                 case 9 -> {addShiftRequirements();}
                 case 10 -> {return;}//exit
                 default -> System.out.println("Invalid choice. Please try again.");
@@ -57,11 +60,36 @@ public class HRManagerPresentation {
     }
 
     private void notification() {
+        System.out.println("notification : ");
         shiftService.getNotification();
     }
 
-    private void assignEmployeeForShift() {
-
+    private void manageAssignEmployeeForShift() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("assign employee for shift : ");
+        System.out.println("Please enter the shift details:");
+        System.out.println("assign employee for shift - choose shift date");
+        String date = scanner.nextLine();
+        System.out.println("assign employee for shift - enter morning(m)/evening(e)");
+        String shiftType = scanner.nextLine();
+        shiftService.ShowShiftStatus(branch,date,shiftType);
+        System.out.println("assign employee for shift - would you like to approve all? y/n");
+        String ansForApproveAll = scanner.nextLine();
+        if(ansForApproveAll.equals("y")){
+            shiftService.assignAll(branch,date,shiftType);
+        }
+        else {
+            while(true){
+                System.out.println("assign employee for shift - Please enter the employee ID:");
+                int employeeId = scanner.nextInt();
+                System.out.println("assign employee for shift - choose position foe employee : "+employeeId);
+                String position = scanner.nextLine();
+                shiftService.assignEmployeeForShift(branch,employeeId,date,shiftType,position);
+                System.out.println("assign employee for shift - would you like to assign more? y/n");
+                String ansForContinue = scanner.nextLine();
+                if (ansForContinue.equals("n")){return;}
+            }
+        }
     }
 
     private void addShiftRequirements() {
@@ -80,8 +108,6 @@ public class HRManagerPresentation {
             howMany.put(p.name(),ans_quantity);
         }
         System.out.println(shiftService.addShiftRequirements("super",howMany,date,shiftType));
-
-
     }
 
     private void ShowShiftStatus() {
@@ -126,7 +152,6 @@ public class HRManagerPresentation {
         String password = scanner.nextLine();
         System.out.println("Please enter the employee salary:");
         int salary = scanner.nextInt();
-
         System.out.println(employeeService.addNewEmployee(employeeId,employeeName,employeebank,description,salary, joiningDay ,password));
     }
 

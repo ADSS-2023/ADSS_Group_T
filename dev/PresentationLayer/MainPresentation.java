@@ -81,6 +81,9 @@ public class MainPresentation {
         //this.transportManagerPresentation.start();
        // this.hrManagerPresentation.start();
 
+
+        //TODO - create the branch choosing process
+
         Scanner scanner = new Scanner(System.in);
         System.out.println(" ");
         System.out.println("------ login window -------");
@@ -103,7 +106,8 @@ public class MainPresentation {
             switch (result) {
                 case "employee": employeePresentation.start();
                 case "TransportManager": transportManagerPresentation.start();
-                case "HRManager" : hrManagerPresentation.start();
+                    //TODO - remove "super" and put the user selection of the specific branch
+                case "HRManager" : hrManagerPresentation.start("super");
                 case "driver" :
                 default:
             }
