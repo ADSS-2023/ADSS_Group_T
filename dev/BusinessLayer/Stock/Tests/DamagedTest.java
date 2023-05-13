@@ -34,7 +34,6 @@ public class DamagedTest {
         supplierManager = new SupplierManager(serviceFactory);
 
         try {
-            //serviceFactory
             serviceFactory.deleteAllData();
             serviceFactory.uss.setUpDate();
             serviceFactory.inventoryService.setUp();
