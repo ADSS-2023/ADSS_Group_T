@@ -72,9 +72,6 @@ public class DalShiftService {
     }
 
 
-
-
-
     public LinkedHashMap<LocalDate, ArrayList<Shift>> findAllShiftsByBranch(String branch) throws SQLException {
         // Initialize the LinkedHashMap that will hold the shifts by date
         LinkedHashMap<LocalDate, ArrayList<Shift>> shiftsByBranch = new LinkedHashMap<>();
@@ -189,7 +186,6 @@ public class DalShiftService {
             for (ShiftToEmployeeDTO subEmp  : submittedPositionByEmployeesByDateShiftTypeAndBranchDTO){
                 if (subEmp.getPosition() != null && subEmp.getIsAssigned() != null ){
                     String position = subEmp.getPosition();
-                    boolean isManager = subEmp.getShiftType().equals("m");
                     boolean isAssigned = Boolean.parseBoolean(subEmp.getIsAssigned());
                     User user = dalUserService.findUserById(subEmp.getEmployeeId());
                     Employee employee = new Employee(user.getId(), user.getEmployeeName(), user.getBankAccount(), user.getDescription(), user.getSalary(), user.getJoiningDay(),
