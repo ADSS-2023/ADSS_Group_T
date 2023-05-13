@@ -2,6 +2,7 @@ package BusinessLayer.Stock.Tests;
 
 import BusinessLayer.Stock.Inventory;
 import BusinessLayer.Stock.OrderController;
+import PresentationLayer.Supplier.SupplierManager;
 import ServiceLayer.Stock.CategoryService;
 import ServiceLayer.Stock.DamagedService;
 import ServiceLayer.Stock.InventoryService;
@@ -24,6 +25,7 @@ class OrderTest {
     private Inventory inventory;
     public static ServiceFactory serviceFactory;
     public static OrderController orderController;
+    public SupplierManager supplierManager;
 
     @BeforeEach
     public void setUp(){
@@ -34,11 +36,14 @@ class OrderTest {
         inventoryService = serviceFactory.inventoryService;
         itemService = serviceFactory.itemService;
         orderController = serviceFactory.manageOrderService.getStockOrderController();
+        supplierManager = new SupplierManager(serviceFactory);
 
         try {
-            //serviceFactory.dataSetUp();
-            inventory.setUp();
+            serviceFactory.deleteAllData();
+            serviceFactory.uss.setUpDate();
+            serviceFactory.inventoryService.setUp();
             serviceFactory.manageOrderService.set_up();
+            supplierManager.setUpData();
         }
         catch (Exception e){
             System.out.println(e.getMessage());
