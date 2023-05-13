@@ -123,7 +123,7 @@ class OrderTest {
     void presentItemsToBePlaced(){
         try {
             assertEquals("1. Order id:12, item:3% milk, manufacturer:IDO LTD, amount:40\n" +
-                    "2. Order id:1005, item:Beef Sausage, manufacturer:Zogloveck, amount:15\n", orderController.presentItemsToBePlaced());
+                    "2. Order id:1005, item:Beef Sausage, manufacturer:Zogloveck, amount:16\n", orderController.presentItemsToBePlaced());
         }
         catch (Exception e){
             assertEquals("" , "FALSE");

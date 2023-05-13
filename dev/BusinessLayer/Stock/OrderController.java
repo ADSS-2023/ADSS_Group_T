@@ -212,8 +212,8 @@ public class OrderController {
         inventoryDalController.delete(new ItemToOrderDTO(
                 "inventory_waiting_list",tempItem.getProductName(),tempItem.getManufacturer(),
                 tempItem.getQuantity(),tempItem.getExpiryDate().toString(),tempItem.getCostPrice(),tempItem.getOrderId()));
-        inventory.receive_order( inventory.itemToOrder_to_item(tempItem).item_id,
-                tempItem.getOrderId(),
+        inventory.receive_order( tempItem.getOrderId(),
+                inventory.itemToOrder_to_item(tempItem).item_id,
                 tempItem.getQuantity(),
                 location,
                 tempItem.getExpiryDate(),
