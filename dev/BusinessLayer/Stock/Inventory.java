@@ -5,7 +5,6 @@ import BusinessLayer.Supplier_Stock.ItemToOrder;
 import DataLayer.Inventory_Supplier_Dal.DTO.InventoryDTO.*;
 import DataLayer.Inventory_Supplier_Dal.DalController.InventoryDalController;
 import DataLayer.Inventory_Supplier_Dal.DalController.ItemDalController;
-import DataLayer.Util.DTO;
 
 import java.sql.SQLException;
 import java.time.DayOfWeek;
@@ -190,12 +189,13 @@ public class Inventory {
         this.add_item(".0.0",2,"yellow cheese",5,"Emeck",10.2);
         this.add_item(".0.1",1 , "1.5% milk" , 2 , "IDO LTD",  3.5);
         this.add_item(".0.1", 0,"3% milk" , 5 , "IDO LTD",  3.5);
-        this.add_item(".1" , 5  , "Beef Sausage",15,"Zogloveck",10.05);
+        this.add_item(".1.0" , 5  , "Beef Sausage",15,"Zogloveck",10.05);
         receive_order(155,0,20,"ile 5 shelf 10",Util.stringToDate("2023-05-20"),2.15);
         receive_order(120,1,10,"ile 5 shelf 11",Util.stringToDate("2023-05-23"),2.55);
         receive_order(20,2,6,"ile 2 shelf 3",Util.stringToDate("2023-10-25"),5.3);
         receive_order(155,4,20,"ile 5 shelf 10",Util.stringToDate("2023-05-20"),2.15);
         receive_order(345,5,15,"ile 6 shelf 2",Util.stringToDate("2023-10-20"),12.25);
+        inv_dal_controller.insert(new DiscountCounterDTO(0));
     }
 
     /**
@@ -309,6 +309,25 @@ public class Inventory {
 
     }
 
+    private void receive_order(ItemPerOrderDTO itemPerOrderDTO) throws Exception {
+        String to_return="";
+        int amount_warehouse = itemPerOrderDTO.getAmountWarehouse();
+        int amount_store = itemPerOrderDTO.getAmountStore();
+        //check if exist
+        if(items.containsKey(itemPerOrderDTO.getItemId())) {
+            Item cur_item = items.get(itemPerOrderDTO.getItemId());
+            to_return =  cur_item.recive_order(new ItemPerOrder(itemPerOrderDTO));
+            if (shortage_list.contains(cur_item)) {
+                if (cur_item.current_amount() >= cur_item.min_amount)
+                    shortage_list.remove(cur_item);
+            }
+        }
+        else{
+            throw new Exception("illegal item id");
+        }
+
+
+    }
     /**
      * This functions returns a specific Item by an id as a parameter.
      * @param id
@@ -367,11 +386,14 @@ public class Inventory {
     public void loadItemPerOrder() throws Exception{
         List<ItemPerOrderDTO> itemPerOrder = itemDalController.findAll("inventory_item_per_order", ItemPerOrderDTO.class);
         for (ItemPerOrderDTO itemPerOrderDto:itemPerOrder) {
-            items.get(itemPerOrderDto.getItemId()).recive_order(new ItemPerOrder(itemPerOrderDto));
+            receive_order(itemPerOrderDto);
         }
         loadDicounts();
 
     }
+
+
+
     public void loadDicounts() throws Exception{
         List<DiscountDTO> discountDTOList = inv_dal_controller.findAll("inventory_discount", DiscountDTO.class);
         for (DiscountDTO discountDTO : discountDTOList){

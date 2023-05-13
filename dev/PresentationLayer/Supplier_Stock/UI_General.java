@@ -1,5 +1,6 @@
 package PresentationLayer.Supplier_Stock;
 
+import BusinessLayer.Supplier_Stock.Util_Supplier_Stock;
 import DataLayer.Util.DAO;
 import PresentationLayer.Stock.StockUI;
 import PresentationLayer.Supplier.SupplierManager;
@@ -52,6 +53,7 @@ public class UI_General {
         scanner.nextLine();
         if(action==1) {
             //read from DB
+            sf.uss.loadDate();
             stockUI.loadData();
             supplierManager.loadData();
         }
@@ -61,8 +63,8 @@ public class UI_General {
             stockUI.deleteData();
         }
         else if(action == 3){
-            supplierManager.deleteAll();
             stockUI.deleteData();
+            sf.uss.setUpDate();
             stockUI.setUpData();
             supplierManager.setUpData();
         }

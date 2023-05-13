@@ -87,7 +87,7 @@ public class ServiceFactory {
     }
 
     public void deleteAllData(){
-        String[] table_names = {"inventory_categories" , "inventory_item", "inventory_item_ordered"
+        String[] table_names = {"inventory_categories" ,"inventory_constants", "inventory_item", "inventory_item_ordered"
                 , "inventory_item_per_order" , "inventory_damaged_items" , "inventory_discount",
                 "inventory_waiting_list" , "supplier_const_delivery_days" ,
                 "supplier_discount" , "supplier_order" , "supplier_order_product" , "supplier_supplier" ,

@@ -166,4 +166,14 @@ public class ManageOrderService {
             return e.getMessage();
         }
     }
+    public String loadData(){
+        try {
+            orderController.loadData();
+            return "Action succeeded";
+        }
+        catch (Exception e){
+           return e.getMessage();
+        }
+
+    }
 }

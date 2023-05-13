@@ -51,7 +51,7 @@ public class OrderBusiness {
                     supplierAddress, destinationAddress, "true", daysTodeliver, constantDay);
         else
             this.orderDTO = new OrderDTO(orderNum, supplierNum, contactName, contactNumber, orderDate.toString(),
-                    supplierAddress, destinationAddress, "true", daysTodeliver, constantDay);
+                    supplierAddress, destinationAddress, "false", daysTodeliver, constantDay);
         orderDalController.insert(this.orderDTO);
     }
     public OrderBusiness (OrderDTO orderDTO, List<OrderProduct> orderProduct,String supplierName, OrderDalController orderDalController ){
