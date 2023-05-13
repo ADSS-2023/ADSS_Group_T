@@ -2,6 +2,7 @@ package BusinessLayer.HR;
 import BusinessLayer.HR.User.PositionType;
 import DataLayer.HR_T_DAL.DalService.DalEmployeeService;
 import DataLayer.HR_T_DAL.DalService.DalShiftService;
+import ServiceLayer.HR.ShiftService;
 import UtilSuper.Pair;
 
 import java.sql.SQLException;
@@ -105,7 +106,8 @@ public class Shift {
 
 
 
-    public String showShiftStatus() throws SQLException {
+    public String showShiftStatus(DalShiftService dalShiftService) throws SQLException {
+        this.dalShiftService = dalShiftService;
         lazyLoadFindRequiermentsBtDateAndShiftType();
         lazyLoadFindAllSubmissionByDateShiftType();
         String st = "Shift state:\n\n";

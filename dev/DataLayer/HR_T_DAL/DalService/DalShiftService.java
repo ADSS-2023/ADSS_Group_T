@@ -32,32 +32,28 @@ public class DalShiftService {
         return shiftDAO.getShiftsByDate(localDate);
     }
 
-
-    // TODO - israel
     public void addRequierement(String branch, String date, String shiftType, String positionType, int amount) throws SQLException {
         ShiftRequirementsDTO shiftRequirementsDTO = new ShiftRequirementsDTO(date,shiftType,positionType,amount);
         shiftDAO.insert(shiftRequirementsDTO);
     }
 
-    // TODO - israel
     public void updateRequierement(String branch, String date, String shiftType, String positionType, int amount) throws SQLException {
         ShiftRequirementsDTO shiftRequirementsDTO = new ShiftRequirementsDTO(date,shiftType,positionType,amount);
         shiftDAO.update(shiftRequirementsDTO , shiftRequirementsDTO);
     }
 
-    // TODO - israel
     public void deleteRequierement(String branch, String date, String shiftType, String positionType) throws SQLException {
         ShiftRequirementsDTO shiftRequirementsDTO = new ShiftRequirementsDTO(date,shiftType,positionType,0);
         shiftDAO.delete(shiftRequirementsDTO);
     }
 
     // TODO - israel
-    public LinkedHashMap<String, Integer> findRequiermentsBtDateAndShiftType(String branch, LocalDate localDate, boolean shiftTpe) throws SQLException {
+    public LinkedHashMap<String, Integer> findRequiermentsBtDateAndShiftType(String branch, LocalDate localDate, boolean shiftType) throws SQLException {
         return null;
     }
 
     // TODO - israel
-    public LinkedHashMap<String, Integer> findAllSubmissionByDateAndShiftType(String branch, LocalDate localDate, boolean shiftTpe) throws SQLException {
+    public LinkedHashMap<String, Integer> findAllSubmissionByDateAndShiftType(String branch, LocalDate localDate, boolean shiftType) throws SQLException {
         return null;
     }
 
@@ -65,15 +61,10 @@ public class DalShiftService {
     public void addEmployeeToShift(String branch, LocalDate localDate, boolean shiftTpe, int id, String position, boolean isAssined) throws SQLException {
     }
 
-
     // TODO - israel
     public void updateEmployeeToShift(LocalDate localDate, boolean shiftTpe, int id, String position, boolean isAssined) throws SQLException {
 
     }
-
-
-
-
 
     public LinkedHashMap<LocalDate, ArrayList<Shift>> findAllShiftsByBranch(String branch) throws SQLException {
         // Initialize the LinkedHashMap that will hold the shifts by date
@@ -149,7 +140,6 @@ public class DalShiftService {
         return shiftsByBranch;
     }
 
-
     public LinkedHashMap<String, HashMap<LocalDate, ArrayList<Shift>>> findAllShiftsByDateInAllBranches(LocalDate date) throws SQLException {
         LinkedHashMap<String, HashMap<LocalDate, ArrayList<Shift>>> shiftsByBranch = new LinkedHashMap<>();
 
@@ -223,13 +213,6 @@ public class DalShiftService {
 
         return shiftsByBranch;
     }
-
-
-
-
-
-
-
 
     public List<ShiftDTO> getshifsByDateAndShiftType(LocalDate localDate, boolean shiftType) {
         String LocalDatestring = localDate.toString();

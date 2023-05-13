@@ -2,6 +2,7 @@ package PresentationLayer;
 
 import DataLayer.HR_T_DAL.DB_init.Data_init;
 import DataLayer.HR_T_DAL.DB_init.Data_init_HR;
+import DataLayer.HR_T_DAL.DalService.DalEmployeeService;
 import ServiceLayer.HR.EmployeeService;
 import ServiceLayer.HR.ShiftService;
 import ServiceLayer.Transport.BranchService;
@@ -45,6 +46,8 @@ public class MainPresentation {
         this.branchService = serviceFactory.getBranchService();
         this.supplierService = serviceFactory.getSupplierService();
         transportManagerPresentation = new TransportManagerPresentation(logisticCenterService,deliveryService,supplierService,branchService);
+        hrManagerPresentation = new HRManagerPresentation(shiftService,employeeService);
+        employeePresentation = new EmployeePresentation(employeeService);
         serviceFactory.callbackEnterWeight(this.transportManagerPresentation::enterWeightFunction);
         serviceFactory.callbackEnterOverWeight(this.transportManagerPresentation::enterOverWeightAction);
     }
@@ -65,7 +68,7 @@ public class MainPresentation {
         }
         if (choice == 2) {
             Data_init.initOldData(this.serviceFactory.getDAO(),supplierService,deliveryService);
-            Data_init_HR.initOldData(this.serviceFactory.getDAO());
+            Data_init_HR.initOldData(this.serviceFactory.getDAO(), employeeService, shiftService);
         }
         loginWindow();
     }

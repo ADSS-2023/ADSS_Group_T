@@ -2,6 +2,7 @@ package UtilSuper;
 
 import BusinessLayer.HR.DriverController;
 import BusinessLayer.HR.EmployeeController;
+import BusinessLayer.HR.Shift;
 import BusinessLayer.HR.ShiftController;
 import BusinessLayer.HR.User.User;
 import BusinessLayer.HR.User.UserType;
@@ -59,6 +60,7 @@ public class ServiceFactory {
     private DalShiftService dalShiftService;
     private DalDriverService dalDriverService;
     private DAO dao;
+    private Shift shift;
 
 
 

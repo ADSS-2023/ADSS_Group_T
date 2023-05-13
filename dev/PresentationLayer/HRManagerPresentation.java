@@ -1,10 +1,12 @@
 package PresentationLayer;
 
+import BusinessLayer.HR.User.PositionType;
 import ServiceLayer.HR.EmployeeService;
 import ServiceLayer.HR.ShiftService;
 import UtilSuper.Time;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Scanner;
 import UtilSuper.Response;
 public class HRManagerPresentation {
@@ -55,7 +57,6 @@ public class HRManagerPresentation {
     }
 
     private void notification() {
-
         shiftService.getNotification();
     }
 
@@ -64,28 +65,34 @@ public class HRManagerPresentation {
     }
 
     private void addShiftRequirements() {
+        Scanner scanner = new Scanner(System.in);
         System.out.println("Add shift requirements");
-        System.out.println("Please enter the employee details:");
-        System.out.println("Please enter the employee ID:");
-
-//
-//        System.out.println("add shift requirements - choose shift date");
-//        String ans_date_6 = input.next();
-//        System.out.println("add shift requirements - enter morning(m)/evening(e)");
-//        String ans_mORe_6 = input.next();
-//        System.out.println("add shift requirements - shift :"+ans_date_6+ " , " + ans_mORe_6);
-//        HashMap<String,Integer> howMany = new HashMap<>();
-//        for (PositionType p : PositionType.values()) {
-//            System.out.println("how many "+ p.name() + " for that shift ?" );
-//            int ans_quantity = input.nextInt();
-//            howMany.put(p.name(),ans_quantity);
-//        }
-//        System.out.println(shiftService.addShiftRequirements(howMany,ans_date_6,ans_mORe_6));
+        System.out.println("Please enter the shift details:");
+        System.out.println("add shift requirements - choose shift date");
+        String date = scanner.nextLine();
+        System.out.println("add shift requirements - enter morning(m)/evening(e)");
+        String shiftType = scanner.nextLine();
+        System.out.println("add shift requirements - shift :" +date+ " , " + shiftType);
+        LinkedHashMap<String,Integer> howMany = new LinkedHashMap<>();
+        for (PositionType p : PositionType.values()) {
+            System.out.println("how many "+ p.name() + " for that shift ?" );
+            int ans_quantity = scanner.nextInt();
+            howMany.put(p.name(),ans_quantity);
+        }
+        System.out.println(shiftService.addShiftRequirements("super",howMany,date,shiftType));
 
 
     }
 
     private void ShowShiftStatus() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("shift status");
+        System.out.println("Please enter the shift details:");
+        System.out.println("shift status - choose shift date");
+        String date = scanner.nextLine();
+        System.out.println("shift status - enter morning(m)/evening(e)");
+        String shiftType = scanner.nextLine();
+        System.out.println(shiftService.ShowShiftStatus("super",date,shiftType));
     }
 
     private void addQualification() {
