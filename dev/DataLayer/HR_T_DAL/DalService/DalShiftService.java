@@ -71,7 +71,8 @@ public class DalShiftService {
         wherecond.put("branch",branch);
         wherecond.put("shiftDate", Time.localDateToString(localDate));
         wherecond.put("shiftType",shiftType);
-        ArrayList<SubmittedShiftDTO> req = shiftDAO.findAll("ShiftRequirements",wherecond,SubmittedShiftDTO.class);
+        //TODO name by table
+        ArrayList<SubmittedShiftDTO> req = shiftDAO.findAll("",wherecond,SubmittedShiftDTO.class);
         if (req!= null && !req.isEmpty()){
             for (SubmittedShiftDTO submittedShiftDTO: req) {
                 //ret.put(submittedShiftDTO,submittedShiftDTO);

@@ -37,10 +37,8 @@ public class HRManagerPresentation {
                                 " \n 4.show shift status" +
                                 " \n 5.add new driver" +
                                 " \n 6.manage assign Employee for shift" +
-                                " \n 7.submit shift for employee" +
-                                " \n 8.submit shift for driver" +
-                                " \n 9.add shift requirements" +
-                                " \n 10.exit ");
+                                " \n 7.add shift requirements" +
+                                " \n 8.exit ");
             int choice = scanner.nextInt();
             scanner.nextLine(); // Consume the newline character
             switch (choice) {
@@ -50,10 +48,8 @@ public class HRManagerPresentation {
                 case 4 -> {ShowShiftStatus();}
                 case 5 -> {addNewDriver();}
                 case 6 -> {manageAssignEmployeeForShift();}
-                case 7 -> {}
-                case 8 -> {}
-                case 9 -> {addShiftRequirements();}
-                case 10 -> {return;}//exit
+                case 7 -> {addShiftRequirements();}
+                case 8 -> {return;}//exit
                 default -> System.out.println("Invalid choice. Please try again.");
             }
         }
