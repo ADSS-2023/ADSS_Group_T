@@ -66,4 +66,12 @@ public class EmployeeController {
         return employeesMapper;
     }
 
+    public Employee getEmployeeById(int id) throws SQLException {
+        Employee employee = employeesMapper.get(id);
+        if(employee == null){
+            employee = dalEmployeeService.findEmployeeById(id);
+            if (employee == null) throw new SQLException("no employee with that id found");
+        }
+        return employee;
+    }
 }

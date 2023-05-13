@@ -53,14 +53,14 @@ public class EmployeeService {
         }
     }
 
-//    public String getListOfSubmittion(int id) {
-//        Response res = new Response();
-//        try {
-//            return employeeController.getListOfSubmitttions(id);
-//        } catch (Exception ex) {
-//        }
-//        return null;
-//    }
+    public String getListOfSubmittion(int id) {
+        Response res = new Response();
+        try {
+            return employeeController.getEmployeeById(id).showShiftsStatusByEmployee(LocalDate.now());
+        } catch (Exception ex) {
+        }
+        return null;
+    }
 
 
 

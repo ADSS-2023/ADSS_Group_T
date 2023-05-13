@@ -65,22 +65,22 @@ public class DalShiftService {
         else return null;
     }
 
-    public LinkedHashMap<String, Integer> findAllSubmissionByDateAndShiftType(String branch, LocalDate localDate, String shiftType) throws SQLException {
-        LinkedHashMap<String,Integer> ret = new LinkedHashMap<>();
-        HashMap<String, Object> wherecond = new HashMap<>();
-        wherecond.put("branch",branch);
-        wherecond.put("shiftDate", Time.localDateToString(localDate));
-        wherecond.put("shiftType",shiftType);
-        //TODO name by table
-        ArrayList<SubmittedShiftDTO> req = shiftDAO.findAll("",wherecond,SubmittedShiftDTO.class);
-        if (req!= null && !req.isEmpty()){
-            for (SubmittedShiftDTO submittedShiftDTO: req) {
-                //ret.put(submittedShiftDTO,submittedShiftDTO);
-            }
-            return ret;
-        }
-        else return null;
-    }
+//    public LinkedHashMap<String, LinkedHashMap<Employee, Boolean>> findAllSubmissionByDateAndShiftType(String branch, LocalDate localDate, String shiftType) throws SQLException {
+//        LinkedHashMap<String,Integer> ret = new LinkedHashMap<>();
+//        HashMap<String, Object> wherecond = new HashMap<>();
+//        wherecond.put("brancAdrress",branch);
+//        wherecond.put("shiftDate", Time.localDateToString(localDate));
+//        wherecond.put("shiftType",shiftType);
+//        //TODO name by table
+//        ArrayList<SubmittedShiftDTO> req = shiftDAO.findAll("SubmittedShift",wherecond,SubmittedShiftDTO.class);
+//        if (req!= null && !req.isEmpty()){
+//            for (SubmittedShiftDTO submittedShiftDTO: req) {
+//                ret.put(submittedShiftDTO,submittedShiftDTO);
+//            }
+//            return ret;
+//        }
+//        else return null;
+//    }
 
 
     // TODO - israel do not throwe Exeption

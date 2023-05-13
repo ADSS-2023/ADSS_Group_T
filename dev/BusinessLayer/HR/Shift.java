@@ -88,7 +88,7 @@ public class Shift {
         String s ;
         if(shiftType) s = "m";
         else s = "e";
-        employeeRequirements = dalShiftService.findAllSubmissionByDateAndShiftType(branch, date, s);
+        //submittedPositionByEmployees = dalShiftService.findAllSubmissionByDateAndShiftType(branch, date, s);
     }
 
     public String isLegalShift() throws SQLException {

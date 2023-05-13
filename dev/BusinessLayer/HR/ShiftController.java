@@ -71,14 +71,14 @@ public class ShiftController {
 
 
 
-    public LinkedHashMap<LocalDate, ArrayList<Shift>> lazyLoadFindShifsByBranch(String branch) throws SQLException {
+    public LinkedHashMap<LocalDate, ArrayList<Shift>> lazyLoadFindShiftsByBranch(String branch) throws SQLException {
         LinkedHashMap<LocalDate, ArrayList<Shift>> branchShifts = dalShiftService.findAllShiftsByBranch(branch);
         shifts.put(branch, branchShifts);
         return branchShifts;
     }
 
     public String showShiftStatus(String branchId, LocalDate date, boolean shiftType) throws SQLException {
-        LinkedHashMap<LocalDate, ArrayList<Shift>> branchShifts = lazyLoadFindShifsByBranch(branchId);
+        LinkedHashMap<LocalDate, ArrayList<Shift>> branchShifts = lazyLoadFindShiftsByBranch(branchId);
         Shift shift = shiftType ? branchShifts.get(date).get(0) : branchShifts.get(date).get(1);
         return shift.showShiftStatus(dalShiftService);
     }
@@ -91,7 +91,7 @@ public class ShiftController {
     }
     public String submitShiftForEmployee(String branch, int id, LocalDate date, boolean shiftType) throws Exception {
         Employee employee =  lazyLoadFindEmployeeByid(id);
-        HashMap<LocalDate, ArrayList<Shift>> branchShifts = lazyLoadFindShifsByBranch(branch);
+        HashMap<LocalDate, ArrayList<Shift>> branchShifts = lazyLoadFindShiftsByBranch(branch);
 
         if (employee != null && branchShifts != null){
             employee.addSubmittedShift(branch,  date, shiftType);
@@ -102,7 +102,7 @@ public class ShiftController {
     }
 
     public String assignEmployeeForShift(String branch, int id, LocalDate date, boolean shiftType, String positionType) throws Exception {
-        HashMap<LocalDate, ArrayList<Shift>> branchShifts = lazyLoadFindShifsByBranch(branch);
+        HashMap<LocalDate, ArrayList<Shift>> branchShifts = lazyLoadFindShiftsByBranch(branch);
         Employee employee =  lazyLoadFindEmployeeByid(id);
         if ( branchShifts != null && employee != null){
             Shift shift = shiftType ?  branchShifts.get(date).get(0) : branchShifts.get(date).get(1);
@@ -113,7 +113,7 @@ public class ShiftController {
     }
 
     public String assignAll(String branch,  LocalDate date, boolean shiftType) throws SQLException {
-        HashMap<LocalDate, ArrayList<Shift>> branchShifts = lazyLoadFindShifsByBranch(branch);
+        HashMap<LocalDate, ArrayList<Shift>> branchShifts = lazyLoadFindShiftsByBranch(branch);
         if (branchShifts != null){
             Shift shift = shiftType ?  branchShifts.get(date).get(0) : branchShifts.get(date).get(1);
             shift.assignAll();
@@ -123,7 +123,7 @@ public class ShiftController {
     }
 
     public void addRequirements(String branch, LocalDate shiftDate, boolean shiftType, LinkedHashMap<String, Integer> requirements) throws IllegalArgumentException, SQLException {
-        HashMap<LocalDate, ArrayList<Shift>> branchShifts = lazyLoadFindShifsByBranch(branch);
+        HashMap<LocalDate, ArrayList<Shift>> branchShifts = lazyLoadFindShiftsByBranch(branch);
         String shiftT= "e";
         if (branchShifts != null) {
             if (branchShifts.containsKey(shiftDate)) {
@@ -150,7 +150,7 @@ public class ShiftController {
 
     //todo from Noam Gilad pls
     public void addStoreKeeperRequirement(LocalDate requiredDate, String branch) throws SQLException, NoSuchFieldException {
-        HashMap<LocalDate, ArrayList<Shift>> branchShifts = lazyLoadFindShifsByBranch(branch);
+        HashMap<LocalDate, ArrayList<Shift>> branchShifts = lazyLoadFindShiftsByBranch(branch);
         if (branchShifts == null)
             throw new NoSuchFieldException("there is no such branch exist");
         if (branchShifts != null){

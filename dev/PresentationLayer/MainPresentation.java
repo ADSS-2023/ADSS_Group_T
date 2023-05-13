@@ -40,6 +40,7 @@ public class MainPresentation {
 
         this.shiftService = serviceFactory.getShiftService();
         this.employeeService = serviceFactory.getEmployeeService();
+        this.userService = serviceFactory.getUserService();
         this.logisticCenterService = serviceFactory.getLogisticCenterService();
         this.deliveryService = serviceFactory.getDeliveryService();
         this.userService = serviceFactory.getUserService();
@@ -77,10 +78,6 @@ public class MainPresentation {
      * the main window of the system
      */
     public void loginWindow() {
-        //TODO remove shortCut:
-        //this.transportManagerPresentation.start();
-       // this.hrManagerPresentation.start();
-
 
         //TODO - create the branch choosing process
 
