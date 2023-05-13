@@ -78,6 +78,7 @@ public class HRManagerPresentation {
         if(ansForApproveAll.equals("y")){
             shiftService.assignAll(branch,date,shiftType);
         }
+
         else {
             while(true){
                 System.out.println("assign employee for shift - Please enter the employee ID:");
