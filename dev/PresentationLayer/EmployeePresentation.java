@@ -18,26 +18,15 @@ public class EmployeePresentation {
             System.out.println("------ main window -------");
             System.out.println("Please choose an option:");
             System.out.println(
-                            " \n 1.add new Employee" +
-                            " \n 2.notification" +
-                            " \n 3.add employee qualification " +
-                            " \n 4.show shift status" +
-                            " \n 5.add new driver" +
-                            " \n 6.manage assign Employee for shift" +
-                            " \n 7.submit shift for employee" +
-                            " \n 8.submit shift for driver" +
-                            " \n 9.add shift requirements" +
-                            " \n 10.exit ");
+                            " \n 1.submmit shift " +
+                            " \n 2.show my shift status" +
+                            " \n 3.exit ");
             int choice = scanner.nextInt();
             scanner.nextLine(); // Consume the newline character
             switch (choice) {
                 case 1 -> {}
                 case 2 -> {}
-                case 3 -> {}
-                case 4 -> {}
-                case 5 -> {}
-                case 6 -> {}
-                case 7 -> {return;}//exit
+                case 3 -> {return;}//exit
                 default -> System.out.println("Invalid choice. Please try again.");
             }
         }
