@@ -33,7 +33,6 @@ class InventoryTest {
         inventoryService = serviceFactory.inventoryService;
         itemService = serviceFactory.itemService;
         supplierManager = new SupplierManager(serviceFactory);
-
         try {
             serviceFactory.deleteAllData();
             serviceFactory.uss.setUpDate();
