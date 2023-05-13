@@ -2,6 +2,7 @@ package BusinessLayer.Stock.Tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 import BusinessLayer.Stock.Inventory;
+import PresentationLayer.Supplier.SupplierManager;
 import ServiceLayer.Stock.CategoryService;
 import ServiceLayer.Stock.DamagedService;
 import ServiceLayer.Stock.InventoryService;
@@ -19,6 +20,8 @@ public class DamagedTest {
     public static ItemService itemService;
     private Inventory inventory;
     public static ServiceFactory serviceFactory;
+    public SupplierManager supplierManager;
+
 
     @BeforeEach
     public void setUp(){
@@ -28,9 +31,15 @@ public class DamagedTest {
         categoryService = serviceFactory.categoryService;
         inventoryService = serviceFactory.inventoryService;
         itemService = serviceFactory.itemService;
+        supplierManager = new SupplierManager(serviceFactory);
+
         try {
-            //serviceFactory.dataSetUp();
-            inventory.setUp();
+            //serviceFactory
+            serviceFactory.deleteAllData();
+            serviceFactory.uss.setUpDate();
+            serviceFactory.inventoryService.setUp();
+            serviceFactory.manageOrderService.set_up();
+            supplierManager.setUpData();
         }
         catch (Exception e){
             System.out.println(e.getMessage());
@@ -58,7 +67,8 @@ public class DamagedTest {
             String result = damagedService.produce_damaged_report();
             // Check if the returned report is not empty and contains the correct item details
             assertNotNull(result);
-            assertEquals("Item name : 1.5% milk , Item ID : 1 , Amount : 3 , Description : Damaged during transit", result);
+            assertEquals("Item name : 1.5% milk , Item ID : 1 , Amount : 3 , Description : Damaged during transit\n" +
+                    "arrived in: 2023-09-17", result);
         } catch (Exception e) {
             fail("produce_damaged_report() threw an exception: " + e.getMessage());
         }

@@ -133,7 +133,7 @@ public class ManageOrderService {
         try {
             orderController.loadWaitingItems();
             orderController.loadOrderedItems();
-            //orderController.set_up_waiting_items();
+            orderController.set_up_waiting_items();
         }
         catch (Exception e){
             e.getMessage();
