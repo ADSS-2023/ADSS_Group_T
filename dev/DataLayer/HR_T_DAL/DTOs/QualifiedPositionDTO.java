@@ -12,4 +12,8 @@ public class QualifiedPositionDTO extends DTO {
         this.employeeId = employeeId;
         this.positionName = positionName;
     }
+
+    public QualifiedPositionDTO() {
+
+    }
 }

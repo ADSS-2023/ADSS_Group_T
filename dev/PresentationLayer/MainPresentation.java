@@ -53,7 +53,7 @@ public class MainPresentation {
     }
 
 
-    public void start() throws SQLException {
+    public void start() throws Exception {
         Scanner scanner = new Scanner(System.in);
         System.out.println("------ START -------");
         System.out.println("Please choose an option:");
@@ -68,7 +68,7 @@ public class MainPresentation {
         }
         if (choice == 2) {
             Data_init.initOldData(this.serviceFactory.getDAO(),supplierService,deliveryService);
-            Data_init_HR.initOldData(this.serviceFactory.getDAO(), employeeService, shiftService);
+            Data_init_HR.initOldData(this.serviceFactory.getDAO(), employeeService, shiftService, serviceFactory.getEmployeeController(), serviceFactory.getShiftController(), serviceFactory.getDalShiftService());
         }
         loginWindow();
     }

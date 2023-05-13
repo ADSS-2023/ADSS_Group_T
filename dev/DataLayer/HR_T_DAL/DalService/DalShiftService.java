@@ -19,11 +19,12 @@ import java.util.*;
 
 public class DalShiftService {
 
-    private Connection connection ;
+    private Connection connection;
     private ShiftDAO shiftDAO;
     private DalUserService dalUserService;
 
     private DalEmployeeService employeeService;
+
     public DalShiftService(Connection connection) throws SQLException {
         this.connection = connection;
         this.shiftDAO = new ShiftDAO(connection);
@@ -34,63 +35,166 @@ public class DalShiftService {
         return shiftDAO.getShiftsByDate(localDate);
     }
 
+    public void addNotification(LocalDate localDate, String notification) throws SQLException {
+        NotificationsDTO notificationsDTO = new NotificationsDTO(localDate.toString(), notification);
+        shiftDAO.insert(notificationsDTO);
+    }
+
+    public HashMap<LocalDate, String> getNotifications(String fromDate, String toDate) throws SQLException {
+        LinkedHashMap<String, Object> conditions = new LinkedHashMap<>();
+        conditions.put("date", fromDate + " TO " + toDate);
+        ArrayList<NotificationsDTO> notificationsDTOs = shiftDAO.findAll("Notifications", conditions, NotificationsDTO.class);
+
+        HashMap<LocalDate, String> notifications = new HashMap<>();
+        for (NotificationsDTO notificationsDTO : notificationsDTOs) {
+            notifications.put(LocalDate.parse(notificationsDTO.getDate()), notificationsDTO.getNotification());
+        }
+        return notifications;
+    }
+
+
+
     public void addRequierement(String branch, String date, String shiftType, String positionType, int amount) throws SQLException {
-        ShiftRequirementsDTO shiftRequirementsDTO = new ShiftRequirementsDTO(branch,date,shiftType,positionType,amount);
+        ShiftRequirementsDTO shiftRequirementsDTO = new ShiftRequirementsDTO(branch, date, shiftType, positionType, amount);
         shiftDAO.insert(shiftRequirementsDTO);
     }
 
     public void updateRequierement(String branch, String date, String shiftType, String positionType, int amount) throws SQLException {
-        ShiftRequirementsDTO shiftRequirementsDTO = new ShiftRequirementsDTO(branch,date,shiftType,positionType,amount);
-        shiftDAO.update(shiftRequirementsDTO , shiftRequirementsDTO);
+        ShiftRequirementsDTO shiftRequirementsDTO = new ShiftRequirementsDTO(branch, date, shiftType, positionType, amount);
+        shiftDAO.update(shiftRequirementsDTO, shiftRequirementsDTO);
     }
 
     public void deleteRequierement(String branch, String date, String shiftType, String positionType) throws SQLException {
-        ShiftRequirementsDTO shiftRequirementsDTO = new ShiftRequirementsDTO(branch,date,shiftType,positionType,0);
+        ShiftRequirementsDTO shiftRequirementsDTO = new ShiftRequirementsDTO(branch, date, shiftType, positionType, 0);
         shiftDAO.delete(shiftRequirementsDTO);
     }
 
     public LinkedHashMap<String, Integer> findRequiermentsByDateAndShiftType(String branch, LocalDate localDate, String shiftType) throws SQLException {
-        LinkedHashMap<String,Integer> ret = new LinkedHashMap<>();
+        LinkedHashMap<String, Integer> ret = new LinkedHashMap<>();
         HashMap<String, Object> wherecond = new HashMap<>();
-        wherecond.put("branch",branch);
+        wherecond.put("branch", branch);
         wherecond.put("shiftDate", Time.localDateToString(localDate));
-        wherecond.put("shiftType",shiftType);
-        ArrayList<ShiftRequirementsDTO> req = shiftDAO.findAll("ShiftRequirements",wherecond,ShiftRequirementsDTO.class);
-        if (req!= null && !req.isEmpty()){
-            for (ShiftRequirementsDTO shiftReq: req) {
-                ret.put(shiftReq.getPositionName(),shiftReq.getAmount());
+        wherecond.put("shiftType", shiftType);
+        ArrayList<ShiftRequirementsDTO> req = shiftDAO.findAll("ShiftRequirements", wherecond, ShiftRequirementsDTO.class);
+        if (req != null && !req.isEmpty()) {
+            for (ShiftRequirementsDTO shiftReq : req) {
+                ret.put(shiftReq.getPositionName(), shiftReq.getAmount());
             }
             return ret;
-        }
-        else return null;
+        } else return null;
     }
 
-    public LinkedHashMap<String, Integer> findAllSubmissionByDateAndShiftType(String branch, LocalDate localDate, String shiftType) throws SQLException {
-        LinkedHashMap<String,Integer> ret = new LinkedHashMap<>();
-        HashMap<String, Object> wherecond = new HashMap<>();
-        wherecond.put("branch",branch);
-        wherecond.put("shiftDate", Time.localDateToString(localDate));
-        wherecond.put("shiftType",shiftType);
-        //TODO name by table
-        ArrayList<SubmittedShiftDTO> req = shiftDAO.findAll("",wherecond,SubmittedShiftDTO.class);
-        if (req!= null && !req.isEmpty()){
-            for (SubmittedShiftDTO submittedShiftDTO: req) {
-                //ret.put(submittedShiftDTO,submittedShiftDTO);
+//    public LinkedHashMap<String, LinkedHashMap<Employee, Boolean>> findAllSubmissionByBranchDateAndShiftType(String branch, LocalDate localDate, String shiftType) throws SQLException {
+//
+//        HashMap<String, Object> wherecond = new HashMap<>();
+//        wherecond.put("branch",branch);
+//        wherecond.put("shiftDate", Time.localDateToString(localDate));
+//        wherecond.put("shiftType",shiftType);
+//        ArrayList<ShiftToEmployeeDTO> shiftToEmployee = shiftDAO.findAll("ShiftToEmployee", wherecond ,ShiftToEmployeeDTO.class);
+//        LinkedHashMap<String, LinkedHashMap<Employee, Boolean>> ret = new LinkedHashMap<>();
+//        if (shiftToEmployee!= null && !shiftToEmployee.isEmpty()){
+//            for (ShiftToEmployeeDTO val : shiftToEmployee) {
+//                Employee employee = employeeDAO.find(val.getEmployeeId());
+//                String position = val.getPosition();
+//                if (!ret.containsKey(position)) {
+//                    LinkedHashMap<Employee, Boolean> employeeBooleanHashMap = new LinkedHashMap<>();
+//                    employeeBooleanHashMap.put(employee, val.getAssigned());
+//                    ret.put(position, employeeBooleanHashMap);
+//                } else {
+//                    LinkedHashMap<Employee, Boolean> employeeBooleanHashMap = ret.get(position);
+//                    employeeBooleanHashMap.put(employee, val.getAssigned());
+//                }
+//            }
+//            return ret;
+//        }
+//        else return null;
+//    }
+
+    public LinkedHashMap<String, LinkedHashMap<Employee, Boolean>> findAllSubmissionByBranchDateAndShiftType(String branch, LocalDate localDate, String shiftType) throws SQLException {
+        // Set up the fields needed to retrieve ShiftRequirements and ShiftToEmployee objects
+        Map<String, Object> fieldsForShiftRequirements = new HashMap<>();
+        fieldsForShiftRequirements.put("shiftDate", localDate.toString());
+        fieldsForShiftRequirements.put("shiftType", shiftType);
+        fieldsForShiftRequirements.put("branch", branch);
+
+        // Retrieve the ShiftToEmployee objects for the current ShiftDTO
+        ArrayList<ShiftToEmployeeDTO> submittedPositionByEmployeesByDateShiftTypeAndBranchDTO = shiftDAO.findAll("ShiftToEmployee",
+                fieldsForShiftRequirements, ShiftToEmployeeDTO.class);
+
+
+        // Create a LinkedHashMap to hold the employee assignments for the current Shift object
+        LinkedHashMap<String, LinkedHashMap<Employee, Boolean>> submittedPositionByEmployees = new LinkedHashMap<>();
+        for (ShiftToEmployeeDTO subEmp : submittedPositionByEmployeesByDateShiftTypeAndBranchDTO) {
+            if (subEmp.getPosition() != null && subEmp.getIsAssigned() != null) {
+                String position = subEmp.getPosition();
+                boolean isAssigned = Boolean.parseBoolean(subEmp.getIsAssigned());
+                User user = dalUserService.findUserById(subEmp.getEmployeeId());
+                Employee employee = new Employee(user.getId(), user.getEmployeeName(), user.getBankAccount(), user.getDescription(), user.getSalary(), user.getJoiningDay(),
+                        user.getPassword(), user.getUserType());
+
+                if (submittedPositionByEmployees.containsKey(position)) {
+                    submittedPositionByEmployees.get(position).put(employee, isAssigned);
+                } else {
+                    LinkedHashMap<Employee, Boolean> employeeAssignments = new LinkedHashMap<>();
+                    employeeAssignments.put(employee, isAssigned);
+                    submittedPositionByEmployees.put(position, employeeAssignments);
+                }
             }
-            return ret;
         }
-        else return null;
+        return  submittedPositionByEmployees;
     }
 
 
-    // TODO - israel do not throwe Exeption
-    public void addEmployeeToShift(String branch, LocalDate localDate, boolean shiftTpe, int id, String position, boolean isAssined) throws SQLException {
+
+//    public LinkedHashMap<String, Integer> findAllSubmissionByDateAndShiftType(String branch, LocalDate localDate, String shiftType) throws SQLException {
+//        LinkedHashMap<String, Integer> ret = new LinkedHashMap<>();
+//        HashMap<String, Object> wherecond = new HashMap<>();
+//        wherecond.put("branch", branch);
+//        wherecond.put("shiftDate", Time.localDateToString(localDate));
+//        wherecond.put("shiftType", shiftType);
+//        ArrayList<SubmittedShiftDTO> req = shiftDAO.findAll("",   wherecond, SubmittedShiftDTO.class);
+//        if (req != null && !req.isEmpty()) {
+//            for (SubmittedShiftDTO submittedShiftDTO : req) {
+//                String position = submittedShiftDTO.get
+//                if (ret.containsKey(position)) {
+//                    ret.put(position, ret.get(position) + 1);
+//                } else {
+//                    ret.put(position, 1);
+//                }
+//            }
+//            return ret;
+//        } else {
+//            return null;
+//        }
+//    }
+
+
+
+    public void addEmployeeToShift(String branch, LocalDate localDate, boolean shiftType, int id, String position, boolean isAssined) throws SQLException {
+        String sht = shiftType ? "m" : "e";
+        String isAss = isAssined ? "true" : "false";
+        ShiftToEmployeeDTO shiftToEmployeeDTO = new ShiftToEmployeeDTO(localDate.toString(), sht, id, position, isAss, branch);
+        shiftDAO.insert(shiftToEmployeeDTO);
     }
 
-    // TODO - israel
-    public void updateEmployeeToShift(LocalDate localDate, boolean shiftTpe, int id, String position, boolean isAssined) throws SQLException {
+
+    public void updateEmployeeToShift(LocalDate localDate, boolean shiftType, int id, String position, boolean isAssined) throws SQLException {
+        String sht = shiftType ? "m" : "e";
+        String isAss = isAssined ? "true" : "false";
+        LinkedHashMap<String, Object> pk = new LinkedHashMap<>();
+        pk.put("shiftDate", localDate.toString());
+        pk.put("shiftType", sht);
+        pk.put("employeeId", id);
+        pk.put("position", position);;
+        ShiftToEmployeeDTO shiftToEmployeeDTO = shiftDAO.find(pk, "ShiftToEmployee", ShiftToEmployeeDTO.class);
+        if (shiftToEmployeeDTO != null){
+            String toAss = isAssined ? "true" : "false";
+            ShiftToEmployeeDTO newShiftToEmployeeDto = new ShiftToEmployeeDTO(shiftToEmployeeDTO.getShiftDate(), shiftToEmployeeDTO.getShiftType(), shiftToEmployeeDTO.getEmployeeId(), shiftToEmployeeDTO.getPosition(), toAss, shiftToEmployeeDTO.getBranch());
+            shiftDAO.update(shiftToEmployeeDTO, newShiftToEmployeeDto);
+        }
 
     }
+
 
     public LinkedHashMap<LocalDate, ArrayList<Shift>> findAllShiftsByBranch(String branch) throws SQLException {
         // Initialize the LinkedHashMap that will hold the shifts by date
@@ -151,7 +255,7 @@ public class DalShiftService {
             LocalDate shiftDate = LocalDate.parse(shiftDTO.getShiftDate());
             boolean shiftType = shiftDTO.getShiftType().equals("m");
             int managerId  = shiftDTO.getManagerId();
-            Shift shift = new Shift(branch, shiftDate, shiftType, shiftRequirements, submittedPositionByEmployees, managerId);
+            Shift shift = new Shift(branch, shiftDate, shiftType, shiftRequirements, submittedPositionByEmployees, managerId, this);
 
             // Add the Shift object to the LinkedHashMap holding shifts by date
             if (shiftsByBranch.containsKey(shiftDate)) {
@@ -225,7 +329,7 @@ public class DalShiftService {
             boolean isManagerShift = shiftDTO.getShiftType().equals("m");
             int managerId  = shiftDTO.getManagerId();
 
-            Shift shift = new Shift(branch, shiftDate, isManagerShift, shiftRequirements, submittedPositionByEmployees, managerId);
+            Shift shift = new Shift(branch, shiftDate, isManagerShift, shiftRequirements, submittedPositionByEmployees, managerId, this);
 
             if (shiftsByDate.containsKey(shiftDate)) {
                 shiftsByDate.get(shiftDate).add(shift);

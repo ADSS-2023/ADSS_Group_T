@@ -3,7 +3,6 @@ package BusinessLayer.HR;
 import BusinessLayer.HR.User.PositionType;
 import DataLayer.HR_T_DAL.DalService.DalEmployeeService;
 import DataLayer.HR_T_DAL.DalService.DalShiftService;
-import ServiceLayer.HR.EmployeeService;
 import UtilSuper.Time;
 
 import java.sql.SQLException;
@@ -11,7 +10,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.Map;
 
 public class ShiftController {
     private LinkedHashMap < String,  HashMap<LocalDate, ArrayList<Shift>> > shifts; // branch, shiftDate, shiftType
@@ -27,7 +26,10 @@ public class ShiftController {
 
     private  HashMap<LocalDate, String>  notifications;
 
+
+
     public HashMap<LocalDate, String> getNotifications() {
+
         return notifications;
     }
 
@@ -39,37 +41,61 @@ public class ShiftController {
         this.driverController     = driverController;
         this.dalEmployeeService = dalEmployeeService;
         this.dalShiftService = dalShiftService;
+        this.employeesMapper = employeesMapper;
+        this.notifications = new HashMap<>();
     }
 
-    public void init(LinkedHashMap<Integer,Employee> employeesMapper, DriverController driverController, DalEmployeeService dalEmployeeService,DalShiftService dalShiftService){
-       this.employeesMapper = employeesMapper;
-       this.driverController     = driverController;
-       this.dalEmployeeService = dalEmployeeService;
-       this.dalShiftService = dalShiftService;
-    }
 
-    public void SkipDay(LocalDate date) throws SQLException {
+
+    public void skipDay(LocalDate date) throws SQLException {
         // Retrieve all shifts for the given date and group them by branch
         LinkedHashMap<String, HashMap<LocalDate, ArrayList<Shift>>> shiftsByDateInAllBranch = dalShiftService.findAllShiftsByDateInAllBranches(date);
 
         // Initialize a notification string to collect information about illegal shifts
-        String notification = "";
+        StringBuilder notificationBuilder = new StringBuilder();
 
         // Iterate over all branches
         for (String branch : shiftsByDateInAllBranch.keySet()) {
+            notificationBuilder.append("\n==============================\n");
+            notificationBuilder.append(String.format("Branch: %s\n", branch));
+
             // Retrieve all shifts for the current branch and date
             ArrayList<Shift> shiftsForDateInBranch = shiftsByDateInAllBranch.get(branch).get(date);
 
             // Iterate over all shifts for the current branch and date
             for (Shift shift : shiftsForDateInBranch) {
+                // Check if the current shift has a manager
+                if (shift.getShiftManagerId() == -1) {
+                    notificationBuilder.append("Noticed - the shift must have a manager!!!\n");
+                } else {
+                    notificationBuilder.append(String.format("Manager ID: %s\n", shift.getShiftManagerId()));
+                }
+
                 // Check if the current shift is legal
-                notification += String.format("Branch %s, Date %s, Shift Type %s: %s\n", shift.getBranch(), shift.getDate(), shift.getShiftType(), shift.isLegalShift());
-                this.notifications.put(date, notification);
+                String legalStatus = shift.isLegalShift() ? "LEGAL" : "ILLEGAL";
+                notificationBuilder.append("\n------------------------------\n");
+                notificationBuilder.append(String.format("Shift Date: %s\nShift Type: %s\nLegal Status: %s\n", shift.getDate(), shift.getShiftType(), legalStatus));
+                notificationBuilder.append("\nEmployee Requirements:\n");
+
+                // Add a line for each position requirement
+                for (Map.Entry<String, Integer> requirement: shift.getEmployeeRequirements().entrySet()) {
+                    String position = requirement.getKey();
+                    int requiredAmount = requirement.getValue();
+                    notificationBuilder.append(String.format("%s: %d\n", position, requiredAmount));
                 }
             }
         }
 
+        // Output the notification string
+        notifications.put(date, notificationBuilder.toString());
+        dalShiftService.addNotification(date, notificationBuilder.toString());
+    }
 
+    public HashMap<LocalDate, String> getNotifications(LocalDate fromDate, LocalDate toDate) throws SQLException {
+       this.notifications = dalShiftService.getNotifications(fromDate.toString(), toDate.toString());
+        dalShiftService.getNotifications(fromDate.toString(), toDate.toString());
+        return notifications;
+    }
 
     public LinkedHashMap<LocalDate, ArrayList<Shift>> lazyLoadFindShifsByBranch(String branch) throws SQLException {
         LinkedHashMap<LocalDate, ArrayList<Shift>> branchShifts = dalShiftService.findAllShiftsByBranch(branch);

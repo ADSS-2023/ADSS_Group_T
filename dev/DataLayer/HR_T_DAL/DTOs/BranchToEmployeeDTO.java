@@ -11,4 +11,10 @@ public class BranchToEmployeeDTO extends DTO {
         this.branchAddress = branchAddress;
         this.employeeId = employeeId;
     }
+
+    public BranchToEmployeeDTO(){
+
+    }
+
+
 }

@@ -11,10 +11,11 @@ public class SubmittedShiftDTO extends DTO {
     private String shiftType;
     public SubmittedShiftDTO(int emloyeeId, String branchAdress, String date, String shiftType) {
         super("SubmittedShift");
-        this.branch = branchAdress;
-        this.shiftType = shiftType;
         this.employeeId = emloyeeId;
         this.date = date;
+        this.shiftType = shiftType;
+        this.branch = branchAdress;
+
     }
 
     public SubmittedShiftDTO (){}

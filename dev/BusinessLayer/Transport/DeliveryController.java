@@ -686,6 +686,12 @@ public class DeliveryController {
      * @throws Exception when receiving details
      */
     public ArrayList<Delivery> getNextDayDeatails() throws Exception {
+        try {
+            this.shiftController.skipDay(currDate.plusDays(1));
+        }
+        catch (Exception exception){
+
+        }
         ArrayList<Delivery> deliveriesThatReScheduleDelivery = new ArrayList<>();
         deliveriesThatReScheduleDelivery.addAll(checkStoreKeeperForTomorrow());
         deliveriesThatReScheduleDelivery.addAll(scheduleDriversForTomorrow());

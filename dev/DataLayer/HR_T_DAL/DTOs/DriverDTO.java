@@ -14,6 +14,9 @@ public class DriverDTO extends DTO {
         this.coolingLevel = coolingLevel;
     }
 
+    public DriverDTO() {
+    }
+
     public int getDriverId() {
         return driverId;
     }

@@ -18,8 +18,14 @@ public class Driver extends User {
         super(id, employeeName, bankAccount, description, salary, joiningDay, password, userType);
         this.licenseType = licenseType;
         this.coolingLevel = coolingLevel;
-        // restrictions = new ArrayList<>();
     }
+
+    public Driver(LicenseType licenseType, CoolingLevel coolingLevel, User user) {
+        super(user.getId(), user.getEmployeeName(), user.getBankAccount(), user.getDescription(), user.getSalary(), user.getJoiningDay(), user.getPassword(), user.getUserType());
+        this.licenseType = licenseType;
+        this.coolingLevel = coolingLevel;
+    }
+
 
     public Driver(DriverDTO driverDTO , User user) {
         super(driverDTO.getDriverId(),user.getEmployeeName(),user.getBankAccount(),user.getDescription(),user.getSalary(),user.getJoiningDay(),user.getPassword(),user.getUserType());
