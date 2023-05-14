@@ -1,7 +1,14 @@
 //package Tests;
 //
+//import DataLayer.HR_T_DAL.DalService.DalDeliveryService;
+//import DataLayer.HR_T_DAL.DalService.DalLogisticCenterService;
+//import ServiceLayer.Transport.BranchService;
 //import org.junit.Test;
 //import static org.junit.Assert.*;
+//
+//import java.sql.Connection;
+//import java.sql.DriverManager;
+//import java.sql.SQLException;
 //import java.time.LocalDate;
 //import java.util.ArrayList;
 //import java.util.HashSet;
@@ -13,17 +20,22 @@
 //import BusinessLayer.HR.Driver.LicenseType;
 //
 //public class TransportControllerTest {
+//    private BranchController branchController;
+//    private DalDeliveryService dalDeliveryService;
 //
-//    private TransportController lc;
-//
+//    private DalLogisticCenterService dalLogisticCenterService;
 //    @Before
-//    public void setUp() {
-//        lc = new TransportController();
+//    public void setUp() throws SQLException {
+//        String testDBUrl = "jdbc:sqlite:dev/DataLayer/HR_Transport_DB.db";
+//        Connection connection = DriverManager.getConnection(testDBUrl);
+//        dalLogisticCenterService = new DalLogisticCenterService(connection);
+//        dalDeliveryService = new DalDeliveryService(connection, dalLogisticCenterService);
+//        this.branchController = new BranchController(dalDeliveryService);
 //    }
 //
 //    @Test
 //    public void testScheduleTruckWithoutTrucks() {
-//        LocalDate date = LocalDate.of(2023, 4, 2);
+//        LocalDate date = LocalDate.of(LocalDate.);
 //        assertNull("Expected no truck to be scheduled when there are no trucks available.", lc.scheduleTruck(date, CoolingLevel.non));
 //    }
 //

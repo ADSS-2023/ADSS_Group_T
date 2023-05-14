@@ -87,8 +87,7 @@ public class ServiceFactory {
 
         employeeController = new EmployeeController(dalEmployeeService,dalUserService);
         driverController = new DriverController(dalDriverService);
-        shiftController = new ShiftController(driverController,dalEmployeeService,dalShiftService,employeeController.getEmployeesMapper());
-        shiftService = new ShiftService(shiftController);
+
         //TODO delete because error!:
 
 
@@ -108,8 +107,13 @@ public class ServiceFactory {
         branchService = new BranchService(branchController);
         supplierController = new SupplierController(dalDeliveryService);
         supplierService = new SupplierService(supplierController);
+
+        shiftController = new ShiftController(driverController,dalEmployeeService,dalShiftService,employeeController.getEmployeesMapper(),branchController);
+        shiftService = new ShiftService(shiftController);
+
         deliveryController = new DeliveryController(logisticCenterController,supplierController,branchController,driverController,shiftController,dalDeliveryService);
         deliveryService = new DeliveryService(deliveryController);
+
 
     }
 

@@ -10,7 +10,7 @@ public class Shift {
 
     private LocalDate date;
 
-    String branch;
+    private String branch;
     private boolean shiftType;
 
     private LinkedHashMap <String, Integer> employeeRequirements; // HashMap<PositionType, amount> - require employees per shift
@@ -205,7 +205,7 @@ public class Shift {
 
     public boolean isThereAnyStoreKeeperReuirement() throws Exception {
         lazyLoadFindRequiermentsBtDateAndShiftType();
-        if (!employeeRequirements.containsKey(PositionType.storekeeper.name()) || employeeRequirements.get(PositionType.storekeeper.name()) < 1)
+        if ( employeeRequirements==null || !employeeRequirements.containsKey(PositionType.storekeeper.name()) || employeeRequirements.get(PositionType.storekeeper.name()) < 1)
             return false;
         return true;
     }
