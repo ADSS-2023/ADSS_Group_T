@@ -10,6 +10,8 @@ import ServiceLayer.Transport.DeliveryService;
 import ServiceLayer.Transport.LogisticCenterService;
 import ServiceLayer.Transport.SupplierService;
 import ServiceLayer.UserService;
+import UtilSuper.Response;
+import UtilSuper.ResponseSerializer;
 import UtilSuper.ServiceFactory;
 
 import java.sql.SQLException;
@@ -87,8 +89,12 @@ public class MainPresentation {
         Scanner scanner = new Scanner(System.in);
         System.out.println(" ");
         System.out.println("------ login window -------");
-        System.out.println("Current date: " + deliveryService.getCurrDateDetails());
-        while (true) {
+        Response response = ResponseSerializer.deserializeFromJson(deliveryService.getCurrDate());
+        if (response.isError()) {
+            System.out.println("cant show current day");
+        } else {
+            System.out.println("Current date: " + response.getReturnValue());
+        }
             String result = null;
             boolean loginSuccess = false;
             while (!loginSuccess) {
@@ -112,5 +118,5 @@ public class MainPresentation {
                 default:
             }
         }
-    }
+
 }

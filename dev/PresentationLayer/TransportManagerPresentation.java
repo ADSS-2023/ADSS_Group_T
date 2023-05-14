@@ -49,8 +49,8 @@ public class TransportManagerPresentation {
             System.out.println("6. Show logistic center products");
             System.out.println("7. show all Deliveries");
             System.out.println("8. add new products to supplier");
-            System.out.println("9. show map");
-            System.out.println("10. Logout");
+            System.out.println("9. Logout");
+
             int choice = scanner.nextInt();
             scanner.nextLine(); // Consume the newline character
             switch (choice) {

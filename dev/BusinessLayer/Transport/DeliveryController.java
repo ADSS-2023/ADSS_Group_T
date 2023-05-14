@@ -696,8 +696,11 @@ public class DeliveryController {
 
         }
         ArrayList<Delivery> deliveriesThatReScheduleDelivery = new ArrayList<>();
-        deliveriesThatReScheduleDelivery.addAll(checkStoreKeeperForTomorrow());
-        deliveriesThatReScheduleDelivery.addAll(scheduleDriversForTomorrow());
+
+        if(!getDeliveriesByDate(this.currDate.plusDays(1)).isEmpty()) {
+            deliveriesThatReScheduleDelivery.addAll(checkStoreKeeperForTomorrow());
+            deliveriesThatReScheduleDelivery.addAll(scheduleDriversForTomorrow());
+        }
         return deliveriesThatReScheduleDelivery;
     }
 
@@ -837,7 +840,7 @@ public class DeliveryController {
      * @throws SQLException query error
      */
     private boolean deliveryInDate(LocalDate date) throws SQLException {
-        return (date2deliveries.containsKey(date) && !date2deliveries.get(date).isEmpty()) || dalDeliveryService.findAllDeliveriesByDate(date.toString()) != null;
+        return (date2deliveries.containsKey(date) && !date2deliveries.get(date).isEmpty()) || !dalDeliveryService.findAllDeliveriesByDate(date.toString()).isEmpty();
     }
 
     /**
