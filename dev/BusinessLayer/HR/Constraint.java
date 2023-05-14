@@ -1,7 +1,7 @@
 package BusinessLayer.HR;
 
 import BusinessLayer.HR.User.PositionType;
-import DataLayer.HR_T_DAL.DTOs.ConstraintDTO;
+import DataLayer.HR_T_DAL.DTOs.ConstraintByEmployeeDTO;
 
 import java.time.LocalDate;
 
@@ -22,7 +22,7 @@ public class Constraint {
         this.assignedPosition = null;
     }
 //TODO -adding the time class
-    public Constraint(ConstraintDTO constraintDTO) {
+    public Constraint(ConstraintByEmployeeDTO constraintDTO) {
         this.branch = constraintDTO.getBranchAddress();
         this.employeeId = constraintDTO.getEmployeeId();
         this.date = date;

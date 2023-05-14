@@ -198,7 +198,7 @@ public Driver lazyLoadDriver (int id) throws SQLException {
         return  driverSubmissionByDate;
     }
 
-    public String submitShift(LocalDate date, int id, CoolingLevel coolingLevel, LicenseType licenseType) throws SQLException {
+    public String submitShift(LocalDate date, int id) throws SQLException {
         LinkedHashMap<Driver, Boolean> driverSubmissionByDate = lazyLoadDriverSubmitionByDateAndId(date, id);
         Driver driver = lazyLoadDriver(id);
 

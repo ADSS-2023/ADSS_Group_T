@@ -2,17 +2,17 @@ package DataLayer.HR_T_DAL.DTOs;
 
 import DataLayer.Util.DTO;
 
-public class ConstraintDTO extends DTO {
+public class ConstraintByEmployeeDTO extends DTO {
 
     private int employeeId;
     private String branchAddress;
     private String constraintDate;
     private String shiftType;
-    private String isTemporary;
+
     private String positionType;
 
-    public ConstraintDTO(int employeeId, String branchAddress, String constraintDate, String shiftType , String positionType) {
-        super("Constraint");
+    public ConstraintByEmployeeDTO(int employeeId, String branchAddress, String constraintDate, String shiftType , String positionType) {
+        super("ConstraintByEmployee");
         this.employeeId = employeeId;
         this.branchAddress = branchAddress;
         this.constraintDate = constraintDate;
@@ -20,7 +20,7 @@ public class ConstraintDTO extends DTO {
         this.positionType = positionType;
     }
 
-    public ConstraintDTO() {
+    public ConstraintByEmployeeDTO() {
 
     }
 
@@ -40,9 +40,7 @@ public class ConstraintDTO extends DTO {
         return shiftType;
     }
 
-    public String getIsTemporary() {
-        return isTemporary;
-    }
+
 
     public String getPositionType() {
         return positionType;

@@ -1,6 +1,7 @@
 package DataLayer.HR_T_DAL.DB_init;
 
 import BusinessLayer.HR.*;
+import BusinessLayer.HR.User.PositionType;
 import BusinessLayer.HR.User.UserType;
 import DataLayer.HR_T_DAL.DTOs.*;
 import DataLayer.HR_T_DAL.DalService.DalEmployeeService;
@@ -13,7 +14,9 @@ import UtilSuper.Time;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 public class Data_init_HR {
 
@@ -27,6 +30,58 @@ public class Data_init_HR {
         dao.deleteTableDataWithTableName("User");
         dao.deleteTableDataWithTableName("Driver");
         dao.deleteTableDataWithTableName("DateToDriver");
+
+
+
+        //init shifts for ayear in all branches
+        LocalDate startDate = LocalDate.now(); // Start date is one year from now
+        LocalDate endDate = startDate.plusMonths(1); // End date is one month from the start date
+
+        List<String> branches = Arrays.asList("b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9", "b10", "b11", "b12");
+
+// Loop through each date and insert shifts for the morning and evening
+        while (startDate.isBefore(endDate)) {
+            for (String branch : branches) {
+                try{
+                    ShiftDTO shift1 = new ShiftDTO(startDate.toString(), "m", -1, branch);
+                    ShiftDTO shift2 = new ShiftDTO(startDate.toString(), "e", -1, branch);
+                    dao.insert(shift1);
+                    dao.insert(shift2);
+                }
+                catch (Exception exp){
+
+                }
+
+            }
+
+            // Increment the date by 1 day
+            startDate = startDate.plusDays(1);
+        }
+
+        //init requirements for month
+        LinkedHashMap<String, Integer> positions = new LinkedHashMap<>();
+        positions.put(PositionType.orderly.name(), 1);
+        positions.put(PositionType.security.name(), 1);
+        positions.put(PositionType.general_worker.name(), 2);
+        positions.put(PositionType.cleaning.name(), 1);
+        positions.put(PositionType.cashier.name(), 2);
+        positions.put(PositionType.storekeeper.name(), 1);
+
+        //init shifts for ayear in all branches
+        startDate = LocalDate.now(); // Start date is one year from now
+        endDate = startDate.plusMonths(1); // End date is one month
+// Loop through each date and insert shifts for the morning and evening
+        while (startDate.isBefore(endDate)) {
+            for (String branch : branches) {
+                shiftService.addShiftRequirements(branch, positions, startDate.toString(), "m" );
+                shiftService.addShiftRequirements(branch, positions, startDate.toString(), "e" );
+            }
+
+            // Increment the date by 1 day
+            startDate = startDate.plusDays(1);
+        }
+
+
         //adding employees
 
 
@@ -83,6 +138,32 @@ public class Data_init_HR {
         employeeService.addQualification(20 , "orderly");
         employeeService.addQualification(20 , "cashier");
 
+
+        // submit shift for employee
+        employeeService.submitShiftForEmployee("b1", 13, LocalDate.now().plusDays(1), "m");
+        employeeService.submitShiftForEmployee("b1", 14, LocalDate.now().plusDays(1), "m");
+        employeeService.submitShiftForEmployee("b2", 15, LocalDate.now().plusDays(1), "m");
+        employeeService.submitShiftForEmployee("b1", 13, LocalDate.now().plusDays(1), "m");
+        employeeService.submitShiftForEmployee("b1", 14, LocalDate.now().plusDays(1), "e");
+        employeeService.submitShiftForEmployee("b1", 15, LocalDate.now().plusDays(1), "m");
+        employeeService.submitShiftForEmployee("b1", 16, LocalDate.now().plusDays(1), "e");
+        employeeService.submitShiftForEmployee("b1", 17, LocalDate.now().plusDays(1), "m");
+        employeeService.submitShiftForEmployee("b1", 18, LocalDate.now().plusDays(1), "e");
+        employeeService.submitShiftForEmployee("b1", 19, LocalDate.now().plusDays(1), "m");
+        employeeService.submitShiftForEmployee("b1", 20, LocalDate.now().plusDays(1), "e");
+        employeeService.submitShiftForEmployee("b2", 16, LocalDate.now().plusDays(3), "e");
+        employeeService.submitShiftForEmployee("b3", 17, LocalDate.now().plusDays(4), "m");
+        employeeService.submitShiftForEmployee("b3", 18, LocalDate.now().plusDays(4), "e");
+        employeeService.submitShiftForEmployee("b4", 19, LocalDate.now().plusDays(5), "m");
+        employeeService.submitShiftForEmployee("b4", 20, LocalDate.now().plusDays(5), "e");
+
+        shiftService.assignAll("b1", LocalDate.now().plusDays(1).toString(), "m");
+        shiftService.assignEmployeeForShift("b2", 16, LocalDate.now().plusDays(1).toString(), "m", PositionType.cleaning.name());
+
+
+
+
+
         //adding drivers
 
         employeeService.addNewDriver(21, "Driver 1", "123456789", "Driver with license type C and no cooling", 20000, "2023-05-14", "password123", "C", 0);
@@ -95,6 +176,24 @@ public class Data_init_HR {
         employeeService.addNewDriver(28, "Driver 8", "456321789", "Driver with license type C1 and fridge cooling", 27000, "2023-05-14", "password123", "C1", 1);
         employeeService.addNewDriver(29, "Driver 9", "789456123", "Driver with license type E and fridge cooling", 28000, "2023-05-14", "password123", "E", 2);
         employeeService.addNewDriver(30, "Driver 10", "123789456", "Driver with license type C and no cooling", 29000, "2023-05-14", "password123", "C", 0);
+
+
+        //submit shifts for drivers
+        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 21);
+        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 22);
+        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 23);
+        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 24);
+        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 25);
+        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 26);
+        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 27);
+        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 28);
+        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 29);
+        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 30);
+
+        employeeService.assignDriverForShift(LocalDate.now().plusDays(1), 21, 1);
+        employeeService.assignDriverForShift(LocalDate.now().plusDays(1), 22, 1);
+
+
 
 //        DriverDTO driver1 = new DriverDTO(21, "C", "non");
 //        dao.insert(driver1);
@@ -140,49 +239,49 @@ public class Data_init_HR {
 //        UserDTO driver10a = new UserDTO("User", "JasonDriver", "30", "driver", 30, "987456321", "2023-05-14", "Strong work ethic", 13000);
 //        dao.insert(driver10a);
 
-
-        dao.insert(new DateToDriverDTO(Time.localDateToString(LocalDate.now().plusDays(1)),21));
-        dao.insert(new DateToDriverDTO(Time.localDateToString(LocalDate.now().plusDays(1)),22));
-        dao.insert(new DateToDriverDTO(Time.localDateToString(LocalDate.now().plusDays(2)),22));
-        dao.insert(new DateToDriverDTO(Time.localDateToString(LocalDate.now().plusDays(1)),23));
-        dao.insert(new DateToDriverDTO(Time.localDateToString(LocalDate.now().plusDays(1)),24));
-        dao.insert(new DateToDriverDTO(Time.localDateToString(LocalDate.now().plusDays(2)),24));
-        dao.insert(new DateToDriverDTO(Time.localDateToString(LocalDate.now().plusDays(1)),25));
-        dao.insert(new DateToDriverDTO(Time.localDateToString(LocalDate.now().plusDays(1)),26));
-        dao.insert(new DateToDriverDTO(Time.localDateToString(LocalDate.now().plusDays(2)),26));
-        dao.insert(new DateToDriverDTO(Time.localDateToString(LocalDate.now().plusDays(1)),27));
-        dao.insert(new DateToDriverDTO(Time.localDateToString(LocalDate.now().plusDays(1)),28));
-        dao.insert(new DateToDriverDTO(Time.localDateToString(LocalDate.now().plusDays(2)),28));
-        dao.insert(new DateToDriverDTO(Time.localDateToString(LocalDate.now().plusDays(1)),29));
-        dao.insert(new DateToDriverDTO(Time.localDateToString(LocalDate.now().plusDays(1)),30));
-        dao.insert(new DateToDriverDTO(Time.localDateToString(LocalDate.now().plusDays(2)),30));
-
-        dao.insert(new SiteDTO("super", "000000001", "Contact super", 42, 42, Location.getShippingArea(42,42),"branch"));
-
-        String date = Time.localDateToString(LocalDate.now().plusDays(1));
-        dao.insert(new ShiftDTO(date, "m", 11, "super"));
-        dao.insert(new ShiftDTO(date, "e", 11, "super"));
-        date = Time.localDateToString(LocalDate.now());
-        dao.insert(new ShiftDTO(date, "m", 11, "super"));
-        dao.insert(new ShiftDTO(date, "e", 11, "super"));
-        date = Time.localDateToString(LocalDate.now().plusDays(2));
-        dao.insert(new ShiftDTO(date, "m", 11, "super"));
-        dao.insert(new ShiftDTO(date, "e", 11, "super"));
-
-        //cashier, storekeeper, security, cleaning, orderly, general_worker, shiftManager;
-        LinkedHashMap<String,Integer> howmany = new LinkedHashMap<>();
-        howmany.put("cashier",1);
-        howmany.put("storekeeper",1);
-        howmany.put("security",1);
-        howmany.put("cleaning",1);
-        howmany.put("general_worker",1);
-        howmany.put("orderly",1);
-        howmany.put("shiftManager",1);
-        shiftService.addShiftRequirements("super",howmany,Time.localDateToString(LocalDate.now().plusDays(1)), "e" );
-        shiftService.addShiftRequirements("super",howmany,Time.localDateToString(LocalDate.now().plusDays(1)), "m");
-        shiftService.addShiftRequirements("super",howmany,Time.localDateToString(LocalDate.now().plusDays(1)), "e");
-        shiftService.addShiftRequirements("super",howmany,Time.localDateToString(LocalDate.now().plusDays(1)), "m");
-        shiftService.addShiftRequirements("super",howmany,Time.localDateToString(LocalDate.now().plusDays(1)), "e");
+//
+//        dao.insert(new DateToDriverDTO(Time.localDateToString(LocalDate.now().plusDays(1)),21));
+//        dao.insert(new DateToDriverDTO(Time.localDateToString(LocalDate.now().plusDays(1)),22));
+//        dao.insert(new DateToDriverDTO(Time.localDateToString(LocalDate.now().plusDays(2)),22));
+//        dao.insert(new DateToDriverDTO(Time.localDateToString(LocalDate.now().plusDays(1)),23));
+//        dao.insert(new DateToDriverDTO(Time.localDateToString(LocalDate.now().plusDays(1)),24));
+//        dao.insert(new DateToDriverDTO(Time.localDateToString(LocalDate.now().plusDays(2)),24));
+//        dao.insert(new DateToDriverDTO(Time.localDateToString(LocalDate.now().plusDays(1)),25));
+//        dao.insert(new DateToDriverDTO(Time.localDateToString(LocalDate.now().plusDays(1)),26));
+//        dao.insert(new DateToDriverDTO(Time.localDateToString(LocalDate.now().plusDays(2)),26));
+//        dao.insert(new DateToDriverDTO(Time.localDateToString(LocalDate.now().plusDays(1)),27));
+//        dao.insert(new DateToDriverDTO(Time.localDateToString(LocalDate.now().plusDays(1)),28));
+//        dao.insert(new DateToDriverDTO(Time.localDateToString(LocalDate.now().plusDays(2)),28));
+//        dao.insert(new DateToDriverDTO(Time.localDateToString(LocalDate.now().plusDays(1)),29));
+//        dao.insert(new DateToDriverDTO(Time.localDateToString(LocalDate.now().plusDays(1)),30));
+//        dao.insert(new DateToDriverDTO(Time.localDateToString(LocalDate.now().plusDays(2)),30));
+//
+//        dao.insert(new SiteDTO("super", "000000001", "Contact super", 42, 42, Location.getShippingArea(42,42),"branch"));
+//
+//        String date = Time.localDateToString(LocalDate.now().plusDays(1));
+//        dao.insert(new ShiftDTO(date, "m", 11, "super"));
+//        dao.insert(new ShiftDTO(date, "e", 11, "super"));
+//        date = Time.localDateToString(LocalDate.now());
+//        dao.insert(new ShiftDTO(date, "m", 11, "super"));
+//        dao.insert(new ShiftDTO(date, "e", 11, "super"));
+//        date = Time.localDateToString(LocalDate.now().plusDays(2));
+//        dao.insert(new ShiftDTO(date, "m", 11, "super"));
+//        dao.insert(new ShiftDTO(date, "e", 11, "super"));
+//
+//        //cashier, storekeeper, security, cleaning, orderly, general_worker, shiftManager;
+//        LinkedHashMap<String,Integer> howmany = new LinkedHashMap<>();
+//        howmany.put("cashier",1);
+//        howmany.put("storekeeper",1);
+//        howmany.put("security",1);
+//        howmany.put("cleaning",1);
+//        howmany.put("general_worker",1);
+//        howmany.put("orderly",1);
+//        howmany.put("shiftManager",1);
+//        shiftService.addShiftRequirements("super",howmany,Time.localDateToString(LocalDate.now().plusDays(1)), "e" );
+//        shiftService.addShiftRequirements("super",howmany,Time.localDateToString(LocalDate.now().plusDays(1)), "m");
+//        shiftService.addShiftRequirements("super",howmany,Time.localDateToString(LocalDate.now().plusDays(1)), "e");
+//        shiftService.addShiftRequirements("super",howmany,Time.localDateToString(LocalDate.now().plusDays(1)), "m");
+//        shiftService.addShiftRequirements("super",howmany,Time.localDateToString(LocalDate.now().plusDays(1)), "e");
 
 //
 //        SubmittedShiftDTO s = new SubmittedShiftDTO(11, "super", Time.localDateToString(LocalDate.now().plusDays(1)), "true");

@@ -23,12 +23,13 @@ public class DalShiftService {
     private ShiftDAO shiftDAO;
     private DalUserService dalUserService;
 
-    private DalEmployeeService employeeService;
+    private DalEmployeeService dalEmployeeService;
 
-    public DalShiftService(Connection connection) throws SQLException {
+    public DalShiftService(Connection connection, DalEmployeeService dalEmployeeService) throws SQLException {
         this.connection = connection;
         this.shiftDAO = new ShiftDAO(connection);
         this.dalUserService = new DalUserService(connection);
+        this.dalEmployeeService = dalEmployeeService;
     }
 
     public List<ShiftDTO> getshifsByDate(LocalDate localDate) throws SQLException {
@@ -130,7 +131,7 @@ public class DalShiftService {
                 boolean isAssigned = Boolean.parseBoolean(subEmp.getIsAssigned());
                 User user = dalUserService.findUserById(subEmp.getEmployeeId());
                 Employee employee = new Employee(user.getId(), user.getEmployeeName(), user.getBankAccount(), user.getDescription(), user.getSalary(), user.getJoiningDay(),
-                        user.getPassword(), user.getUserType());
+                        user.getPassword(), user.getUserType() , dalEmployeeService);
 
                 if (submittedPositionByEmployees.containsKey(position)) {
                     submittedPositionByEmployees.get(position).put(employee, isAssigned);
@@ -238,16 +239,19 @@ public class DalShiftService {
                     boolean shiftType = subEmp.getShiftType().equals("m");
                     boolean isAssigned = Boolean.parseBoolean(subEmp.getIsAssigned());
                     User user = dalUserService.findUserById(subEmp.getEmployeeId());
-                    Employee employee = new Employee(user.getId(), user.getEmployeeName(), user.getBankAccount(), user.getDescription(), user.getSalary(), user.getJoiningDay(),
-                            user.getPassword(), user.getUserType());
+                    if (user != null){
+                        Employee employee = new Employee(user.getId(), user.getEmployeeName(), user.getBankAccount(), user.getDescription(), user.getSalary(), user.getJoiningDay(),
+                                user.getPassword(), user.getUserType(), dalEmployeeService);
 
-                    if (submittedPositionByEmployees.containsKey(position)) {
-                        submittedPositionByEmployees.get(position).put(employee, isAssigned);
-                    } else {
-                        LinkedHashMap<Employee, Boolean> employeeAssignments = new LinkedHashMap<>();
-                        employeeAssignments.put(employee, isAssigned);
-                        submittedPositionByEmployees.put(position, employeeAssignments);
+                        if (submittedPositionByEmployees.containsKey(position)) {
+                            submittedPositionByEmployees.get(position).put(employee, isAssigned);
+                        } else {
+                            LinkedHashMap<Employee, Boolean> employeeAssignments = new LinkedHashMap<>();
+                            employeeAssignments.put(employee, isAssigned);
+                            submittedPositionByEmployees.put(position, employeeAssignments);
+                        }
                     }
+
                 }
             }
 
@@ -312,7 +316,7 @@ public class DalShiftService {
                     boolean isAssigned = Boolean.parseBoolean(subEmp.getIsAssigned());
                     User user = dalUserService.findUserById(subEmp.getEmployeeId());
                     Employee employee = new Employee(user.getId(), user.getEmployeeName(), user.getBankAccount(), user.getDescription(), user.getSalary(), user.getJoiningDay(),
-                            user.getPassword(), user.getUserType());
+                            user.getPassword(), user.getUserType(), dalEmployeeService);
 
                     if (submittedPositionByEmployees.containsKey(position)) {
                         submittedPositionByEmployees.get(position).put(employee, isAssigned);

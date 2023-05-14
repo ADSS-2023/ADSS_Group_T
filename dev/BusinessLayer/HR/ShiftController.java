@@ -6,7 +6,6 @@ import DataLayer.HR_T_DAL.DalService.DalEmployeeService;
 import DataLayer.HR_T_DAL.DalService.DalShiftService;
 import ServiceLayer.Transport.BranchService;
 import UtilSuper.Time;
-
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -15,6 +14,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ShiftController {
+
+
     private final LinkedHashMap<String, HashMap<LocalDate, ArrayList<Shift>>> shifts; // branch, shiftDate, shiftType
     private DriverController driverController;
     private BranchController branchController;
