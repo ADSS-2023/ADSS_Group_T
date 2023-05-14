@@ -51,7 +51,7 @@ public class SupplierProductBusiness {
         this.expiryDate = LocalDate.parse(supplierProductDTO.getExpiryDate());
     }
 
-    private boolean isDiscountExists(int productAmount, boolean isPercentage){
+    public boolean isDiscountExists(int productAmount, boolean isPercentage){
         for(Discount dis:quantitiesAgreement) {
             if (dis.isPercentage() == isPercentage && dis.getAmount() == productAmount)
                 return true;

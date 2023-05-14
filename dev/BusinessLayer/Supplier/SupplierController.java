@@ -3,6 +3,7 @@ package BusinessLayer.Supplier;
 import BusinessLayer.Supplier.Discounts.Discount;
 import BusinessLayer.Supplier.Discounts.NumberDiscount;
 import BusinessLayer.Supplier.Discounts.PercentDiscount;
+import BusinessLayer.Supplier.Supplier_Util.Discounts;
 import BusinessLayer.Supplier.Supplier_Util.PaymentTerms;
 import BusinessLayer.Supplier.Suppliers.ConstantSupplier;
 import BusinessLayer.Supplier.Suppliers.OccasionalSupplier;
@@ -290,6 +291,45 @@ public class SupplierController {
 
     public boolean isSupplierExists(int supplierNum){
         return suppliers.containsKey(supplierNum);
+    }
+
+    public boolean isSupplierProductExists(int supplierNum, String productName, String productManufacturer){
+        try {
+            if (isSupplierExists(supplierNum)) {
+                SupplierBusiness sp = getSupplier(supplierNum);
+                return sp.getSupplierProduct(productName, productManufacturer) != null;
+            }
+        }
+        catch (Exception e){
+            return false;
+        }
+        return false;
+    }
+
+    public boolean isSupplierDiscountExists(int supplierNum, Discounts discountEnum, int amount, boolean isPrecentage){
+        try {
+            if (isSupplierExists(supplierNum)) {
+                SupplierBusiness sp = getSupplier(supplierNum);
+                return sp.isDiscountExist(discountEnum, amount, isPrecentage);
+            }
+        }
+        catch (Exception e){
+            return false;
+        }
+        return false;
+    }
+
+    public boolean isProductDiscountExists(int supplierNum, int productNum,int productAmount, boolean isPercentage){
+        try {
+            if (isSupplierExists(supplierNum)) {
+                SupplierBusiness sp = getSupplier(supplierNum);
+                return sp.getSupplierProduct(productNum).isDiscountExists(productAmount, isPercentage);
+            }
+        }
+        catch (Exception e){
+            return false;
+        }
+        return false;
     }
 
     public SupplierBusiness getSupplier(int supplierNum) throws Exception {
