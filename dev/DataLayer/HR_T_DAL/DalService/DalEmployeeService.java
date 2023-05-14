@@ -5,7 +5,6 @@ import BusinessLayer.HR.Employee;
 import DataLayer.HR_T_DAL.DAOs.ConstraintDao;
 import DataLayer.HR_T_DAL.DAOs.EmployeeDAO;
 import DataLayer.HR_T_DAL.DAOs.QualificationDAO;
-import DataLayer.HR_T_DAL.DAOs.UserDAO;
 import DataLayer.HR_T_DAL.DTOs.*;
 import DataLayer.Util.DAO;
 
@@ -42,7 +41,7 @@ public class DalEmployeeService {
         String s ="e";
         if (shiftType)
             s="m";
-        ConstraintDTO constraintDTO = new ConstraintDTO(employeeId,branchAdress,date.toString(),s ,positionType);
+        ConstraintByEmployeeDTO constraintDTO = new ConstraintByEmployeeDTO(employeeId,branchAdress,date.toString(),s ,positionType);
         dao.insert(constraintDTO);
     }
     public void addSubmittesdShift(String branchAdress,  LocalDate date, boolean shiftType,  int employeeId ) throws SQLException {
@@ -54,7 +53,7 @@ public class DalEmployeeService {
     }
 
     public Constraint findConstraintByIdAndDate(int employeeId,   LocalDate date) throws SQLException {
-        ConstraintDTO constraintDTO = constraintDao.findConstraintByIdAndDate(employeeId,date.toString());
+        ConstraintByEmployeeDTO constraintDTO = constraintDao.findConstraintByIdAndDate(employeeId,date.toString());
         Constraint constraint = new Constraint(constraintDTO);
         return constraint;
     }
@@ -64,9 +63,9 @@ public class DalEmployeeService {
         conditions.put("employeeId", id);
         conditions.put("constraintDate", startDate.toString() + " TO " + endDate.toString());
         conditions.put("positionType", "NOT NULL");
-        ArrayList<ConstraintDTO> constraintDTOs = constraintDao.findAll("Constraint", conditions, ConstraintDTO.class);
+        ArrayList<ConstraintByEmployeeDTO> constraintDTOs = constraintDao.findAll("Constraint", conditions, ConstraintByEmployeeDTO.class);
         HashMap<LocalDate, Constraint> constraints = new HashMap<>();
-        for (ConstraintDTO constraintDTO : constraintDTOs) {
+        for (ConstraintByEmployeeDTO constraintDTO : constraintDTOs) {
             Constraint constraint = new Constraint(constraintDTO);
             constraints.put(constraint.getDate(), constraint);
         }
@@ -77,7 +76,7 @@ public class DalEmployeeService {
 
     //work?
 //    public Constraint setAssignedPosition(int employeeId, LocalDate date, String positionType) throws SQLException {
-//        ConstraintDTO constraintDTO = constraintDao.find(employeeId, date.toString());
+//        ConstraintByEmployeeDTO constraintDTO = constraintDao.find(employeeId, date.toString());
 //        if (constraintDTO != null) {
 //            constraintDTO.setPositionType(positionType);
 //            constraintDao.update(constraintDTO);
@@ -93,9 +92,9 @@ public class DalEmployeeService {
         pk.put("branchAddress", branchAddress);
         pk.put("constraintDate", constraintDate);
         pk.put(shiftType, shiftType);
-        ConstraintDTO constraintDTO = constraintDao.find(pk, "constraints", ConstraintDTO.class);
+        ConstraintByEmployeeDTO constraintDTO = constraintDao.find(pk, "constraints", ConstraintByEmployeeDTO.class);
         if (constraintDTO != null) {
-            ConstraintDTO newConstraint = new ConstraintDTO(employeeId, branchAddress, constraintDate, shiftType, positionType);
+            ConstraintByEmployeeDTO newConstraint = new ConstraintByEmployeeDTO(employeeId, branchAddress, constraintDate, shiftType, positionType);
             constraintDao.update(constraintDTO, newConstraint);
             return new Constraint(newConstraint);
         } else {

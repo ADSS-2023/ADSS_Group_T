@@ -177,21 +177,21 @@ public class Data_init_HR {
         employeeService.addNewDriver(29, "Driver 9", "789456123", "Driver with license type E and fridge cooling", 28000, "2023-05-14", "password123", "E", 2);
         employeeService.addNewDriver(30, "Driver 10", "123789456", "Driver with license type C and no cooling", 29000, "2023-05-14", "password123", "C", 0);
 
-        //
+
         //submit shifts for drivers
-//        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 21);
-//        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 22);
-//        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 23);
-//        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 24);
-//        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 25);
-//        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 26);
-//        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 27);
-//        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 28);
-//        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 29);
-//        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 30);
-//
-//        employeeService.assignDriverForShift(LocalDate.now().plusDays(1), 21, 1);
-//        employeeService.assignDriverForShift(LocalDate.now().plusDays(1), 22, 1);
+        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 21);
+        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 22);
+        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 23);
+        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 24);
+        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 25);
+        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 26);
+        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 27);
+        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 28);
+        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 29);
+        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 30);
+
+        employeeService.assignDriverForShift(LocalDate.now().plusDays(1), 21, 1);
+        employeeService.assignDriverForShift(LocalDate.now().plusDays(1), 22, 1);
 
 
 

@@ -13,7 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ShiftController {
-    private LinkedHashMap < String,  HashMap<LocalDate, ArrayList<Shift>> > shifts; // branch, shiftDate, shiftType
+    private LinkedHashMap <String,  HashMap<LocalDate, ArrayList<Shift>> > shifts; // branch, shiftDate, shiftType
 
     DriverController driverController;
 

@@ -70,7 +70,7 @@ public class Employee extends User {
         // Add the new constraint to the submitted shift
         else {
             Constraint cons = new Constraint(branch, id, date, shiftType);
-            dalEmployeeService.addConstraint(id, branch, date, shiftType, null);
+            dalEmployeeService.addConstraint(id, branch, date, shiftType, "non");
             submittedShifts.put(date, cons);
             //it is added on the controller
            // dalEmployeeService.addSubmittesdShift(branch, date, shiftType, id);

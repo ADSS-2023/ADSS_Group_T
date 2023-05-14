@@ -1,15 +1,12 @@
 package DataLayer.HR_T_DAL.DAOs;
 
-import BusinessLayer.HR.Constraint;
-import DataLayer.HR_T_DAL.DTOs.ConstraintDTO;
+import DataLayer.HR_T_DAL.DTOs.ConstraintByEmployeeDTO;
 import DataLayer.Util.DAO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.util.List;
 
 public class ConstraintDao extends DAO {
 
@@ -17,8 +14,8 @@ public class ConstraintDao extends DAO {
         super(connection);
     }
 
-    public ConstraintDTO findConstraintByIdAndDate(int employeeId, String date) throws SQLException {
-        ConstraintDTO result = null;
+    public ConstraintByEmployeeDTO findConstraintByIdAndDate(int employeeId, String date) throws SQLException {
+        ConstraintByEmployeeDTO result = null;
         String sql = "SELECT * FROM Constraint WHERE employeeId = ? AND constraintDate = ?";
 
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -27,7 +24,7 @@ public class ConstraintDao extends DAO {
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
-                result = new ConstraintDTO(
+                result = new ConstraintByEmployeeDTO(
                         resultSet.getInt("employeeId"),
                         resultSet.getString("branchAddress"),
                         resultSet.getString("constraintDate"),
