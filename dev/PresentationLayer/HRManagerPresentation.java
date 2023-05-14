@@ -3,6 +3,8 @@ package PresentationLayer;
 import BusinessLayer.HR.User.PositionType;
 import ServiceLayer.HR.EmployeeService;
 import ServiceLayer.HR.ShiftService;
+import ServiceLayer.Transport.BranchService;
+import UtilSuper.ResponseSerializer;
 import UtilSuper.Time;
 
 import java.util.HashMap;
@@ -13,16 +15,15 @@ public class HRManagerPresentation {
 
     private ShiftService shiftService;
     private EmployeeService employeeService;
+    private BranchService branchService;
 
-    private String branch;
-
-    public HRManagerPresentation(ShiftService shiftService, EmployeeService employeeService){
+    public HRManagerPresentation(ShiftService shiftService, EmployeeService employeeService,BranchService branchService){
         this.shiftService = shiftService;
         this.employeeService = employeeService;
+        this.branchService = branchService;
     }
 
-    public void start(String branch) {
-        this.branch = branch;
+    public void start() {
         mainWindow();
     }
     private void mainWindow() {
@@ -68,13 +69,21 @@ public class HRManagerPresentation {
         String date = scanner.nextLine();
         System.out.println("assign employee for shift - enter morning(m)/evening(e)");
         String shiftType = scanner.nextLine();
-        shiftService.ShowShiftStatus(branch,date,shiftType);
+        Response response = ResponseSerializer.deserializeFromJson(branchService.getAllBranches());
+        if (response.isError())
+            System.out.println(response.getErrorMessage());
+        else {
+            System.out.println(response.getReturnValue());
+        }
+        System.out.println("choose Branch from the list:");
+        String branch = scanner.nextLine();
+        System.out.println(shiftService.ShowShiftStatus(branch,date,shiftType));
+
         System.out.println("assign employee for shift - would you like to approve all? y/n");
         String ansForApproveAll = scanner.nextLine();
         if(ansForApproveAll.equals("y")){
             shiftService.assignAll(branch,date,shiftType);
         }
-
         else {
             while(true){
                 System.out.println("assign employee for shift - Please enter the employee ID:");
@@ -93,6 +102,14 @@ public class HRManagerPresentation {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Add shift requirements");
         System.out.println("Please enter the shift details:");
+        Response response = ResponseSerializer.deserializeFromJson(branchService.getAllBranches());
+        if (response.isError())
+            System.out.println(response.getErrorMessage());
+        else {
+            System.out.println(response.getReturnValue());
+        }
+        System.out.println("choose Branch from the list:");
+        String branch = scanner.nextLine();
         System.out.println("add shift requirements - choose shift date");
         String date = scanner.nextLine();
         System.out.println("add shift requirements - enter morning(m)/evening(e)");
@@ -104,18 +121,26 @@ public class HRManagerPresentation {
             int ans_quantity = scanner.nextInt();
             howMany.put(p.name(),ans_quantity);
         }
-        System.out.println(shiftService.addShiftRequirements("super",howMany,date,shiftType));
+        System.out.println(shiftService.addShiftRequirements(branch,howMany,date,shiftType));
     }
 
     private void ShowShiftStatus() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("shift status");
         System.out.println("Please enter the shift details:");
+        Response response = ResponseSerializer.deserializeFromJson(branchService.getAllBranches());
+        if (response.isError())
+            System.out.println(response.getErrorMessage());
+        else {
+            System.out.println(response.getReturnValue());
+        }
+        System.out.println("choose Branch from the list:");
+        String branch = scanner.nextLine();
         System.out.println("shift status - choose shift date");
         String date = scanner.nextLine();
         System.out.println("shift status - enter morning(m)/evening(e)");
         String shiftType = scanner.nextLine();
-        System.out.println(shiftService.ShowShiftStatus("super",date,shiftType));
+        System.out.println(shiftService.ShowShiftStatus(branch,date,shiftType));
     }
 
     private void addQualification() {
