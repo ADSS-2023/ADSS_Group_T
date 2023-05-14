@@ -366,7 +366,10 @@ public class Inventory {
     }
     public void loadData() throws Exception {
         DiscountCounterDTO discountCounterDTO = inv_dal_controller.find("discountCounter","name","inventory_constants", DiscountCounterDTO.class);
-        discount_counter = discountCounterDTO.getCount();
+        if(discountCounterDTO == null)
+            discount_counter = 0;
+        else
+            discount_counter = discountCounterDTO.getCount();
         List<CategoryDTO> categoryDTOList = inv_dal_controller.findAllCategories("inventory_categories",CategoryDTO.class);
         for (CategoryDTO categoryDTO : categoryDTOList){
             add_category(categoryDTO);

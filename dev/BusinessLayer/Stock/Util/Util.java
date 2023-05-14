@@ -32,6 +32,8 @@ public class Util {
      * @return
      */
     public static LocalDate stringToDate(String dateString) {
+        if(dateString == null)
+            return null;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         try {
             LocalDate date = LocalDate.parse(dateString, formatter);

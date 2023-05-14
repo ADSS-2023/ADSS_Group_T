@@ -24,7 +24,12 @@ public class Util_Supplier_Stock {
 
     }
     public void loadDate() throws SQLException{
-        currDay = Util.stringToDate(inventoryDalController.find("currDate","name", "inventory_constants",CurrDateDTO.class).getDate());
+        CurrDateDTO currDateDTO =  inventoryDalController.find("currDate","name", "inventory_constants",CurrDateDTO.class);
+        if (currDateDTO == null)
+            currDay = Util.stringToDate("2023-09-15");
+        else
+            currDay = Util.stringToDate(currDateDTO.getDate());
+
     }
     public void setUpDate() throws SQLException{
         CurrDateDTO setDate = new CurrDateDTO("2023-09-17");
