@@ -78,18 +78,19 @@ public class ServiceFactory {
         /*this.deleteAllData();*/
     }
 
-/*    private Connection makeCon() {
+    private Connection makeCon() {
         try {
-            String dbFile = "./dev/source/stock_supplier_db.db";
-            String url = "jdbc:sqlite:" + dbFile;
-            Class.forName("org.sqlite.JDBC");
+            String dbFile = "stock_supplier_db.db";
+            String url = "jdbc:sqlite::resource:" + dbFile;
+/*            Class.forName("org.sqlite.JDBC");*/
             return DriverManager.getConnection(url);
         } catch (Exception var3) {
             System.out.println(var3.getMessage());
             return null;
 
         }
-    }*/
+    }
+/*
     private Connection makeCon() {
         try {
             String dbFileName = "stock_supplier_db.db";
@@ -119,6 +120,7 @@ public class ServiceFactory {
 
         }
     }
+*/
 
     public void deleteAllData(){
         String[] table_names = {"inventory_categories" ,"inventory_constants", "inventory_item", "inventory_item_ordered"
