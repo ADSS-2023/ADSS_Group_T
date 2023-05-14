@@ -35,7 +35,7 @@ public class EmployeeController {
         }
 
         // Create and set properties of the new employee object
-        Employee newEmployee = new Employee(id, employeeName, bankAccount, description,  salary, joiningDay, password, userType);
+        Employee newEmployee = new Employee(id, employeeName, bankAccount, description,  salary, joiningDay, password, userType, dalEmployeeService);
         dalUserService.addNewEmployee(newEmployee);
 
         // Add the new employee to the employeesMapper map
@@ -48,18 +48,28 @@ public class EmployeeController {
         this.shiftController = shiftController;
 }
 
-
-    public void addQualification(int id,  String position) throws SQLException {
+    public Employee getEmployeeById(int id) throws SQLException {
         Employee employee = employeesMapper.get(id);
-        Employee employee2 =  null;
-        if (employee == null){
-            employee2 = dalEmployeeService.findEmployeeById(id);
-            if(employee2 != null){
-                employeesMapper.put(id, employee2);
-                dalEmployeeService.addQualification(id,position);
-            }
-            else throw new IllegalArgumentException("there is no such employee with this id");
+        if(employee == null){
+            employee = dalEmployeeService.findEmployeeById(id);
+            if (employee == null) throw new SQLException("no employee with that id found");
         }
+        return employee;
+    }
+    public void addQualification(int id, String position) throws SQLException {
+        Employee employee = employeesMapper.get(id);
+        if (employee == null) {
+            Employee employee2 = dalEmployeeService.findEmployeeById(id);
+            if (employee2 != null) {
+                employeesMapper.put(id, employee2);
+                employee = employee2;
+            } else {
+                throw new IllegalArgumentException("There is no employee with this id.");
+            }
+        }
+        employee.addQualification(position);
+        //comment it as it  being making in the Employee
+        //dalEmployeeService.addQualification(id, position);
     }
 
     public LinkedHashMap<Integer, Employee> getEmployeesMapper(){

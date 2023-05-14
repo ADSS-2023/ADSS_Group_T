@@ -2,21 +2,13 @@ package DataLayer.HR_T_DAL.DAOs;
 
 import BusinessLayer.HR.Employee;
 import BusinessLayer.HR.User.PositionType;
-import BusinessLayer.HR.User.User;
 import BusinessLayer.HR.User.UserType;
-import DataLayer.HR_T_DAL.DTOs.ConstraintDTO;
+import DataLayer.HR_T_DAL.DTOs.ConstraintByEmployeeDTO;
 import DataLayer.HR_T_DAL.DTOs.EmployeeDTO;
-import DataLayer.HR_T_DAL.DTOs.UserDTO;
 import DataLayer.Util.DAO;
-import DataLayer.Util.DTO;
 
-import java.lang.reflect.Field;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -31,17 +23,17 @@ public class EmployeeDAO extends DAO {
         return null;
     }
 
-    public List<ConstraintDTO> getSubmittedShiftsByEmployee(EmployeeDTO employee) {
+    public List<ConstraintByEmployeeDTO> getSubmittedShiftsByEmployee(EmployeeDTO employee) {
         // Retrieve all submitted shifts for an employee from the database
         return null;
     }
 
-    public List<ConstraintDTO> getSubmittedShiftsNotAssigneByEmployee(EmployeeDTO employee) {
+    public List<ConstraintByEmployeeDTO> getSubmittedShiftsNotAssigneByEmployee(EmployeeDTO employee) {
         // Retrieve all submitted shifts for an employee from the database
         return null;
     }
 
-    public List<ConstraintDTO> getAssignedShiftsByEmployee(EmployeeDTO employee) {
+    public List<ConstraintByEmployeeDTO> getAssignedShiftsByEmployee(EmployeeDTO employee) {
         // Retrieve all assigned shifts for an employee from the database
         return null;
     }

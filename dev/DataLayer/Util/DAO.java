@@ -176,9 +176,22 @@ public class DAO {
         T result = null;
         String sql = "SELECT * FROM " + tableName + " WHERE ";
         ArrayList<String> pkNames = new ArrayList<>(pk.keySet());
-        for(int i = 0; i< pkNames.size() - 1;i++)
-            sql = sql + pkNames.get(i) + " = " + pk.get(pkNames.get(i)) + " and " ;
-        sql = sql + pkNames.get(pkNames.size()-1) + " = " + pk.get(pkNames.get(pkNames.size()-1));
+        for(int i = 0; i < pkNames.size() - 1; i++) {
+            sql += pkNames.get(i) + " = ";
+            if (pk.get(pkNames.get(i)) instanceof String) {
+                sql += "'" + pk.get(pkNames.get(i)) + "'";
+            } else {
+                sql += pk.get(pkNames.get(i));
+            }
+            sql += " and ";
+        }
+        sql += pkNames.get(pkNames.size() - 1) + " = ";
+        if (pk.get(pkNames.get(pkNames.size() - 1)) instanceof String) {
+            sql += "'" + pk.get(pkNames.get(pkNames.size() - 1)) + "'";
+        } else {
+            sql += pk.get(pkNames.get(pkNames.size() - 1));
+        }
+
 
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();

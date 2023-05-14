@@ -1,22 +1,25 @@
 package ServiceLayer.HR;
 
-import BusinessLayer.HR.Driver;
-import BusinessLayer.HR.DriverController;
-import BusinessLayer.HR.Employee;
-import BusinessLayer.HR.EmployeeController;
+import BusinessLayer.HR.*;
+import BusinessLayer.HR.User.PositionType;
 import BusinessLayer.HR.User.UserType;
 import UtilSuper.Time;
 
 import java.time.LocalDate;
+import java.util.NoSuchElementException;
+
 import UtilSuper.Response;
 
 public class EmployeeService {
     private EmployeeController employeeController;
     private DriverController driverController;
 
-    public EmployeeService(EmployeeController ec , DriverController driverController) {
+    private ShiftController shiftController;
+
+    public EmployeeService(EmployeeController ec , DriverController driverController, ShiftController shiftController) {
         this.driverController = driverController;
         this.employeeController = ec;
+        this.shiftController = shiftController;
     }
 
     public String addNewEmployee(int id, String employeeName, String bankAccount, String description, int salary, String joiningDay, String password) {
@@ -29,6 +32,76 @@ public class EmployeeService {
            return ex.getMessage();
       }
    }
+
+    public String submitShiftForEmployee(String branch, int id, LocalDate date, String shifType ) {
+        Response res = new Response();
+        try {
+            boolean sht = true;
+            if (shifType.equals("m"))
+                sht = true;
+            else if (shifType.equals("e")){
+                sht = false;
+            }
+            return shiftController.submitShiftForEmployee( branch,  id , date, sht);
+        }
+        catch (Exception ex) {
+            return ex.getMessage();
+        }
+    }
+
+    public String assignAll(String branch, LocalDate date, String shiftType ) {
+        Response res = new Response();
+        try {
+            boolean sht = true;
+            if (shiftType.equals("m"))
+                sht = true;
+            else if (shiftType.equals("e")){
+                sht = false;
+            }
+            return shiftController.assignAll( branch, date, sht);
+
+        }
+        catch (Exception ex) {
+            return ex.getMessage();
+        }
+    }
+
+    public String assignShiftForEmployee(String branch, int id, LocalDate date, String shiftType, String positionType ) {
+        Response res = new Response();
+        try {
+            boolean sht = true;
+            if (shiftType.equals("m"))
+                sht = true;
+            else if (shiftType.equals("e")){
+                sht = false;
+            }
+            return shiftController.assignEmployeeForShift( branch, id, date, sht, positionType);
+        }
+        catch (Exception ex) {
+            return ex.getMessage();
+        }
+    }
+
+    public String submitShiftForDriver(LocalDate date, int id) {
+        Response res = new Response();
+        try {
+            return driverController.submitShift( date, id );
+        }
+        catch (Exception ex) {
+            return ex.getMessage();
+        }
+    }
+
+    public String assignDriverForShift(LocalDate date, int id, String licenseType, String coolingLevel ) {
+        Response res = new Response();
+        try {
+           driverController.assignDriver(date, id , licenseType, coolingLevel );
+           return "The driver assign successfully";
+        }
+        catch (Exception ex) {
+            return ex.getMessage();
+        }
+    }
 
     public String addQualification(int id, String quali) {
         Response res = new Response();
@@ -61,8 +134,17 @@ public class EmployeeService {
 //        }
 //        return null;
 //    }
+    public String getListOfSubmittion(int id) {
+        Response res = new Response();
+        try {
+            return employeeController.getEmployeeById(id).showShiftsStatusByEmployee(LocalDate.now());
+        } catch (Exception ex) {
+        }
+        return null;
+    }
 
 
-
+    public void submitAsUser(int id,String date,String shiftType,String branch) {
+    }
 }
 

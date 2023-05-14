@@ -6,7 +6,6 @@ import DataLayer.HR_T_DAL.DalService.DalEmployeeService;
 import DataLayer.HR_T_DAL.DalService.DalShiftService;
 import ServiceLayer.Transport.BranchService;
 import UtilSuper.Time;
-
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -15,6 +14,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ShiftController {
+
+
     private final LinkedHashMap<String, HashMap<LocalDate, ArrayList<Shift>>> shifts; // branch, shiftDate, shiftType
     private DriverController driverController;
     private BranchController branchController;
@@ -24,21 +25,21 @@ public class ShiftController {
     private HashMap<LocalDate, String> notifications;
 
 
-    public ShiftController() {
-        shifts = new LinkedHashMap<>();
-    }
+
 
     public ShiftController(DriverController driverController, DalEmployeeService dalEmployeeService, DalShiftService dalShiftService,
-                           LinkedHashMap<Integer, Employee> employeesMapper, BranchController branchController) {
+                           BranchController branchController, LinkedHashMap<Integer, Employee> employeesMapper) {
 
         this.branchController = branchController;
         shifts = new LinkedHashMap<>();
         this.driverController = driverController;
         this.dalEmployeeService = dalEmployeeService;
         this.dalShiftService = dalShiftService;
-        this.employeesMapper = employeesMapper;
         this.notifications = new HashMap<>();
+        this.employeesMapper = employeesMapper;
     }
+
+
 
     public HashMap<LocalDate, String> getNotifications() {
         return notifications;
@@ -142,7 +143,6 @@ public class ShiftController {
         HashMap<LocalDate, ArrayList<Shift>> branchShifts = lazyLoadFindShifsByBranch(branch);
         if (branchShifts != null) {
             Shift shift = shiftType ? branchShifts.get(date).get(0) : branchShifts.get(date).get(1);
-            shift.assignAll();
             return shift.assignAll();
         }
         return "assign failed";

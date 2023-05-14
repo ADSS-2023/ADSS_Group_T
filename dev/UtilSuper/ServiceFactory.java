@@ -81,17 +81,20 @@ public class ServiceFactory {
 
         dalUserService = new DalUserService(connection);
 
-        dalShiftService = new DalShiftService(connection);
+
         dalDriverService = new DalDriverService(connection,dalUserService);
         dalEmployeeService = new DalEmployeeService(connection,dalUserService);
+        dalShiftService = new DalShiftService(connection, dalEmployeeService);
 
         employeeController = new EmployeeController(dalEmployeeService,dalUserService);
         driverController = new DriverController(dalDriverService);
+        branchController = new BranchController(dalDeliveryService);
 
         //TODO delete because error!:
 
+        shiftController = new ShiftController(this.driverController, this.dalEmployeeService, this.dalShiftService, this.branchController, this.employeeController.getEmployeesMapper());
+        employeeService = new EmployeeService(employeeController,driverController, shiftController);
 
-        employeeService = new EmployeeService(employeeController,driverController);
 
 
         logisticCenterController = new LogisticCenterController(dalLogisticCenterService);
@@ -103,12 +106,11 @@ public class ServiceFactory {
         User TRuser = new User(2,"TrManeger","123456","cool",1000,null,"2", UserType.TransportManager);
         userController = new UserController(employeeController,TRuser,driverController,HRuser);
         userService = new UserService(userController);
-        branchController = new BranchController(dalDeliveryService);
         branchService = new BranchService(branchController);
         supplierController = new SupplierController(dalDeliveryService);
         supplierService = new SupplierService(supplierController);
 
-        shiftController = new ShiftController(driverController,dalEmployeeService,dalShiftService,employeeController.getEmployeesMapper(),branchController);
+        shiftController = new ShiftController(driverController,dalEmployeeService,dalShiftService, branchController, employeeController.getEmployeesMapper());
         shiftService = new ShiftService(shiftController);
 
         deliveryController = new DeliveryController(logisticCenterController,supplierController,branchController,driverController,shiftController,dalDeliveryService);
