@@ -15,6 +15,11 @@ import ServiceLayer.Stock.ManageOrderService;
 import DataLayer.Inventory_Supplier_Dal.DalController.InventoryDalController;
 import DataLayer.Inventory_Supplier_Dal.DalController.ItemDalController;
 import ServiceLayer.Supplier.SupplierService;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.net.URL;
 import java.sql.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -73,11 +78,40 @@ public class ServiceFactory {
         /*this.deleteAllData();*/
     }
 
-    private Connection makeCon() {
+/*    private Connection makeCon() {
         try {
-            String dbFile = "./dev/DataLayer/stock_supplier_db.db";
+            String dbFile = "./dev/source/stock_supplier_db.db";
             String url = "jdbc:sqlite:" + dbFile;
             Class.forName("org.sqlite.JDBC");
+            return DriverManager.getConnection(url);
+        } catch (Exception var3) {
+            System.out.println(var3.getMessage());
+            return null;
+
+        }
+    }*/
+    private Connection makeCon() {
+        try {
+            String dbFileName = "stock_supplier_db.db";
+            InputStream inputStream = DAO.class.getClassLoader().getResourceAsStream(dbFileName);
+
+            if (inputStream == null) {
+                // handle the case where the resource is not found
+            }
+
+            File tempFile = File.createTempFile(dbFileName, "");
+            tempFile.deleteOnExit();
+
+            try (FileOutputStream outputStream = new FileOutputStream(tempFile)) {
+                byte[] buffer = new byte[8192];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
+                }
+            }
+
+            String url = "jdbc:sqlite:" + tempFile.getAbsolutePath();
+
             return DriverManager.getConnection(url);
         } catch (Exception var3) {
             System.out.println(var3.getMessage());

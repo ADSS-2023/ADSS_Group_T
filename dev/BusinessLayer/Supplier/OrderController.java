@@ -231,6 +231,15 @@ public class OrderController {
         }
         List<OrderBusiness> ordersToDelete = new LinkedList<>();
         for (OrderBusiness order : ordersNotSupplied) {
+            if(order.getDaysToSupplied()>0) { // first, reduce all delivery time by 1 day
+                order.setDaysToSupplied(order.getDaysToSupplied() - 1);
+                OrderDTO oldOrderDTO = order.getOrderDTO();
+                OrderDTO newOrderDTO = new OrderDTO(oldOrderDTO.getOrderNum(), oldOrderDTO.getSupplierNum(), oldOrderDTO.getContactName(), oldOrderDTO.getContactNumber()
+                        , oldOrderDTO.getOrderDate(), oldOrderDTO.getSupplierAddress(), oldOrderDTO.getDestinationAddress(), "true", oldOrderDTO.getDaysToDeliver() - 1, null);
+                orderDalController.update(oldOrderDTO, newOrderDTO);
+                order.setOrderDTO(newOrderDTO);
+            }
+
             if (order.getDaysToSupplied() == 0) {
                 for (OrderProduct product : order.getProducts()) {
                     items.add(new ItemToOrder(product.getProductName(), product.getManufacturer(), product.getQuantity(),
@@ -247,13 +256,6 @@ public class OrderController {
                     orderDalController.delete(oldOrderDTO);
                 }
                 ordersToDelete.add(order);
-            } else {
-                order.setDaysToSupplied(order.getDaysToSupplied() - 1);
-                OrderDTO oldOrderDTO = order.getOrderDTO();
-                OrderDTO newOrderDTO = new OrderDTO(oldOrderDTO.getOrderNum(), oldOrderDTO.getSupplierNum(), oldOrderDTO.getContactName(), oldOrderDTO.getContactNumber()
-                        , oldOrderDTO.getOrderDate(), oldOrderDTO.getSupplierAddress(), oldOrderDTO.getDestinationAddress(), "true", oldOrderDTO.getDaysToDeliver() - 1, null);
-                orderDalController.update(oldOrderDTO, newOrderDTO);
-                order.setOrderDTO(newOrderDTO);
             }
         }
         for (OrderBusiness order : ordersToDelete)

@@ -65,13 +65,53 @@ class OrderTest {
 
     @Test
     void createSpecialOrder_need_to_success(){
-        //serviceFactory.supplierManager.setUpData();
-        //MAKE SURE THAT YAGIL AND GOZ UPLOAD DATA!!
+        //MAY FAIL - NEED TO BE DUE TO THE CUR DAY OF THE TEST
         Map<Integer,Integer> cur_map = new HashMap<>();
         cur_map.put(4 , 100);
         try {
             orderController.createSpecialOrder(cur_map, true);
-            assertEquals("\u001B[31mOrder cannot be supplied\u001B[0m",  orderController.show_all_orders());
+            assertEquals("---------SUNDAY---------\n" +
+                    "Regular orders:\n" +
+                    "\tNo items to present\n" +
+                    "\n" +
+                    "Special orders:\n" +
+                    "\tNo items to present\n" +
+                    "---------MONDAY---------\n" +
+                    "Regular orders:\n" +
+                    "\tNo items to present\n" +
+                    "\n" +
+                    "Special orders:\n" +
+                    "\tItem id: 4, item name and manufacturer name: Click Elite, amount: 100\n" +
+                    "---------TUESDAY---------\n" +
+                    "Regular orders:\n" +
+                    "\tNo items to present\n" +
+                    "\n" +
+                    "Special orders:\n" +
+                    "\tNo items to present\n" +
+                    "---------WEDNESDAY---------\n" +
+                    "Regular orders:\n" +
+                    "\tNo items to present\n" +
+                    "\n" +
+                    "Special orders:\n" +
+                    "\tNo items to present\n" +
+                    "---------THURSDAY---------\n" +
+                    "Regular orders:\n" +
+                    "\tNo items to present\n" +
+                    "\n" +
+                    "Special orders:\n" +
+                    "\tNo items to present\n" +
+                    "---------FRIDAY---------\n" +
+                    "Regular orders:\n" +
+                    "\tNo items to present\n" +
+                    "\n" +
+                    "Special orders:\n" +
+                    "\tNo items to present\n" +
+                    "---------SATURDAY---------\n" +
+                    "Regular orders:\n" +
+                    "\tNo items to present\n" +
+                    "\n" +
+                    "Special orders:\n" +
+                    "\tNo items to present\n",  orderController.show_all_orders());
 
         }
         catch (Exception e){
@@ -83,7 +123,7 @@ class OrderTest {
     void presentItemsToBePlaced(){
         try {
             assertEquals("1. Order id:12, item:3% milk, manufacturer:IDO LTD, amount:40\n" +
-                    "2. Order id:1005, item:Beef Sausage, manufacturer:Zogloveck, amount:15\n", orderController.presentItemsToBePlaced());
+                    "2. Order id:1005, item:Beef Sausage, manufacturer:Zogloveck, amount:16\n", orderController.presentItemsToBePlaced());
         }
         catch (Exception e){
             assertEquals("" , "FALSE");
