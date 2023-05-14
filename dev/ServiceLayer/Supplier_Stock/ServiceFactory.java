@@ -82,7 +82,7 @@ public class ServiceFactory {
         try {
             String dbFile = "stock_supplier_db.db";
             String url = "jdbc:sqlite::resource:" + dbFile;
-/*            Class.forName("org.sqlite.JDBC");*/
+            Class.forName("org.sqlite.JDBC");
             return DriverManager.getConnection(url);
         } catch (Exception var3) {
             System.out.println(var3.getMessage());
