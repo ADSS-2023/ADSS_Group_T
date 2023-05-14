@@ -799,7 +799,7 @@ public class DeliveryController {
      * @return list of deliveries in the required date
      * @throws SQLException query error
      */
-    private ArrayList<Delivery> getDeliveriesByDate(LocalDate date) throws SQLException {
+    private ArrayList<Delivery> getDeliveriesByDate(LocalDate date) throws Exception {
         ArrayList<Delivery> dateDeliveries = new ArrayList<>();
         List<DateToDeliveryDTO> dateDeliveriesDTOs = dalDeliveryService.findAllDeliveriesByDate(date.toString());
         for(DateToDeliveryDTO dto : dateDeliveriesDTOs){
@@ -826,8 +826,8 @@ public class DeliveryController {
      * @return true if there is delivery in this date, false otherwise
      * @throws SQLException query error
      */
-    private boolean deliveryInDate(LocalDate date) throws SQLException {
-        return (date2deliveries.containsKey(date) && !date2deliveries.get(date).isEmpty()) || !dalDeliveryService.findAllDeliveriesByDate(date.toString()).isEmpty();
+    private boolean deliveryInDate(LocalDate date) throws Exception {
+        return getDeliveriesByDate(date).size() > 0;
     }
 
     /**
