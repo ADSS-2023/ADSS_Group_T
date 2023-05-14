@@ -85,5 +85,11 @@ class LogisticCenterControllerTest {
         LinkedHashMap<Integer, Truck> trucks = logisticCenterController.getAllTrucks();
         assertEquals(9, trucks.size());
     }
-
+  
+    public void testGetProductsInStock() throws Exception {
+        Exception exception = assertThrows(Exception.class, () -> {
+            logisticCenterController.getProductsInStock();
+        });
+        assertEquals("no products in stock", exception.getMessage());
+    }
 }

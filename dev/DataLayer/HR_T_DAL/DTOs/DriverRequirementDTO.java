@@ -20,6 +20,8 @@ public class DriverRequirementDTO extends DTO {
         this.amount = amount;
     }
 
+
+
     public String getDate() {
         return date;
     }

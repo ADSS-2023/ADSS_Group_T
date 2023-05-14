@@ -1,7 +1,7 @@
 package BusinessLayer.HR;
 
 import BusinessLayer.HR.User.PositionType;
-import DataLayer.HR_T_DAL.DTOs.ConstraintDTO;
+import DataLayer.HR_T_DAL.DTOs.ConstraintByEmployeeDTO;
 
 import java.time.LocalDate;
 
@@ -22,12 +22,15 @@ public class Constraint {
         this.assignedPosition = null;
     }
 //TODO -adding the time class
-    public Constraint(ConstraintDTO constraintDTO) {
+    public Constraint(ConstraintByEmployeeDTO constraintDTO) {
         this.branch = constraintDTO.getBranchAddress();
         this.employeeId = constraintDTO.getEmployeeId();
-        this.date = date;
+        this.date = LocalDate.parse(constraintDTO.getConstraintDate());
         this.shiftType = stringTObooleanST(constraintDTO.getShiftType());
-        this.assignedPosition = PositionType.valueOf(constraintDTO.getPositionType());
+        if (constraintDTO.getPositionType() == null || constraintDTO.getPositionType().equals("null") || constraintDTO.getPositionType().equals("non"))
+            this.assignedPosition = null;
+        else
+            this.assignedPosition = PositionType.valueOf(constraintDTO.getPositionType());
     }
 
     public boolean stringTObooleanST(String s){

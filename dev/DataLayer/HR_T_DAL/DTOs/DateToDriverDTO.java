@@ -26,6 +26,15 @@ public class DateToDriverDTO extends DTO {
 
     }
 
+    public String getShiftDate() {
+        return shiftDate;
+    }
 
+    public int getDriverId() {
+        return driverId;
+    }
 
+    public String getIsAssigned() {
+        return isAssigned;
+    }
 }

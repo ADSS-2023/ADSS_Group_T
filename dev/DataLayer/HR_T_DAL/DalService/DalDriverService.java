@@ -45,16 +45,38 @@ public class DalDriverService {
     }
 
 
+//    public LinkedHashMap<Driver, Boolean> findSubmissionByIdAndDate(int driverId, LocalDate date) throws SQLException { // the boolean is if assigned or not
+//        Pair result = driverDAO.getDriverAndIfIsAssigned(driverId, date.toString());
+//        LinkedHashMap<Driver, Boolean> ret = new LinkedHashMap<>();
+//        if (result.getFirst() != null && result.getSecond() != null) {
+//            DriverDTO dd = (DriverDTO) result.getFirst();
+//            Driver driver = new Driver(dd, dalUserService.findUserById(driverId));
+//            ret.put(driver, true);
+//            return ret;
+//        } else return null;
+//    }
+
     public LinkedHashMap<Driver, Boolean> findSubmissionByIdAndDate(int driverId, LocalDate date) throws SQLException { // the boolean is if assigned or not
-        Pair result = driverDAO.getDriverAndIfIsAssigned(driverId, date.toString());
-        LinkedHashMap<Driver, Boolean> ret = new LinkedHashMap<>();
-        if (result.getFirst() != null && result.getSecond() != null) {
-            DriverDTO dd = (DriverDTO) result.getFirst();
-            Driver driver = new Driver(dd, dalUserService.findUserById(driverId));
-            ret.put(driver, true);
-            return ret;
-        } else return null;
+        LinkedHashMap<String, Object> pk = new LinkedHashMap<>();
+        pk.put("shiftDate", date.toString());
+        pk.put("driverId",driverId);
+        DateToDriverDTO dateToDriverDTO = driverDAO.find(pk, "DateToDriver", DateToDriverDTO.class);
+        if (dateToDriverDTO == null  )
+            return null;
+        DriverDTO driverDTO = driverDAO.find(driverId, "driverId", "Driver", DriverDTO.class);
+        UserDTO userDTO = driverDAO.find(driverId, "id", "User", UserDTO.class);
+        if (driverDTO == null || userDTO == null)
+            return null;
+        Driver driver = new Driver(driverDTO, userDTO);
+        LinkedHashMap<Driver, Boolean> submissionByDriverIdAnDate = new LinkedHashMap<>();
+        String isAssignedString = dateToDriverDTO.getIsAssigned();
+        boolean isAssignedboolean = false;
+        if (isAssignedString.equals("true"))
+            isAssignedboolean = true;
+        submissionByDriverIdAnDate.put(driver, isAssignedboolean);
+        return submissionByDriverIdAnDate;
     }
+
 
 
     public LinkedList<Driver> findAllSubmissionByDate(LocalDate date) throws SQLException {
@@ -100,35 +122,38 @@ public class DalDriverService {
 
 
 
-    public LinkedHashMap<LocalDate, LinkedHashMap<Driver, Boolean>> findAllDriverSubmissionsBetweenDates(LocalDate startDate, LocalDate finishDate, int driverId) throws SQLException {
+    public LinkedHashMap<LocalDate, LinkedHashMap<Driver, Boolean>> findAllDriverSubmissionsBetweenDates(LocalDate startDate, LocalDate endDate, int driverId) throws SQLException {
         LinkedHashMap<LocalDate, LinkedHashMap<Driver, Boolean>> result = new LinkedHashMap<>();
+        LinkedHashMap<String, Object> conditions = new LinkedHashMap<>();
+        conditions.put("driverId", driverId);
+        conditions.put("shiftDate", startDate.toString() + " TO " + endDate.toString());
+        ArrayList<DateToDriverDTO> driverSubmissionsBetweenDays = driverDAO.findAll("DateToDriver", conditions, DateToDriverDTO.class);
+        Driver driver = findDriverById(driverId);
+        if ( driver != null ){
+            // Loop through all the dates between startDate and finishDate
+            for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+                // Create a new LinkedHashMap to store the drivers for the current date
+                LinkedHashMap<Driver, Boolean> driverMap = new LinkedHashMap<>();
 
-        // Loop through all the dates between startDate and finishDate
-        for (LocalDate date = startDate; !date.isAfter(finishDate); date = date.plusDays(1)) {
-            // Find all the submissions for the current date using the findAllSubmissionByDate method
-            LinkedList<Driver> drivers = findAllSubmissionByDate(date);
-
-            // Create a new LinkedHashMap to store the drivers for the current date
-            LinkedHashMap<Driver, Boolean> driverMap = new LinkedHashMap<>();
-
-            // Loop through all the drivers for the current date
-            for (Driver driver : drivers) {
-                // Check if the driver is the same as the driverId parameter
-                if (driver.getId() == driverId) {
-                    // Add the driver to the driverMap with the value set to true
-                    driverMap.put(driver, true);
-                } else {
-                    // Add the driver to the driverMap with the value set to false
-                    driverMap.put(driver, false);
+                // Loop through all the submissions for the current date
+                for (DateToDriverDTO submission : driverSubmissionsBetweenDays) {
+                    // Check if the submission's date is the same as the current date
+                    if (submission.getShiftDate().equals(date)) {
+                        // Find the driver for the submission
+                        // Add the driver to the driverMap with the value set to true if the submission is approved
+                        boolean isAssigned = false;
+                        if (submission.getIsAssigned().equals("true"))
+                            isAssigned = true;
+                        driverMap.put(driver, isAssigned);
+                    }
                 }
+                // Add the driverMap to the result LinkedHashMap with the key set to the current date
+                result.put(date, driverMap);
             }
-
-            // Add the driverMap to the result LinkedHashMap with the key set to the current date
-            result.put(date, driverMap);
         }
-
         return result;
     }
+
 
     public boolean deleterequieremnt(LocalDate date, String licenseType, String coolingLevel) throws SQLException {
         LinkedHashMap<String, Object> pk = new LinkedHashMap<>();
@@ -136,7 +161,7 @@ public class DalDriverService {
         pk.put("licenseType", licenseType);
         pk.put("coolingLevel", coolingLevel);
 
-        DriverRequirementDTO requirement = dao.find(pk, "requirement", DriverRequirementDTO.class);
+        DriverRequirementDTO requirement = dao.find(pk, "DriverRequirements", DriverRequirementDTO.class);
         if (requirement != null) {
             dao.delete(requirement);
             return true;
@@ -204,8 +229,8 @@ public class DalDriverService {
         driverDAO.insert(driverDTO);
     }
 
-    public List<DriverDTO> getDriversByLicenseType(Driver.LicenseType licenseType) throws SQLException {
-        return driverDAO.getDriversByLicenseType(licenseType);
-    }
+//    public List<DriverDTO> getDriversByLicenseType(Driver.LicenseType licenseType) throws SQLException {
+//        return driverDAO.getDriversByLicenseType(licenseType);
+//    }
 
 }
