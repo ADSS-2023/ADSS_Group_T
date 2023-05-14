@@ -161,7 +161,7 @@ public class DalDriverService {
         pk.put("licenseType", licenseType);
         pk.put("coolingLevel", coolingLevel);
 
-        DriverRequirementDTO requirement = dao.find(pk, "requirement", DriverRequirementDTO.class);
+        DriverRequirementDTO requirement = dao.find(pk, "DriverRequirements", DriverRequirementDTO.class);
         if (requirement != null) {
             dao.delete(requirement);
             return true;

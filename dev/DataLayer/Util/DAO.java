@@ -178,20 +178,27 @@ public class DAO {
         ArrayList<String> pkNames = new ArrayList<>(pk.keySet());
         for(int i = 0; i < pkNames.size() - 1; i++) {
             sql += pkNames.get(i) + " = ";
-            if (pk.get(pkNames.get(i)) instanceof String) {
+            if (pkNames.get(i).equals("date")) {
                 sql += "'" + pk.get(pkNames.get(i)) + "'";
             } else {
-                sql += pk.get(pkNames.get(i));
+                if (pk.get(pkNames.get(i)) instanceof String) {
+                    sql += "'" + pk.get(pkNames.get(i)) + "'";
+                } else {
+                    sql += pk.get(pkNames.get(i));
+                }
             }
             sql += " and ";
         }
         sql += pkNames.get(pkNames.size() - 1) + " = ";
-        if (pk.get(pkNames.get(pkNames.size() - 1)) instanceof String) {
+        if (pkNames.get(pkNames.size() - 1).equals("date")) {
             sql += "'" + pk.get(pkNames.get(pkNames.size() - 1)) + "'";
         } else {
-            sql += pk.get(pkNames.get(pkNames.size() - 1));
+            if (pk.get(pkNames.get(pkNames.size() - 1)) instanceof String) {
+                sql += "'" + pk.get(pkNames.get(pkNames.size() - 1)) + "'";
+            } else {
+                sql += pk.get(pkNames.get(pkNames.size() - 1));
+            }
         }
-
 
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
@@ -217,6 +224,7 @@ public class DAO {
 
         return result;
     }
+
 
 
     public <T extends DTO> ArrayList<T> findAll(String tableName, Class<T> dtoClass) throws SQLException {
