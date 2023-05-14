@@ -17,7 +17,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class OrderTest {
+class   OrderTest {
     public static InventoryService inventoryService;
     public static CategoryService categoryService;
     public static DamagedService damagedService;
