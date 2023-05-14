@@ -20,6 +20,10 @@ public class ConstraintDTO extends DTO {
         this.positionType = positionType;
     }
 
+    public ConstraintDTO() {
+
+    }
+
     public int getEmployeeId() {
         return employeeId;
     }
@@ -43,4 +47,10 @@ public class ConstraintDTO extends DTO {
     public String getPositionType() {
         return positionType;
     }
+
+    public void setPositionType(String positionType) {
+        this.positionType = positionType;
+    }
+
+
 }

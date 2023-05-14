@@ -25,34 +25,46 @@ public class UserDTO extends DTO {
      */
     public UserDTO(String tableName,String userName , String password ,String userType , int id ,String bankAccount , String joiningDay, String description , int salary) {
         super(tableName);
-        this.userType = userType;
+        this.id  = id ;
         this.userName = userName;
         this.password = password;
-        this.id =id;
+        this.userType = userType;
         this.bankAccount = bankAccount;
-        this.joiningDay = joiningDay;
-        this.salary = salary;
         this.description = description;
+        this.salary = salary;
+        this.joiningDay = joiningDay;
     }
-    public UserDTO(User user) {
-        super("User");
-        this.userType = user.getUserType().toString();
-        this.userName = user.getEmployeeName();
-        this.password = user.getPassword();
-        this.id =user.getId();
-        this.bankAccount = user.getBankAccount();
-        this.joiningDay = user.getPassword();
-        this.salary = user.getSalary();
 
-    }
     public UserDTO(Employee employee) {
         super("User");
-        this.userType = employee.getUserType().toString();
+        this.id = employee.getId();
         this.userName = employee.getEmployeeName();
         this.password = employee.getPassword();
+        this.userType = employee.getUserType().name();
+        this.bankAccount = employee.getBankAccount();
+        this.description = employee.getDescription();
+        this.salary = employee.getSalary();
+        this.joiningDay = employee.getJoiningDay().toString();
     }
 
+    public UserDTO(User user) {
+        super("User");
+        this.id = user.getId();
+        this.userName = user.getEmployeeName();
+        this.password = user.getPassword();
+        this.userType = user.getUserType().name();
+        this.bankAccount = user.getBankAccount();
+        this.description = user.getDescription();
+        this.salary = user.getSalary();
+        this.joiningDay = user.getJoiningDay().toString();
+    }
+
+
+
     public UserDTO(){}
+
+
+
 
     public int getId() {
         return id;

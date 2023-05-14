@@ -168,4 +168,51 @@ public class ServiceFactory {
 
     public SupplierService getSupplierService() {return supplierService;}
 
+    public BranchController getBranchController() {
+        return branchController;
+    }
+
+    public SupplierController getSupplierController() {
+        return supplierController;
+    }
+
+    public Connection getConnection() {
+        return connection;
+    }
+
+    public DalLogisticCenterService getDalLogisticCenterService() {
+        return dalLogisticCenterService;
+    }
+
+    public DalDeliveryService getDalDeliveryService() {
+        return dalDeliveryService;
+    }
+
+    public DalUserService getDalUserService() {
+        return dalUserService;
+    }
+
+    public DalEmployeeService getDalEmployeeService() {
+        return dalEmployeeService;
+    }
+
+    public DalShiftService getDalShiftService() {
+        return dalShiftService;
+    }
+
+    public DalDriverService getDalDriverService() {
+        return dalDriverService;
+    }
+
+    public DAO getDao() {
+        return dao;
+    }
+
+    public Shift getShift() {
+        return shift;
+    }
+
+    public DriverController getDriverController() {
+        return driverController;
+    }
 }

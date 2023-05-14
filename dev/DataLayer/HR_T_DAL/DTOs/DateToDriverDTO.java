@@ -6,9 +6,26 @@ public class DateToDriverDTO extends DTO {
     private String shiftDate;
     private int driverId;
 
+    private String isAssigned;
+
+    public DateToDriverDTO(String shiftDate, int driverId, String isAssigned) {
+        super("DateToDriver");
+        this.shiftDate = shiftDate;
+        this.driverId = driverId;
+        this.isAssigned = isAssigned;
+
+    }
+
     public DateToDriverDTO(String shiftDate, int driverId) {
         super("DateToDriver");
         this.shiftDate = shiftDate;
         this.driverId = driverId;
     }
+
+    public DateToDriverDTO() {
+
+    }
+
+
+
 }

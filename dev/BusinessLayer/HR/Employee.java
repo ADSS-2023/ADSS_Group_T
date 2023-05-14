@@ -96,7 +96,7 @@ public class Employee extends User {
         // Requirement 3: An employee cannot work more than six times a week.
         LocalDate startOfWeek = date.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
         LocalDate endOfWeek = startOfWeek.with(TemporalAdjusters.next(DayOfWeek.SATURDAY));
-        HashMap<LocalDate, Constraint> driverAssignInWeek = dalEmployeeService.findAssignConstraintByIdBetwwenDates(startOfWeek, endOfWeek, id);
+        HashMap<LocalDate, Constraint> driverAssignInWeek = dalEmployeeService.findAssignedConstraintByIdBetweenDates(startOfWeek, endOfWeek, id);
         if (driverAssignInWeek.keySet().size() >= 6)
             throw new IllegalArgumentException("Employee has already worked six shifts this week.");
 
@@ -118,8 +118,9 @@ public class Employee extends User {
 //        }
 
         // Set the assigned position of the shift
+        String sht = shiftType? "m" : "e";
         constraint.setAssignedPosition(positionType);
-        dalEmployeeService.setAssignedPosition(id,  date, positionType.name());
+        dalEmployeeService.setAssignedPosition(id,  branch, date.toString(), sht, positionType.name());
     }
 
 

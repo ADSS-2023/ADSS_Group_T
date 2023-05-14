@@ -4,10 +4,7 @@ import BusinessLayer.HR.Driver;
 import BusinessLayer.HR.User.User;
 import BusinessLayer.HR.User.UserType;
 import DataLayer.HR_T_DAL.DAOs.DriverDAO;
-import DataLayer.HR_T_DAL.DTOs.CounterDTO;
-import DataLayer.HR_T_DAL.DTOs.DriverDTO;
-import DataLayer.HR_T_DAL.DTOs.DriverRequirementDTO;
-import DataLayer.HR_T_DAL.DTOs.UserDTO;
+import DataLayer.HR_T_DAL.DTOs.*;
 import DataLayer.Util.DAO;
 import UtilSuper.Pair;
 
@@ -60,21 +57,22 @@ public class DalDriverService {
     }
 
 
-    // TODO - israel
     public LinkedList<Driver> findAllSubmissionByDate(LocalDate date) throws SQLException {
-        LinkedList<DriverDTO> listDriverDTO = driverDAO.findAllSubmissionByDate(date.toString());
-        LinkedList<Driver> listDriver = new LinkedList<Driver>();
-        for (DriverDTO d : listDriverDTO) {
-            if (d != null) {
-                User u = dalUserService.findUserById(d.getDriverId());
-                if (u != null) {
-                    Driver driver = new Driver(d, u);
-                    listDriver.add(driver);
-                }
+        LinkedList<DriverDTO> driverDTOs = driverDAO.findAllByLinkedList("DateToDriver", "shiftDate", date.toString(), DriverDTO.class);
+        LinkedList<Driver> drivers = new LinkedList<>();
+
+        for (DriverDTO driverDTO : driverDTOs) {
+            User user = dalUserService.findUserById(driverDTO.getDriverId());
+            if (user != null) {
+                Driver driver = new Driver(driverDTO, user);
+                drivers.add(driver);
             }
         }
-        return listDriver;
+
+        return drivers;
     }
+
+
 
 
 
@@ -102,10 +100,36 @@ public class DalDriverService {
 
 
 
-    // TODO - israel
-    public LinkedHashMap<LocalDate, LinkedHashMap<Driver, Boolean>> findAllDriverSubmissionsBetweenDates(LocalDate startDate, LocalDate finishDate, int driverId) throws SQLException { // the boolean is if assigned or not
-        return null;
+    public LinkedHashMap<LocalDate, LinkedHashMap<Driver, Boolean>> findAllDriverSubmissionsBetweenDates(LocalDate startDate, LocalDate finishDate, int driverId) throws SQLException {
+        LinkedHashMap<LocalDate, LinkedHashMap<Driver, Boolean>> result = new LinkedHashMap<>();
+
+        // Loop through all the dates between startDate and finishDate
+        for (LocalDate date = startDate; !date.isAfter(finishDate); date = date.plusDays(1)) {
+            // Find all the submissions for the current date using the findAllSubmissionByDate method
+            LinkedList<Driver> drivers = findAllSubmissionByDate(date);
+
+            // Create a new LinkedHashMap to store the drivers for the current date
+            LinkedHashMap<Driver, Boolean> driverMap = new LinkedHashMap<>();
+
+            // Loop through all the drivers for the current date
+            for (Driver driver : drivers) {
+                // Check if the driver is the same as the driverId parameter
+                if (driver.getId() == driverId) {
+                    // Add the driver to the driverMap with the value set to true
+                    driverMap.put(driver, true);
+                } else {
+                    // Add the driver to the driverMap with the value set to false
+                    driverMap.put(driver, false);
+                }
+            }
+
+            // Add the driverMap to the result LinkedHashMap with the key set to the current date
+            result.put(date, driverMap);
+        }
+
+        return result;
     }
+
     public boolean deleterequieremnt(LocalDate date, String licenseType, String coolingLevel) throws SQLException {
         LinkedHashMap<String, Object> pk = new LinkedHashMap<>();
         pk.put("date", date);
@@ -129,13 +153,39 @@ public class DalDriverService {
         return true;
     }
 
-    // TODO - israel
-    public LinkedHashMap<Driver, Boolean> assignDriver(int driverId, LocalDate date) throws SQLException { // the boolean is if assigned or not
-        return null;
+    public LinkedHashMap<Driver, Boolean> assignDriver(int driverId, LocalDate date) throws SQLException {
+        // Create a new DateToDriverDTO with the given driverId and date, and isAssigned set to true
+        DateToDriverDTO newDto = new DateToDriverDTO(date.toString(), driverId, "true");
+
+        // Get the old DateToDriverDTO from the database with the same driverId and date
+        LinkedHashMap<String, Object> pk = new LinkedHashMap<>();
+        pk.put("driverId", driverId);
+        pk.put("shiftDate", date.toString());
+        DateToDriverDTO oldDto = driverDAO.find(pk, "DateToDriver", DateToDriverDTO.class);
+
+        // Update the row in the database with the new DTO
+        driverDAO.update(oldDto, newDto);
+
+        // Return a LinkedHashMap with the assigned Driver and a Boolean value of true
+        LinkedHashMap<Driver, Boolean> result = new LinkedHashMap<>();
+        DriverDTO driverDTO = driverDAO.find(driverId, "driverId", "Driver", DriverDTO.class);
+        UserDTO userDTO = driverDAO.find(driverDTO.getDriverId(), "id", "User", UserDTO.class);
+
+        UserType userType = UserType.valueOf(userDTO.getUserType());
+
+        Driver driver = new Driver(driverDTO.getDriverId(), userDTO.getUserName(), userDTO.getBankAccount(), userDTO.getDescription(), userDTO.getSalary(), LocalDate.parse(userDTO.getJoiningDay()), userDTO.getPassword(), userType, Driver.LicenseType.valueOf(driverDTO.getLicenseType()), Driver.CoolingLevel.valueOf(driverDTO.getCoolingLevel()));
+        result.put(driver, true);
+        return result;
     }
 
-    // TODO - israel
-    public void addSubmissionForDriver(int driverId, LocalDate date) throws SQLException { // the boolean is if assigned or not
+
+
+    public void addSubmissionForDriver(int driverId, LocalDate date) throws SQLException {
+        // Create a new DateToDriverDTO with the given driverId and date, and isAssigned set to false
+        DateToDriverDTO newDto = new DateToDriverDTO(date.toString(), driverId, "false");
+
+        // Insert the new DTO into the database
+        driverDAO.insert(newDto);
     }
 
     public void addSRequirement(LocalDate date, String licenseType, String coolingLevel, int amount) throws SQLException {

@@ -13,4 +13,10 @@ public class BranchToShiftDTO extends DTO {
         this.shiftDate = shiftDate;
         this.shiftType = shiftType;
     }
+
+    public BranchToShiftDTO(){
+
+    }
+
+
 }
