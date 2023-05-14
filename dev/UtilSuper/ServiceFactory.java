@@ -99,7 +99,7 @@ public class ServiceFactory {
 
         logisticCenterController = new LogisticCenterController(dalLogisticCenterService);
         logisticCenterService = new LogisticCenterService(logisticCenterController);
-        dalDeliveryService = new DalDeliveryService(connection,dalLogisticCenterService);
+
 
         //TODO //
         User HRuser = new User(1,"HRManeger","123456","cool",1000,null,"1", UserType.HRManager);

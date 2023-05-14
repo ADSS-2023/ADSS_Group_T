@@ -6,23 +6,23 @@ import java.sql.SQLException;
 import java.util.LinkedHashMap;
 
 public class SupplierController {
-    private LinkedHashMap<String, Supplier> suppliers;
+
     private DalDeliveryService dalDeliveryService;
 
     public SupplierController(DalDeliveryService dalDeliveryService) {
-        this.suppliers = new LinkedHashMap<>();
+
         this.dalDeliveryService = dalDeliveryService;
     }
 
     // without products
     public void addSupplier(String supplierAddress, String telNumber, String contactName, int x, int y) throws SQLException {
-        if (suppliers.containsKey(supplierAddress) ||
+        if (getAllSuppliers().containsKey(supplierAddress) ||
                 dalDeliveryService.findSupplier(supplierAddress) != null) {
             throw new IllegalArgumentException("supplier address is taken");
         }
-        Supplier supplier = new Supplier(supplierAddress, telNumber, contactName, x, y, dalDeliveryService);
-        dalDeliveryService.insertSupplier(supplier);
-        suppliers.put(supplier.getAddress(), supplier);
+        dalDeliveryService.addSupplier(supplierAddress, telNumber, contactName, x, y);
+
+        addSupplier(supplierAddress, telNumber, contactName, x, y);
     }
 
 //    /**
@@ -42,21 +42,21 @@ public class SupplierController {
 //    }
 
     public LinkedHashMap<String, Supplier> getAllSuppliers() throws SQLException {
-        suppliers = dalDeliveryService.findAllSupplier();
-        return suppliers;
+
+        return  dalDeliveryService.findAllSuppliers();
     }
 
     public Supplier getSupplier(String supplierAddress) throws SQLException {
         Supplier s;
-        if (!suppliers.containsKey(supplierAddress)) {
+        if (!getAllSuppliers().containsKey(supplierAddress)) {
             s = dalDeliveryService.findSupplier(supplierAddress);
             if(s == null)
                 throw new IllegalArgumentException("no such supp");;
-            suppliers.put(supplierAddress,s);
+
             return s;
         }
         else
-            return suppliers.get(supplierAddress);
+            return getAllSuppliers().get(supplierAddress);
     }
 
     public LinkedHashMap<String, Product> getSupplierProducts(String supplierAddress) throws SQLException {

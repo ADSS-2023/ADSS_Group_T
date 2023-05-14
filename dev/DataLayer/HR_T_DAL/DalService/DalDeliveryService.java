@@ -16,11 +16,13 @@ public class DalDeliveryService {
 
     private DalLogisticCenterService dalLogisticCenterService;
     private DeliveryDAO deliveryDAO;
+    private LinkedHashMap<String, Supplier> suppliers;
 
     private SiteDAO siteDAO;
     private DAO dao;
 
     public DalDeliveryService(Connection connection,DalLogisticCenterService dalLogisticCenterService) {
+        this.suppliers = new LinkedHashMap<>();
         this.dalLogisticCenterService = dalLogisticCenterService;
         this.deliveryDAO = new DeliveryDAO(connection);
         this.dao = new DAO(connection);
@@ -131,10 +133,14 @@ public class DalDeliveryService {
     }
 
     public Supplier findSupplier(String supplierAddress) throws SQLException {
+        if(suppliers.containsKey(supplierAddress))
+            return suppliers.get(supplierAddress);
+
         SiteDTO dto = dao.find(supplierAddress,SiteDTO.getPKNameStatic(),SiteDTO.getTableNameStatic(),SiteDTO.class);
         if(dto == null)
             return null;
-        return new Supplier(dto,this);
+        suppliers.put(supplierAddress,new Supplier(dto,this));
+        return suppliers.get(supplierAddress);
     }
 
     public Branch findBranch(String branchAddress) throws SQLException {
@@ -177,7 +183,7 @@ public class DalDeliveryService {
     public DateToTruckDTO findSpecificTruckInDate(LinkedHashMap<String,Object> pk) throws SQLException {
         return dao.find(pk,DateToTruckDTO.getTableNameStatic(),DateToTruckDTO.class);
     }
-    public LinkedHashMap<String, Supplier> findAllSupplier() throws SQLException {
+    public LinkedHashMap<String, Supplier> findAllSuppliers() throws SQLException {
         ArrayList<SiteDTO> suppliersDTOs =  siteDAO.findAllSite("supplier");
         LinkedHashMap<String, Supplier> suppliers = new LinkedHashMap<>();
         for(SiteDTO s : suppliersDTOs){
@@ -310,5 +316,12 @@ public class DalDeliveryService {
     public void deleteAllData() throws SQLException {
         dao.deleteAllDataFromDatabase();
     }
+
+    public void addSupplier(String supplierAddress, String telNumber, String contactName, int x, int y) throws SQLException {
+        Supplier supplier = new Supplier(supplierAddress,telNumber,contactName,x,y,this);
+        suppliers.put(supplierAddress,supplier);
+        insertSupplier(supplier);
+    }
+
 
 }

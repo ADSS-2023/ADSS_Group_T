@@ -301,7 +301,7 @@ public Driver lazyLoadDriver (int id) throws SQLException {
             for (Map.Entry<Driver, Boolean> entry : driverStatusMap.entrySet()) {
                 Driver driver = entry.getKey();
                 Boolean isAssigned = entry.getValue();
-                if (!isAssigned) {
+                if (isAssigned) {
                     drivers.add(driver);
                 }
             }
