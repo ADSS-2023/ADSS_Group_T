@@ -1,5 +1,6 @@
 package DataLayer.HR_T_DAL.DTOs;
 
+import BusinessLayer.HR.User.PositionType;
 import DataLayer.Util.DTO;
 
 public class ConstraintByEmployeeDTO extends DTO {
@@ -17,8 +18,15 @@ public class ConstraintByEmployeeDTO extends DTO {
         this.branchAddress = branchAddress;
         this.constraintDate = constraintDate;
         this.shiftType = shiftType;
-        this.positionType = positionType;
+        if (positionType == null || positionType.equals("non"))
+            this.positionType = null;
+        else{
+            this.positionType = positionType;
+        }
+
     }
+
+
 
     public ConstraintByEmployeeDTO() {
 
