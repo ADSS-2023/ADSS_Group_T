@@ -116,6 +116,7 @@ public class DalEmployeeService {
         ConstraintByEmployeeDTO constraintDTO = constraintDao.find(pk, "ConstraintByEmployee", ConstraintByEmployeeDTO.class);
         if (constraintDTO != null) {
             ConstraintByEmployeeDTO newConstraint = new ConstraintByEmployeeDTO(employeeId, branchAddress, constraintDate, shiftType, positionType);
+            // TODO - check that the assignPosition change from null to the propare position
             constraintDao.update(constraintDTO, newConstraint);
             return new Constraint(newConstraint);
         } else {
