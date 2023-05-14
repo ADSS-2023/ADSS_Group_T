@@ -25,4 +25,10 @@ public class Product {
         return this.coolingLevel;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if(!(obj instanceof Product))
+            return false;
+        return ((Product) obj).getName().equals(this.name) && ((Product) obj).getCoolingLevel() == this.coolingLevel;
+    }
 }

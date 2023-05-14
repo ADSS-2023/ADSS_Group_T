@@ -77,4 +77,8 @@ public class DalLogisticCenterService {
     public SiteDTO findLogisticCenter() throws SQLException {
         return dao.find("logistic center address","siteAddress","Site", SiteDTO.class);
     }
+
+    public void deleteAllData() throws SQLException {
+        dao.deleteAllDataFromDatabase();
+    }
 }
