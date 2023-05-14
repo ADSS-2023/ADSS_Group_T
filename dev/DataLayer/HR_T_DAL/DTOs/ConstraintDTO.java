@@ -8,7 +8,7 @@ public class ConstraintDTO extends DTO {
     private String branchAddress;
     private String constraintDate;
     private String shiftType;
-    private String isTemporary;
+
     private String positionType;
 
     public ConstraintDTO(int employeeId, String branchAddress, String constraintDate, String shiftType , String positionType) {
@@ -40,9 +40,7 @@ public class ConstraintDTO extends DTO {
         return shiftType;
     }
 
-    public String getIsTemporary() {
-        return isTemporary;
-    }
+
 
     public String getPositionType() {
         return positionType;

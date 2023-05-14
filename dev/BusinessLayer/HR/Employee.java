@@ -23,27 +23,27 @@ public class Employee extends User {
 
 
 
-    public Employee(int id, String employeeName, String bankAccount, String description, int salary, LocalDate joiningDay, String password, UserType userType) {
+    public Employee(int id, String employeeName, String bankAccount, String description, int salary, LocalDate joiningDay, String password, UserType userType, DalEmployeeService dalEmployeeService) {
         super(id, employeeName, bankAccount, description, salary, joiningDay, password, userType);
         this.qualifiedPositions = new ArrayList<>();
         this.submittedShifts = new LinkedHashMap<>();
+        this.dalEmployeeService = dalEmployeeService;
       /*  this.shiftsRestriction = new LinkedHashMap<>();*/
         description = null;
     }
 
 
 
-    public Employee(UserDTO userDTO) {
+    public Employee(UserDTO userDTO, DalEmployeeService dalEmployeeService) {
         super(userDTO);
         this.qualifiedPositions = new ArrayList<>();
         this.submittedShifts = new LinkedHashMap<>();
+        this.dalEmployeeService = dalEmployeeService;
         /*  this.shiftsRestriction = new LinkedHashMap<>();*/
         description = null;
     }
 
-    public void init (DalEmployeeService dalEmployeeService){
-        this.dalEmployeeService = dalEmployeeService;
-    }
+
 
     /**
      * Adds a submitted shift to the employee's submittedShifts map, after checking if it is legal
@@ -70,9 +70,10 @@ public class Employee extends User {
         // Add the new constraint to the submitted shift
         else {
             Constraint cons = new Constraint(branch, id, date, shiftType);
-            dalEmployeeService.addConstraint(id, branch, date, shiftType,null);
+            dalEmployeeService.addConstraint(id, branch, date, shiftType, null);
             submittedShifts.put(date, cons);
-            dalEmployeeService.addSubmittesdShift(branch, date, shiftType, id);
+            //it is added on the controller
+           // dalEmployeeService.addSubmittesdShift(branch, date, shiftType, id);
         }
     }
 

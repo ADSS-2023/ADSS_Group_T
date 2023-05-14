@@ -81,9 +81,10 @@ public class ServiceFactory {
 
         dalUserService = new DalUserService(connection);
 
-        dalShiftService = new DalShiftService(connection);
+
         dalDriverService = new DalDriverService(connection,dalUserService);
         dalEmployeeService = new DalEmployeeService(connection,dalUserService);
+        dalShiftService = new DalShiftService(connection, dalEmployeeService);
 
         employeeController = new EmployeeController(dalEmployeeService,dalUserService);
         driverController = new DriverController(dalDriverService);
@@ -92,7 +93,7 @@ public class ServiceFactory {
         //TODO delete because error!:
 
 
-        employeeService = new EmployeeService(employeeController,driverController);
+        employeeService = new EmployeeService(employeeController,driverController, shiftController);
 
 
         logisticCenterController = new LogisticCenterController(dalLogisticCenterService);

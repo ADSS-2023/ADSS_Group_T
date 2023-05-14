@@ -28,6 +28,7 @@ public class DalEmployeeService {
 
     private DalUserService dalUserService;
 
+
     public DalEmployeeService(Connection connection,DalUserService dalUserService) {
         this.connection = connection;
         this.employeeDAO = new EmployeeDAO(connection);
@@ -38,9 +39,9 @@ public class DalEmployeeService {
     }
 
     public void addConstraint(int employeeId, String branchAdress, LocalDate date, boolean shiftType,String positionType) throws SQLException {
-        String s ="evening";
+        String s ="e";
         if (shiftType)
-            s="morning";
+            s="m";
         ConstraintDTO constraintDTO = new ConstraintDTO(employeeId,branchAdress,date.toString(),s ,positionType);
         dao.insert(constraintDTO);
     }
@@ -123,7 +124,7 @@ public class DalEmployeeService {
     public Employee findEmployeeById(int employeeId) throws SQLException {
        UserDTO userDTO = dalUserService.findUserDTOById(employeeId);
        if (userDTO != null){
-           Employee employee = new Employee(userDTO);
+           Employee employee = new Employee(userDTO, this);
            return employee;
        }
         else return null;
