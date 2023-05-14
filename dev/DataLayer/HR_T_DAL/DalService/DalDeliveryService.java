@@ -18,6 +18,7 @@ public class DalDeliveryService {
     private DeliveryDAO deliveryDAO;
     private LinkedHashMap<String, Supplier> suppliers;
     private LinkedHashMap<String, Branch> branches;
+    private LinkedHashMap<String, Product> products;
     private SiteDAO siteDAO;
     private DAO dao;
 
@@ -64,7 +65,7 @@ public class DalDeliveryService {
         dao.insert(dto);
     }
 
-    public void insertProduct(Product product) throws SQLException{
+    private void insertProduct(Product product) throws SQLException{
         ProductDTO dto = new ProductDTO(product.getName(),product.getCoolingLevel().toString());
         dao.insert(dto);
     }
@@ -173,10 +174,14 @@ public class DalDeliveryService {
     }
 
     public Product findProduct(String productName) throws SQLException {
+        if(this.products.containsKey(productName))
+            return this.products.get(productName);
         ProductDTO dto = dao.find(productName,"productName","Product",ProductDTO.class);
         if(dto == null)
             return null;
-        return new Product(dto);
+        Product product = new Product(dto);
+        this.products.put(productName,product);
+        return product;
     }
 
     public Delivery findDelivery(int deliveryId) throws SQLException {
@@ -201,27 +206,27 @@ public class DalDeliveryService {
         ArrayList<SiteDTO> suppliersDTOs = siteDAO.findAllSite("supplier");
         for (SiteDTO s : suppliersDTOs) {
             if (!this.suppliers.containsKey(s.getSiteAddress()))
-                suppliers.put(s.getSiteAddress(), new Supplier(s, this));
+                this.suppliers.put(s.getSiteAddress(), new Supplier(s, this));
         }
         return this.suppliers;
     }
 
     public LinkedHashMap<String, Product> findAllProducts() throws SQLException {
         ArrayList<ProductDTO> ProductDTOs =  dao.findAll(ProductDTO.getTableNameStatic(), ProductDTO.class);
-        LinkedHashMap<String, Product> products = new LinkedHashMap<>();
         for(ProductDTO p : ProductDTOs){
-            products.put(p.getProductName(),new Product(p));
+            if(!this.products.containsKey(p.getProductName()))
+                this.products.put(p.getProductName(),new Product(p));
         }
-        return products;
+        return this.products;
     }
 
     public LinkedHashMap<String, Product> findAllProductsOfSupplier(String supplierAddress) throws SQLException {
         ArrayList<ProductDTO> ProductDTOs =  deliveryDAO.findAllProductsOfSupplier(supplierAddress, ProductDTO.class);
-        LinkedHashMap<String, Product> products = new LinkedHashMap<>();
+        LinkedHashMap<String, Product> SupplierProducts = new LinkedHashMap<>();
         for(ProductDTO p : ProductDTOs){
-            products.put(p.getProductName(),new Product(p));
+            SupplierProducts.put(p.getProductName(),this.products.get(p.getProductName()));
         }
-        return products;
+        return SupplierProducts;
     }
 
     public LinkedHashMap<String, Branch> findAllBranches() throws SQLException {
@@ -341,6 +346,12 @@ public class DalDeliveryService {
         Branch branch = new Branch(branchAddress,telNumber,contactName,x,y);
         branches.put(branchAddress, branch);
         insertBranch(branch);
+    }
+
+    public void addProduct(String productName, int productCoolingLevel) throws SQLException {
+        Product product = new Product(productName, productCoolingLevel);
+        products.put(productName, product);
+        insertProduct(product);
     }
 
 

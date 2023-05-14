@@ -21,8 +21,8 @@ public class DalLogisticCenterService {
     private LogisticDAO logisticDAO;
     private Connection connection;
     private DAO dao;
-
     private LinkedHashMap<Integer, Truck> trucks;
+
     public DalLogisticCenterService(Connection connection) {
         this.trucks = new LinkedHashMap<>();
         this.connection = connection;

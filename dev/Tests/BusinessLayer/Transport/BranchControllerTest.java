@@ -58,7 +58,7 @@ public class BranchControllerTest extends TestCase {
 
         // add a branch to the system
         Branch branch = new Branch(branchAddress, telNumber, contactName, x, y);
-        dalDeliveryService.insertBranch(branch);
+        dalDeliveryService.addBranch(branchAddress, telNumber, contactName, x, y);
 
         // call the method under test
         Branch result = branchController.getBranch(branchAddress);
