@@ -62,7 +62,7 @@ public Driver lazyLoadDriver (int id) throws SQLException {
 
 
 
-    public void assignDriver(LocalDate date, int id, int numRequirement) throws SQLException {
+    public void assignDriver(LocalDate date, int id, String licenseType, String coolingLevel) throws SQLException {
         // get the driver with the given id
         Driver driver = lazyLoadDriver(id);
         if (driver == null) {
@@ -97,24 +97,30 @@ public Driver lazyLoadDriver (int id) throws SQLException {
 
         // Check that it meets the requirements
         LinkedHashMap<Pair<Driver.LicenseType, Driver.CoolingLevel>, Integer> requirements =  lazyLoadAllRequierementsForDate(date);
-        int i=1;
+        boolean isQualificationMet = false;
         for (Pair<Driver.LicenseType, Driver.CoolingLevel> pair : requirements.keySet()) {
-            if (i == numRequirement) { // check if we've reached the desired index
-                if (!isDriverMeetingTheRequirements(driver, pair))
+            if (pair.getFirst().toString().equals(licenseType) && pair.getSecond().toString().equals(coolingLevel)) {
+                isQualificationMet = true;
+                if (!isDriverMeetingTheRequirements(driver, pair)) {
                     throw new IllegalArgumentException("Driver is not meeting the requirements");
-                if (requirements.get(date) <= 0)
+                }
+                if (requirements.get(pair) <= 0) {
                     throw new IllegalArgumentException("there is no such requirements");
-            }
-            else{
-                //deleteRequieremnt
+                }
+                //deleteRequirement
                 deleteRequirement(pair, date);
                 // mark the driver as assigned for the given date
                 driverSubmissionToAssign.put(driver, true);
                 dalDriverService.assignDriver(id, date);
-                }
-            i++;
+                break;
             }
         }
+        if (!isQualificationMet) {
+            throw new IllegalArgumentException("Driver does not meet the qualifications");
+        }
+    }
+
+
 
 
     public boolean deleteRequirement(Pair<Driver.LicenseType, Driver.CoolingLevel> requirement, LocalDate date) throws SQLException {
@@ -194,8 +200,11 @@ public Driver lazyLoadDriver (int id) throws SQLException {
 
     public LinkedHashMap<Driver, Boolean> lazyLoadDriverSubmitionByDateAndId(LocalDate date, int id) throws SQLException {
         LinkedHashMap<Driver, Boolean> driverSubmissionByDate  = dalDriverService.findSubmissionByIdAndDate(id, date);
-        date2driversSubmission.put(date, driverSubmissionByDate);
+        if (driverSubmissionByDate != null) {
+            date2driversSubmission.put(date, driverSubmissionByDate);
+        }
         return  driverSubmissionByDate;
+
     }
 
     public String submitShift(LocalDate date, int id) throws SQLException {
@@ -209,22 +218,23 @@ public Driver lazyLoadDriver (int id) throws SQLException {
             throw new IllegalArgumentException("Driver with id " + id + " has already submitted for " + date);
         }
         // Check if the driver has the required license type
-        if (driver.getLicenseLevel().ordinal() >= getMinRequirementsLicenseLevelByDate(date)) {
+        if (driver.getLicenseLevel().ordinal() < getMinRequirementsLicenseLevelByDate(date)) {
             throw new IllegalArgumentException("Driver with id " + id + " does not have the required license type.");
         }
 
         // Check if the driver has the required cooling level
-        if (drivers.get(id).getCoolingLevel().ordinal() >= getMinRequirementsCoolingLevelByDate(date)) {
+        if (drivers.get(id).getCoolingLevel().ordinal() < getMinRequirementsCoolingLevelByDate(date)) {
             throw new IllegalArgumentException("Driver with id " + id + " does not have the required cooling level.");
         }
 
 
 
+        dalDriverService.addSubmissionForDriver(id, date);
         if (!date2driversSubmission.containsKey(date)) {
             date2driversSubmission.put(date, new LinkedHashMap<>());
         }
         date2driversSubmission.get(date).put(driver, false);
-        dalDriverService.addSubmissionForDriver(id, date);
+
         return "Driver with id " + id + " submit successfully to " + date.toString();
     }
 

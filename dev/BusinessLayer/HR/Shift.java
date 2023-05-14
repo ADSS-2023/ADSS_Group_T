@@ -227,7 +227,7 @@ public class Shift {
                 return "Employee already assigned to this position";
             }
 
-            if (!employeeRequirements.containsKey(PositionType.valueOf(pos)))
+            if (!employeeRequirements.containsKey(PositionType.valueOf(pos).name()))
                 throw new NoSuchElementException("Invalid position");
 
             int amount = employeeRequirements.get(pos);
@@ -239,8 +239,9 @@ public class Shift {
                 employee.assignShift(this.branch, this.date, this.shiftType, PositionType.valueOf(pos));
 
                 // Assign the employee to the position by updating their assigned status in the map
-                employees.put(employee, true);
                 dalShiftService.updateEmployeeToShift(date, shiftType, employee.getId(), pos, true);
+                employees.put(employee, true);
+
 
 
                 // remove the requierements
@@ -282,14 +283,15 @@ public class Shift {
                 for (int i = 0; i < requirement && i < unassignedEmployees.size(); i++) {
                     Employee employee = unassignedEmployees.get(i);
                     try {
-                        employee.assignShift(this.branch, this.date, this.shiftType, PositionType.valueOf(positionType));
-                        employeeMap.put(employee, true);
+                        assignEmployeeForShift(positionType, employee);
+                        //employee.assignShift(this.branch, this.date, this.shiftType, PositionType.valueOf(positionType));
+                        //employeeMap.put(employee, true);
                         assignedCount++;
                         if (positionType.equals("shiftManager") && shiftManagerId == -1) {
                             shiftManagerId = employee.getId();
                         }
                     } catch (Exception exception) {
-                        //continue- this employee cannot assign
+                        int k = 1;
                     }
                 }
             }
@@ -303,24 +305,30 @@ public class Shift {
         if (employeeRequirements.containsKey(positionType)) {
             int amount = employeeRequirements.get(positionType);
             //delete from cache
-            if (amount > 1){
+            if (amount > 1) {
                 employeeRequirements.put(positionType, amount - 1);
-                if(shiftType){s = "morning";}
-                else s = "evening";
-                dalShiftService.updateRequierement(branch, date.toString(), s, positionType, amount-1);
-            }
-            else{
-                if(shiftType){s = "morning";}
-                else s = "evening";
+                if (shiftType) {
+                    s = "morning";
+                } else {
+                    s = "evening";
+                }
+                dalShiftService.updateRequierement(branch, date.toString(), s, positionType, amount - 1);
+            } else {
+                if (shiftType) {
+                    s = "morning";
+                } else {
+                    s = "evening";
+                }
                 employeeRequirements.remove(positionType);
-                dalShiftService.deleteRequierement(branch, date.toString(), s , positionType);
+                dalShiftService.deleteRequierement(branch, date.toString(), s, positionType);
             }
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
+
+
 
 
     // just for tests!!

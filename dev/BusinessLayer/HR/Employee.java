@@ -82,7 +82,8 @@ public class Employee extends User {
     public void assignShift(String branch, LocalDate date, boolean shiftType, PositionType positionType) throws Exception {
         Constraint constraint = submittedShifts.get(date);
         if (constraint == null){
-            constraint = dalEmployeeService.findConstraintByIdAndDate(id, date);;
+            String st = shiftType ? "m" : "e";
+            constraint = dalEmployeeService.findConstraintByIdBranchDateAndShiftType(id, branch,  date, st);;
             submittedShifts.put(date, constraint);
         }
 
@@ -120,31 +121,28 @@ public class Employee extends User {
 
         // Set the assigned position of the shift
         String sht = shiftType? "m" : "e";
-        constraint.setAssignedPosition(positionType);
         dalEmployeeService.setAssignedPosition(id,  branch, date.toString(), sht, positionType.name());
+        constraint.setAssignedPosition(positionType);
     }
 
 
 
     public String showShiftsStatusByEmployee(LocalDate localDate) throws SQLException {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 30; i++) {
-            LocalDate date = localDate.plusDays(i);
-            Constraint constraint = submittedShifts.getOrDefault(date, null);
-            if (constraint == null)
-                constraint =  dalEmployeeService.findConstraintByIdAndDate(id, date.plusDays(i));
-            if (constraint != null)
-                submittedShifts.put(date.plusDays(i), constraint);
+        List<Constraint> constraints = dalEmployeeService.findAllConstraintByIdBetweenDates(id, localDate, localDate.plusMonths(1));
+
+        for (Constraint constraint : constraints) {
+            LocalDate date = constraint.getDate();
             sb.append(String.format("%-12s%-12s%-12s%-12s\n", "Date", "Shift Type", "Is Approved", "Assigned Position"));
             sb.append(String.format("%-12s%-12s%-12s%-12s\n", date, "Morning", "", ""));
-            if (constraint != null && constraint.getShiftType()) {
-                sb.append(String.format("%-12s%-12s%-12s%-12s\n", "", "", constraint.getAssignedPosition() == null  ? "Yes" : "No", constraint.getAssignedPosition() == null ? "No" : "Yes"));
+            if (constraint.getShiftType()) {
+                sb.append(String.format("%-12s%-12s%-12s%-12s\n", "", "", constraint.getAssignedPosition() == null ? "Yes" : "No", constraint.getAssignedPosition() != null ? constraint.getAssignedPosition() : "" ));
             } else {
                 sb.append(String.format("%-12s%-12s%-12s%-12s\n", "", "", "", ""));
             }
             sb.append(String.format("%-12s%-12s%-12s%-12s\n", "", "Evening", "", ""));
-            if (constraint != null && !constraint.getShiftType()) {
-                sb.append(String.format("%-12s%-12s%-12s%-12s\n", "", "", constraint.getAssignedPosition() == null ? "Yes" : "No", constraint.getAssignedPosition() == null ? "No" : "Yes"));
+            if (!constraint.getShiftType()) {
+                sb.append(String.format("%-12s%-12s%-12s%-12s\n", "", "", constraint.getAssignedPosition() == null ? "Yes" : "No", constraint.getAssignedPosition() != null ? constraint.getAssignedPosition() : "" ));
             } else {
                 sb.append(String.format("%-12s%-12s%-12s%-12s\n", "", "", "", ""));
             }

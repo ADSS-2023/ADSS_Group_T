@@ -4,6 +4,7 @@ import BusinessLayer.HR.User.User;
 import BusinessLayer.HR.User.PositionType;
 import BusinessLayer.HR.User.UserType;
 import DataLayer.HR_T_DAL.DTOs.DriverDTO;
+import DataLayer.HR_T_DAL.DTOs.UserDTO;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -26,11 +27,15 @@ public class Driver extends User {
         this.coolingLevel = coolingLevel;
     }
 
-
+    public Driver(DriverDTO driverDTO , UserDTO userDTO) {
+        super(driverDTO.getDriverId(),userDTO.getUserName(),userDTO.getBankAccount(),userDTO.getDescription(), userDTO.getSalary(), LocalDate.parse(userDTO.getJoiningDay()), userDTO.getPassword(),UserType.valueOf(userDTO.getUserType()));
+        this.licenseType =  Driver.LicenseType.valueOf(driverDTO.getLicenseType());
+        this.coolingLevel =  Driver.CoolingLevel.valueOf(driverDTO.getCoolingLevel());
+    }
     public Driver(DriverDTO driverDTO , User user) {
         super(driverDTO.getDriverId(),user.getEmployeeName(),user.getBankAccount(),user.getDescription(),user.getSalary(),user.getJoiningDay(),user.getPassword(),user.getUserType());
-        this.licenseType = getByString (driverDTO.getLicenseType());
-        this.coolingLevel =  getcoolingByString (driverDTO.getCoolingLevel());
+        this.licenseType =  Driver.LicenseType.valueOf(driverDTO.getLicenseType());
+        this.coolingLevel =  Driver.CoolingLevel.valueOf(driverDTO.getCoolingLevel());
     }
 
     public static LicenseType getByString (String licenseType ) {

@@ -236,7 +236,7 @@ public class DalShiftService {
             for (ShiftToEmployeeDTO subEmp  : submittedPositionByEmployeesByDateShiftTypeAndBranchDTO){
                 if (subEmp.getPosition() != null && subEmp.getIsAssigned() != null ){
                     String position = subEmp.getPosition();
-                    boolean shiftType = subEmp.getShiftType().equals("m");
+                   // boolean shiftType = subEmp.getShiftType().equals("m");
                     boolean isAssigned = Boolean.parseBoolean(subEmp.getIsAssigned());
                     User user = dalUserService.findUserById(subEmp.getEmployeeId());
                     if (user != null){

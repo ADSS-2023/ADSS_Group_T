@@ -14,27 +14,27 @@ public class ConstraintDao extends DAO {
         super(connection);
     }
 
-    public ConstraintByEmployeeDTO findConstraintByIdAndDate(int employeeId, String date) throws SQLException {
-        ConstraintByEmployeeDTO result = null;
-        String sql = "SELECT * FROM Constraint WHERE employeeId = ? AND constraintDate = ?";
-
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, employeeId);
-            statement.setString(2, date);
-            ResultSet resultSet = statement.executeQuery();
-
-            if (resultSet.next()) {
-                result = new ConstraintByEmployeeDTO(
-                        resultSet.getInt("employeeId"),
-                        resultSet.getString("branchAddress"),
-                        resultSet.getString("constraintDate"),
-                        resultSet.getString("shiftType"),
-                        resultSet.getString("positionType")
-                );
-                result.setTableName("Constraint");
-            }
-        }
-        return result;
-    }
+//    public ConstraintByEmployeeDTO findConstraintByIdAndDate(int employeeId, String date) throws SQLException {
+//        ConstraintByEmployeeDTO result = null;
+//        String sql = "SELECT * FROM Constraint WHERE employeeId = ? AND constraintDate = ?";
+//
+//        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+//            statement.setInt(1, employeeId);
+//            statement.setString(2, date);
+//            ResultSet resultSet = statement.executeQuery();
+//
+//            if (resultSet.next()) {
+//                result = new ConstraintByEmployeeDTO(
+//                        resultSet.getInt("employeeId"),
+//                        resultSet.getString("branchAddress"),
+//                        resultSet.getString("constraintDate"),
+//                        resultSet.getString("shiftType"),
+//                        resultSet.getString("positionType")
+//                );
+//                result.setTableName("Constraint");
+//            }
+//        }
+//        return result;
+//    }
 
 }
