@@ -170,8 +170,7 @@ public class ShiftController {
         }
     }
 
-    public void addDirverRequirement(LocalDate requiredDate, Driver.LicenseType licenseType, Driver.CoolingLevel coolingLevel) throws SQLException {
-
+    public void addDriverRequirement(LocalDate requiredDate, Driver.LicenseType licenseType, Driver.CoolingLevel coolingLevel) throws SQLException {
         driverController.addDriverRequirement(requiredDate, licenseType, coolingLevel);
     }
 
@@ -189,8 +188,8 @@ public class ShiftController {
                 storeKeeperRequirment.put(PositionType.storekeeper.name(), 1);
                 shift.addEmployeeRequirements(storeKeeperRequirment);
                 if (shift.getShiftType()) {
-                    s = "morning";
-                } else s = "evening";
+                    s = "m";
+                } else s = "e";
                 dalShiftService.addRequierement(branch, requiredDate.toString(), s, PositionType.storekeeper.toString(), 1);
             }
         }

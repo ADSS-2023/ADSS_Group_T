@@ -29,7 +29,7 @@ public class HRManagerPresentation {
     private void mainWindow() {
         Scanner scanner = new Scanner(System.in);
         while (true) {
-            System.out.println("------ main window -------");
+            System.out.println("------ HR main window -------");
             System.out.println("Please choose an option:");
             System.out.println(
                                 " \n 1.add new Employee" +
@@ -39,7 +39,7 @@ public class HRManagerPresentation {
                                 " \n 5.add new driver" +
                                 " \n 6.manage assign Employee for shift" +
                                 " \n 7.add shift requirements" +
-                                " \n 8.exit ");
+                                " \n 8.logout ");
             int choice = scanner.nextInt();
             scanner.nextLine(); // Consume the newline character
             switch (choice) {

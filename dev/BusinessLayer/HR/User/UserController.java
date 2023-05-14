@@ -22,15 +22,15 @@ public class UserController {
 
 
     //TODO-init the user controller
-    public UserController(EmployeeController employeeController,User Tr ,DriverController driverController, User Hr) {
+    public UserController(EmployeeController employeeController,User Tr ,DriverController driverController, User Hr,DalUserService dalUserService) {
         this.Hr = Hr;
         this.Tr = Tr;
         this.employeeController = employeeController;
         this.driverController = driverController;
+        this.dalUserService = dalUserService;
     }
 
     public UserType login(int id, String password) throws Exception {
-        String userType;
         if (Hr.getId() == id) {
             if (Hr.getPassword().equals(password))
                 return Hr.userType;
@@ -46,7 +46,7 @@ public class UserController {
             User user = dalUserService.findUserById(id);
             if (user == null)
                 throw new NoSuchFieldException("error");
-            if (user.password != password)
+            if (!user.password.toString().equals(password))
                 throw new IllegalArgumentException("error");
             return user.userType;
         }
