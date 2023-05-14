@@ -134,8 +134,17 @@ public class EmployeeService {
 //        }
 //        return null;
 //    }
+    public String getListOfSubmittion(int id) {
+        Response res = new Response();
+        try {
+            return employeeController.getEmployeeById(id).showShiftsStatusByEmployee(LocalDate.now());
+        } catch (Exception ex) {
+        }
+        return null;
+    }
 
 
-
+    public void submitAsUser(int id,String date,String shiftType,String branch) {
+    }
 }
 
