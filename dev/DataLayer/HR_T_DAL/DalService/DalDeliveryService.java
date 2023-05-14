@@ -17,12 +17,13 @@ public class DalDeliveryService {
     private DalLogisticCenterService dalLogisticCenterService;
     private DeliveryDAO deliveryDAO;
     private LinkedHashMap<String, Supplier> suppliers;
-
+    private LinkedHashMap<String, Branch> branches;
     private SiteDAO siteDAO;
     private DAO dao;
 
     public DalDeliveryService(Connection connection,DalLogisticCenterService dalLogisticCenterService) {
         this.suppliers = new LinkedHashMap<>();
+        this.branches = new LinkedHashMap<>();
         this.dalLogisticCenterService = dalLogisticCenterService;
         this.deliveryDAO = new DeliveryDAO(connection);
         this.dao = new DAO(connection);
@@ -51,13 +52,13 @@ public class DalDeliveryService {
         dao.insert(dto);
     }
 
-    public void insertSupplier(Supplier supplier) throws SQLException {
+    private void insertSupplier(Supplier supplier) throws SQLException {
         SiteDTO dto = new SiteDTO(supplier.getAddress(),supplier.getTelNumber(),
                 supplier.getContactName(),supplier.getLocation().getX(),supplier.getLocation().getY(),supplier.getShippingArea(),"supplier");
         dao.insert(dto);
     }
 
-    public void insertBranch(Branch branch) throws SQLException {
+    private void insertBranch(Branch branch) throws SQLException {
         SiteDTO dto = new SiteDTO(branch.getAddress(),branch.getTelNumber(),
                 branch.getContactName(),branch.getLocation().getX(),branch.getLocation().getY(),branch.getShippingArea(),"branch");
         dao.insert(dto);
@@ -144,15 +145,23 @@ public class DalDeliveryService {
     }
 
     public Branch findBranch(String branchAddress) throws SQLException {
+        if(this.branches.containsKey(branchAddress))
+            return this.branches.get(branchAddress);
         SiteDTO dto = dao.find(branchAddress,SiteDTO.getPKNameStatic(),SiteDTO.getTableNameStatic(), SiteDTO.class);
         if(dto == null)
             return null;
-        return new Branch(dto);
+        Branch branch = new Branch(dto);
+        this.branches.put(branchAddress,branch);
+        return branch;
     }
     public Site findSite(String siteAddress) throws SQLException{
         SiteDTO dto = dao.find(siteAddress,SiteDTO.getPKNameStatic(),SiteDTO.getTableNameStatic(), SiteDTO.class);
-        if(dto.getType().equals("Branch"))
-            return new Branch(dto);
+        if(dto.getType().equals("Branch")) {
+            if(this.branches.containsKey(siteAddress))
+                return this.branches.get(siteAddress);
+            this.branches.put(siteAddress,new Branch(dto));
+            return this.branches.get(siteAddress);
+        }
         else if(dto.getType().equals("Supplier")){
             if(suppliers.containsKey(siteAddress))
                 return suppliers.get(siteAddress);
@@ -190,11 +199,9 @@ public class DalDeliveryService {
     }
     public LinkedHashMap<String, Supplier> findAllSuppliers() throws SQLException {
         ArrayList<SiteDTO> suppliersDTOs = siteDAO.findAllSite("supplier");
-
         for (SiteDTO s : suppliersDTOs) {
             if (!this.suppliers.containsKey(s.getSiteAddress())) {
-                Supplier supplier = new Supplier(s, this);
-                suppliers.put(s.getSiteAddress(), supplier);
+                suppliers.put(s.getSiteAddress(), new Supplier(s, this));
             }
         }
         return this.suppliers;
@@ -218,11 +225,11 @@ public class DalDeliveryService {
         return products;
     }
 
-    public LinkedHashMap<String, Branch> findAllBranch() throws SQLException {
+    public LinkedHashMap<String, Branch> findAllBranches() throws SQLException {
         ArrayList<SiteDTO> branchesDTOs =  siteDAO.findAllSite("branch");
-        LinkedHashMap<String, Branch> branches = new LinkedHashMap<>();
         for(SiteDTO b : branchesDTOs){
-            branches.put(b.getSiteAddress(),new Branch(b));
+            if(!this.branches.containsKey(b.getSiteAddress()))
+                branches.put(b.getSiteAddress(),new Branch(b));
         }
         return branches;
     }
@@ -329,6 +336,12 @@ public class DalDeliveryService {
         Supplier supplier = new Supplier(supplierAddress,telNumber,contactName,x,y,this);
         suppliers.put(supplierAddress,supplier);
         insertSupplier(supplier);
+    }
+
+    public void addBranch(String branchAddress, String telNumber, String contactName, int x, int y) throws SQLException {
+        Branch branch = new Branch(branchAddress,telNumber,contactName,x,y);
+        branches.put(branchAddress, branch);
+        insertBranch(branch);
     }
 
 

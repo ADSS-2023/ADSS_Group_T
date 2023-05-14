@@ -21,28 +21,11 @@ public class SupplierController {
             throw new IllegalArgumentException("supplier address is taken");
         }
         dalDeliveryService.addSupplier(supplierAddress, telNumber, contactName, x, y);
-
-        addSupplier(supplierAddress, telNumber, contactName, x, y);
     }
 
-//    /**
-//     * add a product to the supplier
-//     *
-//     * @param address - the address of the supplier
-//     * @param product - the product to add
-//     * @return true if the product added successfully, and false otherwise
-//     */
-//    public boolean addProductToSupplier(String address, String productName, int coolingLevel) {
-//        Supplier supplier = getSupplier(address);
-//        if (supplier == null) {
-//            throw new IllegalArgumentException("no such address");
-//        }
-//        supplier.addProduct(productName, coolingLevel);
-//        return true;
-//    }
+
 
     public LinkedHashMap<String, Supplier> getAllSuppliers() throws SQLException {
-
         return  dalDeliveryService.findAllSuppliers();
     }
 
@@ -51,8 +34,7 @@ public class SupplierController {
         if (!getAllSuppliers().containsKey(supplierAddress)) {
             s = dalDeliveryService.findSupplier(supplierAddress);
             if(s == null)
-                throw new IllegalArgumentException("no such supp");;
-
+                throw new IllegalArgumentException("no such supplier");;
             return s;
         }
         else
