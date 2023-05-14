@@ -33,13 +33,13 @@ public class EmployeeService {
       }
    }
 
-    public String submitShiftForEmployee(String branch, int id, LocalDate date, String shifType ) {
+    public String submitShiftForEmployee(String branch, int id, LocalDate date, String shiftType ) {
         Response res = new Response();
         try {
             boolean sht = true;
-            if (shifType.equals("m"))
+            if (shiftType.equals("m"))
                 sht = true;
-            else if (shifType.equals("e")){
+            else if (shiftType.equals("e")){
                 sht = false;
             }
             return shiftController.submitShiftForEmployee( branch,  id , date, sht);
@@ -126,14 +126,6 @@ public class EmployeeService {
         }
     }
 
-//    public String getListOfSubmittion(int id) {
-//        Response res = new Response();
-//        try {
-//            return employeeController.getListOfSubmitttions(id);
-//        } catch (Exception ex) {
-//        }
-//        return null;
-//    }
     public String getListOfSubmittion(int id) {
         Response res = new Response();
         try {
@@ -143,8 +135,5 @@ public class EmployeeService {
         return null;
     }
 
-
-    public void submitAsUser(int id,String date,String shiftType,String branch) {
-    }
 }
 

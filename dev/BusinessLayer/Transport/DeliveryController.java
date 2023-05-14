@@ -135,7 +135,7 @@ public class DeliveryController {
                         new LinkedHashMap<>(), this.logisticCenterController.getLogisticCenter(), truck.getLicenseNumber(), branch.getShippingArea(),dalDeliveryService);
                 dalDeliveryService.updateCounter("delivery counter",deliveryCounter);
                 try {
-                    shiftController.addDirverRequirement(requiredDate, truck.getLicenseType(), truck.getCoolingLevel());
+                    shiftController.addDriverRequirement(requiredDate, truck.getLicenseType(), truck.getCoolingLevel());
                     shiftController.addStoreKeeperRequirement(requiredDate, branch.getAddress());
                 }catch (Exception e){};
                 delivery.addUnHandledBranch(branch, filesCounter++);
@@ -198,7 +198,7 @@ public class DeliveryController {
                 Delivery delivery = new Delivery(deliveryCounter++, requiredDate, LocalTime.NOON, truck.getWeight(), null,
                         new LinkedHashMap<>(), logisticCenterController.getLogisticCenter(), truck.getLicenseNumber(), branch.getShippingArea(),dalDeliveryService);
                 dalDeliveryService.updateCounter("delivery counter",deliveryCounter);
-                shiftController.addDirverRequirement(requiredDate, truck.getLicenseType(), truck.getCoolingLevel());
+                shiftController.addDriverRequirement(requiredDate, truck.getLicenseType(), truck.getCoolingLevel());
                 shiftController.addStoreKeeperRequirement(requiredDate, branch.getAddress());
                 delivery.addUnHandledBranch(branch, filesCounter++);
                 addDelivery(delivery);
@@ -270,7 +270,7 @@ public class DeliveryController {
                 Delivery delivery = new Delivery(deliveryCounter++, requiredDate, LocalTime.NOON, truck.getWeight(), new LinkedHashMap<>(),
                         new LinkedHashMap<>(), null, truck.getLicenseNumber(), 0,dalDeliveryService);
                 dalDeliveryService.updateCounter("delivery counter",deliveryCounter);
-                shiftController.addDirverRequirement(requiredDate, truck.getLicenseType(), truck.getCoolingLevel());
+                shiftController.addDriverRequirement(requiredDate, truck.getLicenseType(), truck.getCoolingLevel());
                 delivery.addLogisticCenterDestination(++filesCounter);
                 addDelivery(delivery);
                 addDeliveryToDate(requiredDate,delivery,true);
@@ -650,7 +650,7 @@ public class DeliveryController {
                 newDeliveredDate = newDeliveredDate.plusDays(1);
                 continue;
             }
-            shiftController.addDirverRequirement(newDeliveredDate, t.getLicenseType(), t.getCoolingLevel());
+            shiftController.addDriverRequirement(newDeliveredDate, t.getLicenseType(), t.getCoolingLevel());
             for (Branch branch : branches.keySet()) {
                 shiftController.addStoreKeeperRequirement(newDeliveredDate, branch.getAddress());
             }

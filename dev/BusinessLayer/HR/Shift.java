@@ -65,7 +65,7 @@ public class Shift {
             }
             else{
                 employeeRequirements.put(pos, amount);
-                String sht = shiftType? "true" : "false";
+                String sht = shiftType? "m" : "e";
                 dalShiftService.addRequierement(branch, date.toString(), sht, pos, amount);
             }
         }
@@ -186,6 +186,7 @@ public class Shift {
             else if (employeesByPosition.get(emp) == null){
                 employeesByPosition.put(emp, false);
                 dalShiftService.addEmployeeToShift(branch, date, shiftType, emp.getId(), pos, false);
+                return "employee added successfully";
             }
         }
         return "Shift submitted successfully";
@@ -197,8 +198,8 @@ public class Shift {
         lazyLoadFindRequiermentsBtDateAndShiftType();
         if (!employeeRequirements.containsKey(PositionType.storekeeper.name()) || employeeRequirements.get(PositionType.storekeeper.name()) < 1) {
             employeeRequirements.put(PositionType.storekeeper.name(), 1);
-            if(shiftType){s = "morning";}
-            else s = "evening";
+            if(shiftType){s = "m";}
+            else s = "e";
             dalShiftService.addRequierement(branch, date.toString(), s, PositionType.storekeeper.name(), 1);
         }
     }

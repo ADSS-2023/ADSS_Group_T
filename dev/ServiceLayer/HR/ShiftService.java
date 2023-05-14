@@ -1,5 +1,6 @@
 package ServiceLayer.HR;
 
+import BusinessLayer.HR.Driver;
 import BusinessLayer.HR.ShiftController;
 
 import java.time.LocalDate;
@@ -88,6 +89,37 @@ public class ShiftService {
         return null;
     }
 
+    public String addDriverReq(String date , String licenseType ,String cooling  ){
+        Response res = new Response();
+        try
+        {
+         shiftController.addDriverRequirement(Time.stringToLocalDate(date),getByString(licenseType),getcoolingByString(cooling));
+        }
+        catch (Exception ex){
+        }
+        return null;
+    }
+    public static Driver.LicenseType getByString (String licenseType ) {
+        if (licenseType.equals("C1"))
+            return Driver.LicenseType.C1;
+        if (licenseType.equals("C"))
+            return Driver.LicenseType.C;
+        if (licenseType.equals("E"))
+            return Driver.LicenseType.E;
+        else
+            return Driver.LicenseType.C1;
+    }
+
+    public static Driver.CoolingLevel getcoolingByString (String coolingLevel) {
+        if (coolingLevel.equals("non"))
+            return Driver.CoolingLevel.non;
+        if (coolingLevel.equals("fridge"))
+            return Driver.CoolingLevel.fridge;
+        if (coolingLevel.equals("freezer"))
+            return Driver.CoolingLevel.freezer;
+        else
+            return Driver.CoolingLevel.non;
+    }
 
 
 //    public String submitShift(String branch, int id, String date, String type) {
