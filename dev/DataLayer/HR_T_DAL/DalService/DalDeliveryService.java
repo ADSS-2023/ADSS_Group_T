@@ -8,6 +8,7 @@ import DataLayer.Util.DAO;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -19,6 +20,8 @@ public class DalDeliveryService {
     private LinkedHashMap<String, Supplier> suppliers;
     private LinkedHashMap<String, Branch> branches;
     private LinkedHashMap<String, Product> products;
+    private final LinkedHashMap<LocalDate, ArrayList<Truck>> date2trucks;
+    private final LinkedHashMap<LocalDate, ArrayList<Delivery>> date2deliveries;
     private SiteDAO siteDAO;
     private DAO dao;
 
@@ -29,6 +32,8 @@ public class DalDeliveryService {
         this.deliveryDAO = new DeliveryDAO(connection);
         this.dao = new DAO(connection);
         this.siteDAO = new SiteDAO(connection);
+        this.date2trucks = new LinkedHashMap<>();
+        this.date2deliveries = new LinkedHashMap<>();
     }
 
     public void insertDelivery(Delivery delivery) throws SQLException {
@@ -69,13 +74,13 @@ public class DalDeliveryService {
         ProductDTO dto = new ProductDTO(product.getName(),product.getCoolingLevel().toString());
         dao.insert(dto);
     }
-    public void insertDateToDelivery(String shiftDate, int deliveryId) throws SQLException {
+    private void insertDateToDelivery(String shiftDate, int deliveryId) throws SQLException {
         DateToDeliveryDTO dto = new DateToDeliveryDTO(shiftDate, deliveryId);
         dao.insert(dto);
     }
 
-    public void insertDateToTruck(String shiftDate, int truckLicenseNumber) throws SQLException {
-        DateToTruckDTO dto = new DateToTruckDTO(shiftDate, truckLicenseNumber);
+    private void insertDateToTruck(LocalDate shiftDate, int truckLicenseNumber) throws SQLException {
+        DateToTruckDTO dto = new DateToTruckDTO(shiftDate.toString(), truckLicenseNumber);
         dao.insert(dto);
     }
 
@@ -94,14 +99,20 @@ public class DalDeliveryService {
         dao.delete(dto);
     }
 
-    public void deleteDateToDelivery(String shiftDate, int deliveryId) throws SQLException {
-        DateToDeliveryDTO dto = new DateToDeliveryDTO(shiftDate, deliveryId);
+    public void deleteDateToDelivery(LocalDate shiftDate, Delivery delivery) throws Exception {
+        if(!date2deliveries.containsKey(shiftDate) || !date2deliveries.get(shiftDate).contains(delivery))
+            throw new Exception("this truck is not assigned in this date, so cannot be deleted");
+        DateToDeliveryDTO dto = new DateToDeliveryDTO(shiftDate.toString(), delivery.getId());
         dao.delete(dto);
+        date2deliveries.get(shiftDate).remove(delivery);
     }
 
-    public void deleteDateToTruck(String shiftDate, int truckId) throws SQLException {
-        DateToTruckDTO dto = new DateToTruckDTO(shiftDate, truckId);
+    public void deleteDateToTruck(LocalDate shiftDate, Truck truck) throws Exception {
+        if(!date2trucks.containsKey(shiftDate) || !date2trucks.get(shiftDate).contains(truck))
+            throw new Exception("this truck is not assigned in this date, so cannot be deleted");
+        DateToTruckDTO dto = new DateToTruckDTO(shiftDate.toString(), truck.getLicenseNumber());
         dao.delete(dto);
+        date2trucks.get(shiftDate).remove(truck);
     }
 
     public void updateCounter(String counter, int newCounter) throws SQLException {
@@ -199,8 +210,15 @@ public class DalDeliveryService {
         return dao.find(pk,"DeliveryHandledSites",DeliveryHandledSitesDTO.class);
     }
 
-    public DateToTruckDTO findSpecificTruckInDate(LinkedHashMap<String,Object> pk) throws SQLException {
-        return dao.find(pk,DateToTruckDTO.getTableNameStatic(),DateToTruckDTO.class);
+    public boolean findSpecificTruckInDate(LinkedHashMap<String,Object> pk) throws SQLException {
+        Truck truck = dalLogisticCenterService.findTruck((Integer)pk.get("truckId"));
+        if(truck != null && date2trucks.containsKey((LocalDate)pk.get("shiftDate")) && date2trucks.get((LocalDate)pk.get("shiftDate")).contains(truck))
+            return true;
+        DateToTruckDTO dto = dao.find(pk,DateToTruckDTO.getTableNameStatic(),DateToTruckDTO.class);
+        if(dto == null)
+            return false;
+        date2trucks.get((LocalDate)pk.get("shiftDate")).add(truck);
+        return true;
     }
     public LinkedHashMap<String, Supplier> findAllSuppliers() throws SQLException {
         ArrayList<SiteDTO> suppliersDTOs = siteDAO.findAllSite("supplier");
@@ -246,7 +264,7 @@ public class DalDeliveryService {
         return deliveryDAO.findAllDeliveriesByDate(date);
     }
 
-    public ArrayList<DateToTruckDTO> findAllTrucksByDate(String date) throws SQLException {
+    private ArrayList<DateToTruckDTO> findAllTrucksByDate(String date) throws SQLException {
         return deliveryDAO.findAllTrucksByDate(date);
     }
 
@@ -352,6 +370,32 @@ public class DalDeliveryService {
         Product product = new Product(productName, productCoolingLevel);
         products.put(productName, product);
         insertProduct(product);
+    }
+
+    public void addTruckToDate(LocalDate requiredDate, Truck truck) throws SQLException {
+        if (!date2trucks.containsKey(requiredDate))
+            date2trucks.put(requiredDate, new ArrayList<>());
+        date2trucks.get(requiredDate).add(truck);
+        insertDateToTruck(requiredDate,truck.getLicenseNumber());
+    }
+
+    public void addDeliveryToDate(LocalDate requiredDate, Delivery delivery) throws SQLException {
+        if (!date2deliveries.containsKey(requiredDate))
+            date2deliveries.put(requiredDate, new ArrayList<>());
+        date2deliveries.get(requiredDate).add(delivery);
+        insertDateToDelivery(requiredDate.toString(),delivery.getId());
+    }
+
+    public ArrayList<Truck> getAllTrucksByDate(LocalDate date) throws SQLException {
+        List<DateToTruckDTO> dateTrucksDTOs = findAllTrucksByDate(date.toString());
+        ArrayList<Truck> dateTrucks = new ArrayList<>();
+        for(DateToTruckDTO dto : dateTrucksDTOs){
+            Truck truck = dalLogisticCenterService.findTruck(dto.getTruckId());
+            if(!this.date2trucks.get(date).contains(truck))
+                this.date2trucks.get(date).add(truck);
+            dateTrucks.add(truck);
+        }
+        return dateTrucks;
     }
 
 

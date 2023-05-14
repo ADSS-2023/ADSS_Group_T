@@ -23,8 +23,6 @@ public class DeliveryController {
     private final SupplierController supplierController;
     private final BranchController branchController;
     private LinkedHashMap<Integer, Delivery> deliveries;
-    private final LinkedHashMap<LocalDate, ArrayList<Truck>> date2trucks;
-    private final LinkedHashMap<LocalDate, ArrayList<Delivery>> date2deliveries;
     private LogisticCenterController logisticCenterController;
     private int deliveryCounter;
     private int filesCounter;
@@ -39,8 +37,6 @@ public class DeliveryController {
                               BranchController branchController, DriverController driverController,
                               ShiftController shiftController, DalDeliveryService dalDeliveryService) throws Exception {
         this.deliveries = new LinkedHashMap<>();
-        this.date2trucks = new LinkedHashMap<>();
-        this.date2deliveries = new LinkedHashMap<>();
         this.branchController = branchController;
         this.driverController = driverController;
         this.supplierController = supplierController;
@@ -760,12 +756,11 @@ public class DeliveryController {
      * @param saveToData save to DB if true
      * @throws SQLException query error
      */
-    private void addDeliveryToDate(LocalDate requiredDate, Delivery delivery,boolean saveToData) throws SQLException {
-        if (!date2deliveries.containsKey(requiredDate))
-            date2deliveries.put(requiredDate, new ArrayList<>());
-        if(saveToData)
-            dalDeliveryService.insertDateToDelivery(requiredDate.toString(),delivery.getId());
-        date2deliveries.get(requiredDate).add(delivery);
+    private void addDeliveryToDate(LocalDate requiredDate, Delivery delivery,boolean saveToData) throws Exception {
+        //if(saveToData)
+        if(getDeliveriesByDate(requiredDate).contains(delivery))
+            throw new Exception("this delivery is already assigned for this date");
+        dalDeliveryService.addDeliveryToDate(requiredDate,delivery);
     }
 
     /**
@@ -775,12 +770,11 @@ public class DeliveryController {
      * @param saveToData save to DB if true
      * @throws SQLException query error
      */
-    private void addTruckToDate(LocalDate requiredDate, Truck truck,boolean saveToData) throws SQLException {
-        if (!date2trucks.containsKey(requiredDate))
-            date2trucks.put(requiredDate, new ArrayList<>());
-        if(saveToData)
-            dalDeliveryService.insertDateToTruck(requiredDate.toString(),truck.getLicenseNumber());
-        date2trucks.get(requiredDate).add(truck);
+    private void addTruckToDate(LocalDate requiredDate, Truck truck,boolean saveToData) throws Exception {
+        //if(saveToData)
+        if(getTrucksByDate(requiredDate).contains(truck))
+            throw new Exception("this truck is already assigned for this date");
+        dalDeliveryService.addTruckToDate(requiredDate,truck);
     }
 
     /**
@@ -823,14 +817,7 @@ public class DeliveryController {
      * @throws SQLException query error
      */
     private ArrayList<Truck> getTrucksByDate(LocalDate date) throws Exception {
-        ArrayList<Truck> dateTrucks = new ArrayList<>();
-        List<DateToTruckDTO> dateTrucksDTOs = dalDeliveryService.findAllTrucksByDate(date.toString());
-        for(DateToTruckDTO dto : dateTrucksDTOs){
-            Truck truck = logisticCenterController.getTruck(dto.getTruckId());
-            dateTrucks.add(truck);
-            addTruckToDate(date,truck,false);
-        }
-        return dateTrucks;
+        return dalDeliveryService.getAllTrucksByDate(date);
     }
 
     /**
@@ -854,8 +841,7 @@ public class DeliveryController {
         LinkedHashMap<String,Object> pk = new LinkedHashMap<>();
         pk.put("shiftDate",date);
         pk.put("truckId",truck.getLicenseNumber());
-        DateToTruckDTO dto = dalDeliveryService.findSpecificTruckInDate(pk);
-        return date2trucks.containsKey(date) || dto != null;
+        return dalDeliveryService.findSpecificTruckInDate(pk);
     }
 
     /**
@@ -865,8 +851,7 @@ public class DeliveryController {
      * @throws Exception query error
      */
     private void removeTruckFromDate(LocalDate date,Truck t) throws Exception {
-        dalDeliveryService.deleteDateToTruck(date.toString(),t.getLicenseNumber());
-        getTrucksByDate(date).remove(t);
+        dalDeliveryService.deleteDateToTruck(date,t);
     }
 
     /**
@@ -875,9 +860,8 @@ public class DeliveryController {
      * @param d the delivery to remove
      * @throws SQLException query error
      */
-    private void removeDeliveryFromDate(LocalDate date,Delivery d) throws SQLException {
-        dalDeliveryService.deleteDateToDelivery(date.toString(),d.getId());
-        getDeliveriesByDate(date).remove(d);
+    private void removeDeliveryFromDate(LocalDate date,Delivery d) throws Exception {
+        dalDeliveryService.deleteDateToDelivery(date,d);
     }
 }
 
