@@ -200,9 +200,8 @@ public class DalDeliveryService {
     public LinkedHashMap<String, Supplier> findAllSuppliers() throws SQLException {
         ArrayList<SiteDTO> suppliersDTOs = siteDAO.findAllSite("supplier");
         for (SiteDTO s : suppliersDTOs) {
-            if (!this.suppliers.containsKey(s.getSiteAddress())) {
+            if (!this.suppliers.containsKey(s.getSiteAddress()))
                 suppliers.put(s.getSiteAddress(), new Supplier(s, this));
-            }
         }
         return this.suppliers;
     }
