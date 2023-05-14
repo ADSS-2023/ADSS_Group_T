@@ -307,5 +307,8 @@ public class DalDeliveryService {
      return result;
     }
 
+    public void deleteAllData() throws SQLException {
+        dao.deleteAllDataFromDatabase();
+    }
 
 }

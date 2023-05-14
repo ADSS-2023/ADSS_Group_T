@@ -10,6 +10,8 @@ import ServiceLayer.Transport.DeliveryService;
 import ServiceLayer.Transport.LogisticCenterService;
 import ServiceLayer.Transport.SupplierService;
 import ServiceLayer.UserService;
+import UtilSuper.Response;
+import UtilSuper.ResponseSerializer;
 import UtilSuper.ServiceFactory;
 
 import java.sql.SQLException;
@@ -46,7 +48,7 @@ public class MainPresentation {
         this.branchService = serviceFactory.getBranchService();
         this.supplierService = serviceFactory.getSupplierService();
         transportManagerPresentation = new TransportManagerPresentation(logisticCenterService,deliveryService,supplierService,branchService);
-        hrManagerPresentation = new HRManagerPresentation(shiftService,employeeService);
+        hrManagerPresentation = new HRManagerPresentation(shiftService,employeeService,branchService);
         employeePresentation = new EmployeePresentation(employeeService);
         serviceFactory.callbackEnterWeight(this.transportManagerPresentation::enterWeightFunction);
         serviceFactory.callbackEnterOverWeight(this.transportManagerPresentation::enterOverWeightAction);
@@ -77,18 +79,15 @@ public class MainPresentation {
      * the main window of the system
      */
     public void loginWindow() {
-        //TODO remove shortCut:
-        //this.transportManagerPresentation.start();
-       // this.hrManagerPresentation.start();
-
-
-        //TODO - create the branch choosing process
-
         Scanner scanner = new Scanner(System.in);
         System.out.println(" ");
         System.out.println("------ login window -------");
-        System.out.println("Current date: " + deliveryService.getCurrDateDetails());
-        while (true) {
+        Response response = ResponseSerializer.deserializeFromJson(deliveryService.getCurrDate());
+        if (response.isError()) {
+            System.out.println("cant show current day");
+        } else {
+            System.out.println("Current date: " + response.getReturnValue());
+        }
             String result = null;
             boolean loginSuccess = false;
             while (!loginSuccess) {
@@ -106,11 +105,10 @@ public class MainPresentation {
             switch (result) {
                 case "employee": employeePresentation.start();
                 case "TransportManager": transportManagerPresentation.start();
-                    //TODO - remove "super" and put the user selection of the specific branch
-                case "HRManager" : hrManagerPresentation.start("super");
+                case "HRManager" : hrManagerPresentation.start();
                 case "driver" :
                 default:
             }
         }
-    }
+
 }
