@@ -95,6 +95,7 @@ public class EmployeeService {
     public String assignDriverForShift(LocalDate date, int id, String licenseType, String coolingLevel ) {
         Response res = new Response();
         try {
+
            driverController.assignDriver(date, id , licenseType, coolingLevel );
            return "The driver assign successfully";
         }
@@ -102,6 +103,7 @@ public class EmployeeService {
             return ex.getMessage();
         }
     }
+
 
     public String addQualification(int id, String quali) {
         Response res = new Response();
