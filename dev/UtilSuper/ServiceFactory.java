@@ -73,9 +73,6 @@ public class ServiceFactory {
 
         this.dao = new DAO(connection);
         Data_init.initBasicData(dao);
-        Data_init_HR.initBasicData(dao);
-
-
         dalLogisticCenterService = new DalLogisticCenterService(connection);
         dalDeliveryService = new DalDeliveryService(connection,dalLogisticCenterService);
 
@@ -116,6 +113,8 @@ public class ServiceFactory {
         deliveryController = new DeliveryController(logisticCenterController,supplierController,branchController,driverController,shiftController,dalDeliveryService);
         deliveryService = new DeliveryService(deliveryController);
 
+
+        Data_init_HR.initBasicData(dao,shiftService);
 
     }
 

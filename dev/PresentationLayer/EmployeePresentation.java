@@ -2,15 +2,18 @@ package PresentationLayer;
 
 import ServiceLayer.HR.EmployeeService;
 import ServiceLayer.HR.ShiftService;
+import ServiceLayer.Transport.BranchService;
+import UtilSuper.Response;
+import UtilSuper.ResponseSerializer;
 import UtilSuper.Time;
 
 import java.util.Scanner;
 
 public class EmployeePresentation {
     private EmployeeService employeeService;
-    private ShiftService shiftService;
-    public EmployeePresentation(EmployeeService employeeService,ShiftService shiftService){
-        this.shiftService = shiftService;
+    private BranchService branchService;
+    public EmployeePresentation(EmployeeService employeeService, BranchService branchService){
+        this.branchService = branchService;
         this.employeeService = employeeService;
     }
     public void start() {
@@ -43,6 +46,12 @@ public class EmployeePresentation {
         System.out.println("please choose morning(m)/evening(e)");
         String shiftType = scanner.nextLine();
         System.out.println("choose Branch from the list:");
+        Response response = ResponseSerializer.deserializeFromJson(branchService.getAllBranches());
+        if (response.isError())
+            System.out.println(response.getErrorMessage());
+        else {
+            System.out.println(response.getReturnValue());
+        }
         String branch = scanner.nextLine();
         System.out.println(employeeService.submitShiftForEmployee(branch,id, Time.stringToLocalDate(date),shiftType));
     }

@@ -20,26 +20,19 @@ import java.util.List;
 
 public class Data_init_HR {
 
-    public static void initBasicData(DAO dao) throws SQLException {
+    public static void initBasicData(DAO dao,ShiftService shiftService) throws SQLException {
         UserDTO userDTO = new UserDTO("User", "1", "1", "HRManager", 1, "123456", "2023-04-03", "good worker", 10000);
         dao.deleteTableDataWithDTO(userDTO);
         dao.insert(userDTO);
-    }
-    public static void initOldData(DAO dao, EmployeeService employeeService , ShiftService shiftService, EmployeeController employeeController, ShiftController shiftController, DalShiftService dalShiftService) throws Exception {
-
-        dao.deleteTableDataWithTableName("User");
-        dao.deleteTableDataWithTableName("Driver");
-        dao.deleteTableDataWithTableName("DateToDriver");
-
-
 
         //init shifts for ayear in all branches
         LocalDate startDate = LocalDate.now(); // Start date is one year from now
-        LocalDate endDate = startDate.plusWeeks(1); // End date is one month from the start date
+        LocalDate endDate = startDate.plusWeeks(2); // End date is one month from the start date
 
-        List<String> branches = Arrays.asList("b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9", "b10", "b11", "b12");
+        List<String> branches = Arrays.asList("b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9", "b10");
 
-// Loop through each date and insert shifts for the morning and evening
+
+        // Loop through each date and insert shifts for the morning and evening
         while (startDate.isBefore(endDate)) {
             for (String branch : branches) {
                 try{
@@ -57,15 +50,15 @@ public class Data_init_HR {
             // Increment the date by 1 day
             startDate = startDate.plusDays(1);
         }
-
         //init requirements for month
         LinkedHashMap<String, Integer> positions = new LinkedHashMap<>();
         positions.put(PositionType.orderly.name(), 1);
         positions.put(PositionType.security.name(), 1);
         positions.put(PositionType.general_worker.name(), 2);
         positions.put(PositionType.cleaning.name(), 1);
-        positions.put(PositionType.cashier.name(), 2);
-        positions.put(PositionType.storekeeper.name(), 1);
+        positions.put(PositionType.cashier.name(), 3);
+        positions.put(PositionType.storekeeper.name(), 2);
+        positions.put(PositionType.shiftManager.name(), 1);
 
         //init shifts for ayear in all branches
         startDate = LocalDate.now(); // Start date is one year from now
@@ -81,10 +74,11 @@ public class Data_init_HR {
             startDate = startDate.plusDays(1);
         }
 
+    }
+    public static void initOldData(DAO dao, EmployeeService employeeService , ShiftService shiftService, EmployeeController employeeController, ShiftController shiftController, DalShiftService dalShiftService) throws Exception {
+        initBasicData(dao,shiftService);
 
         //adding employees
-
-
 //        UserDTO user1 = new UserDTO("User", "JohnDoe", "1", "employee", 11, "123456789", "2023-05-14", "Good worker", 15000);
 //        dao.insert(user1);
 //        UserDTO user2 = new UserDTO("User", "JaneDoe", "2", "employee", 12, "987654321", "2023-05-14", "Professional driver", 20000);
@@ -158,7 +152,7 @@ public class Data_init_HR {
         employeeService.submitShiftForEmployee("b4", 20, LocalDate.now().plusDays(5), "e");
 
         shiftService.assignAll("b1", LocalDate.now().plusDays(1).toString(), "m");
-        shiftService.assignEmployeeForShift("b2", 16, LocalDate.now().plusDays(1).toString(), "m", PositionType.cleaning.name());
+        //shiftService.assignEmployeeForShift("b2", 16, LocalDate.now().plusDays(1).toString(), "m", PositionType.cleaning.name());
 
 
 
