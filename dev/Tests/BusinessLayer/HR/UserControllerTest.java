@@ -36,6 +36,7 @@ public class UserControllerTest extends TestCase {
         this.dalEmployeeService = new DalEmployeeService(connection,dalUserService);
         employeeController = new EmployeeController(dalEmployeeService , dalUserService);
         this.dalDriverService = new DalDriverService(connection,dalUserService);
+
         this.userController = new UserController(employeeController,null,null,dalUserService);
         this.dao = new DAO(connection);
         dao.deleteTableDataWithTableName("User");

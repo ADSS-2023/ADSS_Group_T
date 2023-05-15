@@ -27,13 +27,15 @@ public class EmployeePresentation {
             System.out.println("------ Employee main window -------");
             System.out.println("Please choose an option:");
             System.out.println(
-                            " \n 1.submmit shift " +
+                            " \n 1.submit shift " +
+                            " \n 1.show submissions " +
                             " \n 2.logout ");
             int choice = scanner.nextInt();
             scanner.nextLine(); // Consume the newline character
             switch (choice) {
                 case 1 -> {submitShift();}
-                case 2 -> {return;}//exit
+                case 2 -> {showMyShifts();}
+                case 3 -> {return;}//exit
                 default -> System.out.println("Invalid choice. Please try again.");
             }
         }
@@ -55,11 +57,8 @@ public class EmployeePresentation {
         System.out.println(employeeService.submitShiftForEmployee(branch,id, Time.stringToLocalDate(date),shiftType));
     }
 
-//    public void showMyShifts(){
-//        Scanner scanner = new Scanner(System.in);
-//        System.out.println("Please enter the employee ID:");
-//        int id = scanner.nextInt();
-//        employeeService.getListOfSubmittion(id);
-//    }
+    public void showMyShifts(){
+        System.out.println(employeeService.getListOfSubmittion(id));
+    }
 
 }
