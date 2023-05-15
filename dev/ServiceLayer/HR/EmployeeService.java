@@ -92,11 +92,11 @@ public class EmployeeService {
         }
     }
 
-    public String assignDriverForShift(LocalDate date, int id, String licenseType, String coolingLevel ) {
+    public String assignDriverForShift(LocalDate date, int id) {
         Response res = new Response();
         try {
 
-           driverController.assignDriver(date, id , licenseType, coolingLevel );
+           driverController.assignDriver(date, id);
            return "The driver assign successfully";
         }
         catch (Exception ex) {

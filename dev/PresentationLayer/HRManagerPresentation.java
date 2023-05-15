@@ -59,23 +59,13 @@ public class HRManagerPresentation {
     }
 
     private void manageAssignDriverForShift() {
-        String coolinglevel;
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter the driver details:");
         System.out.println("manage Assign Driver For Shift - choose shift date");
         String date = scanner.nextLine();
         System.out.println("Please enter the driver ID:");
         int id = scanner.nextInt();
-        scanner.nextLine();
-        System.out.println("Please enter the driver cooling level by number: (1)=non (2)=fridge (3)=freezer");
-        int cooling = scanner.nextInt();
-        scanner.nextLine();
-        if(cooling == 1) coolinglevel = "non";
-        else if (cooling == 2) coolinglevel = "fridge" ;
-        else coolinglevel = "freezer";
-        System.out.println("Please enter the driver license type : C1 , C , E " );
-        String licenseType = scanner.nextLine();
-        employeeService.assignDriverForShift(Time.stringToLocalDate(date),id,licenseType,coolinglevel);
+        employeeService.assignDriverForShift(Time.stringToLocalDate(date),id);
     }
 
     private void notification() {
