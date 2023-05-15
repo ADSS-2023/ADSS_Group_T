@@ -105,11 +105,8 @@ public class Shift {
                 return 1;
             else
                 return 0;
+
         }
-
-
-
-
 
 
 
