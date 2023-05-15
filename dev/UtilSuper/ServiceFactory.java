@@ -56,14 +56,10 @@ public class ServiceFactory {
     private DalDeliveryService dalDeliveryService;
     private DalUserService dalUserService;
     private DalEmployeeService dalEmployeeService;
-
     private DalShiftService dalShiftService;
     private DalDriverService dalDriverService;
     private DAO dao;
     private Shift shift;
-
-
-
     private DriverController driverController;
 
     public ServiceFactory() throws Exception {
@@ -72,7 +68,6 @@ public class ServiceFactory {
         connection = DriverManager.getConnection(testDBUrl);
 
         this.dao = new DAO(connection);
-        Data_init.initBasicData(dao);
         dalLogisticCenterService = new DalLogisticCenterService(connection);
         dalDeliveryService = new DalDeliveryService(connection,dalLogisticCenterService);
 
@@ -87,12 +82,8 @@ public class ServiceFactory {
         driverController = new DriverController(dalDriverService);
         branchController = new BranchController(dalDeliveryService);
 
-        //TODO delete because error!:
-
         shiftController = new ShiftController(this.driverController, this.dalEmployeeService, this.dalShiftService, this.branchController, this.employeeController.getEmployeesMapper());
         employeeService = new EmployeeService(employeeController,driverController, shiftController);
-
-
 
         logisticCenterController = new LogisticCenterController(dalLogisticCenterService);
         logisticCenterService = new LogisticCenterService(logisticCenterController);

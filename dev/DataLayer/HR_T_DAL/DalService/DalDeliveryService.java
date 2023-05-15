@@ -5,6 +5,7 @@ import DataLayer.HR_T_DAL.DAOs.DeliveryDAO;
 import DataLayer.HR_T_DAL.DAOs.SiteDAO;
 import DataLayer.HR_T_DAL.DTOs.*;
 import DataLayer.Util.DAO;
+import UtilSuper.Time;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -220,13 +221,11 @@ public class DalDeliveryService {
     }
 
     public boolean findSpecificTruckInDate(LinkedHashMap<String,Object> pk) throws SQLException {
-        Truck truck = dalLogisticCenterService.findTruck((Integer)pk.get("truckId"));
-        if(truck != null && date2trucks.containsKey((LocalDate)pk.get("shiftDate")) && date2trucks.get((LocalDate)pk.get("shiftDate")).contains(truck))
-            return true;
         DateToTruckDTO dto = dao.find(pk,DateToTruckDTO.getTableNameStatic(),DateToTruckDTO.class);
         if(dto == null)
             return false;
-        date2trucks.get((LocalDate)pk.get("shiftDate")).add(truck);
+        Truck truck = dalLogisticCenterService.findTruck((Integer)pk.get("truckId"));
+        date2trucks.get(Time.stringToLocalDate((String)pk.get("shiftDate"))).add(truck);
         return true;
     }
     public LinkedHashMap<String, Supplier> findAllSuppliers() throws SQLException {
@@ -405,6 +404,8 @@ public class DalDeliveryService {
         ArrayList<Truck> dateTrucks = new ArrayList<>();
         for(DateToTruckDTO dto : dateTrucksDTOs){
             Truck truck = dalLogisticCenterService.findTruck(dto.getTruckId());
+            if(!this.date2trucks.containsKey(date))
+                this.date2trucks.put(date,new ArrayList<>());
             if(!this.date2trucks.get(date).contains(truck))
                 this.date2trucks.get(date).add(truck);
             dateTrucks.add(truck);
@@ -417,6 +418,8 @@ public class DalDeliveryService {
         ArrayList<Delivery> dateDeliveries = new ArrayList<>();
         for(DateToDeliveryDTO dto : dateDeliveriesDTOs){
             Delivery delivery = findDelivery(dto.getDeliveryId());
+            if(!this.date2deliveries.containsKey(date))
+                this.date2deliveries.put(date,new ArrayList<>());
             if(!this.date2deliveries.get(date).contains(delivery))
                 this.date2deliveries.get(date).add(delivery);
             dateDeliveries.add(delivery);
@@ -425,4 +428,12 @@ public class DalDeliveryService {
     }
 
 
+    public void deleteDelivery(Delivery delivery) throws SQLException {
+        dao.delete(delivery.createDeliveryDTO());
+    }
+
+    public void updateDateCounter(LocalDate oldDate, LocalDate newDate) throws SQLException {
+        dao.update(new CounterDTO("date counter",Time.localDateToString(oldDate)),
+                new CounterDTO("date counter",Time.localDateToString(newDate)));
+    }
 }

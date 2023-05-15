@@ -6,6 +6,7 @@ import UtilSuper.EnterOverWeightInterface;
 import UtilSuper.Response;
 import UtilSuper.ResponseSerializer;
 
+import java.sql.SQLException;
 import java.util.LinkedHashMap;
 
 public class DeliveryService {
@@ -82,7 +83,7 @@ public class DeliveryService {
             if(s == null)
                 response.setReturnValue("\nno deliveries today! :)\n");
             else
-                response.setReturnValue("\nthe following deliveries will bew reschedule due to lack of drivers:\n" + s);
+                response.setReturnValue("\nthe following deliveries will be reschedule due to lack of drivers:\n" + s);
             return ResponseSerializer.serializeToJson(response);
         } catch (Exception ex) {
             Response response = new Response();
@@ -94,7 +95,7 @@ public class DeliveryService {
     public String getCurrDateDetails() {
         try {
             Response response = new Response();
-            response.setReturnValue(this.deliveryController.getCurrDateDetails().toString());
+            response.setReturnValue(this.deliveryController.getCurrDate().toString());
             return ResponseSerializer.serializeToJson(response);
         } catch (Exception ex) {
             Response response = new Response();
@@ -137,6 +138,10 @@ public class DeliveryService {
             response.setErrorMessage(ex.getMessage());
             return ResponseSerializer.serializeToJson(response);
         }
+    }
+
+    public void initCounters() throws SQLException {
+        deliveryController.initCounters();
     }
 
 //    public String orderDelivery(String branchString, LinkedHashMap<String, LinkedHashMap<String, Integer>> suppliersString,

@@ -4,7 +4,9 @@ import BusinessLayer.HR.Driver;
 import BusinessLayer.HR.Shift;
 import BusinessLayer.HR.User.PositionType;
 import BusinessLayer.HR.User.UserType;
+import BusinessLayer.Transport.DeliveryController;
 import DataLayer.HR_T_DAL.DTOs.*;
+import DataLayer.HR_T_DAL.DalService.DalDeliveryService;
 import DataLayer.Util.DAO;
 import ServiceLayer.Transport.DeliveryService;
 import ServiceLayer.Transport.SupplierService;
@@ -17,15 +19,9 @@ import java.util.LinkedHashMap;
 
 public class Data_init {
 
-    public static void DeleteAllData(){
-
-    }
     public static void initBasicData(DAO dao) throws SQLException {
 
         dao.deleteAllDataFromDatabase();
-
-        SiteDTO logisticCenter = new SiteDTO("logistic center address","0000000000","logistic center contact",0,0,0,"logistic center");
-        dao.insert(logisticCenter);
 
         CounterDTO dateCounter = new CounterDTO("date counter", LocalDate.now().toString());
         dao.insert(dateCounter);
@@ -36,8 +32,8 @@ public class Data_init {
         CounterDTO deliveryCounter = new CounterDTO("delivery counter","0");
         dao.insert(deliveryCounter);
 
-
     }
+
     public static void initOldData(DAO dao,SupplierService supplierService,DeliveryService deliveryService) throws SQLException {
         initBasicData(dao);
         initSites(dao);
