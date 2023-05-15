@@ -38,6 +38,15 @@ public Driver lazyLoadDriver (int id) throws SQLException {
     return  driver;
 }
 
+    public Driver getDriverById(int id) throws SQLException {
+        Driver driver = drivers.get(id);
+        if (driver == null){
+            driver = dalDriverService.findDriverById(id);
+            if (driver == null) throw new SQLException("no driver with that id found");
+        }
+        return  driver;
+    }
+
 
 
     public String getRequirementsByDate(LocalDate date) throws SQLException {

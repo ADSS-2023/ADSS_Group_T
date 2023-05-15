@@ -12,11 +12,13 @@ import java.util.Scanner;
 public class EmployeePresentation {
     private EmployeeService employeeService;
     private BranchService branchService;
+    private int id;
     public EmployeePresentation(EmployeeService employeeService, BranchService branchService){
         this.branchService = branchService;
         this.employeeService = employeeService;
     }
-    public void start() {
+    public void start(int id) {
+        this.id = id;
         mainWindow();
     }
     private void mainWindow() {
@@ -38,9 +40,6 @@ public class EmployeePresentation {
     }
     public void submitShift(){
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Please enter the employee ID:");
-        int id = scanner.nextInt();
-        scanner.nextLine();
         System.out.println("please choose shift date");
         String date = scanner.nextLine();
         System.out.println("please choose morning(m)/evening(e)");

@@ -88,6 +88,7 @@ public class MainPresentation {
      * the main window of the system
      */
     public void loginWindow() {
+        int id=0;
         while(true){
             Scanner scanner = new Scanner(System.in);
             System.out.println(" ");
@@ -102,7 +103,7 @@ public class MainPresentation {
             boolean loginSuccess = false;
             while (!loginSuccess) {
                 System.out.print("Enter your ID: ");
-                int id = scanner.nextInt();
+                id = scanner.nextInt();
                 System.out.print("Enter your password: ");
                 String password = scanner.next();
                 result = userService.login(id, password);
@@ -113,7 +114,7 @@ public class MainPresentation {
                 }
             }
             switch (result) {
-                case "employee" -> employeePresentation.start();
+                case "employee" -> employeePresentation.start(id);
                 case "TransportManager" -> transportManagerPresentation.start();
                 case "HRManager" -> hrManagerPresentation.start();
                 case "driver" -> driverPresentation.start();
