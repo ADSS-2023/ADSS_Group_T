@@ -1,8 +1,5 @@
 package BusinessLayer.HR_Transport;
-import BusinessLayer.HR.DriverController;
-import BusinessLayer.HR.EmployeeController;
-import BusinessLayer.HR.Shift;
-import BusinessLayer.HR.ShiftController;
+import BusinessLayer.HR.*;
 import BusinessLayer.HR.User.UserController;
 import BusinessLayer.Transport.BranchController;
 import BusinessLayer.Transport.DeliveryController;
@@ -19,6 +16,7 @@ import ServiceLayer.Transport.DeliveryService;
 import ServiceLayer.Transport.LogisticCenterService;
 import ServiceLayer.Transport.SupplierService;
 import ServiceLayer.UserService;
+import UtilSuper.Pair;
 import UtilSuper.Time;
 import junit.framework.TestCase;
 import org.junit.Before;
@@ -31,8 +29,7 @@ import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 
 public class OrderDeliveryTest {
@@ -70,7 +67,6 @@ public class OrderDeliveryTest {
         this.dao = new DAO(connection);
         dao.deleteAllDataFromDatabase();
         Data_init.initBasicData(dao);
-
         dalLogisticCenterService = new DalLogisticCenterService(connection);
         dalDeliveryService = new DalDeliveryService(connection, dalLogisticCenterService);
         dalUserService = new DalUserService(connection);
@@ -82,7 +78,6 @@ public class OrderDeliveryTest {
         branchController = new BranchController(dalDeliveryService);
         shiftController = new ShiftController(this.driverController, this.dalEmployeeService, this.dalShiftService, this.branchController, this.employeeController.getEmployeesMapper());
         employeeService = new EmployeeService(employeeController, driverController, shiftController);
-
         logisticCenterController = new LogisticCenterController(dalLogisticCenterService);
         logisticCenterService = new LogisticCenterService(logisticCenterController);
         branchService = new BranchService(branchController);
@@ -92,17 +87,13 @@ public class OrderDeliveryTest {
         shiftService = new ShiftService(shiftController);
         deliveryController = new DeliveryController(logisticCenterController, supplierController, branchController, driverController, shiftController, dalDeliveryService);
         deliveryService = new DeliveryService(deliveryController);
-
-
         Data_init.initSites(dao);
         Data_init.initTrucks(dao);
         Data_init.initSupplierProducts(supplierService);
-
         Data_init_HR.initBasicData(dao,shiftService);
         Data_init_HR.initOldData(dao,employeeService,shiftService,employeeController,shiftController,dalShiftService);
-    }
-    @Test
-    public void orderDelivery() throws SQLException {
+
+
         String branch1 = "b1";
         LinkedHashMap<String, LinkedHashMap<String, Integer>> products1 = new LinkedHashMap<>();
         LinkedHashMap<String, Integer> supplierProducts1 = new LinkedHashMap<>();
@@ -120,14 +111,26 @@ public class OrderDeliveryTest {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        assertEquals(2, deliveryController.getAllDeliveries().size());
-        driverController.getMinRequirementsCoolingLevelByDate(LocalDate.now().plusDays(2));
-        int numOfDriversReq =  driverController.getMinRequirementsLicenseLevelByDate(LocalDate.now().plusDays(2));
-        assertEquals(2,numOfDriversReq);
-
-
-
     }
+    @Test
+    public void checkIfAddDelivery() throws SQLException {
+        assertEquals(2, deliveryController.getAllDeliveries().size());
+    }
+    @Test
+    public void  checkIfRequierementsDrvers() throws SQLException {
+        LinkedHashMap<Pair<Driver.LicenseType, Driver.CoolingLevel>, Integer> requierementsForDate  = driverController.lazyLoadAllRequierementsForDate(LocalDate.now().plusDays(2));
+        assertEquals(2,requierementsForDate.size());
+    }
+
+    @Test
+    public void checkDriversToTruck() throws Exception {
+        deliveryController.skipDay();
+        deliveryController.getNextDayDeatails();
+        Driver driver = driverController.lazyLoadDriver(deliveryController.getDelivery(0).getDriverID());
+        assertNotNull(driver);
+    }
+
+
 
 //    @Test
 //    public void testAddBranch() throws SQLException {
