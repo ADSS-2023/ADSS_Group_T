@@ -118,7 +118,7 @@ public class DeliveryService {
     public String showAllDeliveries() {
         try {
             Response response = new Response();
-            response.setReturnValue(transportJsonConvert.deliveryListToString(this.deliveryController.getAllDeliveries()));
+            response.setReturnValue(transportJsonConvert.deliveryListToString(this.deliveryController.getAllDeliveries().values()));
             return ResponseSerializer.serializeToJson(response);
         } catch (Exception ex) {
             Response response = new Response();

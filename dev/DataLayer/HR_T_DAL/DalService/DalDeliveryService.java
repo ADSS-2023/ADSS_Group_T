@@ -22,6 +22,7 @@ public class DalDeliveryService {
     private LinkedHashMap<String, Product> products;
     private final LinkedHashMap<LocalDate, ArrayList<Truck>> date2trucks;
     private final LinkedHashMap<LocalDate, ArrayList<Delivery>> date2deliveries;
+    private LinkedHashMap<Integer, Delivery> deliveries;
     private SiteDAO siteDAO;
     private DAO dao;
 
@@ -34,9 +35,11 @@ public class DalDeliveryService {
         this.siteDAO = new SiteDAO(connection);
         this.date2trucks = new LinkedHashMap<>();
         this.date2deliveries = new LinkedHashMap<>();
+        this.products = new LinkedHashMap<>();
+        this.deliveries = new LinkedHashMap<>();
     }
 
-    public void insertDelivery(Delivery delivery) throws SQLException {
+    private void insertDelivery(Delivery delivery) throws SQLException {
         Site site = delivery.getSource();
         String address = null;
         if (site != null)
@@ -148,12 +151,12 @@ public class DalDeliveryService {
     public Supplier findSupplier(String supplierAddress) throws SQLException {
         if(suppliers.containsKey(supplierAddress))
             return suppliers.get(supplierAddress);
-
         SiteDTO dto = dao.find(supplierAddress,SiteDTO.getPKNameStatic(),SiteDTO.getTableNameStatic(),SiteDTO.class);
         if(dto == null)
             return null;
-        suppliers.put(supplierAddress,new Supplier(dto,this));
-        return suppliers.get(supplierAddress);
+        Supplier supplier = new Supplier(dto,this);
+        suppliers.put(supplierAddress,supplier);
+        return supplier;
     }
 
     public Branch findBranch(String branchAddress) throws SQLException {
@@ -196,10 +199,14 @@ public class DalDeliveryService {
     }
 
     public Delivery findDelivery(int deliveryId) throws SQLException {
+        if(deliveries.containsKey(deliveryId))
+            return deliveries.get(deliveryId);
         DeliveryDTO dto = dao.find(deliveryId,"id","Delivery",DeliveryDTO.class);
         if(dto == null)
             return null;
-        return new Delivery(dto,this);
+        Delivery delivery = new Delivery(dto,this);
+        deliveries.put(deliveryId,delivery);
+        return delivery;
     }
 
     public DeliveryUnHandledSitesDTO findDeliveryUnHandledSites(LinkedHashMap<String,Object> pk) throws SQLException {
@@ -260,7 +267,7 @@ public class DalDeliveryService {
         return dao.findAll(DateToDeliveryDTO.getTableNameStatic(),DateToDeliveryDTO.class);
     }
 
-    public List<DateToDeliveryDTO> findAllDeliveriesByDate(String date) throws SQLException {
+    private List<DateToDeliveryDTO> findAllDeliveriesByDate(String date) throws SQLException {
         return deliveryDAO.findAllDeliveriesByDate(date);
     }
 
@@ -338,16 +345,16 @@ public class DalDeliveryService {
 
     public LinkedHashMap<Integer, Delivery> findAllDeliveries() throws SQLException {
         ArrayList<DeliveryDTO> deliveryDTOS = dao.findAll(DeliveryDTO.getTableNameStatic(),DeliveryDTO.class);
-        LinkedHashMap<Integer,Delivery> result = new LinkedHashMap<>();
         for (DeliveryDTO deliveryDTO: deliveryDTOS){
-            result.put(deliveryDTO.getId(),new Delivery(deliveryDTO,this));
-            result.get(deliveryDTO.getId()).setUnHandledSuppliers(findAllUnHandledSuppliersForDelivery(deliveryDTO.getId()));
-            result.get(deliveryDTO.getId()).setUnHandledBranches(findAllUnHandledBranchesForDelivery(deliveryDTO.getId()));
-            result.get(deliveryDTO.getId()).setHandledSuppliers(findAllHandledSuppliersForDelivery(deliveryDTO.getId()));
-            result.get(deliveryDTO.getId()).setHandledBranches(findAllHandledBranchesForDelivery(deliveryDTO.getId()));
+            if(!this.deliveries.containsKey(deliveryDTO.getId())) {
+                this.deliveries.put(deliveryDTO.getId(), new Delivery(deliveryDTO, this));
+                this.deliveries.get(deliveryDTO.getId()).setUnHandledSuppliers(findAllUnHandledSuppliersForDelivery(deliveryDTO.getId()));
+                this.deliveries.get(deliveryDTO.getId()).setUnHandledBranches(findAllUnHandledBranchesForDelivery(deliveryDTO.getId()));
+                this.deliveries.get(deliveryDTO.getId()).setHandledSuppliers(findAllHandledSuppliersForDelivery(deliveryDTO.getId()));
+                this.deliveries.get(deliveryDTO.getId()).setHandledBranches(findAllHandledBranchesForDelivery(deliveryDTO.getId()));
+            }
         }
-
-     return result;
+     return this.deliveries;
     }
 
     public void deleteAllData() throws SQLException {
@@ -370,6 +377,11 @@ public class DalDeliveryService {
         Product product = new Product(productName, productCoolingLevel);
         products.put(productName, product);
         insertProduct(product);
+    }
+
+    public void addDelivery(Delivery delivery) throws SQLException {
+        deliveries.put(delivery.getId(), delivery);
+        insertDelivery(delivery);
     }
 
     public void addTruckToDate(LocalDate requiredDate, Truck truck) throws SQLException {
@@ -396,6 +408,18 @@ public class DalDeliveryService {
             dateTrucks.add(truck);
         }
         return dateTrucks;
+    }
+
+    public ArrayList<Delivery> getAllDeliveriesByDate(LocalDate date) throws SQLException {
+        List<DateToDeliveryDTO> dateDeliveriesDTOs = findAllDeliveriesByDate(date.toString());
+        ArrayList<Delivery> dateDeliveries = new ArrayList<>();
+        for(DateToDeliveryDTO dto : dateDeliveriesDTOs){
+            Delivery delivery = findDelivery(dto.getDeliveryId());
+            if(!this.date2deliveries.get(date).contains(delivery))
+                this.date2deliveries.get(date).add(delivery);
+            dateDeliveries.add(delivery);
+        }
+        return dateDeliveries;
     }
 
 

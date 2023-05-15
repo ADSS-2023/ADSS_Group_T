@@ -26,7 +26,7 @@ public class SupplierController {
 
 
     public LinkedHashMap<String, Supplier> getAllSuppliers() throws SQLException {
-        return  dalDeliveryService.findAllSuppliers();
+        return dalDeliveryService.findAllSuppliers();
     }
 
     public Supplier getSupplier(String supplierAddress) throws SQLException {

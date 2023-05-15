@@ -22,7 +22,6 @@ public class DeliveryController {
     private final ShiftController shiftController;
     private final SupplierController supplierController;
     private final BranchController branchController;
-    private LinkedHashMap<Integer, Delivery> deliveries;
     private LogisticCenterController logisticCenterController;
     private int deliveryCounter;
     private int filesCounter;
@@ -36,7 +35,6 @@ public class DeliveryController {
     public DeliveryController(LogisticCenterController logisticCenterController, SupplierController supplierController,
                               BranchController branchController, DriverController driverController,
                               ShiftController shiftController, DalDeliveryService dalDeliveryService) throws Exception {
-        this.deliveries = new LinkedHashMap<>();
         this.branchController = branchController;
         this.driverController = driverController;
         this.supplierController = supplierController;
@@ -520,12 +518,9 @@ public class DeliveryController {
      * @throws SQLException query error
      */
     public Delivery getDelivery(int id) throws SQLException {
-        if(deliveries.containsKey(id))
-            return deliveries.get(id);
         Delivery d = dalDeliveryService.findDelivery(id);
         if(d==null)
             throw new RuntimeException("there is no delivery with this id");
-        deliveries.put(id,d);
         return d;
     }
 
@@ -668,7 +663,7 @@ public class DeliveryController {
      * @throws SQLException query error
      */
     public File getLoadedProducts(int deliveryID, String address) throws SQLException {
-        return deliveries.get(deliveryID).getUnHandledSuppliers().get(supplierController.getSupplier(address));
+        return getDelivery(deliveryID).getUnHandledSuppliers().get(supplierController.getSupplier(address));
     }
 
     public void setEnterWeightInterface(EnterWeightInterface enterWeightInterface) {
@@ -727,9 +722,8 @@ public class DeliveryController {
     }
 
 
-    public Collection<Delivery> getAllDeliveries() throws SQLException {
-        this.deliveries = dalDeliveryService.findAllDeliveries();
-        return deliveries.values();
+    public LinkedHashMap<Integer, Delivery> getAllDeliveries() throws SQLException {
+        return dalDeliveryService.findAllDeliveries();
     }
 
     public LocalDate getCurrDate() {
@@ -742,11 +736,10 @@ public class DeliveryController {
      * @throws SQLException wuery error
      */
     public void addDelivery(Delivery delivery) throws SQLException {
-        if(deliveries.containsKey(delivery.getId()) ||
+        if(getAllDeliveries().containsKey(delivery.getId()) ||
         dalDeliveryService.findDelivery(delivery.getId()) != null)
             throw new IllegalArgumentException("delivery with this id already exist");
-        dalDeliveryService.insertDelivery(delivery);
-        deliveries.put(delivery.getId(), delivery);
+        dalDeliveryService.addDelivery(delivery);
     }
 
     /**
@@ -800,14 +793,7 @@ public class DeliveryController {
      * @throws SQLException query error
      */
     private ArrayList<Delivery> getDeliveriesByDate(LocalDate date) throws Exception {
-        ArrayList<Delivery> dateDeliveries = new ArrayList<>();
-        List<DateToDeliveryDTO> dateDeliveriesDTOs = dalDeliveryService.findAllDeliveriesByDate(date.toString());
-        for(DateToDeliveryDTO dto : dateDeliveriesDTOs){
-            Delivery d = getDelivery(dto.getDeliveryId());
-            dateDeliveries.add(d);
-            addDeliveryToDate(date,d,false);
-        }
-        return dateDeliveries;
+        return dalDeliveryService.getAllDeliveriesByDate(date);
     }
 
     /**
