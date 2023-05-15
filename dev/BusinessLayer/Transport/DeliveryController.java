@@ -648,8 +648,9 @@ public class DeliveryController {
                 shiftController.addStoreKeeperRequirement(newDeliveredDate, branch.getAddress());
             }
 
-            Delivery newDelivery = new Delivery(deliveryCounter, newDeliveredDate, LocalTime.NOON, t.getWeight(), suppliers, branches,
+            Delivery newDelivery = new Delivery(deliveryCounter++, newDeliveredDate, LocalTime.NOON, t.getWeight(), suppliers, branches,
                     suppliers.entrySet().iterator().next().getKey(), t.getLicenseNumber(), branches.entrySet().iterator().next().getKey().getShippingArea(),dalDeliveryService);
+            dalDeliveryService.updateCounter("delivery counter",deliveryCounter);
             addDelivery(newDelivery);
             addDeliveryToDate(newDeliveredDate,newDelivery);
             found = true;
@@ -685,7 +686,7 @@ public class DeliveryController {
             this.shiftController.skipDay(currDate.plusDays(1));
         }
         catch (Exception exception){
-
+            throw new Exception("Error while skipping in Shift day");
         }
         ArrayList<Delivery> deliveriesThatReScheduleDelivery = new ArrayList<>();
 
