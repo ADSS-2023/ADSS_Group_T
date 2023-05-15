@@ -90,6 +90,7 @@ public class DalLogisticCenterService {
 
     public void deleteAllData() throws SQLException {
         dao.deleteAllDataFromDatabase();
+    }
 
     public void addTruck(int licenseNumber, String model, int weight, int maxWeight, int coolingLevel) throws SQLException {
         Truck truck = new Truck(licenseNumber, model, weight, maxWeight, coolingLevel);
