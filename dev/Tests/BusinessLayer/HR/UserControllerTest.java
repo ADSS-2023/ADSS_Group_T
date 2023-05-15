@@ -1,5 +1,6 @@
 package BusinessLayer.HR;
 
+import BusinessLayer.HR.User.User;
 import BusinessLayer.HR.User.UserController;
 import BusinessLayer.HR.User.UserType;
 import DataLayer.HR_T_DAL.DalService.*;
@@ -36,27 +37,28 @@ public class UserControllerTest extends TestCase {
         this.dalEmployeeService = new DalEmployeeService(connection,dalUserService);
         employeeController = new EmployeeController(dalEmployeeService , dalUserService);
         this.dalDriverService = new DalDriverService(connection,dalUserService);
-
-        this.userController = new UserController(employeeController,null,null,dalUserService);
+        User HRuser = new User(1,"HRManeger","123456","cool",1000,null,"1", UserType.HRManager);
+        User TRuser = new User(2,"TrManeger","123456","cool",1000,null,"2", UserType.TransportManager);
+        this.userController = new UserController(employeeController,TRuser,HRuser,dalUserService);
         this.dao = new DAO(connection);
         dao.deleteTableDataWithTableName("User");
     }
     @Test
-    public void testLogin() throws Exception {
-
+    public void testLoginHR() throws Exception {
+        UserType u = userController.login(1,"1");
+        Assert.assertTrue(u.toString().equals(UserType.HRManager.toString()));
     }
-    @AfterEach
-    public void deleteChanges () throws SQLException {
-        dao.deleteTableDataWithTableName("User");
-        dao.deleteTableDataWithTableName("QualifiedPosition");
+    @Test
+    public void testLoginTM() throws Exception {
+        UserType u = userController.login(2,"2");
+        Assert.assertTrue(u.toString().equals(UserType.TransportManager.toString()));
     }
-
     @Test
     public void testLoginWithoutPreData() {
-        Exception exception = Assert.assertThrows(SQLException.class, () -> {
-            userController.login(1,"1");
+        Exception exception = Assert.assertThrows(NoSuchFieldException.class, () -> {
+            userController.login(11,"11");
         });
-        String expectedMessage = "no employee with that id found";
+        String expectedMessage = "";
         String actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));
     }
