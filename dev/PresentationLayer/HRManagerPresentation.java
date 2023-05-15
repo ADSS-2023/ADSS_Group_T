@@ -70,7 +70,7 @@ public class HRManagerPresentation {
 
     private void notification() {
         System.out.println("notification : ");
-        shiftService.getNotification();
+        System.out.println(shiftService.getNotification());
     }
 
     private void manageAssignEmployeeForShift() {

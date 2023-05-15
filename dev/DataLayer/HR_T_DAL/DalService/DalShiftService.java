@@ -11,6 +11,8 @@ import DataLayer.HR_T_DAL.DTOs.*;
 import DataLayer.Util.DTO;
 import UtilSuper.Pair;
 import UtilSuper.Time;
+import org.w3c.dom.ranges.Range;
+
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -42,9 +44,8 @@ public class DalShiftService {
     }
 
     public HashMap<LocalDate, String> getNotifications(String fromDate, String toDate) throws SQLException {
-        LinkedHashMap<String, Object> conditions = new LinkedHashMap<>();
-        conditions.put("date", fromDate + " TO " + toDate);
-        ArrayList<NotificationsDTO> notificationsDTOs = shiftDAO.findAll("Notifications", conditions, NotificationsDTO.class);
+        ArrayList<NotificationsDTO> notificationsDTOs = shiftDAO.findAllBetweenDates("Notifications", "date",
+                "'" + LocalDate.parse(fromDate) + "'", "'" + LocalDate.parse(toDate).plusDays(1) + "'", NotificationsDTO.class);
 
         HashMap<LocalDate, String> notifications = new HashMap<>();
         for (NotificationsDTO notificationsDTO : notificationsDTOs) {
@@ -52,6 +53,8 @@ public class DalShiftService {
         }
         return notifications;
     }
+
+
 
 
 

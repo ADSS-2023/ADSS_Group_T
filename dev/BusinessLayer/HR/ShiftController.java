@@ -41,9 +41,6 @@ public class ShiftController {
 
 
 
-    public HashMap<LocalDate, String> getNotifications() {
-        return notifications;
-    }
 
     public void skipDay(LocalDate date) throws SQLException {
         // Retrieve all shifts for the given date and group them by branch
@@ -96,6 +93,9 @@ public class ShiftController {
                                 }
                             }
                         }
+                        //notification for driver requirements
+                        notificationBuilder.append(driverController.getRequirementsByDate(date));
+
                     }
                 } catch (Exception ex) {
                     // Catch the exception and continue the loop
@@ -117,7 +117,6 @@ public class ShiftController {
 
     public HashMap<LocalDate, String> getNotifications(LocalDate fromDate, LocalDate toDate) throws SQLException {
         this.notifications = dalShiftService.getNotifications(fromDate.toString(), toDate.toString());
-        dalShiftService.getNotifications(fromDate.toString(), toDate.toString());
         return notifications;
     }
 
