@@ -23,3 +23,8 @@ Manage assign Employee for shift: Assign employees to a shift based on their pos
 Add shift requirements: Specify the number of employees needed for each position in a shift.
 
 Logout: Exit the program.
+
+## pre reload data 
+HR manager id = 1 password = 1
+
+employees id = 11-20 passwords = 11-20 accordingly  
