@@ -11,29 +11,24 @@ import java.util.Map;
 
 public class LogisticCenter extends Site {
 
-    private LinkedHashMap<Integer, Truck> trucks;
     private LinkedHashMap<Product, Integer> productsInStock;
     private DalLogisticCenterService dalLogisticCenterService;
 
     public LogisticCenter(DalLogisticCenterService dalLogisticCenterService) {
         super("logistic center address", "0000000000", "logictic center manager", 0, 0);
         this.dalLogisticCenterService = dalLogisticCenterService;
-        this.trucks = new LinkedHashMap<>();
         this.productsInStock = new LinkedHashMap<>();
     }
     public LogisticCenter(SiteDTO siteDTO, DalLogisticCenterService dalLogisticCenterService){
         super(siteDTO.getSiteAddress(),siteDTO.getTelNumber(),siteDTO.getContactName(),siteDTO.getX(),siteDTO.getY());
         this.dalLogisticCenterService = dalLogisticCenterService;
-        this.trucks = new LinkedHashMap<>();
         this.productsInStock = new LinkedHashMap<>();
     }
 
     public boolean addTruck(int licenseNumber, String model, int weight, int maxWeight, int coolingLevel) throws Exception {
-        if (trucks.containsKey(licenseNumber))
+        if (getAllTrucks().containsKey(licenseNumber) || dalLogisticCenterService.findTruck(licenseNumber) != null)
             throw new RuntimeException("trucks contains licenseNumber");
-        Truck truck = new Truck(licenseNumber, model, weight, maxWeight, coolingLevel);
-        dalLogisticCenterService.insertTruck(truck);
-        trucks.put(licenseNumber,truck);
+        dalLogisticCenterService.addTruck(licenseNumber, model, weight, maxWeight, coolingLevel);
         return true;
     }
 
@@ -91,20 +86,19 @@ public class LogisticCenter extends Site {
     }
 
     public LinkedHashMap<Integer, Truck> getAllTrucks() throws Exception {
-        trucks =  dalLogisticCenterService.findAllTrucks();
+        LinkedHashMap<Integer, Truck> trucks = dalLogisticCenterService.findAllTrucks();
         if (trucks == null || trucks.isEmpty())
             throw new RuntimeException("no trucks in the system");
         return trucks;
     }
 
     public Truck getTruck(int licenseNumber) throws Exception {
-        if(!trucks.containsKey(licenseNumber)) {
+        if(!getAllTrucks().containsKey(licenseNumber)) {
             Truck truck = dalLogisticCenterService.findTruck(licenseNumber);
             if (truck == null)
                 throw new Exception("no truck in the system");
-            else
-                trucks.put(licenseNumber,truck);
+            return truck;
         }
-        return trucks.get(licenseNumber);
+        return getAllTrucks().get(licenseNumber);
     }
 }

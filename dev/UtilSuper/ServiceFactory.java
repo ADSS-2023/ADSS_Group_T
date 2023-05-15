@@ -73,9 +73,6 @@ public class ServiceFactory {
 
         this.dao = new DAO(connection);
         Data_init.initBasicData(dao);
-        Data_init_HR.initBasicData(dao);
-
-
         dalLogisticCenterService = new DalLogisticCenterService(connection);
         dalDeliveryService = new DalDeliveryService(connection,dalLogisticCenterService);
 
@@ -99,12 +96,12 @@ public class ServiceFactory {
 
         logisticCenterController = new LogisticCenterController(dalLogisticCenterService);
         logisticCenterService = new LogisticCenterService(logisticCenterController);
-        dalDeliveryService = new DalDeliveryService(connection,dalLogisticCenterService);
+
 
         //TODO //
         User HRuser = new User(1,"HRManeger","123456","cool",1000,null,"1", UserType.HRManager);
         User TRuser = new User(2,"TrManeger","123456","cool",1000,null,"2", UserType.TransportManager);
-        userController = new UserController(employeeController,TRuser,driverController,HRuser);
+        userController = new UserController(employeeController,TRuser,driverController,HRuser,dalUserService);
         userService = new UserService(userController);
         branchService = new BranchService(branchController);
         supplierController = new SupplierController(dalDeliveryService);
@@ -116,6 +113,8 @@ public class ServiceFactory {
         deliveryController = new DeliveryController(logisticCenterController,supplierController,branchController,driverController,shiftController,dalDeliveryService);
         deliveryService = new DeliveryService(deliveryController);
 
+
+        Data_init_HR.initBasicData(dao,shiftService);
 
     }
 

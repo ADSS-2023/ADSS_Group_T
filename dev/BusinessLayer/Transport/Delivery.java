@@ -94,7 +94,7 @@ public class Delivery {
      * @throws SQLException query error
      */
     private int checkBranch(Branch b, int fileCounter, HashMap<Product, Integer> copyOfSupplierFileProducts) throws SQLException {
-        File branchFile = getHandledBranches().get(b);
+        File branchFile = getUnHandledBranches().get(b);
         ArrayList<Product> productsTmp = new ArrayList<>(branchFile.getProducts().keySet());
         for (Product branchProduct : productsTmp) {
             if (copyOfSupplierFileProducts.containsKey(branchProduct)) {
@@ -117,7 +117,8 @@ public class Delivery {
      */
     private int handleBranch(Branch b, Product product, int amount, HashMap<Product, Integer> copyOfSupplierFileProducts, int fileCounter) throws SQLException {
         fileCounter = addProductToHandledBranch(b,product,amount,fileCounter);
-        removeProductFromUnHandledBranch(b,product, amount);
+        File f = dalDeliveryService.findAllUnHandledBranchesForDelivery(id).get(b);
+        removeProductFromUnHandledBranch(b,product, amount,f.getId());
         copyOfSupplierFileProducts.replace(product, copyOfSupplierFileProducts.get(product) - amount);
         if (copyOfSupplierFileProducts.get(product) == 0)
             copyOfSupplierFileProducts.remove(product);
@@ -202,7 +203,7 @@ public class Delivery {
             dalDeliveryService.insertHandledSite(id,branch.getAddress(),p.getName(),fileCounter - 1,amount);
         }
         else
-            dalDeliveryService.updateHandledSite(id,branch.getAddress(),p.getName(), handledBranches.get(branch).getId() ,amount);
+            dalDeliveryService.insertHandledSite(id,branch.getAddress(),p.getName(), handledBranches.get(branch).getId() ,amount);
         handledBranches.get(branch).addProduct(p, amount);
         return fileCounter;
     }
@@ -214,11 +215,12 @@ public class Delivery {
      * @param amount the amount to remove
      * @throws SQLException query error
      */
-    public void removeProductFromUnHandledBranch(Branch branch, Product product, int amount) throws SQLException {
+    public void removeProductFromUnHandledBranch(Branch branch, Product product, int amount,int fileId) throws SQLException {
         LinkedHashMap<String,Object> pk = new LinkedHashMap<>();
         pk.put("deliveryId",id);
         pk.put("siteAddress",branch.getAddress());
         pk.put("productName",product.getName());
+        pk.put("fileId",fileId);
         DeliveryUnHandledSitesDTO dto = dalDeliveryService.findDeliveryUnHandledSites(pk);
         if(dto.getAmount() == amount)
             dalDeliveryService.deleteUnHandledSite(getId(), branch.getAddress(), product.getName(), dto.getFileId(),amount);
@@ -327,7 +329,7 @@ public class Delivery {
      * create delivery DTO with the delivery current details
      * @return the suitable delivery DTO
      */
-    private DeliveryDTO createDeliveryDTO(){
+    public DeliveryDTO createDeliveryDTO(){
         String address = null;
         if(this.source != null)
             address = this.getSource().getAddress();

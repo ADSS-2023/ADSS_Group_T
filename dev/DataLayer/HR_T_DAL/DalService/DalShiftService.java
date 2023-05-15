@@ -347,19 +347,19 @@ public class DalShiftService {
         return shiftsByBranch;
     }
 
-    public List<ShiftDTO> getshifsByDateAndShiftType(LocalDate localDate, boolean shiftType) {
-        String LocalDatestring = localDate.toString();
-        String shiftTypestring ;
-        if (shiftType) shiftTypestring = "morning"; else shiftTypestring = "evening";
-
-        //shiftDAO.find()
-        return null;
-    }
-
-    public void addNewShift (Shift shift) throws SQLException {
-        ShiftDTO shiftDTO = new ShiftDTO(shift);
-        shiftDAO.insert(shiftDTO);
-    }
+//    public List<ShiftDTO> getshifsByDateAndShiftType(LocalDate localDate, boolean shiftType) {
+//        String LocalDatestring = localDate.toString();
+//        String shiftTypestring ;
+//        if (shiftType) shiftTypestring = "morning"; else shiftTypestring = "evening";
+//
+//        //shiftDAO.find()
+//        return null;
+//    }
+//
+//    public void addNewShift (Shift shift) throws SQLException {
+//        ShiftDTO shiftDTO = new ShiftDTO(shift);
+//        shiftDAO.insert(shiftDTO);
+//    }
 }
 
 

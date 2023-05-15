@@ -5,11 +5,10 @@ import java.sql.SQLException;
 import java.util.LinkedHashMap;
 
 public class BranchController {
-    private LinkedHashMap<String, Branch> branches;
+
     private DalDeliveryService dalDeliveryService;
 
     public BranchController(DalDeliveryService dalDeliveryService) {
-        this.branches = new LinkedHashMap<String, Branch>();
         this.dalDeliveryService = dalDeliveryService;
     }
 
@@ -23,13 +22,11 @@ public class BranchController {
      * @throws SQLException query error
      */
     public void addBranch(String branchAddress, String telNumber, String contactName, int x, int y) throws SQLException {
-        if (branches.containsKey(branchAddress) ||
+        if (getAllBranches().containsKey(branchAddress) ||
                 dalDeliveryService.findBranch(branchAddress) != null) {
             throw new IllegalArgumentException("branch address is taken");
         }
-        Branch branch = new Branch(branchAddress, telNumber, contactName, x, y);
-        dalDeliveryService.insertBranch(branch);
-        branches.put(branch.getAddress(), branch);
+        dalDeliveryService.addBranch(branchAddress, telNumber, contactName, x, y);
     }
 
     /**
@@ -40,15 +37,14 @@ public class BranchController {
      */
     public Branch getBranch(String branchAddress) throws SQLException {
         Branch b;
-        if (!branches.containsKey(branchAddress)) {
+        if (!getAllBranches().containsKey(branchAddress)) {
             b = dalDeliveryService.findBranch(branchAddress);
             if(b == null)
-                return null;
-            branches.put(branchAddress,b);
+                throw new IllegalArgumentException("no such branch");;
             return b;
         }
         else
-            return branches.get(branchAddress);
+            return getAllBranches().get(branchAddress);
     }
 
     /**
@@ -57,7 +53,6 @@ public class BranchController {
      * @throws SQLException query error
      */
     public LinkedHashMap<String, Branch> getAllBranches() throws SQLException {
-        branches = dalDeliveryService.findAllBranch();
-        return branches;
+        return dalDeliveryService.findAllBranches();
     }
 }

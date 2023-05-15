@@ -133,23 +133,30 @@ public class DriverDAO extends DAO {
         return result;
     }
 
+    public LinkedList<DriverDTO> getDriversByDate(String date) throws SQLException {
+        LinkedList<DriverDTO> result = new LinkedList<DriverDTO>();
+        String sql = "SELECT Driver.*\n" +
+                "FROM Driver\n" +
+                "JOIN DateToDriver ON Driver.DriverID = DateToDriver.DriverID\n" +
+                "WHERE DateToDriver.shiftDate = " + "'" +date+ "'";
 
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
 
+            ResultSet resultSet = statement.executeQuery();
 
+            while (resultSet.next()) {
+                DriverDTO driver = new DriverDTO(
+                        resultSet.getInt("driverId"),
+                        resultSet.getString("licenseType"),
+                        resultSet.getString("coolingLevel")
+                );
+                driver.setTableName("Driver");
+                result.add(driver);
+            }
+        }
+        return result;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+    }
 
 
 //    public List<DriverDTO> getDriversByDate(String date) throws SQLException {

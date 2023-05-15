@@ -80,7 +80,8 @@ public class DalDriverService {
 
 
     public LinkedList<Driver> findAllSubmissionByDate(LocalDate date) throws SQLException {
-        LinkedList<DriverDTO> driverDTOs = driverDAO.findAllByLinkedList("DateToDriver", "shiftDate", date.toString(), DriverDTO.class);
+        LinkedList<DriverDTO> driverDTOs = driverDAO.getDriversByDate(date.toString());
+
         LinkedList<Driver> drivers = new LinkedList<>();
 
         for (DriverDTO driverDTO : driverDTOs) {

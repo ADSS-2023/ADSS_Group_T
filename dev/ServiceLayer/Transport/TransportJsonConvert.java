@@ -110,8 +110,8 @@ public class TransportJsonConvert {
 
 
     public String deliveryListToString(Collection<Delivery> deliveryList) throws SQLException {
-        if (deliveryList == null)
-            return "no deliveries! :)" + "\n";
+        if (deliveryList == null || deliveryList.isEmpty())
+            return  null;
         StringBuilder sb = new StringBuilder();
         for (Delivery delivery : deliveryList) {
             sb.append("\n---------------------------------------\n");
