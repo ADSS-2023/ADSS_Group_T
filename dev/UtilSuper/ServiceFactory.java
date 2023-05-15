@@ -65,7 +65,7 @@ public class ServiceFactory {
     public ServiceFactory() throws Exception {
 
         String testDBUrl = "jdbc:sqlite:dev/DataLayer/HR_Transport_DB.db";
-        connection = DriverManager.getConnection(testDBUrl);
+        connection = makeCon();
         this.dao = new DAO(connection);
         dalLogisticCenterService = new DalLogisticCenterService(connection);
         dalDeliveryService = new DalDeliveryService(connection,dalLogisticCenterService);
@@ -95,6 +95,18 @@ public class ServiceFactory {
 
         deliveryController = new DeliveryController(logisticCenterController,supplierController,branchController,driverController,shiftController,dalDeliveryService);
         deliveryService = new DeliveryService(deliveryController);
+    }
+    private Connection makeCon() {
+        try {
+            String dbFile = "HR_Transport_DB.db";
+            String url = "jdbc:sqlite::resource:" + dbFile;
+            Class.forName("org.sqlite.JDBC");
+            return DriverManager.getConnection(url);
+        } catch (Exception var3) {
+            System.out.println(var3.getMessage());
+            return null;
+
+        }
     }
 
     public DAO getDAO() {
