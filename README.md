@@ -1,5 +1,10 @@
 # ADSS_Group_T
 
+## pre reload data 
+* date format in the system is : yyyy-mm-dd
+* HR manager id = 1 password = 1
+* employees id = 11-20 passwords = 11-20 accordingly  
+
 ## HR Manager Presentation Class
 This is a presentation layer class for the HR Manager, responsible for displaying the HR main menu and invoking the relevant business logic services according to the user’s choice.
 
@@ -24,7 +29,4 @@ Add shift requirements: Specify the number of employees needed for each position
 
 Logout: Exit the program.
 
-## pre reload data 
-HR manager id = 1 password = 1
 
-employees id = 11-20 passwords = 11-20 accordingly  
