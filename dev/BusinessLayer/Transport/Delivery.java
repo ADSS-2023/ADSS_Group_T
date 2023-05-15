@@ -94,7 +94,7 @@ public class Delivery {
      * @throws SQLException query error
      */
     private int checkBranch(Branch b, int fileCounter, HashMap<Product, Integer> copyOfSupplierFileProducts) throws SQLException {
-        File branchFile = getHandledBranches().get(b);
+        File branchFile = getUnHandledBranches().get(b);
         ArrayList<Product> productsTmp = new ArrayList<>(branchFile.getProducts().keySet());
         for (Product branchProduct : productsTmp) {
             if (copyOfSupplierFileProducts.containsKey(branchProduct)) {
@@ -327,7 +327,7 @@ public class Delivery {
      * create delivery DTO with the delivery current details
      * @return the suitable delivery DTO
      */
-    private DeliveryDTO createDeliveryDTO(){
+    public DeliveryDTO createDeliveryDTO(){
         String address = null;
         if(this.source != null)
             address = this.getSource().getAddress();

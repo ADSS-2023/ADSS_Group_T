@@ -15,16 +15,16 @@ import java.util.List;
 
 public class DalDeliveryService {
 
-    private DalLogisticCenterService dalLogisticCenterService;
-    private DeliveryDAO deliveryDAO;
-    private LinkedHashMap<String, Supplier> suppliers;
-    private LinkedHashMap<String, Branch> branches;
-    private LinkedHashMap<String, Product> products;
+    private final DalLogisticCenterService dalLogisticCenterService;
+    private final DeliveryDAO deliveryDAO;
+    private final LinkedHashMap<String, Supplier> suppliers;
+    private final LinkedHashMap<String, Branch> branches;
+    private final LinkedHashMap<String, Product> products;
     private final LinkedHashMap<LocalDate, ArrayList<Truck>> date2trucks;
     private final LinkedHashMap<LocalDate, ArrayList<Delivery>> date2deliveries;
-    private LinkedHashMap<Integer, Delivery> deliveries;
-    private SiteDAO siteDAO;
-    private DAO dao;
+    private final LinkedHashMap<Integer, Delivery> deliveries;
+    private final SiteDAO siteDAO;
+    private final DAO dao;
 
     public DalDeliveryService(Connection connection,DalLogisticCenterService dalLogisticCenterService) {
         this.suppliers = new LinkedHashMap<>();

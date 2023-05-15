@@ -4,8 +4,7 @@ import BusinessLayer.HR.Driver;
 import BusinessLayer.HR.Driver.CoolingLevel;
 import BusinessLayer.HR.DriverController;
 import BusinessLayer.HR.ShiftController;
-import DataLayer.HR_T_DAL.DTOs.DateToDeliveryDTO;
-import DataLayer.HR_T_DAL.DTOs.DateToTruckDTO;
+import DataLayer.HR_T_DAL.DTOs.DeliveryDTO;
 import DataLayer.HR_T_DAL.DalService.DalDeliveryService;
 import UtilSuper.EnterOverWeightInterface;
 import UtilSuper.EnterWeightInterface;
@@ -22,15 +21,13 @@ public class DeliveryController {
     private final ShiftController shiftController;
     private final SupplierController supplierController;
     private final BranchController branchController;
-    private LogisticCenterController logisticCenterController;
+    private final LogisticCenterController logisticCenterController;
     private int deliveryCounter;
     private int filesCounter;
     private LocalDate currDate;
-
-    // private Listener listener;
     private EnterWeightInterface enterWeightInterface;
     private EnterOverWeightInterface overweightAction;
-    private DalDeliveryService dalDeliveryService;
+    private final DalDeliveryService dalDeliveryService;
 
     public DeliveryController(LogisticCenterController logisticCenterController, SupplierController supplierController,
                               BranchController branchController, DriverController driverController,
@@ -134,7 +131,7 @@ public class DeliveryController {
                 }catch (Exception e){};
                 delivery.addUnHandledBranch(branch, filesCounter++);
                 addDelivery(delivery);
-                addDeliveryToDate(requiredDate,delivery,true);
+                addDeliveryToDate(requiredDate,delivery);
                 for (Supplier supplier : new ArrayList<>(suppliers.keySet())) {
                     Map<Product, Integer> products = suppliers.get(supplier);
                     for (Product product : new LinkedHashSet<>(products.keySet())) {
@@ -196,7 +193,7 @@ public class DeliveryController {
                 shiftController.addStoreKeeperRequirement(requiredDate, branch.getAddress());
                 delivery.addUnHandledBranch(branch, filesCounter++);
                 addDelivery(delivery);
-                addDeliveryToDate(requiredDate,delivery,true);
+                addDeliveryToDate(requiredDate,delivery);
                 for (Product product : new LinkedHashSet<>(products.keySet())) {
                     if (product.getCoolingLevel() == coolingLevel) {
                         this.filesCounter = delivery.addProductToLogisticCenterFromFile(logisticCenterController.getLogisticCenter().getAddress(),
@@ -267,7 +264,7 @@ public class DeliveryController {
                 shiftController.addDirverRequirement(requiredDate, truck.getLicenseType(), truck.getCoolingLevel());
                 delivery.addLogisticCenterDestination(++filesCounter);
                 addDelivery(delivery);
-                addDeliveryToDate(requiredDate,delivery,true);
+                addDeliveryToDate(requiredDate,delivery);
                 for (Supplier supplier : new ArrayList<>(suppliers.keySet())) {
                     Map<Product, Integer> products = suppliers.get(supplier);
                     for (Product product : new LinkedHashSet<>(products.keySet())) {
@@ -300,7 +297,7 @@ public class DeliveryController {
         if (logisticCenterController.getAllTrucks() != null) {
             for (Truck truck : logisticCenterController.getAllTrucks().values()) {
                 if (!specificTruckInDate(date,truck) && truck.getCoolingLevel() == coolingLevel) {
-                    addTruckToDate(date,truck,true);
+                    addTruckToDate(date,truck);
                     return truck;
                 }
             }
@@ -432,18 +429,18 @@ public class DeliveryController {
      * @param deliveryID - the delivery who needed a truck replacement
      * @return true if the truck was replaced, false otherwise(there is no available truck)
      */
-    public boolean replaceTruck(int deliveryID) throws Exception {
+    public boolean replaceTruck(int deliveryID,int weight) throws Exception {
         Truck t = logisticCenterController.getTruck(getDelivery(deliveryID).getTruckNumber());
         LocalDate date = getDelivery(deliveryID).getDate();
         for (int licenseNumber : logisticCenterController.getAllTrucks().keySet()) {
             Truck optionalTruck = logisticCenterController.getTruck(licenseNumber);
-            if ((optionalTruck.getMaxWeight() >= getDelivery(deliveryID).getTruckWeight()) &&
+            if ((optionalTruck.getMaxWeight() >= getDelivery(deliveryID).getTruckWeight() - t.getWeight() + weight + optionalTruck.getWeight()) &&
                     !specificTruckInDate(date,optionalTruck)  &&
                     optionalTruck.getCoolingLevel() == t.getCoolingLevel() &&
                     optionalTruck.getLicenseType().ordinal() >= t.getLicenseType().ordinal()) {
                 getDelivery(deliveryID).setTruckNumber(optionalTruck.getLicenseNumber());
                 removeTruckFromDate(date,t);
-                addTruckToDate(date,logisticCenterController.getTruck(licenseNumber),true);
+                addTruckToDate(date,logisticCenterController.getTruck(licenseNumber));
                 return true;
             }
         }
@@ -502,10 +499,16 @@ public class DeliveryController {
         //do nothing?
         //DropSite(deliveryID, address);
         if (action == 2) {
-            if (!replaceTruck(deliveryID)) {
+            if (!replaceTruck(deliveryID,weight)) {
                 int newAction = overweightAction.EnterOverweightAction(deliveryID);
                 if (newAction == 3)
                     unloadProducts(deliveryID, weight, address);
+            }
+            else {
+                Delivery delivery = getDelivery(deliveryID);
+                DeliveryDTO oldDTO = delivery.createDeliveryDTO();
+                delivery.setTruckWeight(delivery.getTruckWeight() + weight);
+                dalDeliveryService.updateDelivery(oldDTO,delivery.createDeliveryDTO());
             }
         } else if (action == 3)
             unloadProducts(deliveryID, weight, address);
@@ -650,7 +653,7 @@ public class DeliveryController {
                     suppliers.entrySet().iterator().next().getKey(), t.getLicenseNumber(), branches.entrySet().iterator().next().getKey().getShippingArea(),dalDeliveryService);
             addDelivery(newDelivery);
             deliveryInDate(newDeliveredDate);
-            addDeliveryToDate(newDeliveredDate,newDelivery,true);
+            addDeliveryToDate(newDeliveredDate,newDelivery);
             found = true;
         }
     }
@@ -746,11 +749,9 @@ public class DeliveryController {
      * add delivery to the deliveries in specific date
      * @param requiredDate the date to add to
      * @param delivery the delivery to add
-     * @param saveToData save to DB if true
      * @throws SQLException query error
      */
-    private void addDeliveryToDate(LocalDate requiredDate, Delivery delivery,boolean saveToData) throws Exception {
-        //if(saveToData)
+    private void addDeliveryToDate(LocalDate requiredDate, Delivery delivery) throws Exception {
         if(getDeliveriesByDate(requiredDate).contains(delivery))
             throw new Exception("this delivery is already assigned for this date");
         dalDeliveryService.addDeliveryToDate(requiredDate,delivery);
@@ -760,11 +761,9 @@ public class DeliveryController {
      * add truck to the trucks in specific date
      * @param requiredDate the date to add to
      * @param truck the truck to add
-     * @param saveToData save to DB if true
      * @throws SQLException query error
      */
-    private void addTruckToDate(LocalDate requiredDate, Truck truck,boolean saveToData) throws Exception {
-        //if(saveToData)
+    private void addTruckToDate(LocalDate requiredDate, Truck truck) throws Exception {
         if(getTrucksByDate(requiredDate).contains(truck))
             throw new Exception("this truck is already assigned for this date");
         dalDeliveryService.addTruckToDate(requiredDate,truck);
