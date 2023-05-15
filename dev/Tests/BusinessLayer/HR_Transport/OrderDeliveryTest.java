@@ -9,6 +9,7 @@ import DataLayer.HR_T_DAL.DB_init.Data_init;
 import DataLayer.HR_T_DAL.DB_init.Data_init_HR;
 import DataLayer.HR_T_DAL.DalService.*;
 import DataLayer.Util.DAO;
+import PresentationLayer.TransportManagerPresentation;
 import ServiceLayer.HR.EmployeeService;
 import ServiceLayer.HR.ShiftService;
 import ServiceLayer.Transport.BranchService;
@@ -22,6 +23,8 @@ import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -117,9 +120,14 @@ public class OrderDeliveryTest {
         assertEquals(2, deliveryController.getAllDeliveries().size());
     }
     @Test
-    public void  checkIfRequierementsDrvers() throws SQLException {
+    public void  checkIfRequierementsDrverswith() throws SQLException {
         LinkedHashMap<Pair<Driver.LicenseType, Driver.CoolingLevel>, Integer> requierementsForDate  = driverController.lazyLoadAllRequierementsForDate(LocalDate.now().plusDays(2));
         assertEquals(2,requierementsForDate.size());
+    }
+    @Test
+    public void  checkIfRequierementsDrverswithout() throws SQLException {
+        LinkedHashMap<Pair<Driver.LicenseType, Driver.CoolingLevel>, Integer> requierementsForDate  = driverController.lazyLoadAllRequierementsForDate(LocalDate.now().plusDays(4));
+        assertEquals(0,requierementsForDate.size());
     }
 
     @Test
@@ -130,6 +138,17 @@ public class OrderDeliveryTest {
         assertNotNull(driver);
     }
 
+
+
+    @Test
+    public void testEnterOverWeightAction() {
+        TransportManagerPresentation presentation = new TransportManagerPresentation(logisticCenterService, deliveryService, supplierService, branchService);
+        String input = "1"; // simulate user input
+        InputStream in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in); // set System.in to the simulated input stream
+        int action = presentation.enterOverWeightAction(0); // call the function with a dummy delivery ID
+        assertEquals(1, action); // verify that the function returned the expected value
+    }
 
 
 //    @Test
