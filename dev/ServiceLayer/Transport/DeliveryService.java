@@ -38,7 +38,11 @@ public class DeliveryService {
     public String skipDay() {
         try {
             Response response = new Response();
-            response.setReturnValue(transportJsonConvert.deliveryListToString(deliveryController.skipDay()));
+            String s = transportJsonConvert.deliveryListToString(deliveryController.skipDay());
+            if(s == null)
+                response.setReturnValue("\nall deliveries handled today if existed");
+            else
+                response.setReturnValue("the following deliveries rescheduled:\n\n" + s);
             return ResponseSerializer.serializeToJson(response);
         } catch (Exception ex) {
             Response response = new Response();
@@ -74,7 +78,11 @@ public class DeliveryService {
     public String getNextDayDetails() {
         try {
             Response response = new Response();
-            response.setReturnValue(transportJsonConvert.deliveryListToString(deliveryController.getNextDayDeatails()));
+            String s = transportJsonConvert.deliveryListToString(deliveryController.getNextDayDeatails());
+            if(s == null)
+                response.setReturnValue("\nno deliveries today! :)\n");
+            else
+                response.setReturnValue("\ntoday deliveries are:\n" + s);
             return ResponseSerializer.serializeToJson(response);
         } catch (Exception ex) {
             Response response = new Response();
@@ -118,7 +126,11 @@ public class DeliveryService {
     public String showAllDeliveries() {
         try {
             Response response = new Response();
-            response.setReturnValue(transportJsonConvert.deliveryListToString(this.deliveryController.getAllDeliveries().values()));
+            String s = transportJsonConvert.deliveryListToString(this.deliveryController.getAllDeliveries().values());
+            if(s == null)
+                response.setReturnValue("there are no deliveries currently in the system");
+            else
+                response.setReturnValue(s);
             return ResponseSerializer.serializeToJson(response);
         } catch (Exception ex) {
             Response response = new Response();

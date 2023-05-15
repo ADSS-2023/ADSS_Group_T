@@ -630,10 +630,10 @@ public class DeliveryController {
      * @throws Exception error while reschedule delivery
      */
     private void reScheduleDelivery(LinkedHashMap<Supplier, File> suppliers, LinkedHashMap<Branch, File> branches) throws Exception {
-        boolean found = false;
         LocalDate newDeliveredDate = this.currDate.plusDays(2);
         CoolingLevel coolingLevel = CoolingLevel.non;
         Truck t;
+        boolean found = suppliers.isEmpty() && branches.isEmpty();
         while (!found) {
             t = scheduleTruck(newDeliveredDate, coolingLevel);
             if (t == null) {

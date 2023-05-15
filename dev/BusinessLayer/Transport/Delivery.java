@@ -203,7 +203,7 @@ public class Delivery {
             dalDeliveryService.insertHandledSite(id,branch.getAddress(),p.getName(),fileCounter - 1,amount);
         }
         else
-            dalDeliveryService.updateHandledSite(id,branch.getAddress(),p.getName(), handledBranches.get(branch).getId() ,amount);
+            dalDeliveryService.insertHandledSite(id,branch.getAddress(),p.getName(), handledBranches.get(branch).getId() ,amount);
         handledBranches.get(branch).addProduct(p, amount);
         return fileCounter;
     }
