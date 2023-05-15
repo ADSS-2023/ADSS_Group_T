@@ -66,7 +66,7 @@ public class MainPresentation {
         System.out.println("1. start new program");
         System.out.println("2. load old data");
         System.out.println("3. continue from last save");
-        System.out.println("4.exit program");
+        System.out.println("4. exit program");
         int choice = scanner.nextInt();
         scanner.nextLine();
         if (choice == 1){
@@ -113,11 +113,10 @@ public class MainPresentation {
                 }
             }
             switch (result) {
-                case "employee": employeePresentation.start();
-                case "TransportManager": transportManagerPresentation.start();
-                case "HRManager" : hrManagerPresentation.start();
-                case "driver" :  driverPresentation.start();
-                break;
+                case "employee" -> employeePresentation.start();
+                case "TransportManager" -> transportManagerPresentation.start();
+                case "HRManager" -> hrManagerPresentation.start();
+                case "driver" -> driverPresentation.start();
             }
         }
     }
