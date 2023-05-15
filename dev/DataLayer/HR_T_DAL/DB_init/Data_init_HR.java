@@ -188,9 +188,11 @@ public class Data_init_HR {
         //employeeService.assignDriverForShift(LocalDate.now().plusDays(2), 21, "C1", "fridge" );
         //employeeService.assignDriverForShift(LocalDate.now().plusDays(1), 22, 1);
         employeeService.submitShiftForDriver(LocalDate.now().plusDays(2), 21);
-        shiftService.addDriverReq(LocalDate.now().plusDays(2).toString(),"C1", "1");
-        shiftService.addDriverReq(LocalDate.now().plusDays(2).toString(),"C", "2");
-        shiftService.addDriverReq(LocalDate.now().plusDays(2).toString(),"E", "0");
+        employeeService.submitShiftForDriver(LocalDate.now().plusDays(3), 29);
+        employeeService.submitShiftForDriver(LocalDate.now().plusDays(3), 21);
+//        shiftService.addDriverReq(LocalDate.now().plusDays(2).toString(),"C1", "1");
+//        shiftService.addDriverReq(LocalDate.now().plusDays(2).toString(),"C", "2");
+//        shiftService.addDriverReq(LocalDate.now().plusDays(2).toString(),"E", "0");
 
 
 
