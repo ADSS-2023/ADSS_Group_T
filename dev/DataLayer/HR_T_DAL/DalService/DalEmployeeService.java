@@ -64,11 +64,8 @@ public class DalEmployeeService {
     }
 
 
-    public  ArrayList<Constraint> findAllConstraintByIdBetweenDates(int id , LocalDate startDate, LocalDate endDate) throws SQLException{
-        LinkedHashMap<String, Object> conditions = new LinkedHashMap<>();
-        conditions.put("employeeId", id);
-        conditions.put("constraintDate", startDate.toString() + " TO " + endDate.toString());
-        ArrayList<ConstraintByEmployeeDTO> constraintDTO = constraintDao.findAll("ConstraintByEmployee", conditions, ConstraintByEmployeeDTO.class);
+    public ArrayList<Constraint> findAllConstraintByIdBetweenDates(int id, LocalDate startDate, LocalDate endDate) throws SQLException {
+        ArrayList<ConstraintByEmployeeDTO> constraintDTO = constraintDao.findAllByIdBetweenDates("ConstraintByEmployee", "employeeId", id, "constraintDate", startDate, endDate, ConstraintByEmployeeDTO.class);
         ArrayList<Constraint> constraints = new ArrayList<>();
         for (ConstraintByEmployeeDTO cons : constraintDTO) {
             Constraint constraint = new Constraint(cons);
@@ -76,6 +73,8 @@ public class DalEmployeeService {
         }
         return constraints;
     }
+
+
     public HashMap<LocalDate, Constraint> findAssignedConstraintByIdBetweenDates(LocalDate startDate, LocalDate endDate, int id) throws SQLException {
         LinkedHashMap<String, Object> conditions = new LinkedHashMap<>();
         conditions.put("employeeId", id);

@@ -330,6 +330,39 @@ public class DAO {
         return results;
     }
 
+    public <T extends DTO> ArrayList<T> findAllByIdBetweenDates(String tableName, String idFieldName, int id, String dateFieldName, LocalDate fromDate, LocalDate toDate, Class<T> dtoClass) throws SQLException {
+        ArrayList<T> results = new ArrayList<>();
+        String fromDateStr = "'" + fromDate.toString() + "'";
+        String toDateStr = "'" + toDate.toString() + "'";
+        String sql = "SELECT * FROM " + tableName + " WHERE " + idFieldName + " = ? AND " + dateFieldName + " BETWEEN " + fromDateStr + " AND " + toDateStr;
+
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            int columnCount = metaData.getColumnCount();
+
+            while (resultSet.next()) {
+                T dto = dtoClass.getDeclaredConstructor().newInstance();
+                dto.setTableName(tableName);
+
+                for (int i = 1; i <= columnCount; i++) {
+                    String columnName = metaData.getColumnName(i);
+                    Object columnValue = resultSet.getObject(i);
+                    Field field = dto.getClass().getDeclaredField(columnName);
+                    field.setAccessible(true);
+                    field.set(dto, columnValue);
+                }
+
+                results.add(dto);
+            }
+        } catch (ReflectiveOperationException e) {
+            throw new SQLException("Error creating DTO instance", e);
+        }
+
+        return results;
+    }
+
 
     public <T extends DTO> ArrayList<T> findAllBetweenDates(String tableName, String fieldName, String fromDate, String toDate, Class<T> dtoClass) throws SQLException {
         ArrayList<T> results = new ArrayList<>();

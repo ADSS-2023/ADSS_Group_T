@@ -131,25 +131,20 @@ public class Employee extends User {
         StringBuilder sb = new StringBuilder();
         List<Constraint> constraints = dalEmployeeService.findAllConstraintByIdBetweenDates(id, localDate, localDate.plusMonths(1));
 
+        // Add header row
+        sb.append("+------------+------------+-------------+-----------------+\n");
+        sb.append("|    Date    | Shift Type | Is Approved | Assigned Position|\n");
+        sb.append("+------------+------------+-------------+-----------------+\n");
+
         for (Constraint constraint : constraints) {
             LocalDate date = constraint.getDate();
-            sb.append(String.format("%-12s%-12s%-12s%-12s\n", "Date", "Shift Type", "Is Approved", "Assigned Position"));
-            sb.append(String.format("%-12s%-12s%-12s%-12s\n", date, "Morning", "", ""));
-            if (constraint.getShiftType()) {
-                sb.append(String.format("%-12s%-12s%-12s%-12s\n", "", "", constraint.getAssignedPosition() == null ? "Yes" : "No", constraint.getAssignedPosition() != null ? constraint.getAssignedPosition() : "" ));
-            } else {
-                sb.append(String.format("%-12s%-12s%-12s%-12s\n", "", "", "", ""));
-            }
-            sb.append(String.format("%-12s%-12s%-12s%-12s\n", "", "Evening", "", ""));
-            if (!constraint.getShiftType()) {
-                sb.append(String.format("%-12s%-12s%-12s%-12s\n", "", "", constraint.getAssignedPosition() == null ? "Yes" : "No", constraint.getAssignedPosition() != null ? constraint.getAssignedPosition() : "" ));
-            } else {
-                sb.append(String.format("%-12s%-12s%-12s%-12s\n", "", "", "", ""));
-            }
-            sb.append("\n");
+            sb.append(String.format("| %-10s | %-10s | %-11s | %-15s |\n", date, "Morning", "", ""));
+            sb.append(String.format("| %-10s | %-10s | %-11s | %-15s |\n", "", "Evening", constraint.getAssignedPosition() != null ? "Yes" : "", constraint.getAssignedPosition() != null ? constraint.getAssignedPosition() : ""));
+            sb.append("+------------+------------+-------------+-----------------+\n");
         }
         return sb.toString();
     }
+
 
 
 
