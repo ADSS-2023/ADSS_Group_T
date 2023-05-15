@@ -69,28 +69,27 @@ public class HRManagerPresentation {
         String date = scanner.nextLine();
         System.out.println("assign employee for shift - enter morning(m)/evening(e)");
         String shiftType = scanner.nextLine();
+        System.out.println("choose Branch from the list:");
         Response response = ResponseSerializer.deserializeFromJson(branchService.getAllBranches());
         if (response.isError())
             System.out.println(response.getErrorMessage());
         else {
             System.out.println(response.getReturnValue());
         }
-        System.out.println("choose Branch from the list:");
         String branch = scanner.nextLine();
         System.out.println(shiftService.ShowShiftStatus(branch,date,shiftType));
-
         System.out.println("assign employee for shift - would you like to approve all? y/n");
         String ansForApproveAll = scanner.nextLine();
         if(ansForApproveAll.equals("y")){
-            shiftService.assignAll(branch,date,shiftType);
+            System.out.println(shiftService.assignAll(branch,date,shiftType));
         }
         else {
             while(true){
                 System.out.println("assign employee for shift - Please enter the employee ID:");
                 int employeeId = scanner.nextInt();
-                System.out.println("assign employee for shift - choose position foe employee : "+employeeId);
+                System.out.println("assign employee for shift - choose position for employee : " +employeeId);
                 String position = scanner.nextLine();
-                shiftService.assignEmployeeForShift(branch,employeeId,date,shiftType,position);
+                System.out.println(shiftService.assignEmployeeForShift(branch,employeeId,date,shiftType,position));
                 System.out.println("assign employee for shift - would you like to assign more? y/n");
                 String ansForContinue = scanner.nextLine();
                 if (ansForContinue.equals("n")){return;}
@@ -205,6 +204,6 @@ public class HRManagerPresentation {
         scanner.nextLine();
         System.out.println("Please enter the driver license type : C1 , C , E " );
         String licenseType = scanner.nextLine();
-        employeeService.addNewDriver(id,Name,bank,description,salary,joiningDay,password,licenseType,coolinglevel);
+        System.out.println(employeeService.addNewDriver(id,Name,bank,description,salary,joiningDay,password,licenseType,coolinglevel));
     }
 }

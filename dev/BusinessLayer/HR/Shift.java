@@ -113,7 +113,7 @@ public class Shift {
         boolean hasManager = shiftManagerId != -1;
         String st = "Shift state:\n\n";
         st += String.format("| %-15s | %-8s | %-8s | %-25s | %-25s |\n", "Position", "Assigned", "Required", "Submissions Not Assigned", "Employee IDs Not Assigned");
-        st += "|-----------------|----------|----------|-------------------------|-----------------------------|\n";
+        st += "|-----------------|----------|----------|---------------------------|---------------------------|\n";
         boolean isLegalShift = true;
         StringBuilder missing = new StringBuilder();
         for (Map.Entry<String, Integer> entry : employeeRequirements.entrySet()) {

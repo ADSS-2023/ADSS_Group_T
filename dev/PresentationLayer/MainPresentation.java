@@ -52,7 +52,7 @@ public class MainPresentation {
         this.supplierService = serviceFactory.getSupplierService();
         transportManagerPresentation = new TransportManagerPresentation(logisticCenterService,deliveryService,supplierService,branchService);
         hrManagerPresentation = new HRManagerPresentation(shiftService,employeeService,branchService);
-        employeePresentation = new EmployeePresentation(employeeService,shiftService);
+        employeePresentation = new EmployeePresentation(employeeService,branchService);
         driverPresentation = new DriverPresentation(employeeService);
         serviceFactory.callbackEnterWeight(this.transportManagerPresentation::enterWeightFunction);
         serviceFactory.callbackEnterOverWeight(this.transportManagerPresentation::enterOverWeightAction);
@@ -71,6 +71,7 @@ public class MainPresentation {
         scanner.nextLine();
         if (choice == 1){
             Data_init.initBasicData(this.serviceFactory.getDAO());
+            Data_init_HR.initBasicData(this.serviceFactory.getDAO(),this.shiftService);
 
         }
         if (choice == 2) {
