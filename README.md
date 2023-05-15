@@ -65,3 +65,64 @@ How to use,
 - logout
 
 
+
+## pre-load-data
+| Employee ID | Qualifications           |
+|-------------|--------------------------|
+| 11          | shiftManager, cashier    |
+| 12          | general_worker, orderly  |
+| 13          | cleaning, security, storekeeper |
+| 14          | storekeeper              |
+| 15          | cashier                  |
+| 16          | cashier, cleaning        |
+| 17          | security, storekeeper, storekeeper |
+| 18          | cashier                  |
+| 19          | cashier, storekeeper     |
+| 20          | orderly, cashier         |
+
+| Branch | Employee ID | Shift Date | Shift Time(morning/evening) |
+|--------|-------------|------------|-----------------------------|
+| b1     | 13          | 2023-05-16 | m                           |
+| b1     | 14          | 2023-05-16 | m                           |
+| b2     | 15          | 2023-05-16 | m                           |
+| b1     | 13          | 2023-05-16 | m                           |
+| b1     | 14          | 2023-05-16 | e                           |
+| b1     | 15          | 2023-05-16 | m                           |
+| b1     | 16          | 2023-05-16 | e                           |
+| b1     | 17          | 2023-05-16 | m                           |
+| b1     | 18          | 2023-05-16 | e                           |
+| b1     | 19          | 2023-05-16 | m                           |
+| b1     | 20          | 2023-05-16 | e                           |
+| b2     | 16          | 2023-05-18 | e                           |
+| b3     | 17          | 2023-05-19 | m                           |
+| b3     | 18          | 2023-05-19 | e                           |
+| b4     | 19          | 2023-05-20 | m                           |
+| b4     | 20          | 2023-05-20 | e                           |
+
+| Date                | Employee ID |
+|---------------------|--------------|
+| LocalDate.now().plusDays(1) | 21           |
+| LocalDate.now().plusDays(2) | 21           |
+| LocalDate.now().plusDays(1) | 22           |
+| LocalDate.now().plusDays(1) | 23           |
+| LocalDate.now().plusDays(1) | 24           |
+| LocalDate.now().plusDays(1) | 25           |
+| LocalDate.now().plusDays(1) | 26           |
+| LocalDate.now().plusDays(1) | 27           |
+| LocalDate.now().plusDays(1) | 28           |
+| LocalDate.now().plusDays(1) | 29           |
+| LocalDate.now().plusDays(1) | 30           |
+
+| Employee ID | Name           | bank account  | description                 | Salary | Start Date  | Manager ID |
+|-------------|----------------|---------------|-----------------------------|--------|-------------|------------|
+| 11          | JohnDoe        | 123456789     | Good worker                 | 15000  | 2023-05-14  | 11         |
+| 12          | JaneDoe        | 987654321     | Professional driver         | 20000  | 2023-05-14  | 12         |
+| 13          | BobSmith       | 456789123     | Experienced HR professional | 25000  | 2023-05-14  | 13         |
+| 14          | AliceJohnson  | 789123456     | Operations expert           | 30000  | 2023-05-14  | 14         |
+| 15          | DavidLee      | 321654987     | Team player                 | 16000  | 2023-05-14  | 15         |
+| 16          | MaryBrown     | 654987321     | Safe and reliable           | 21000  | 2023-05-14  | 16         |
+| 17          | JoeWilson     | 789654123     | People person               | 26000  | 2023-05-14  | 17         |
+| 18          | SaraJones     | 456321789     | Logistics pro               | 31000  | 2023-05-14  | 18         |
+| 19          | MarkTaylor    | 789456123     | Hard worker                 | 17000  | 2023-05-14  | 19         |
+| 20          | EmilyDavis    | 123789456     | Route optimization expert   | 22000  | 2023-05-14  | 20         |
+
