@@ -28,8 +28,8 @@ public class EmployeePresentation {
             System.out.println("Please choose an option:");
             System.out.println(
                             " \n 1.submit shift " +
-                            " \n 1.show submissions " +
-                            " \n 2.logout ");
+                            " \n 2.show submissions " +
+                            " \n 3.logout ");
             int choice = scanner.nextInt();
             scanner.nextLine(); // Consume the newline character
             switch (choice) {
