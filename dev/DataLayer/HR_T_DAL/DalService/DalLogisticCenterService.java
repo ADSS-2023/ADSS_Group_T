@@ -40,6 +40,11 @@ public class DalLogisticCenterService {
         return truck;
     }
 
+    public void insertLogisticCenter() throws SQLException {
+        SiteDTO logisticCenter = new SiteDTO("logistic center address","0000000000","logistic center contact",0,0,0,"logistic center");
+        dao.insert(logisticCenter);
+    }
+
     private boolean insertTruck(Truck truck) throws SQLException {
         TruckDTO truckDTO = new TruckDTO(truck);
         DAO dao = new DAO(connection);

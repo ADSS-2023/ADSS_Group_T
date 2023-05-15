@@ -58,7 +58,7 @@ public class Data_init_HR {
         positions.put(PositionType.cleaning.name(), 1);
         positions.put(PositionType.cashier.name(), 3);
         positions.put(PositionType.storekeeper.name(), 2);
-        positions.put(PositionType.shiftManager.name(), 1);
+       // positions.put(PositionType.shiftManager.name(), 1);
 
         //init shifts for ayear in all branches
         startDate = LocalDate.now(); // Start date is one year from now
@@ -114,6 +114,7 @@ public class Data_init_HR {
 
         //cashier, storekeeper, security, cleaning, orderly, general_worker, shiftManager;
         employeeService.addQualification(11 , "shiftManager");
+        employeeService.addQualification(11 , "cashier");
         employeeService.addQualification(12 , "general_worker");
         employeeService.addQualification(12 , "orderly");
         employeeService.addQualification(13 , "cleaning");

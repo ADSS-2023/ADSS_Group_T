@@ -6,6 +6,8 @@ import ServiceLayer.Transport.LogisticCenterService;
 import ServiceLayer.Transport.SupplierService;
 import UtilSuper.Response;
 import UtilSuper.ResponseSerializer;
+
+import java.sql.SQLException;
 import java.util.LinkedHashMap;
 import java.util.Scanner;
 
@@ -22,11 +24,12 @@ public class TransportManagerPresentation {
         this.branchService = branchService;
     }
 
-    public void start() {
+    public void start() throws SQLException {
         mainWindow();
     }
 
-    private void mainWindow() {
+    private void mainWindow() throws SQLException {
+        deliveryService.initCounters();
         Scanner scanner = new Scanner(System.in);
         while (true) {
 

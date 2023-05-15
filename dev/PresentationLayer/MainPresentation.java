@@ -87,7 +87,7 @@ public class MainPresentation {
     /**
      * the main window of the system
      */
-    public void loginWindow() {
+    public void loginWindow() throws SQLException {
         int id=0;
         while(true){
             Scanner scanner = new Scanner(System.in);
@@ -102,8 +102,10 @@ public class MainPresentation {
             String result = null;
             boolean loginSuccess = false;
             while (!loginSuccess) {
-                System.out.print("Enter your ID: ");
+                System.out.print("Enter your ID or -1 for exit: ");
                 id = scanner.nextInt();
+                if(id == -1)
+                    return;
                 System.out.print("Enter your password: ");
                 String password = scanner.next();
                 result = userService.login(id, password);

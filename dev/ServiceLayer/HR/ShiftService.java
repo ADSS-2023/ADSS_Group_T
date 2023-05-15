@@ -34,17 +34,18 @@ public class ShiftService {
 
     public String getNotification (){
         Response res = new Response();
+        String st = "";
         try
         {
-           HashMap<LocalDate,String> noti = shiftController.getNotifications();
+           HashMap<LocalDate,String> noti = shiftController.getNotifications(LocalDate.now(), LocalDate.now().plusDays(1));
             for (LocalDate date : noti.keySet()) {
-
+                st += noti.get(date).toString();
             }
         }
         catch (Exception ex){
             return ex.getMessage();
         }
-        return "succeed";
+        return st;
     }
 
     public String ShowShiftStatus(String branch, String date , String shiftType){
