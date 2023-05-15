@@ -69,7 +69,14 @@ public class ShiftController {
                     notificationBuilder.append(String.format("Manager ID: %s\n", shift.getShiftManagerId()));
                 }
                 // Check if the current shift is legal
-                String legalStatus = shift.isLegalShift() ? "LEGAL" : "ILLEGAL";
+                String legalStatus = "";
+                if ( shift.isLegalShift() == 1)
+                    legalStatus = "legal";
+                else if ( shift.isLegalShift() == 0)
+                    legalStatus = "illegal";
+
+                notificationBuilder.append("Noticed - the shift is illegal!!!\n");
+
                 notificationBuilder.append("\n------------------------------\n");
                 notificationBuilder.append(String.format("Shift Date: %s\nShift Type: %s\nLegal Status: %s\n", shift.getDate(), shift.getShiftType(), legalStatus));
                 notificationBuilder.append("\nEmployee Requirements:\n");

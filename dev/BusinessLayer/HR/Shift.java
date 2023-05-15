@@ -87,21 +87,29 @@ public class Shift {
     }
 
 
-    public boolean isLegalShift() throws SQLException {
+    public int isLegalShift() throws SQLException {
         lazyLoadFindRequiermentsBtDateAndShiftType();
         boolean hasManager = (shiftManagerId != -1);
         boolean allPositionsFilled = true;
-
+        if (employeeRequirements == null)
+            return -1;
         // Check if all position requirements are fulfilled
-        for (Map.Entry<String, Integer> requirement: employeeRequirements.entrySet()) {
-            int requiredAmount = requirement.getValue();
-            if (requiredAmount > 0) {
-                allPositionsFilled = false;
-                break;
+        for (Map.Entry<String, Integer> requirement : employeeRequirements.entrySet()) {
+                int requiredAmount = requirement.getValue();
+                if (requiredAmount > 0) {
+                    allPositionsFilled = false;
+                    break;
+                }
             }
+            if (hasManager && allPositionsFilled)
+                return 1;
+            else
+                return 0;
         }
-        return (hasManager && allPositionsFilled);
-    }
+
+
+
+
 
 
 
