@@ -62,7 +62,7 @@ public Driver lazyLoadDriver (int id) throws SQLException {
 
 
 
-    public void assignDriver(LocalDate date, int id, String licenseType, String coolingLevel) throws SQLException {
+    public void assignDriver(LocalDate date, int id) throws SQLException {
         // get the driver with the given id
         Driver driver = lazyLoadDriver(id);
         if (driver == null) {
@@ -76,7 +76,7 @@ public Driver lazyLoadDriver (int id) throws SQLException {
 
         Boolean submissionStatus = driverSubmissionToAssign.get(driver);
 
-        if (submissionStatus.booleanValue()) {
+        if (submissionStatus) {
             throw new IllegalArgumentException("Driver is already assigned to a shift on this day.");
         }
 
@@ -99,7 +99,7 @@ public Driver lazyLoadDriver (int id) throws SQLException {
         LinkedHashMap<Pair<Driver.LicenseType, Driver.CoolingLevel>, Integer> requirements =  lazyLoadAllRequierementsForDate(date);
         boolean isQualificationMet = false;
         for (Pair<Driver.LicenseType, Driver.CoolingLevel> pair : requirements.keySet()) {
-            if (pair.getFirst().toString().equals(licenseType) && pair.getSecond().toString().equals(coolingLevel)) {
+            if (pair.getFirst().ordinal() <= driver.getLicenseLevel().ordinal() && pair.getSecond().ordinal() <= driver.getCoolingLevel().ordinal()) {
                 isQualificationMet = true;
                 if (!isDriverMeetingTheRequirements(driver, pair)) {
                     throw new IllegalArgumentException("Driver is not meeting the requirements");

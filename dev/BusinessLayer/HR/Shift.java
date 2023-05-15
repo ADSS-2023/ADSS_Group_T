@@ -206,9 +206,7 @@ public class Shift {
 
     public boolean isThereAnyStoreKeeperReuirement() throws Exception {
         lazyLoadFindRequiermentsBtDateAndShiftType();
-        if ( employeeRequirements==null || !employeeRequirements.containsKey(PositionType.storekeeper.name()) || employeeRequirements.get(PositionType.storekeeper.name()) < 1)
-            return false;
-        return true;
+        return employeeRequirements != null && employeeRequirements.containsKey(PositionType.storekeeper.name()) && employeeRequirements.get(PositionType.storekeeper.name()) >= 1;
     }
 
 

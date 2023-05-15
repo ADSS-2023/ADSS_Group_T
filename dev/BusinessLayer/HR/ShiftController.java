@@ -181,15 +181,20 @@ public class ShiftController {
         if (branchShifts == null)
             throw new NoSuchFieldException("there is no such branch exist");
         ArrayList<Shift> branchShiftsByDate = branchShifts.get(requiredDate);
+        if(branchShiftsByDate == null || branchShiftsByDate.size() < 2)
+            throw new Exception("there is no 2 shifts in this date");
+            //TODO: if there is no shifts in this date, create 2 new shifts
         String s;
-        if (branchShiftsByDate != null) {
+        if(!(branchShiftsByDate.get(0).isThereAnyStoreKeeperReuirement() && branchShiftsByDate.get(1).isThereAnyStoreKeeperReuirement())) {
             for (Shift shift : branchShiftsByDate) {
                 LinkedHashMap<String, Integer> storeKeeperRequirment = new LinkedHashMap<>();
                 storeKeeperRequirment.put(PositionType.storekeeper.name(), 1);
                 shift.addEmployeeRequirements(storeKeeperRequirment);
                 if (shift.getShiftType()) {
                     s = "m";
-                } else s = "e";
+                }
+                else
+                    s = "e";
                 dalShiftService.addRequierement(branch, requiredDate.toString(), s, PositionType.storekeeper.toString(), 1);
             }
         }

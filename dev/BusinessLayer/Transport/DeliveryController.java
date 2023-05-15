@@ -4,7 +4,6 @@ import BusinessLayer.HR.Driver;
 import BusinessLayer.HR.Driver.CoolingLevel;
 import BusinessLayer.HR.DriverController;
 import BusinessLayer.HR.ShiftController;
-import DataLayer.HR_T_DAL.DTOs.DeliveryDTO;
 import DataLayer.HR_T_DAL.DalService.DalDeliveryService;
 import UtilSuper.EnterOverWeightInterface;
 import UtilSuper.EnterWeightInterface;
@@ -361,16 +360,20 @@ public class DeliveryController {
         ArrayList<Delivery> deliveriesWithoutDrivers = new ArrayList<>();
         if(driversTomorrow != null) {
             for (Delivery delivery : deliveriesTomorrow) {
+                boolean schedule = false;
                 Truck truck = logisticCenterController.getTruck(delivery.getTruckNumber());
-                for (Driver driver : driversTomorrow) {
-                    if (driver.getLicenseLevel().ordinal() >= truck.getLicenseType().ordinal()) {
-                        if (driver.getCoolingLevel().ordinal() >= truck.getCoolingLevel().ordinal()) {
-                            delivery.setDriver(driver);
-                            break;
-                        }
+                for (Driver driver : new ArrayList<>(driversTomorrow)) {
+                    if (driversTomorrow.contains(driver) &&
+                            driver.getLicenseLevel().ordinal() >= truck.getLicenseType().ordinal() &&
+                            driver.getCoolingLevel().ordinal() >= truck.getCoolingLevel().ordinal()) {
+                        delivery.setDriver(driver);
+                        driversTomorrow.remove(driver);
+                        schedule = true;
+                        break;
                     }
                 }
-                deliveriesWithoutDrivers.add(delivery);
+                if(!schedule)
+                    deliveriesWithoutDrivers.add(delivery);
             }
             return deliveriesWithoutDrivers;
         }
@@ -631,7 +634,7 @@ public class DeliveryController {
      */
     private void reScheduleDelivery(LinkedHashMap<Supplier, File> suppliers, LinkedHashMap<Branch, File> branches) throws Exception {
         LocalDate newDeliveredDate = this.currDate.plusDays(2);
-        CoolingLevel coolingLevel = CoolingLevel.non;
+        CoolingLevel coolingLevel = suppliers.entrySet().iterator().next().getValue().getProducts().entrySet().iterator().next().getKey().getCoolingLevel();
         Truck t;
         boolean found = suppliers.isEmpty() && branches.isEmpty();
         while (!found) {
@@ -648,7 +651,6 @@ public class DeliveryController {
             Delivery newDelivery = new Delivery(deliveryCounter, newDeliveredDate, LocalTime.NOON, t.getWeight(), suppliers, branches,
                     suppliers.entrySet().iterator().next().getKey(), t.getLicenseNumber(), branches.entrySet().iterator().next().getKey().getShippingArea(),dalDeliveryService);
             addDelivery(newDelivery);
-            deliveryInDate(newDeliveredDate);
             addDeliveryToDate(newDeliveredDate,newDelivery);
             found = true;
         }
@@ -691,6 +693,8 @@ public class DeliveryController {
             deliveriesThatReScheduleDelivery.addAll(checkStoreKeeperForTomorrow());
             deliveriesThatReScheduleDelivery.addAll(scheduleDriversForTomorrow());
         }
+        for(Delivery delivery: deliveriesThatReScheduleDelivery)
+            reScheduleDelivery(delivery.getUnHandledSuppliers(),delivery.getUnHandledBranches());
         return deliveriesThatReScheduleDelivery;
     }
 
