@@ -29,7 +29,7 @@ public class Data_init_HR {
         LocalDate startDate = LocalDate.now(); // Start date is one year from now
         LocalDate endDate = startDate.plusWeeks(2); // End date is one month from the start date
 
-        List<String> branches = Arrays.asList("b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9", "b10");
+        List<String> branches = Arrays.asList("b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9");
 
 
         // Loop through each date and insert shifts for the morning and evening

@@ -99,6 +99,7 @@ public class HRManagerPresentation {
             while(true){
                 System.out.println("assign employee for shift - Please enter the employee ID:");
                 int employeeId = scanner.nextInt();
+                scanner.nextLine();
                 System.out.println("assign employee for shift - choose position for employee : " +employeeId);
                 String position = scanner.nextLine();
                 System.out.println(shiftService.assignEmployeeForShift(branch,employeeId,date,shiftType,position));
