@@ -385,11 +385,17 @@ public class TransportManagerPresentation {
         else {
             Scanner scanner = new Scanner(System.in);
             System.out.println("------- " + deliveryID + " -------");
-            System.out.println("the truck in:" + address + "." +
-                    "\nthe folowing pruducts are loaded: " +
-                    "\n" + response.getReturnValue() +
-                    "\npls enter weight:");
-            return scanner.nextInt();//products weight
+            String weight = "1111111111111111111111";
+            while(weight.length() > 10) {
+                System.out.println("the truck in:" + address + "." +
+                        "\nthe following products are loaded: " +
+                        "\n" + response.getReturnValue() +
+                        "\npls enter weight:");
+                weight = scanner.nextLine();//products weight
+                if(weight.length() > 10)
+                    System.out.println("the weight is not reasonable, please enter a valid weight\n");
+            }
+            return Integer.parseInt(weight);
         }
         return 0;
     }

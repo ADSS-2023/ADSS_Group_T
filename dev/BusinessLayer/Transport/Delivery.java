@@ -117,7 +117,8 @@ public class Delivery {
      */
     private int handleBranch(Branch b, Product product, int amount, HashMap<Product, Integer> copyOfSupplierFileProducts, int fileCounter) throws SQLException {
         fileCounter = addProductToHandledBranch(b,product,amount,fileCounter);
-        removeProductFromUnHandledBranch(b,product, amount);
+        File f = dalDeliveryService.findAllUnHandledBranchesForDelivery(id).get(b);
+        removeProductFromUnHandledBranch(b,product, amount,f.getId());
         copyOfSupplierFileProducts.replace(product, copyOfSupplierFileProducts.get(product) - amount);
         if (copyOfSupplierFileProducts.get(product) == 0)
             copyOfSupplierFileProducts.remove(product);
@@ -214,11 +215,12 @@ public class Delivery {
      * @param amount the amount to remove
      * @throws SQLException query error
      */
-    public void removeProductFromUnHandledBranch(Branch branch, Product product, int amount) throws SQLException {
+    public void removeProductFromUnHandledBranch(Branch branch, Product product, int amount,int fileId) throws SQLException {
         LinkedHashMap<String,Object> pk = new LinkedHashMap<>();
         pk.put("deliveryId",id);
         pk.put("siteAddress",branch.getAddress());
         pk.put("productName",product.getName());
+        pk.put("fileId",fileId);
         DeliveryUnHandledSitesDTO dto = dalDeliveryService.findDeliveryUnHandledSites(pk);
         if(dto.getAmount() == amount)
             dalDeliveryService.deleteUnHandledSite(getId(), branch.getAddress(), product.getName(), dto.getFileId(),amount);

@@ -438,7 +438,9 @@ public class DeliveryController {
                     !specificTruckInDate(date,optionalTruck)  &&
                     optionalTruck.getCoolingLevel() == t.getCoolingLevel() &&
                     optionalTruck.getLicenseType().ordinal() >= t.getLicenseType().ordinal()) {
-                getDelivery(deliveryID).setTruckNumber(optionalTruck.getLicenseNumber());
+                Delivery delivery = getDelivery(deliveryID);
+                delivery.setTruckWeight(delivery.getTruckWeight() - t.getWeight() + weight + optionalTruck.getWeight());
+                delivery.setTruckNumber(optionalTruck.getLicenseNumber());
                 removeTruckFromDate(date,t);
                 addTruckToDate(date,logisticCenterController.getTruck(licenseNumber));
                 return true;
@@ -461,11 +463,11 @@ public class DeliveryController {
         double unloadFactor = (currWeight + weight - maxWeight) / weight;
         File loadedProducts = new File(filesCounter++);
         dalDeliveryService.updateCounter("file counter",filesCounter);
-        for (Product p : getDelivery(deliveryID).getUnHandledSuppliers().get(suppliers.get(supplierAddress)).getProducts().keySet()) {
-            int amount = getDelivery(deliveryID).getUnHandledSuppliers().get(suppliers.get(supplierAddress)).getProducts().get(p);
+        File f = getDelivery(deliveryID).getUnHandledSuppliers().get(suppliers.get(supplierAddress));
+        for (Product p : f.getProducts().keySet()) {
+            int amount = f.getProducts().get(p);
             int unloadAmount = (int) Math.ceil(amount * unloadFactor);
             loadedProducts.addProduct(p, amount - unloadAmount);
-            File f = getDelivery(deliveryID).getUnHandledSuppliers().get(suppliers.get(supplierAddress));
             f.getProducts().replace(p, unloadAmount);
             dalDeliveryService.updateUnHandledSite(deliveryID,supplierAddress,p.getName(),f.getId(),unloadAmount);
         }
@@ -503,12 +505,6 @@ public class DeliveryController {
                 int newAction = overweightAction.EnterOverweightAction(deliveryID);
                 if (newAction == 3)
                     unloadProducts(deliveryID, weight, address);
-            }
-            else {
-                Delivery delivery = getDelivery(deliveryID);
-                DeliveryDTO oldDTO = delivery.createDeliveryDTO();
-                delivery.setTruckWeight(delivery.getTruckWeight() + weight);
-                dalDeliveryService.updateDelivery(oldDTO,delivery.createDeliveryDTO());
             }
         } else if (action == 3)
             unloadProducts(deliveryID, weight, address);

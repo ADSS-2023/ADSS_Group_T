@@ -93,7 +93,7 @@ public class DalDeliveryService {
     }
 
     public void deleteUnHandledSite(int deliveryId, String siteAddress, String productName, int fileId, int amount) throws SQLException {
-        DeliveryHandledSitesDTO dto = new DeliveryHandledSitesDTO(deliveryId,siteAddress,productName,fileId,amount);
+        DeliveryUnHandledSitesDTO dto = new DeliveryUnHandledSitesDTO(deliveryId,siteAddress,productName,fileId,amount);
         dao.delete(dto);
     }
 
@@ -131,6 +131,7 @@ public class DalDeliveryService {
         pk.put("deliveryId",deliveryId);
         pk.put("siteAddress",siteAddress);
         pk.put("productName",productName);
+        pk.put("fileId",fileId);
         DeliveryUnHandledSitesDTO dto = findDeliveryUnHandledSites(pk);
         int oldAmount = dto.getAmount();
         dao.update(new DeliveryUnHandledSitesDTO(deliveryId,siteAddress,productName, fileId,oldAmount),
@@ -142,6 +143,7 @@ public class DalDeliveryService {
         pk.put("deliveryId",deliveryId);
         pk.put("siteAddress",siteAddress);
         pk.put("productName",productName);
+        pk.put("fileId",fileId);
         DeliveryHandledSitesDTO dto = findDeliveryHandledSites(pk);
         int oldAmount = dto.getAmount();
         dao.update(new DeliveryHandledSitesDTO(deliveryId,siteAddress,productName, fileId,oldAmount),
