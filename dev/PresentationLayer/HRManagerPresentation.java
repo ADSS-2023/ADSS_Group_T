@@ -37,9 +37,10 @@ public class HRManagerPresentation {
                                 " \n 3.add employee qualification " +
                                 " \n 4.show shift status" +
                                 " \n 5.add new driver" +
-                                " \n 6.manage assign Employee for shift" +
+                                " \n 6.manage assign employee for shift" +
                                 " \n 7.add shift requirements" +
-                                " \n 8.logout ");
+                                " \n 8.manage assign driver for shift " +
+                                " \n 9.logout ");
             int choice = scanner.nextInt();
             scanner.nextLine(); // Consume the newline character
             switch (choice) {
@@ -50,10 +51,21 @@ public class HRManagerPresentation {
                 case 5 -> {addNewDriver();}
                 case 6 -> {manageAssignEmployeeForShift();}
                 case 7 -> {addShiftRequirements();}
-                case 8 -> {return;}//exit
+                case 8 -> {manageAssignDriverForShift();}
+                case 9 -> {return;}//exit
                 default -> System.out.println("Invalid choice. Please try again.");
             }
         }
+    }
+
+    private void manageAssignDriverForShift() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Please enter the driver details:");
+        System.out.println("manage Assign Driver For Shift - choose shift date");
+        String date = scanner.nextLine();
+        System.out.println("Please enter the driver ID:");
+        int id = scanner.nextInt();
+        employeeService.assignDriverForShift(Time.stringToLocalDate(date),id);
     }
 
     private void notification() {
