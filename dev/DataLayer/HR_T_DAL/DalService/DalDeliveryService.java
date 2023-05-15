@@ -113,6 +113,7 @@ public class DalDeliveryService {
     }
 
     public void deleteDateToTruck(LocalDate shiftDate, Truck truck) throws Exception {
+        getAllTrucksByDate(shiftDate);
         if(!date2trucks.containsKey(shiftDate) || !date2trucks.get(shiftDate).contains(truck))
             throw new Exception("this truck is not assigned in this date, so cannot be deleted");
         DateToTruckDTO dto = new DateToTruckDTO(shiftDate.toString(), truck.getLicenseNumber());

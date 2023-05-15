@@ -217,17 +217,15 @@ public Driver lazyLoadDriver (int id) throws SQLException {
         if (driverSubmissionByDate != null) {
             throw new IllegalArgumentException("Driver with id " + id + " has already submitted for " + date);
         }
-        // Check if the driver has the required license type
-        if (driver.getLicenseLevel().ordinal() < getMinRequirementsLicenseLevelByDate(date)) {
-            throw new IllegalArgumentException("Driver with id " + id + " does not have the required license type.");
-        }
-
-        // Check if the driver has the required cooling level
-        if (drivers.get(id).getCoolingLevel().ordinal() < getMinRequirementsCoolingLevelByDate(date)) {
-            throw new IllegalArgumentException("Driver with id " + id + " does not have the required cooling level.");
-        }
-
-
+//        // Check if the driver has the required license type
+//        if (driver.getLicenseLevel().ordinal() < getMinRequirementsLicenseLevelByDate(date)) {
+//            throw new IllegalArgumentException("Driver with id " + id + " does not have the required license type.");
+//        }
+//
+//        // Check if the driver has the required cooling level
+//        if (drivers.get(id).getCoolingLevel().ordinal() < getMinRequirementsCoolingLevelByDate(date)) {
+//            throw new IllegalArgumentException("Driver with id " + id + " does not have the required cooling level.");
+//        }
 
         dalDriverService.addSubmissionForDriver(id, date);
         if (!date2driversSubmission.containsKey(date)) {
