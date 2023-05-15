@@ -637,27 +637,29 @@ public class DeliveryController {
      * @throws Exception error while reschedule delivery
      */
     private void reScheduleDelivery(LinkedHashMap<Supplier, File> suppliers, LinkedHashMap<Branch, File> branches) throws Exception {
-        LocalDate newDeliveredDate = getCurrDate().plusDays(2);
-        CoolingLevel coolingLevel = suppliers.entrySet().iterator().next().getValue().getProducts().entrySet().iterator().next().getKey().getCoolingLevel();
-        Truck t;
         boolean found = suppliers.isEmpty() && branches.isEmpty();
-        while (!found) {
-            t = scheduleTruck(newDeliveredDate, coolingLevel);
-            if (t == null) {
-                newDeliveredDate = newDeliveredDate.plusDays(1);
-                continue;
-            }
-            shiftController.addDriverRequirement(newDeliveredDate, t.getLicenseType(), t.getCoolingLevel());
-            for (Branch branch : branches.keySet()) {
-                shiftController.addStoreKeeperRequirement(newDeliveredDate, branch.getAddress());
-            }
+        if(!found) {
+            LocalDate newDeliveredDate = getCurrDate().plusDays(2);
+            CoolingLevel coolingLevel = suppliers.entrySet().iterator().next().getValue().getProducts().entrySet().iterator().next().getKey().getCoolingLevel();
+            Truck t;
+            while (!found) {
+                t = scheduleTruck(newDeliveredDate, coolingLevel);
+                if (t == null) {
+                    newDeliveredDate = newDeliveredDate.plusDays(1);
+                    continue;
+                }
+                shiftController.addDriverRequirement(newDeliveredDate, t.getLicenseType(), t.getCoolingLevel());
+                for (Branch branch : branches.keySet()) {
+                    shiftController.addStoreKeeperRequirement(newDeliveredDate, branch.getAddress());
+                }
 
-            Delivery newDelivery = new Delivery(deliveryCounter++, newDeliveredDate, LocalTime.NOON, t.getWeight(), suppliers, branches,
-                    suppliers.entrySet().iterator().next().getKey(), t.getLicenseNumber(), branches.entrySet().iterator().next().getKey().getShippingArea(),dalDeliveryService);
-            dalDeliveryService.updateCounter("delivery counter",deliveryCounter);
-            addDelivery(newDelivery);
-            addDeliveryToDate(newDeliveredDate,newDelivery);
-            found = true;
+                Delivery newDelivery = new Delivery(deliveryCounter++, newDeliveredDate, LocalTime.NOON, t.getWeight(), suppliers, branches,
+                        suppliers.entrySet().iterator().next().getKey(), t.getLicenseNumber(), branches.entrySet().iterator().next().getKey().getShippingArea(), dalDeliveryService);
+                dalDeliveryService.updateCounter("delivery counter", deliveryCounter);
+                addDelivery(newDelivery);
+                addDeliveryToDate(newDeliveredDate, newDelivery);
+                found = true;
+            }
         }
     }
 
