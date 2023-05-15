@@ -18,11 +18,7 @@ public class ConstraintByEmployeeDTO extends DTO {
         this.branchAddress = branchAddress;
         this.constraintDate = constraintDate;
         this.shiftType = shiftType;
-        if (positionType == null || positionType.equals("non"))
-            this.positionType = null;
-        else{
-            this.positionType = positionType;
-        }
+        this.positionType = positionType;
 
     }
 

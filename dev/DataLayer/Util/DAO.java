@@ -4,10 +4,7 @@ package DataLayer.Util;
 import java.lang.reflect.Field;
 import java.sql.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 public class DAO {
 
@@ -113,6 +110,49 @@ public class DAO {
 
         statement.executeUpdate();
     }
+
+
+    public void updateConstraint(DTO oldDto, DTO newDto, String tableName) throws SQLException, IllegalAccessException {
+        String sql = "UPDATE " + tableName + " SET ";
+        Field[] fields = newDto.getClass().getDeclaredFields();
+        List<Object> values = new ArrayList<>();
+        for (Field field : fields) {
+            field.setAccessible(true);
+            Object newValue = field.get(newDto);
+            Object oldValue = field.get(oldDto);
+            if (Objects.equals(newValue, null) && Objects.equals(oldValue, null)) {
+                continue; // Skip null values for both old and new values
+            }
+            if (!Objects.equals(newValue, oldValue)) {
+                sql += field.getName() + " = ?, ";
+                values.add(newValue);
+            }
+        }
+        sql = sql.substring(0, sql.length() - 2); // Remove trailing comma and space
+        sql += " WHERE ";
+        Field[] idFields = oldDto.getClass().getDeclaredFields();
+        for (Field field : idFields) {
+            field.setAccessible(true);
+            Object value;
+            try {
+                value = field.get(oldDto);
+            } catch (IllegalAccessException e) {
+                throw new SQLException("Error accessing field " + field.getName() + " of DTO " + oldDto.getClass().getSimpleName(), e);
+            }
+            if (Objects.equals(value, null)) {
+                throw new SQLException("Cannot update a record with null primary key values.");
+            }
+            sql += field.getName() + " = ? AND ";
+            values.add(value);
+        }
+        sql = sql.substring(0, sql.length() - 5); // Remove trailing " AND "
+        PreparedStatement statement = connection.prepareStatement(sql);
+        for (int i = 0; i < values.size(); i++) {
+            statement.setObject(i + 1, values.get(i));
+        }
+        statement.executeUpdate();
+    }
+
 
     /**
      * This function gets a dto and delete it from the suitable table.

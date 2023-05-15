@@ -106,7 +106,7 @@ public class DalEmployeeService {
 
 
 
-    public Constraint setAssignedPosition(int employeeId, String branchAddress, String constraintDate, String shiftType, String positionType) throws SQLException {
+    public Constraint setAssignedPosition(int employeeId, String branchAddress, String constraintDate, String shiftType, String positionType) throws SQLException, IllegalAccessException {
         LinkedHashMap<String, Object> pk = new LinkedHashMap<>();
         pk.put("employeeId", employeeId);
         pk.put("branchAddress", branchAddress);
@@ -115,13 +115,17 @@ public class DalEmployeeService {
         ConstraintByEmployeeDTO constraintDTO = constraintDao.find(pk, "ConstraintByEmployee", ConstraintByEmployeeDTO.class);
         if (constraintDTO != null) {
             ConstraintByEmployeeDTO newConstraint = new ConstraintByEmployeeDTO(employeeId, branchAddress, constraintDate, shiftType, positionType);
-            // TODO - check that the assignPosition change from null to the propare position
-            constraintDao.update(constraintDTO, newConstraint);
-            return new Constraint(newConstraint);
+            if ((constraintDTO.getPositionType() == null && positionType != null) || (constraintDTO.getPositionType() != null && !constraintDTO.getPositionType().equals(positionType))) {
+                constraintDao.updateConstraint(constraintDTO,  newConstraint, "ConstraintByEmployee");
+                return new Constraint(newConstraint);
+            } else {
+                return null;
+            }
         } else {
             return null;
         }
     }
+
 //    public Constraint setAssignedPosition(int employeeId, String branchAddress, String constraintDate, String shiftType, String positionType) throws SQLException {
 //        LinkedHashMap<String, Object> pk = new LinkedHashMap<>();
 //        pk.put("employeeId", employeeId);
