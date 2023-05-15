@@ -147,7 +147,11 @@ public class Shift {
                 }
                 submissionsNotAssigned = unassignedSubmissions.size();
                 for (Employee employee : unassignedSubmissions) {
-                    employeeIdsNotAssigned += employee.getId() + ",";
+                    if (employee.getQualifiedPositions().contains(PositionType.shiftManager.name()))
+                        employeeIdsNotAssigned += employee.getId() + "(SM)" + ",";
+                    else
+                        employeeIdsNotAssigned += employee.getId()  + ",";
+
                 }
                 if (employeeIdsNotAssigned.length() > 0) {
                     employeeIdsNotAssigned = employeeIdsNotAssigned.substring(0, employeeIdsNotAssigned.length() - 1); // remove last comma
@@ -156,12 +160,12 @@ public class Shift {
             st += String.format("| %-15s | %-8d | %-8d | %-25d | %-25s |\n", position, assigned, required, submissionsNotAssigned, employeeIdsNotAssigned);
             if (required > assigned) {
                 isLegalShift = false;
-                missing.append(required - assigned).append(" employees are missing in the position of ").append(position).append("\n");
+                missing.append(required).append(" employees are missing in the position of ").append(position).append("\n");
             }
         }
         if (!hasManager) {
             isLegalShift = false;
-            missing.append("Noticed- the shift must have a manager!!!\n");
+            missing.append("Noticed!! no such shift manager assign- the shift must have a manager!\n");
         }
         if (isLegalShift) {
             st += "All the requirements of the employees in the shift are fulfilled";
@@ -241,7 +245,10 @@ public class Shift {
                 dalShiftService.updateEmployeeToShift(date, shiftType, employee.getId(), pos, true);
                 employees.put(employee, true);
 
-
+                //check if he qualified to be ShiftManager and ther noy yet a shift manger assign
+                if (shiftManagerId == -1 && employee.isLeagalPosition(PositionType.shiftManager.name())){
+                    shiftManagerId = employee.getId();
+                }
 
                 // remove the requierements
                 deleteRequirement(pos);
