@@ -16,17 +16,15 @@ public class UserController {
     private User Hr;
 
     private User Tr;
-    private DriverController driverController;
     private TransportManager transportManager;
     private DalUserService dalUserService;
 
 
     //TODO-init the user controller
-    public UserController(EmployeeController employeeController,User Tr ,DriverController driverController, User Hr,DalUserService dalUserService) {
+    public UserController(EmployeeController employeeController,User Tr , User Hr,DalUserService dalUserService) {
         this.Hr = Hr;
         this.Tr = Tr;
         this.employeeController = employeeController;
-        this.driverController = driverController;
         this.dalUserService = dalUserService;
     }
 
