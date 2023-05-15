@@ -21,17 +21,26 @@ public class DalLogisticCenterService {
     private LogisticDAO logisticDAO;
     private Connection connection;
     private DAO dao;
+    private LinkedHashMap<Integer, Truck> trucks;
+
     public DalLogisticCenterService(Connection connection) {
+        this.trucks = new LinkedHashMap<>();
         this.connection = connection;
         this.dao = new DAO(connection);
     }
 
     public Truck findTruck(int licenseNumber) throws SQLException {
-         TruckDTO truckDTO = dao.find(licenseNumber,TruckDTO.getPKStatic(),TruckDTO.getTableNameStatic(),TruckDTO.class);
-        return new Truck(truckDTO);
+        if(this.trucks.containsKey(licenseNumber))
+            return this.trucks.get(licenseNumber);
+        TruckDTO truckDTO = dao.find(licenseNumber,TruckDTO.getPKStatic(),TruckDTO.getTableNameStatic(),TruckDTO.class);
+        if(truckDTO == null)
+            return null;
+        Truck truck = new Truck(truckDTO);
+        this.trucks.put(licenseNumber,truck);
+        return truck;
     }
 
-    public boolean insertTruck(Truck truck) throws SQLException {
+    private boolean insertTruck(Truck truck) throws SQLException {
         TruckDTO truckDTO = new TruckDTO(truck);
         DAO dao = new DAO(connection);
         dao.insert(truckDTO);
@@ -56,11 +65,11 @@ public class DalLogisticCenterService {
 
     public LinkedHashMap<Integer, Truck> findAllTrucks() throws SQLException {
         ArrayList<TruckDTO> truckDTOS =  dao.findAll(TruckDTO.getTableNameStatic(), TruckDTO.class);
-        LinkedHashMap<Integer, Truck> trucks = new LinkedHashMap<>();
         for(TruckDTO truckDTO : truckDTOS){
-           trucks.put(truckDTO.getLicenseNumber(),new Truck(truckDTO));
+            if(!this.trucks.containsKey(truckDTO.getLicenseNumber()))
+                this.trucks.put(truckDTO.getLicenseNumber(),new Truck(truckDTO));
         }
-        return  trucks;
+        return this.trucks;
     }
 
     public LinkedHashMap<Product, Integer> findAllProductsInStock() throws SQLException {
@@ -76,5 +85,11 @@ public class DalLogisticCenterService {
 
     public SiteDTO findLogisticCenter() throws SQLException {
         return dao.find("logistic center address","siteAddress","Site", SiteDTO.class);
+    }
+
+    public void addTruck(int licenseNumber, String model, int weight, int maxWeight, int coolingLevel) throws SQLException {
+        Truck truck = new Truck(licenseNumber, model, weight, maxWeight, coolingLevel);
+        trucks.put(licenseNumber,truck);
+        insertTruck(truck);
     }
 }
