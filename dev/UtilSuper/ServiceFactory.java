@@ -103,10 +103,6 @@ public class ServiceFactory {
 
         deliveryController = new DeliveryController(logisticCenterController,supplierController,branchController,driverController,shiftController,dalDeliveryService);
         deliveryService = new DeliveryService(deliveryController);
-
-
-        Data_init_HR.initBasicData(dao,shiftService);
-
     }
 
     public DAO getDAO() {
