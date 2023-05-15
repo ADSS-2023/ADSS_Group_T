@@ -52,41 +52,68 @@ public class ShiftController {
         // Initialize a notification string to collect information about illegal shifts
         StringBuilder notificationBuilder = new StringBuilder();
 
-        // Iterate over all branches
-        for (String branch : shiftsByDateInAllBranch.keySet()) {
-            notificationBuilder.append("\n==============================\n");
-            notificationBuilder.append(String.format("Branch: %s\n", branch));
+        try {
+            // Iterate over all branches
+            for (String branch : shiftsByDateInAllBranch.keySet()) {
+                try {
+                    notificationBuilder.append("\n==============================\n");
+                    notificationBuilder.append(String.format("Branch: %s\n", branch));
 
-            // Retrieve all shifts for the current branch and date
-            ArrayList<Shift> shiftsForDateInBranch = shiftsByDateInAllBranch.get(branch).get(date);
+                    // Retrieve all shifts for the current branch and date
+                    ArrayList<Shift> shiftsForDateInBranch = shiftsByDateInAllBranch.get(branch).get(date);
 
-            // Iterate over all shifts for the current branch and date
-            for (Shift shift : shiftsForDateInBranch) {
-                // Check if the current shift has a manager
-                if (shift.getShiftManagerId() == -1) {
-                    notificationBuilder.append("Noticed - the shift must have a manager!!!\n");
-                } else {
-                    notificationBuilder.append(String.format("Manager ID: %s\n", shift.getShiftManagerId()));
-                }
-                // Check if the current shift is legal
-                String legalStatus = shift.isLegalShift() ? "LEGAL" : "ILLEGAL";
-                notificationBuilder.append("\n------------------------------\n");
-                notificationBuilder.append(String.format("Shift Date: %s\nShift Type: %s\nLegal Status: %s\n", shift.getDate(), shift.getShiftType(), legalStatus));
-                notificationBuilder.append("\nEmployee Requirements:\n");
+                    if (shiftsForDateInBranch != null) {
+                        // Iterate over all shifts for the current branch and date
+                        for (Shift shift : shiftsForDateInBranch) {
+                            // Check if the current shift has a manager
+                            if (shift.getShiftManagerId() == -1) {
+                                notificationBuilder.append("Noticed no such manager shift has been assign yet - the shift must have a manager!!!\n");
+                            } else {
+                                notificationBuilder.append(String.format("Manager ID: %s\n", shift.getShiftManagerId()));
+                            }
+                            // Check if the current shift is legal
+                            String legalStatus = "";
+                            int isLlegal = shift.isLegalShift();
+                            if (isLlegal == 1)
+                                legalStatus = "legal";
+                            else if (isLlegal == 0)
+                                legalStatus = "illegal";
+                            else if (isLlegal == -1)
+                                legalStatus = "There is no such requirements to this shift";
 
-                // Add a line for each position requirement
-                for (Map.Entry<String, Integer> requirement : shift.getEmployeeRequirements().entrySet()) {
-                    String position = requirement.getKey();
-                    int requiredAmount = requirement.getValue();
-                    notificationBuilder.append(String.format("%s: %d\n", position, requiredAmount));
+                            notificationBuilder.append("Noticed - the shift is illegal!!!\n");
+
+                            notificationBuilder.append("\n------------------------------\n");
+                            notificationBuilder.append(String.format("Shift Date: %s\nShift Type: %s\nLegal Status: %s\n", shift.getDate(), shift.getShiftType(), legalStatus));
+                            notificationBuilder.append("\nEmployee Requirements:\n");
+
+                            if (shift.getEmployeeRequirements() != null) {
+                                // Add a line for each position requirement
+                                for (Map.Entry<String, Integer> requirement : shift.getEmployeeRequirements().entrySet()) {
+                                    String position = requirement.getKey();
+                                    int requiredAmount = requirement.getValue();
+                                    notificationBuilder.append(String.format("%s: %d\n", position, requiredAmount));
+                                }
+                            }
+                        }
+                    }
+                } catch (Exception ex) {
+                    // Catch the exception and continue the loop
+                   // ex.printStackTrace();
+                    continue;
                 }
             }
+
+        } catch (Exception exp) {
+            //exp.printStackTrace();
         }
 
         // Output the notification string
         notifications.put(date, notificationBuilder.toString());
         dalShiftService.addNotification(date, notificationBuilder.toString());
     }
+
+
 
     public HashMap<LocalDate, String> getNotifications(LocalDate fromDate, LocalDate toDate) throws SQLException {
         this.notifications = dalShiftService.getNotifications(fromDate.toString(), toDate.toString());
