@@ -4,10 +4,12 @@ import BusinessLayer.HR.Driver;
 import BusinessLayer.HR.Driver.CoolingLevel;
 import BusinessLayer.HR.DriverController;
 import BusinessLayer.HR.ShiftController;
+import DataLayer.HR_T_DAL.DTOs.CounterDTO;
 import DataLayer.HR_T_DAL.DalService.DalDeliveryService;
 import UtilSuper.EnterOverWeightInterface;
 import UtilSuper.EnterWeightInterface;
 import UtilSuper.Time;
+import org.w3c.dom.css.Counter;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -38,10 +40,11 @@ public class DeliveryController {
         this.shiftController = shiftController;
         this.dalDeliveryService = dalDeliveryService;
 
-        //Load Data:
-        this.currDate = LocalDate.now();
-        this.currDate = Time.stringToLocalDate(dalDeliveryService.findTime().getCount());
+    }
 
+    public void initCounters() throws SQLException {
+        //Load Data:
+        this.currDate = Time.stringToLocalDate(dalDeliveryService.findTime().getCount());
         this.filesCounter = Integer.parseInt(dalDeliveryService.findFilesCounter().getCount());
         this.deliveryCounter = Integer.parseInt(dalDeliveryService.findDeliveryCounter().getCount());
     }
@@ -329,23 +332,24 @@ public class DeliveryController {
         return s;
     }
 
-
-    public LocalDate getCurrDateDetails() {
-        return currDate;
-    }
-
     /**
      * advanced to the next day and checks if there are deliveries with overweight problem in this day
      * @return List of the delivery ids that scheduled for the new day and have overweight problem
      */
     public ArrayList<Delivery> skipDay() throws Exception {
-        this.currDate = this.currDate.plusDays(1);
-        if (!deliveryInDate(currDate))
+        LocalDate oldDate = getCurrDate();
+        setCurrDate(getCurrDate().plusDays(1));
+        dalDeliveryService.updateDateCounter(oldDate,this.currDate);
+        if (!deliveryInDate(getCurrDate()))
             return null;
-        for (Delivery d : getDeliveriesByDate(currDate)) {
+        for (Delivery d : getDeliveriesByDate(getCurrDate())) {
             executeDelivery(d);
         }
         return null; //TODO: why returning null?
+    }
+
+    private void setCurrDate(LocalDate currDate) {
+        this.currDate = currDate;
     }
 
     /**
@@ -354,7 +358,7 @@ public class DeliveryController {
      * @throws Exception error while schedule driver
      */
     private ArrayList<Delivery> scheduleDriversForTomorrow() throws Exception {
-        LocalDate tomorrow = this.currDate.plusDays(1);
+        LocalDate tomorrow = getCurrDate().plusDays(1);
         ArrayList<Driver> driversTomorrow = sortDriversByLicenseLevel(driverController.getDriversAssignedByDate(tomorrow));
         ArrayList<Delivery> deliveriesTomorrow = sortDeliveriesByTruckWeight(getDeliveriesByDate(tomorrow));
         ArrayList<Delivery> deliveriesWithoutDrivers = new ArrayList<>();
@@ -532,8 +536,8 @@ public class DeliveryController {
      * @param date - the date to check
      * @return true if the received date is after the current date, false otherwise
      */
-    public boolean checkDate(LocalDate date) {
-        return date.isAfter(currDate);
+    public boolean checkDate(LocalDate date) throws SQLException {
+        return date.isAfter(getCurrDate());
     }
 
 
@@ -633,7 +637,7 @@ public class DeliveryController {
      * @throws Exception error while reschedule delivery
      */
     private void reScheduleDelivery(LinkedHashMap<Supplier, File> suppliers, LinkedHashMap<Branch, File> branches) throws Exception {
-        LocalDate newDeliveredDate = this.currDate.plusDays(2);
+        LocalDate newDeliveredDate = getCurrDate().plusDays(2);
         CoolingLevel coolingLevel = suppliers.entrySet().iterator().next().getValue().getProducts().entrySet().iterator().next().getKey().getCoolingLevel();
         Truck t;
         boolean found = suppliers.isEmpty() && branches.isEmpty();
@@ -682,20 +686,28 @@ public class DeliveryController {
      */
     public ArrayList<Delivery> getNextDayDeatails() throws Exception {
         try {
-            this.shiftController.skipDay(currDate.plusDays(1));
+            this.shiftController.skipDay(getCurrDate().plusDays(1));
         }
         catch (Exception exception){
-
+            int i=5; //cache exception
         }
         ArrayList<Delivery> deliveriesThatReScheduleDelivery = new ArrayList<>();
 
-        if(!getDeliveriesByDate(this.currDate.plusDays(1)).isEmpty()) {
+        if(!getDeliveriesByDate(getCurrDate().plusDays(1)).isEmpty()) {
             deliveriesThatReScheduleDelivery.addAll(checkStoreKeeperForTomorrow());
             deliveriesThatReScheduleDelivery.addAll(scheduleDriversForTomorrow());
         }
-        for(Delivery delivery: deliveriesThatReScheduleDelivery)
+        for(Delivery delivery: deliveriesThatReScheduleDelivery){
             reScheduleDelivery(delivery.getUnHandledSuppliers(),delivery.getUnHandledBranches());
+            removeDeliveryFromDate(delivery.getDate(),delivery);
+            removeTruckFromDate(delivery.getDate(),logisticCenterController.getTruck(delivery.getTruckNumber()));
+            removeDelivery(delivery);
+        }
         return deliveriesThatReScheduleDelivery;
+    }
+
+    private void removeDelivery(Delivery delivery) throws SQLException {
+        dalDeliveryService.deleteDelivery(delivery);
     }
 
 
@@ -705,7 +717,7 @@ public class DeliveryController {
      * @throws Exception error while checking
      */
     private ArrayList<Delivery> checkStoreKeeperForTomorrow() throws Exception {
-        LocalDate tomorrow = this.currDate.plusDays(1);
+        LocalDate tomorrow = getCurrDate().plusDays(1);
         ArrayList<String> branchWithoutStoreKeeper = shiftController.getBranchesWithoutStoreKeeper(tomorrow);
         ArrayList<Delivery> deliveriesTomorrow = new ArrayList<>(getDeliveriesByDate(tomorrow));
         ArrayList<Delivery> deliveriesWithoutStoreKeeper = new ArrayList<>();
@@ -713,9 +725,6 @@ public class DeliveryController {
             LinkedHashSet<Branch> branchesOfDeliveries = new LinkedHashSet<>(delivery.getUnHandledBranches().keySet());
             for (Branch branch : branchesOfDeliveries) {
                 if (branchWithoutStoreKeeper != null && branchWithoutStoreKeeper.contains(branch.getAddress())) {
-                    reScheduleDelivery(delivery.getUnHandledSuppliers(), delivery.getUnHandledBranches());
-                    removeDeliveryFromDate(tomorrow,getDelivery(delivery.getId()));
-                    removeTruckFromDate(tomorrow,logisticCenterController.getTruck(delivery.getTruckNumber()));
                     deliveriesWithoutStoreKeeper.add(delivery);
                     break;
                 }
@@ -729,7 +738,8 @@ public class DeliveryController {
         return dalDeliveryService.findAllDeliveries();
     }
 
-    public LocalDate getCurrDate() {
+    public LocalDate getCurrDate() throws SQLException {
+        this.currDate = Time.stringToLocalDate(dalDeliveryService.findTime().getCount());
         return this.currDate;
     }
 
@@ -824,7 +834,7 @@ public class DeliveryController {
      */
     private boolean specificTruckInDate(LocalDate date,Truck truck) throws SQLException {
         LinkedHashMap<String,Object> pk = new LinkedHashMap<>();
-        pk.put("shiftDate",date);
+        pk.put("shiftDate",date.toString());
         pk.put("truckId",truck.getLicenseNumber());
         return dalDeliveryService.findSpecificTruckInDate(pk);
     }

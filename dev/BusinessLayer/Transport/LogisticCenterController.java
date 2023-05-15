@@ -2,6 +2,7 @@ package BusinessLayer.Transport;
 
 import DataLayer.HR_T_DAL.DTOs.SiteDTO;
 import DataLayer.HR_T_DAL.DalService.DalLogisticCenterService;
+import DataLayer.Util.DAO;
 
 import java.sql.SQLException;
 import java.util.LinkedHashMap;
@@ -13,6 +14,10 @@ public class LogisticCenterController {
 
     public LogisticCenterController(DalLogisticCenterService dalLogisticCenterService) throws Exception {
         SiteDTO siteDTO = dalLogisticCenterService.findLogisticCenter();
+        if(siteDTO == null) {
+            dalLogisticCenterService.insertLogisticCenter();
+            siteDTO = dalLogisticCenterService.findLogisticCenter();
+        }
         this.logisticCenter = new LogisticCenter(siteDTO,dalLogisticCenterService);
     }
 
