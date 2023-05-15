@@ -66,30 +66,22 @@ public class ServiceFactory {
 
         String testDBUrl = "jdbc:sqlite:dev/DataLayer/HR_Transport_DB.db";
         connection = DriverManager.getConnection(testDBUrl);
-
         this.dao = new DAO(connection);
         dalLogisticCenterService = new DalLogisticCenterService(connection);
         dalDeliveryService = new DalDeliveryService(connection,dalLogisticCenterService);
-
         dalUserService = new DalUserService(connection);
-
-
         dalDriverService = new DalDriverService(connection,dalUserService);
         dalEmployeeService = new DalEmployeeService(connection,dalUserService);
         dalShiftService = new DalShiftService(connection, dalEmployeeService);
-
         employeeController = new EmployeeController(dalEmployeeService,dalUserService);
         driverController = new DriverController(dalDriverService);
         branchController = new BranchController(dalDeliveryService);
-
         shiftController = new ShiftController(this.driverController, this.dalEmployeeService, this.dalShiftService, this.branchController, this.employeeController.getEmployeesMapper());
         employeeService = new EmployeeService(employeeController,driverController, shiftController);
-
         logisticCenterController = new LogisticCenterController(dalLogisticCenterService);
         logisticCenterService = new LogisticCenterService(logisticCenterController);
 
 
-        //TODO //
         User HRuser = new User(1,"HRManeger","123456","cool",1000,null,"1", UserType.HRManager);
         User TRuser = new User(2,"TrManeger","123456","cool",1000,null,"2", UserType.TransportManager);
         userController = new UserController(employeeController,TRuser,HRuser,dalUserService);
