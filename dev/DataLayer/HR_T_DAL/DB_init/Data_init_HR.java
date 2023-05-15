@@ -20,10 +20,10 @@ import java.util.List;
 
 public class Data_init_HR {
 
-    public static void initBasicData(DAO dao,ShiftService shiftService) throws SQLException {
-        UserDTO userDTO = new UserDTO("User", "1", "1", "HRManager", 1, "123456", "2023-04-03", "good worker", 10000);
-        dao.deleteTableDataWithDTO(userDTO);
-        dao.insert(userDTO);
+    public static void initBasicData(DAO dao,ShiftService shiftService) throws Exception {
+        //UserDTO userDTO = new UserDTO("User", "1", "1", "HRManager", 1, "123456", "2023-04-03", "good worker", 10000);
+        //dao.deleteTableDataWithDTO(userDTO);
+        //dao.insert(userDTO);
 
         //init shifts for ayear in all branches
         LocalDate startDate = LocalDate.now(); // Start date is one year from now
@@ -42,7 +42,7 @@ public class Data_init_HR {
                     dao.insert(shift2);
                 }
                 catch (Exception exp){
-
+                    throw new Exception("failed to insert shifts to DB");
                 }
 
             }

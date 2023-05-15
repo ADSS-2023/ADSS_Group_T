@@ -8,6 +8,7 @@ import DataLayer.Util.DAO;
 import UtilSuper.Time;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -225,6 +226,9 @@ public class DalDeliveryService {
         if(dto == null)
             return false;
         Truck truck = dalLogisticCenterService.findTruck((Integer)pk.get("truckId"));
+        LocalDate date = Time.stringToLocalDate((String)pk.get("shiftDate"));
+        if(!date2trucks.containsKey(date))
+            date2trucks.put(date,new ArrayList<>());
         date2trucks.get(Time.stringToLocalDate((String)pk.get("shiftDate"))).add(truck);
         return true;
     }
