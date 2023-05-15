@@ -65,7 +65,7 @@ public class HRManagerPresentation {
         String date = scanner.nextLine();
         System.out.println("Please enter the driver ID:");
         int id = scanner.nextInt();
-        employeeService.assignDriverForShift(Time.stringToLocalDate(date),id);
+        System.out.println(employeeService.assignDriverForShift(Time.stringToLocalDate(date),id));
     }
 
     private void notification() {

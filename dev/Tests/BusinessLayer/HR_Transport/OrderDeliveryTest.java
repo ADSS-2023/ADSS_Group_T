@@ -1,5 +1,6 @@
 package BusinessLayer.HR_Transport;
 import BusinessLayer.HR.*;
+import BusinessLayer.Transport.Delivery;
 import DataLayer.HR_T_DAL.DB_init.Data_init;
 import DataLayer.HR_T_DAL.DB_init.Data_init_HR;
 import PresentationLayer.TransportManagerPresentation;
@@ -63,9 +64,12 @@ private ServiceFactory serviceFactory;
         serviceFactory.getDeliveryController().getNextDayDeatails();
         serviceFactory.getDeliveryController().skipDay();
         serviceFactory.getDeliveryController().getNextDayDeatails();
+        LinkedHashMap <Integer,Delivery> deliveries = serviceFactory.getDeliveryController().getAllDeliveries();
 
-        Driver driver = serviceFactory.getDriverController().lazyLoadDriver(serviceFactory.getDeliveryController().getDelivery(0).getDriverID());
-        assertNotNull(driver);
+        Driver driver1 = serviceFactory.getDriverController().lazyLoadDriver(serviceFactory.getDeliveryController().getDelivery(0).getDriverID());
+        Driver driver2 = serviceFactory.getDriverController().lazyLoadDriver(serviceFactory.getDeliveryController().getDelivery(1).getDriverID());
+
+       assertNotEquals(driver1,driver2);
     }
 
     @Test
