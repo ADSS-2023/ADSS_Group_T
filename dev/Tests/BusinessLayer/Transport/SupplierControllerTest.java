@@ -2,6 +2,7 @@ package BusinessLayer.Transport;
 
 import DataLayer.HR_T_DAL.DalService.DalDeliveryService;
 import DataLayer.HR_T_DAL.DalService.DalLogisticCenterService;
+import UtilSuper.ServiceFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,7 @@ class SupplierControllerTest {
     @BeforeEach
     void setUp() throws SQLException {
         String testDBUrl = "jdbc:sqlite:dev/DataLayer/HR_Transport_DB.db";
-        Connection connection = DriverManager.getConnection(testDBUrl);
+        Connection connection = ServiceFactory.makeCon();
         dalDeliveryService = new DalDeliveryService(connection,new DalLogisticCenterService(connection));
         supplierController = new SupplierController(dalDeliveryService);
         dalDeliveryService.deleteAllData();

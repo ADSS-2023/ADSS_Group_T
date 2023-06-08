@@ -5,6 +5,7 @@ import BusinessLayer.HR.User.UserController;
 import BusinessLayer.HR.User.UserType;
 import DataLayer.HR_T_DAL.DalService.*;
 import DataLayer.Util.DAO;
+import UtilSuper.ServiceFactory;
 import junit.framework.TestCase;
 import org.junit.Assert;
 import org.junit.Before;
@@ -32,7 +33,7 @@ public class UserControllerTest extends TestCase {
     public void setUp() throws Exception {
         super.setUp();
         String testDBUrl = "jdbc:sqlite:dev/DataLayer/HR_Transport_DB.db";
-        Connection connection = DriverManager.getConnection(testDBUrl);
+        Connection connection = ServiceFactory.makeCon();
         this.dalUserService = new DalUserService(connection);
         this.dalEmployeeService = new DalEmployeeService(connection,dalUserService);
         employeeController = new EmployeeController(dalEmployeeService , dalUserService);

@@ -2,6 +2,7 @@ package BusinessLayer.Transport;
 
 import DataLayer.HR_T_DAL.DalService.DalDeliveryService;
 import DataLayer.HR_T_DAL.DalService.DalLogisticCenterService;
+import UtilSuper.ServiceFactory;
 import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +24,7 @@ public class BranchControllerTest extends TestCase {
     public void setUp() throws Exception {
         super.setUp();
         String testDBUrl = "jdbc:sqlite:dev/DataLayer/HR_Transport_DB.db";
-        Connection connection = DriverManager.getConnection(testDBUrl);
+        Connection connection = ServiceFactory.makeCon();
         dalLogisticCenterService = new DalLogisticCenterService(connection);
         dalDeliveryService = new DalDeliveryService(connection, dalLogisticCenterService);
         this.branchController = new BranchController(dalDeliveryService);

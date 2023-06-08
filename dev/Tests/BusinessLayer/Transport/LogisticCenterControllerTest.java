@@ -4,6 +4,7 @@ import DataLayer.HR_T_DAL.DalService.DalDeliveryService;
 import DataLayer.HR_T_DAL.DalService.DalLogisticCenterService;
 import DataLayer.Util.DAO;
 import ServiceLayer.Transport.SupplierService;
+import UtilSuper.ServiceFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +26,7 @@ class LogisticCenterControllerTest {
     @BeforeEach
     void setUp() throws Exception {
         String testDBUrl = "jdbc:sqlite:dev/DataLayer/HR_Transport_DB.db";
-        Connection connection = DriverManager.getConnection(testDBUrl);
+        Connection connection = ServiceFactory.makeCon();
         dalLogisticCenterService = new DalLogisticCenterService(connection);
         dalDeliveryService = new DalDeliveryService(connection,dalLogisticCenterService);
         dalLogisticCenterService.deleteAllData();

@@ -2,6 +2,7 @@ package TestCheck;
 
 import DataLayer.HR_T_DAL.DAOs.TruckDAO;
 import DataLayer.HR_T_DAL.DTOs.TruckDTO;
+import UtilSuper.ServiceFactory;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -22,7 +23,7 @@ public class TruckDAOTest {
 
     @Before
     public void setUp() throws SQLException {
-        conn = DriverManager.getConnection(testDBUrl);
+        conn = ServiceFactory.makeCon();
         dao = new TruckDAO(conn);
         // Insert TruckDTO objects into Truck table
         TruckDTO truckDTO1 = new TruckDTO( 1, "Model1", 1000, 2000, "A", "HIGH");

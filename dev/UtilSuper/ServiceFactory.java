@@ -96,7 +96,7 @@ public class ServiceFactory {
         deliveryController = new DeliveryController(logisticCenterController,supplierController,branchController,driverController,shiftController,dalDeliveryService);
         deliveryService = new DeliveryService(deliveryController);
     }
-    private Connection makeCon() {
+    public static Connection makeCon() {
         try {
             String dbFile = "HR_Transport_DB.db";
             String url = "jdbc:sqlite::resource:" + dbFile;
