@@ -31,6 +31,13 @@ public class TransportManagerFrame extends GenericFrameUser {
         this.deliveryService = serviceFactory.getDeliveryService();
         this.supplierService = serviceFactory.getSupplierService();
         this.branchService = serviceFactory.getBranchService();
+        try {
+            deliveryService.initCounters();
+        }
+        catch (Exception exception){
+            setErrorText(exception.toString());
+        }
+
 
 
 
