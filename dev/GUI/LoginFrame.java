@@ -11,26 +11,19 @@ import java.awt.*;
 
 public class LoginFrame extends GenericFrame {
 
-
     public LoginFrame(ServiceFactory serviceFactory) {
         super( serviceFactory);
         setTitle("Login");
-
-
         GenericLabel usernameLabel = new GenericLabel("Username:");
         GenericLabel passwordLabel = new GenericLabel("Password:");
         GenericTextField usernameField = new GenericTextField();
-
         JPasswordField passwordField = new JPasswordField();
         passwordField.setBackground(Color.WHITE);
         passwordField.setOpaque(true);
         passwordField.setHorizontalAlignment(SwingConstants.CENTER);
         passwordField.setFont(new Font("Arial", Font.BOLD, 16));
         passwordField.setPreferredSize(new Dimension(150, 30));
-
-
         GenericButton loginButton = new GenericButton("Login");
-
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -51,7 +44,6 @@ public class LoginFrame extends GenericFrame {
         gbc.gridy = 2;
         gbc.gridwidth = 3; // Set the gridwidth to 3 for a wider button
         mainPanel.add(loginButton, gbc);
-
         // Add action listeners
         loginButton.addActionListener(e -> {
             System.out.println("Button start clicked");
@@ -60,11 +52,11 @@ public class LoginFrame extends GenericFrame {
             String result = serviceFactory.getUserService().login(username, password);
             if(result.equals("employee")) {
                 setErrorText("employee");
-                //TODO: add employee presentation
+                //TODO: add employee presentation (Israel&Tarshish)
             }
             else if(result.equals("driver")) {
                 setErrorText("driver");
-                //TODO: add driver presentation
+                //TODO: add driver presentation (Israel&Tarshish)
             }
             else if(result.equals("TransportManager")) {
                 setErrorText("transport manager");
@@ -73,12 +65,11 @@ public class LoginFrame extends GenericFrame {
             }
             else if(result.equals("HRManager")) {
                 setErrorText("HRManager");
-                //TODO: add hr manager presentation
+                //TODO: add hr manager presentation (Israel&Tarshish)
             }
             else
                 setErrorText("invalid username or password");
             // Perform actions when the button is clicked
-
         });
 
 

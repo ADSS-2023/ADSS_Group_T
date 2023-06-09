@@ -80,8 +80,7 @@ public class DeliveryController {
      * @return map with all the requested products that did not schedule for delivery
      * @throws Exception query error
      */
-    public LinkedHashMap<? extends Site,LinkedHashMap<Product, Integer>> orderDelivery(String destinationString, LinkedHashMap<String, LinkedHashMap<String, Integer>> suppliersString,
-                                                                                  String requiredDateString) throws Exception {
+    public LinkedHashMap<? extends Site,LinkedHashMap<Product, Integer>> orderDelivery(String destinationString, LinkedHashMap<String, LinkedHashMap<String, Integer>> suppliersString, String requiredDateString) throws Exception {
         LocalDate requiredDate = Time.stringToLocalDate(requiredDateString);
         boolean isDestinationIsLogisticCenter = destinationString.equals(logisticCenterController.getAddress());
         boolean isSupplierIsLogisticCenter = suppliersString.containsKey(logisticCenterController.getAddress());

@@ -5,7 +5,6 @@ import DataLayer.HR_T_DAL.DB_init.Data_init_HR;
 import GUI.Generic.GenericButton;
 import GUI.Generic.GenericFrame;
 import UtilSuper.ServiceFactory;
-
 import java.awt.*;
 
 public class MainFrame extends GenericFrame {
@@ -14,13 +13,10 @@ public class MainFrame extends GenericFrame {
     private GenericButton lastSaveButton;
     private GenericButton exitButton;
 
-
-
     public MainFrame(ServiceFactory serviceFactory) {
         // Customize properties if needed
         super( serviceFactory);
         setTitle("Main");
-
         // Create the buttons
         startNewButton = new GenericButton("Start New");
         loadOldDataButton = new GenericButton("Load Old Data");
@@ -39,8 +35,8 @@ public class MainFrame extends GenericFrame {
         gbc.gridx = 0;
         gbc.gridy = 4;
         mainPanel.add(exitButton, gbc);
-
         // Add event listeners
+
         startNewButton.addActionListener(e -> {
             // Perform actions when the button is clicked
             System.out.println("Button start clicked");
@@ -80,10 +76,6 @@ public class MainFrame extends GenericFrame {
                 setErrorText(exception.getMessage());
             }
         });
-
-
-
-
 
         setVisible(true);
     }

@@ -35,8 +35,6 @@ public class MainObject {
         catch (Exception exception){
             System.out.println(exception.toString());
         }
-
-
         // Create an instance of MyWindow
         this.shiftService = serviceFactory.getShiftService();
         this.employeeService = serviceFactory.getEmployeeService();
@@ -52,7 +50,5 @@ public class MainObject {
         serviceFactory.callbackEnterWeight(this.transportManagerPresentation::enterWeightFunction);
         serviceFactory.callbackEnterOverWeight(this.transportManagerPresentation::enterOverWeightAction);
         MainFrame mainFrame = new MainFrame(serviceFactory);
-
-
     }
 }

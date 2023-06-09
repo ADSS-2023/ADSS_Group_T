@@ -1,6 +1,5 @@
 package GUI;
 
-import BusinessLayer.HR.Driver;
 import GUI.Generic.GenericButton;
 import GUI.Generic.GenericFrameUser;
 import GUI.Generic.GenericLabel;
@@ -12,7 +11,6 @@ import ServiceLayer.Transport.SupplierService;
 import UtilSuper.Response;
 import UtilSuper.ResponseSerializer;
 import UtilSuper.ServiceFactory;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.*;
@@ -38,9 +36,6 @@ public class TransportManagerFrame extends GenericFrameUser {
             setErrorText(exception.toString());
         }
 
-
-
-
         GenericButton skipDayButton = new GenericButton("Skip day");
         leftPanel.add((skipDayButton));
 
@@ -65,6 +60,8 @@ public class TransportManagerFrame extends GenericFrameUser {
         GenericButton addNewProductsButton = new GenericButton("Add new products");
         leftPanel.add((addNewProductsButton));
 
+
+        //TODO: implement this button
         skipDayButton.addActionListener(e -> {
             System.out.println("Button skip day clicked");
             rightPanel.removeAll();
@@ -93,6 +90,7 @@ public class TransportManagerFrame extends GenericFrameUser {
 
         });
 
+
         enterNewDeliveryButton.addActionListener(e -> {
             System.out.println("Button enter new delivery clicked");
             rightPanel.removeAll();
@@ -117,24 +115,12 @@ public class TransportManagerFrame extends GenericFrameUser {
                     destinationComboBox = new JComboBox<>(addresses.toArray(new String[0]));
                 }
             }
-
             //----------Supplier and products combobox----------------
             LinkedHashMap<String, LinkedHashMap<String, Integer>> suppliersAndProducts = new LinkedHashMap<>();
             JComboBox<String> supplierComboBox = new JComboBox<>();
             JComboBox<String> productComboBox = new JComboBox<>();
             JTextField amountTextField = new JTextField();
             GenericButton doneButton = new GenericButton("Done");
-            //choose products to deliver from suppliers and enter the amount of each product
-            //each supplier can have multiple products
-            //each products that choose need to have amount > 0
-            //after choosing all products, click on "Done" button
-            //agter clicking on "Done" button, the products will be added to the hashmap suppliersAndProducts
-            //the key of each supplier is the name of the supplier
-            //the value of each supplier is a hashmap of the products of this supplier
-            //the key of each product is the name of the product
-            //the value of each product is the amount of this product
-            //after clicking on "Done" button, the hashmap suppliersAndProducts will be sent to the server
-            // in any change of the combobox, the products combobox will be updated
 
             List<String> suppliers = new ArrayList<>();
             response = ResponseSerializer.deserializeFromJson(supplierService.getAllSuppliers());
@@ -233,6 +219,7 @@ public class TransportManagerFrame extends GenericFrameUser {
             rightPanel.repaint();
         });
 
+
         enterNewTruckButton.addActionListener(e -> {
             rightPanel.removeAll();
             GenericTextField licensePlateTextField = new GenericTextField();
@@ -242,7 +229,6 @@ public class TransportManagerFrame extends GenericFrameUser {
             String[] coolinglevels = {"non","fridge","freezer"};
             JComboBox<String> coolingLevelComboBox = new JComboBox<>(coolinglevels);
             GenericButton doneButton = new GenericButton("Done");
-
             doneButton.addActionListener(e1 -> {
                 int licensePlate = Integer.parseInt(licensePlateTextField.getText());
                 String model = modelTextField.getText();
@@ -271,7 +257,6 @@ public class TransportManagerFrame extends GenericFrameUser {
                     }
                 }
             });
-
             rightPanel.add(new GenericLabel("Enter license plate:"));
             rightPanel.add(licensePlateTextField);
             rightPanel.add(new GenericLabel("Enter model:"));
@@ -285,9 +270,8 @@ public class TransportManagerFrame extends GenericFrameUser {
             rightPanel.add(doneButton);
             rightPanel.revalidate();
             rightPanel.repaint();
-
-
         });
+
 
         enterNewSupplierButton.addActionListener(e -> {
             rightPanel.removeAll();
@@ -306,7 +290,6 @@ public class TransportManagerFrame extends GenericFrameUser {
                 if (address == null || telephoneString == null || contactNameString == null || xString == null || yString == null) {
                     setErrorText("Please fill all fields");
                 } else {
-
                     int xInt = Integer.parseInt(xString);
                     int yInt = Integer.parseInt(yString);
                     if ( xInt <= 0 || yInt <= 0) {
@@ -335,6 +318,7 @@ public class TransportManagerFrame extends GenericFrameUser {
             rightPanel.revalidate();
             rightPanel.repaint();
         });
+
 
         enterNewBranchButton.addActionListener(e -> {
             rightPanel.removeAll();
@@ -383,6 +367,7 @@ public class TransportManagerFrame extends GenericFrameUser {
             rightPanel.repaint();
         });
 
+
         showLogicCenterProductsButton.addActionListener(e -> {
             rightPanel.removeAll();
                 Response response1 = ResponseSerializer.deserializeFromJson(logisticCenterService.getProductsInStock());
@@ -400,10 +385,30 @@ public class TransportManagerFrame extends GenericFrameUser {
                 }
                 rightPanel.add(new GenericLabel(""));
             rightPanel.add(new GenericTextField());
+            rightPanel.revalidate();
+            rightPanel.repaint();
+        });
+
+
+        //TODO: implement this button
+        showAllDeliveriesButton.addActionListener(e -> {
+            rightPanel.removeAll();
+            Response response1 = ResponseSerializer.deserializeFromJson(deliveryService.showAllDeliveries());
+            if (response1.isError()) {
+                setErrorText(response1.getErrorMessage());
+            } else {
+                String deliveries = (String) response1.getReturnValue();
+                rightPanel.add(new GenericLabel(deliveries));
+                rightPanel.revalidate();
+                rightPanel.repaint();
+            }
+            rightPanel.add(new GenericLabel(""));
+            rightPanel.add(new GenericTextField());
 
             rightPanel.revalidate();
             rightPanel.repaint();
         });
+
 
         addNewProductsButton.addActionListener(e -> {
                     rightPanel.removeAll();
@@ -452,14 +457,8 @@ public class TransportManagerFrame extends GenericFrameUser {
                     rightPanel.repaint();
                 });
 
-
-
         leftPanel.revalidate();
         leftPanel.repaint();
-//
-
-
-
         setVisible(true);
     }
     //CallBack-Functions:
@@ -484,7 +483,6 @@ public class TransportManagerFrame extends GenericFrameUser {
         }
         return 0;
     }
-
     public int enterOverWeightAction(int deliveryID) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("There is overweight in delivery " + deliveryID + ".");
@@ -494,8 +492,4 @@ public class TransportManagerFrame extends GenericFrameUser {
         System.out.println("3.unload products");
         return scanner.nextInt();//overweight action
     }
-
-
-
-
 }

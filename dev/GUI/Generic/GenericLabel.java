@@ -17,7 +17,6 @@ public class GenericLabel extends JLabel {
 
     private void customizeLabel() {
         //without background color
-
         setHorizontalAlignment(SwingConstants.CENTER);
         setFont(new Font("Arial", Font.BOLD, 16));
         setPreferredSize(new Dimension(150, 30));
