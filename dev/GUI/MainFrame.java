@@ -2,17 +2,8 @@ package GUI;
 
 import DataLayer.HR_T_DAL.DB_init.Data_init;
 import DataLayer.HR_T_DAL.DB_init.Data_init_HR;
-import PresentationLayer.DriverPresentation;
-import PresentationLayer.EmployeePresentation;
-import PresentationLayer.HRManagerPresentation;
-import PresentationLayer.TransportManagerPresentation;
-import ServiceLayer.HR.EmployeeService;
-import ServiceLayer.HR.ShiftService;
-import ServiceLayer.Transport.BranchService;
-import ServiceLayer.Transport.DeliveryService;
-import ServiceLayer.Transport.LogisticCenterService;
-import ServiceLayer.Transport.SupplierService;
-import ServiceLayer.UserService;
+import GUI.Generic.GenericButton;
+import GUI.Generic.GenericFrame;
 import UtilSuper.ServiceFactory;
 
 import java.awt.*;
@@ -23,22 +14,11 @@ public class MainFrame extends GenericFrame {
     private GenericButton lastSaveButton;
     private GenericButton exitButton;
 
-    private ServiceFactory serviceFactory;
-    private ShiftService shiftService;
-    private EmployeeService employeeService;
-    private LogisticCenterService logisticCenterService;
-    private DeliveryService deliveryService;
-    private UserService userService;
-    private BranchService branchService;
-    private SupplierService supplierService;
-    private TransportManagerPresentation transportManagerPresentation;
-    private HRManagerPresentation hrManagerPresentation;
-    private EmployeePresentation employeePresentation;
-    private DriverPresentation driverPresentation;
 
-    public MainFrame() {
+
+    public MainFrame(ServiceFactory serviceFactory) {
         // Customize properties if needed
-        super();
+        super( serviceFactory);
         setTitle("Main");
 
         // Create the buttons
@@ -66,36 +46,45 @@ public class MainFrame extends GenericFrame {
             System.out.println("Button start clicked");
             try {
                 Data_init.initBasicData(this.serviceFactory.getDAO());
-                Data_init_HR.initBasicData(this.serviceFactory.getDAO(),this.shiftService);
-                this.setVisible(false);
-                LoginFrame loginFrame = new LoginFrame(this.deliveryService, this.userService);
-
-
+                Data_init_HR.initBasicData(this.serviceFactory.getDAO(),serviceFactory.getShiftService());
+                LoginFrame loginFrame = new LoginFrame(serviceFactory);
+                dispose();
             }
             catch (Exception exception){
                 setErrorText(exception.getMessage());
             }
         });
 
-        try {
-            this.serviceFactory = new ServiceFactory();
-        }
-        catch (Exception exception){
-            System.out.println(exception.toString());
-        }
-        this.shiftService = serviceFactory.getShiftService();
-        this.employeeService = serviceFactory.getEmployeeService();
-        this.logisticCenterService = serviceFactory.getLogisticCenterService();
-        this.deliveryService = serviceFactory.getDeliveryService();
-        this.userService = serviceFactory.getUserService();
-        this.branchService = serviceFactory.getBranchService();
-        this.supplierService = serviceFactory.getSupplierService();
-        transportManagerPresentation = new TransportManagerPresentation(logisticCenterService,deliveryService,supplierService,branchService);
-        hrManagerPresentation = new HRManagerPresentation(shiftService,employeeService,branchService);
-        employeePresentation = new EmployeePresentation(employeeService,branchService);
-        driverPresentation = new DriverPresentation(employeeService);
-        serviceFactory.callbackEnterWeight(this.transportManagerPresentation::enterWeightFunction);
-        serviceFactory.callbackEnterOverWeight(this.transportManagerPresentation::enterOverWeightAction);
+        loadOldDataButton.addActionListener(e -> {
+            // Perform actions when the button is clicked
+            System.out.println("Button load old data clicked");
+            try {
+                Data_init.initOldData(this.serviceFactory.getDAO(),serviceFactory.getSupplierService(),serviceFactory.getDeliveryService());
+                Data_init_HR.initOldData(this.serviceFactory.getDAO(), serviceFactory.getEmployeeService(), serviceFactory.getShiftService(), serviceFactory.getEmployeeController(), serviceFactory.getShiftController(), serviceFactory.getDalShiftService());
+                LoginFrame loginFrame = new LoginFrame(serviceFactory);
+                dispose();
+            }
+            catch (Exception exception){
+                setErrorText(exception.getMessage());
+            }
+        });
+
+        lastSaveButton.addActionListener(e -> {
+            // Perform actions when the button is clicked
+            System.out.println("Button continue from last save clicked");
+            try {
+                LoginFrame loginFrame = new LoginFrame(serviceFactory);
+                dispose();
+            }
+            catch (Exception exception){
+                setErrorText(exception.getMessage());
+            }
+        });
+
+
+
+
+
         setVisible(true);
     }
 }

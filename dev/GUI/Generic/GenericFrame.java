@@ -1,4 +1,8 @@
-package GUI;
+package GUI.Generic;
+
+import UtilSuper.Response;
+import UtilSuper.ResponseSerializer;
+import UtilSuper.ServiceFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,9 +16,10 @@ public abstract class GenericFrame extends JFrame {
     protected GridBagLayout gbl;
     protected GridLayout gridLayout;
     protected JPanel mainPanel;
+    protected ServiceFactory serviceFactory;
 
-    public GenericFrame() {
-
+    public GenericFrame(ServiceFactory serviceFactory) {
+        this.serviceFactory = serviceFactory;
         // Create the error label
         errorLabel = new JLabel();
         //set the font size
@@ -66,9 +71,13 @@ public abstract class GenericFrame extends JFrame {
 
     }
 
-    private void updateDateTime() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String dateTime = LocalDateTime.now().format(formatter);
-        dateTimeLabel.setText("Date/Time: " + dateTime);
+    protected void updateDateTime() {
+        Response response = ResponseSerializer.deserializeFromJson(serviceFactory.getDeliveryService().getCurrDate());
+        if (response.isError()) {
+            setErrorText("cant show current day");
+        } else {
+            dateTimeLabel.setText(""+response.getReturnValue());
+        }
+
     }
 }

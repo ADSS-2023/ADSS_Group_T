@@ -1,22 +1,21 @@
 package GUI;
 
-import BusinessLayer.Transport.Delivery;
-import ServiceLayer.Transport.DeliveryService;
-import ServiceLayer.UserService;
+import GUI.Generic.GenericButton;
+import GUI.Generic.GenericFrame;
+import GUI.Generic.GenericLabel;
+import GUI.Generic.GenericTextField;
 import UtilSuper.ServiceFactory;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class LoginFrame extends GenericFrame {
-    private DeliveryService deliveryService;
-    private UserService userService;
 
-    public LoginFrame(DeliveryService deliveryService, UserService userService) {
-        super();
+
+    public LoginFrame(ServiceFactory serviceFactory) {
+        super( serviceFactory);
         setTitle("Login");
-        this.deliveryService = deliveryService;
-        this.userService = userService;
+
 
         GenericLabel usernameLabel = new GenericLabel("Username:");
         GenericLabel passwordLabel = new GenericLabel("Password:");
@@ -58,17 +57,22 @@ public class LoginFrame extends GenericFrame {
             System.out.println("Button start clicked");
             int username = Integer.parseInt(usernameField.getText());
             String password = passwordField.getText();
-            String result = userService.login(username, password);
+            String result = serviceFactory.getUserService().login(username, password);
             if(result.equals("employee")) {
+                setErrorText("employee");
                 //TODO: add employee presentation
             }
             else if(result.equals("driver")) {
+                setErrorText("driver");
                 //TODO: add driver presentation
             }
-            else if(result.equals("transport manager")) {
-                //TODO: add transport manager presentation
+            else if(result.equals("TransportManager")) {
+                setErrorText("transport manager");
+                TransportManagerFrame transportManagerFrame = new TransportManagerFrame(serviceFactory);
+                dispose();
             }
-            else if(result.equals("hr manager")) {
+            else if(result.equals("HRManager")) {
+                setErrorText("HRManager");
                 //TODO: add hr manager presentation
             }
             else
