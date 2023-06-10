@@ -65,7 +65,7 @@ public class LoginFrame extends GenericFrame {
             }
             else if(result.equals("HRManager")) {
                 setErrorText("HRManager");
-                //TODO: add hr manager presentation (Israel&Tarshish)
+                HRManagerFrame hrManagerFrame = new HRManagerFrame(serviceFactory);
             }
             else
                 setErrorText("invalid username or password");
