@@ -66,6 +66,7 @@ public class LoginFrame extends GenericFrame {
             else if(result.equals("HRManager")) {
                 setErrorText("HRManager");
                 HRManagerFrame hrManagerFrame = new HRManagerFrame(serviceFactory);
+                dispose();
             }
             else
                 setErrorText("invalid username or password");

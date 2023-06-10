@@ -6,20 +6,32 @@ import GUI.Generic.GenericLabel;
 import GUI.Generic.GenericTextField;
 import ServiceLayer.HR.EmployeeService;
 import ServiceLayer.HR.ShiftService;
+import ServiceLayer.Transport.BranchService;
+import ServiceLayer.Transport.LogisticCenterService;
+import UtilSuper.ResponseSerializer;
 import UtilSuper.ServiceFactory;
+import UtilSuper.Response;
+import UtilSuper.ResponseSerializer;
 
 import javax.swing.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class HRManagerFrame  extends GenericFrameUser {
 
     private final ShiftService shiftService ;
     private final EmployeeService employeeService;
+    private final BranchService branchService;
+    private final LogisticCenterService logisticCenterService;
 
     public HRManagerFrame(ServiceFactory serviceFactory) {
         super(serviceFactory);
         setTitle("HR Manager");
         this.employeeService = serviceFactory.getEmployeeService();
         this.shiftService = serviceFactory.getShiftService();
+        this.logisticCenterService = serviceFactory.getLogisticCenterService();
+        this.branchService = serviceFactory.getBranchService();
 
         GenericButton addnewEmployeeButton = new GenericButton("add new employee");
         leftPanel.add((addnewEmployeeButton));
@@ -202,6 +214,39 @@ public class HRManagerFrame  extends GenericFrameUser {
         });
 
         assignEmployeeButton.addActionListener(e->{
+            System.out.println("Button add new employee clicked");
+            rightPanel.removeAll();
+            GenericTextField branchField = new GenericTextField();
+            GenericTextField dateField = new GenericTextField();
+            GenericTextField shiftTypeField = new GenericTextField();
+            JComboBox<String> destinationComboBox = new JComboBox<>();
+
+            Response response = ResponseSerializer.deserializeFromJson(logisticCenterService.getAddress());
+            //list of addresses
+            List<String> addresses = new ArrayList<>();
+            if (response.isError()) {
+                setErrorText(response.getErrorMessage());
+            } else {
+                addresses.add((String) response.getReturnValue());
+                response = ResponseSerializer.deserializeFromJson(branchService.getAllBranches());
+                if (response.isError()) {
+                    setErrorText(response.getErrorMessage());
+                } else {
+                    //response.getReturnValue() is string of all branches each branch separated by \n
+                    //add all branches to addresses
+                    String[] branches = ((String) response.getReturnValue()).split("\n");
+                    addresses.addAll(Arrays.asList(branches));
+                    //add to right panel a combobox with all addresses
+                    destinationComboBox = new JComboBox<>(addresses.toArray(new String[0]));
+                }
+            }
+
+            GenericButton doneButton = new GenericButton("Done");
+
+            doneButton.addActionListener(e1 ->{
+
+            });
+            rightPanel.add(new GenericLabel(""));
 
         });
     }
