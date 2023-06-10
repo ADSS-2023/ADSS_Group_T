@@ -169,13 +169,13 @@ public class TransportManagerFrame extends GenericFrameUser {
                                 setErrorText("This product already exists");
                             } else {
                                 suppliersAndProducts.get(supplierName).put(productName, amount);
-                                setErrorText("Product added successfully");
+                                setFeedbackText("Product added successfully");
                             }
                         } else {
                             LinkedHashMap<String, Integer> products = new LinkedHashMap<>();
                             products.put(productName, amount);
                             suppliersAndProducts.put(supplierName, products);
-                            setErrorText("Product added successfully");
+                            setFeedbackText("Product added successfully");
                         }
                     }
                 }
@@ -197,7 +197,7 @@ public class TransportManagerFrame extends GenericFrameUser {
                         if (response1.isError()) {
                             setErrorText(response1.getErrorMessage());
                         } else {
-                            setErrorText("Delivery ordered successfully");
+                            setFeedbackText("Delivery ordered successfully");
                         }
                     }
                 }
@@ -442,7 +442,7 @@ public class TransportManagerFrame extends GenericFrameUser {
                             if (response2.isError()) {
                                 setErrorText(response2.getErrorMessage());
                             } else {
-                                setErrorText("Product added successfully");
+                                setFeedbackText("Product added successfully");
                             }
                         }
                     });

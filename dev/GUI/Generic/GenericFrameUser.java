@@ -4,9 +4,11 @@ import GUI.LoginFrame;
 import UtilSuper.ServiceFactory;
 import javax.swing.*;
 import java.awt.*;
+
 public class GenericFrameUser extends GenericFrame {
     protected JPanel leftPanel;
     protected JPanel rightPanel;
+    private JLabel feedbackLabel;
 
     public GenericFrameUser(ServiceFactory serviceFactory) {
         super(serviceFactory);
@@ -15,6 +17,15 @@ public class GenericFrameUser extends GenericFrame {
         bottomPanel.setPreferredSize(new Dimension(1200, 50));
         GenericButton logoutButton = new GenericButton("Logout");
         bottomPanel.add(logoutButton, BorderLayout.EAST);
+        feedbackLabel = new JLabel();
+        //set the font size
+        feedbackLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        //set the color of the error label text to white
+        feedbackLabel.setForeground(Color.white);
+        setFeedbackText("");
+        bottomPanel.add(feedbackLabel, BorderLayout.WEST);
+
+
         add(bottomPanel, BorderLayout.SOUTH);
         this.mainPanel.setLayout(new GridBagLayout()); // Use GridBagLayout instead of GridLayout
         GridBagConstraints constraints = new GridBagConstraints();
@@ -36,10 +47,19 @@ public class GenericFrameUser extends GenericFrame {
         constraints.weightx = 0.75;
         constraints.gridx = 1;
         mainPanel.add(rightPanel, constraints);
+
         logoutButton.addActionListener(e -> {
             System.out.println("Button logout clicked");
             LoginFrame loginFrame = new LoginFrame(serviceFactory);
             dispose();
         });
+
     }
+    public void setFeedbackText(String feedbackText) {
+        //the first word of the error message is always "Error: " in white color
+        //the rest of the error message is in red color
+        feedbackLabel.setText("<html><font color='white'>feedback: </font><font color='green'>" + feedbackText + "</font></html>");
+    }
+
+
 }
