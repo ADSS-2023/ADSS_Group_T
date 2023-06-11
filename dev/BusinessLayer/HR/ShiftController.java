@@ -184,8 +184,8 @@ public class ShiftController {
                 ArrayList<Shift> shiftList = branchShifts.get(shiftDate);
                 Shift shift = shiftList.get(shiftType ? 0 : 1);
                 if (shiftType) shiftT = "m";
-                for (String positionT : requirements.keySet()) {
-                    dalShiftService.addRequierement(branch, Time.localDateToString(shiftDate), shiftT, positionT, requirements.get(positionT));
+                for (String position : requirements.keySet()) {
+                    dalShiftService.addRequierement(branch, Time.localDateToString(shiftDate), shiftT, position, requirements.get(position));
                 }
                 shift.addEmployeeRequirements(requirements);
             } else {

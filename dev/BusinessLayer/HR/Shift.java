@@ -115,7 +115,6 @@ public class Shift {
     public String showShiftStatus(DalShiftService dalShiftService) throws SQLException {
         lazyLoadFindRequiermentsBtDateAndShiftType();
         lazyLoadFindAllsubmittedPositionByEmployees();
-        boolean hasManager = shiftManagerId != -1;
         String st = "Shift state:\n\n";
         st += String.format("| %-15s | %-8s | %-8s | %-25s | %-25s |\n", "Position", "Assigned", "Required", "Submissions Not Assigned", "Employee IDs Not Assigned");
         st += "|-----------------|----------|----------|---------------------------|---------------------------|\n";
@@ -168,7 +167,7 @@ public class Shift {
                 missing.append(required).append(" employees are missing in the position of ").append(position).append("\n");
             }
         }
-        if (!hasManager) {
+        if (this.shiftManagerId == -1) {
             isLegalShift = false;
             missing.append("Noticed!! no such shift manager assign- the shift must have a manager!\n");
         }
@@ -251,7 +250,8 @@ public class Shift {
                 employees.put(employee, true);
 
                 //check if he qualified to be ShiftManager and ther noy yet a shift manger assign
-                if (shiftManagerId == -1 && employee.isLeagalPosition(PositionType.shiftManager.name())){
+                if (shiftManagerId == -1 && employee.getQualifiedPositions().contains(PositionType.shiftManager.name())){
+                    dalShiftService.updateShift(date, shiftType, employee.getId(), this.branch);
                     shiftManagerId = employee.getId();
                 }
 
@@ -291,16 +291,14 @@ public class Shift {
             }
             // Assign remaining employees to shifts
             if (requirement > 0 && unassignedEmployees.size() > 0) {
-                for (int i = 0; i < requirement && i < unassignedEmployees.size(); i++) {
+                for (int i = 0; requirement>0 && i < unassignedEmployees.size(); i++) {
                     Employee employee = unassignedEmployees.get(i);
                     try {
                         assignEmployeeForShift(positionType, employee);
+                        requirement--;
                         //employee.assignShift(this.branch, this.date, this.shiftType, PositionType.valueOf(positionType));
                         //employeeMap.put(employee, true);
                         assignedCount++;
-                        if (positionType.equals("shiftManager") && shiftManagerId == -1) {
-                            shiftManagerId = employee.getId();
-                        }
                     } catch (Exception exception) {
                         int k = 1;
                     }
