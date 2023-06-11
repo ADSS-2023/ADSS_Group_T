@@ -6,6 +6,8 @@ import GUI.Generic.GenericLabel;
 import GUI.Generic.GenericTextField;
 import ServiceLayer.HR.EmployeeService;
 import ServiceLayer.HR.ShiftService;
+import UtilSuper.Response;
+import UtilSuper.ResponseSerializer;
 import UtilSuper.ServiceFactory;
 
 import javax.swing.*;
@@ -76,7 +78,13 @@ public class HRManagerFrame  extends GenericFrameUser {
                     setErrorText("id and salary must be a number over 0 !!! ");
                 }
                 else {
-                    employeeService.addNewEmployee(id,name,bank,description,salary, joining ,password);
+                    Response response1 = ResponseSerializer.deserializeFromJson(employeeService.addNewEmployee(id,name,bank,description,salary, joining ,password));
+                    if (response1.isError()) {
+                        setErrorText(response1.getErrorMessage());
+                    } else {
+                        setFeedbackText("Delivery ordered successfully");
+                    }
+
                 }
             });
             rightPanel.add(new GenericLabel(""));
@@ -175,7 +183,12 @@ public class HRManagerFrame  extends GenericFrameUser {
                     setErrorText("id and salary must be a number over 0 !!! ");
                 }
                 else {
-                    employeeService.addNewDriver(id,name,bank,description,salary,joining,password,licenseType,coolingLevel);
+                    Response response1 = ResponseSerializer.deserializeFromJson( employeeService.addNewDriver(id,name,bank,description,salary,joining,password,licenseType,coolingLevel));
+                    if (response1.isError()) {
+                        setErrorText(response1.getErrorMessage());
+                    } else {
+                        setFeedbackText("Delivery ordered successfully");
+                    }
                 }
             });
             rightPanel.add(new GenericLabel("Please enter the employee ID:"));

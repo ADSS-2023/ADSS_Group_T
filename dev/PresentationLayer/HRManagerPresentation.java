@@ -66,12 +66,12 @@ public class HRManagerPresentation {
         String date = scanner.nextLine();
         System.out.println("Please enter the driver ID:");
         int id = scanner.nextInt();
-        Response response = employeeService.assignDriverForShift(Time.stringToLocalDate(date), id);
-        if (response.isError()) {
-            System.out.println(response.getErrorMessage());
-        } else {
-            System.out.println(response.getReturnValue());
-        }
+//        Response response = employeeService.assignDriverForShift(Time.stringToLocalDate(date), id);
+//        if (response.isError()) {
+//            System.out.println(response.getErrorMessage());
+//        } else {
+//            System.out.println(response.getReturnValue());
+//        }
     }
 
     private void notification() {
@@ -206,12 +206,12 @@ public class HRManagerPresentation {
         System.out.println("Please enter the employee new Qualification from those options:" +
                 "\n" + "cashier, storekeeper, security, cleaning, orderly, general_worker, shiftManager");
         String quali = scanner.nextLine();
-        Response response = employeeService.addQualification(employeeId, quali);
-        if (response.isError()) {
-            System.out.println(response.getErrorMessage());
-        } else {
-            System.out.println(response.getReturnValue());
-        }
+//        Response response = employeeService.addQualification(employeeId, quali);
+//        if (response.isError()) {
+//            System.out.println(response.getErrorMessage());
+//        } else {
+//            System.out.println(response.getReturnValue());
+//        }
     }
 
     private void addNewEmployee() {
@@ -232,12 +232,12 @@ public class HRManagerPresentation {
         String password = scanner.nextLine();
         System.out.println("Please enter the employee salary:");
         int salary = scanner.nextInt();
-        Response response = employeeService.addNewEmployee(employeeId, employeeName, employeebank, description, salary, joiningDay, password);
-        if (response.isError()) {
-            System.out.println(response.getErrorMessage());
-        } else {
-            System.out.println(response.getReturnValue());
-        }
+//        Response response = employeeService.addNewEmployee(employeeId, employeeName, employeebank, description, salary, joiningDay, password);
+//        if (response.isError()) {
+//            System.out.println(response.getErrorMessage());
+//        } else {
+//            System.out.println(response.getReturnValue());
+//        }
     }
 
     // option 3
@@ -268,12 +268,12 @@ public class HRManagerPresentation {
         scanner.nextLine();
         System.out.println("Please enter the driver license type : C1 , C , E " );
         String licenseType = scanner.nextLine();
-        Response response = employeeService.addNewDriver(id,Name,bank,description,salary,joiningDay,password,licenseType,coolinglevel);
-        if (response.isError()) {
-            System.out.println(response.getErrorMessage());
-        } else {
-            System.out.println(response.getReturnValue());
-        }
+//        Response response = employeeService.addNewDriver(id,Name,bank,description,salary,joiningDay,password,licenseType,coolinglevel);
+//        if (response.isError()) {
+//            System.out.println(response.getErrorMessage());
+//        } else {
+//            System.out.println(response.getReturnValue());
+//        }
     }
 
 }
