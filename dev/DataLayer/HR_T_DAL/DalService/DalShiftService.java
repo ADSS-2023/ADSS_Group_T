@@ -199,6 +199,20 @@ public class DalShiftService {
 
     }
 
+    public void updateShift(LocalDate localDate, boolean shiftType, int managerId, String branch) throws SQLException {
+        String sht = shiftType ? "m" : "e";
+        LinkedHashMap<String, Object> pk = new LinkedHashMap<>();
+        pk.put("shiftDate", localDate.toString());
+        pk.put("shiftType", sht);
+        pk.put("branch", branch);;
+        ShiftDTO shiftDTO = shiftDAO.find(pk, "Shift", ShiftDTO.class);
+        if (shiftDTO != null){
+            ShiftDTO newShiftDTO = new ShiftDTO(shiftDTO.getShiftDate(), shiftDTO.getShiftType(), managerId, shiftDTO.getBranch());
+            shiftDAO.update(shiftDTO, newShiftDTO);
+        }
+
+    }
+
 
     public LinkedHashMap<LocalDate, ArrayList<Shift>> findAllShiftsByBranch(String branch) throws SQLException {
         // Initialize the LinkedHashMap that will hold the shifts by date

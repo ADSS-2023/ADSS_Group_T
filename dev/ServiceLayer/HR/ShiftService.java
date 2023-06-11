@@ -17,88 +17,76 @@ public class ShiftService {
         this.shiftController = shiftController;
     }
 
-    public String addShiftRequirements(String branch, LinkedHashMap<String, Integer> howMany , String date , String shiftType){
-        Response res = new Response();
-        try
-        {
-            boolean bool = true;
-            if (shiftType.equals("e"))
-                bool = false;
-           shiftController.addRequirements(branch, Time.stringToLocalDate(date), bool,  howMany);
+    public Response addShiftRequirements(String branch, LinkedHashMap<String, Integer> howMany, String date, String shiftType) {
+        Response response = new Response();
+        try {
+            boolean bool = !shiftType.equals("e");
+            shiftController.addRequirements(branch, Time.stringToLocalDate(date), bool, howMany);
+            response.setReturnValue("succeed");
+        } catch (Exception ex) {
+            response.setErrorMessage(ex.getMessage());
         }
-        catch (Exception ex){
-            return ex.getMessage();
-        }
-        return "succeed";
+        return response;
     }
 
-    public String getNotification (){
-        Response res = new Response();
-        String st = "";
-        try
-        {
-           HashMap<LocalDate,String> noti = shiftController.getNotifications(LocalDate.now(), LocalDate.now().plusDays(1));
+    public Response getNotification() {
+        Response response = new Response();
+        try {
+            HashMap<LocalDate, String> noti = shiftController.getNotifications(LocalDate.now(), LocalDate.now().plusDays(1));
+            StringBuilder st = new StringBuilder();
             for (LocalDate date : noti.keySet()) {
-                st += noti.get(date).toString();
+                st.append(noti.get(date)).append("\n");
             }
+            response.setReturnValue(st.toString());
+        } catch (Exception ex) {
+            response.setErrorMessage(ex.getMessage());
         }
-        catch (Exception ex){
-            return ex.getMessage();
-        }
-        return st;
+        return response;
     }
 
-    public String ShowShiftStatus(String branch, String date , String shiftType){
-        Response res = new Response();
-        try
-        {
-            boolean bool = true;
-            if (shiftType.equals("e"))
-                bool = false;
-            return shiftController.showShiftStatus(branch, Time.stringToLocalDate(date), bool);
+    public Response ShowShiftStatus(String branch, String date, String shiftType) {
+        Response response = new Response();
+        try {
+            boolean bool = !shiftType.equals("e");
+            response.setReturnValue(shiftController.showShiftStatus(branch, Time.stringToLocalDate(date), bool));
+        } catch (Exception ex) {
+            response.setErrorMessage(ex.getMessage());
         }
-        catch (Exception ex){
-        }
-        return null;
+        return response;
     }
 
-    public String assignEmployeeForShift(String branch,  int ans_id, String ans_date, String ans_type, String position){
-        Response res = new Response();
-        try
-        {
-            boolean bool = true;
-            if (ans_type.equals("e"))
-                bool = false;
-            return shiftController.assignEmployeeForShift(branch, ans_id, Time.stringToLocalDate(ans_date), bool, position  );
+
+    public Response assignEmployeeForShift(String branch, int ans_id, String ans_date, String ans_type, String position) {
+        Response response = new Response();
+        try {
+            boolean bool = !ans_type.equals("e");
+            response.setReturnValue(shiftController.assignEmployeeForShift(branch, ans_id, Time.stringToLocalDate(ans_date), bool, position));
+        } catch (Exception ex) {
+            response.setErrorMessage(ex.getMessage());
         }
-        catch (Exception ex){
-        }
-        return null;
+        return response;
     }
 
-    public String assignAll(String branch,  String ans_date, String ans_type){
-        Response res = new Response();
-        try
-        {
-            boolean bool = true;
-            if (ans_type.equals("e"))
-                bool = false;
-            return shiftController.assignAll(branch, Time.stringToLocalDate(ans_date) , bool);
+    public Response assignAll(String branch, String ans_date, String ans_type) {
+        Response response = new Response();
+        try {
+            boolean bool = !ans_type.equals("e");
+            response.setReturnValue(shiftController.assignAll(branch, Time.stringToLocalDate(ans_date), bool));
+        } catch (Exception ex) {
+            response.setErrorMessage(ex.getMessage());
         }
-        catch (Exception ex){
-        }
-        return null;
+        return response;
     }
 
-    public String addDriverReq(String date , String licenseType ,String cooling  ){
-        Response res = new Response();
-        try
-        {
-         shiftController.addDriverRequirement(Time.stringToLocalDate(date),getByString(licenseType),getcoolingByString(cooling));
+    public Response addDriverReq(String date, String licenseType, String cooling) {
+        Response response = new Response();
+        try {
+            shiftController.addDriverRequirement(Time.stringToLocalDate(date), getByString(licenseType), getcoolingByString(cooling));
+            response.setReturnValue("succeed");
+        } catch (Exception ex) {
+            response.setErrorMessage(ex.getMessage());
         }
-        catch (Exception ex){
-        }
-        return null;
+        return response;
     }
     public static Driver.LicenseType getByString (String licenseType ) {
         if (licenseType.equals("C1"))
@@ -123,18 +111,7 @@ public class ShiftService {
     }
 
 
-//    public String submitShift(String branch, int id, String date, String type) {
-//        Response res = new Response();
-//        try {
-//            boolean boolType = true;
-//            if (type.equals("e"))
-//                boolType = false;
-//            boolean boolTemp = true;
-//            shiftController.submitShift(id,date,boolType,boolTemp);
-//        } catch (Exception ex) {
-//        }
-//        return null;
-//    }
+
 
 
 }

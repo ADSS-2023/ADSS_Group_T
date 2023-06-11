@@ -109,7 +109,13 @@ public class Data_init_HR {
         employeeService.addNewEmployee(17, "JoeWilson", "789654123", "People person", 26000, "2023-05-14", "17");
         employeeService.addNewEmployee(18, "SaraJones", "456321789", "Logistics pro", 31000, "2023-05-14", "18");
         employeeService.addNewEmployee(19, "MarkTaylor", "789456123", "Hard worker", 17000, "2023-05-14", "19");
-        employeeService.addNewEmployee(20, "EmilyDavis", "123789456", "Route optimization expert", 22000, "2023-05-14", "20");
+        employeeService.addNewEmployee(20, "EmilyDavis6", "1237894562", "Route optimization expert", 22000, "2023-05-14", "20");
+        employeeService.addNewEmployee(21, "EmilyDavis1", "1237894563", "Route optimization expert", 22000, "2023-05-14", "21");
+        employeeService.addNewEmployee(22, "EmilyDavis2", "1237894561", "Route optimization expert", 22000, "2023-05-14", "22");
+        employeeService.addNewEmployee(23, "EmilyDavis3", "1237894562", "Route optimization expert", 22000, "2023-05-14", "23");
+        employeeService.addNewEmployee(24, "EmilyDavis4", "1237894563", "Route optimization expert", 22000, "2023-05-14", "24");
+        employeeService.addNewEmployee(25, "EmilyDavis5", "1237894561", "Route optimization expert", 22000, "2023-05-14", "25");
+
 
 
         //cashier, storekeeper, security, cleaning, orderly, general_worker, shiftManager;
@@ -131,28 +137,43 @@ public class Data_init_HR {
         employeeService.addQualification(19 , "cashier");
         employeeService.addQualification(19 , "storekeeper");
         employeeService.addQualification(20 , "orderly");
-        employeeService.addQualification(20 , "cashier");
+        employeeService.addQualification(21 , "general_worker");
+        employeeService.addQualification(22 , "orderly");
+        employeeService.addQualification(22 , "storekeeper");
+        employeeService.addQualification(23 , "general_worker");
+        employeeService.addQualification(24 , "security");
+        employeeService.addQualification(25 , "storekeeper");
+        //employeeService.addQualification(20 , "general_worker");
+
+
 
 
         // submit shift for employee
         employeeService.submitShiftForEmployee("b1", 13, LocalDate.now().plusDays(1), "m");
+        employeeService.submitShiftForEmployee("b1", 11, LocalDate.now().plusDays(1), "m");
+        employeeService.submitShiftForEmployee("b1", 12, LocalDate.now().plusDays(1), "m");
         employeeService.submitShiftForEmployee("b1", 14, LocalDate.now().plusDays(1), "m");
         employeeService.submitShiftForEmployee("b2", 15, LocalDate.now().plusDays(1), "m");
         employeeService.submitShiftForEmployee("b1", 13, LocalDate.now().plusDays(1), "m");
-        employeeService.submitShiftForEmployee("b1", 14, LocalDate.now().plusDays(1), "e");
+        employeeService.submitShiftForEmployee("b1", 14, LocalDate.now().plusDays(1), "m");
         employeeService.submitShiftForEmployee("b1", 15, LocalDate.now().plusDays(1), "m");
-        employeeService.submitShiftForEmployee("b1", 16, LocalDate.now().plusDays(1), "e");
+        employeeService.submitShiftForEmployee("b1", 16, LocalDate.now().plusDays(1), "m");
         employeeService.submitShiftForEmployee("b1", 17, LocalDate.now().plusDays(1), "m");
-        employeeService.submitShiftForEmployee("b1", 18, LocalDate.now().plusDays(1), "e");
+        employeeService.submitShiftForEmployee("b1", 18, LocalDate.now().plusDays(1), "m");
         employeeService.submitShiftForEmployee("b1", 19, LocalDate.now().plusDays(1), "m");
-        employeeService.submitShiftForEmployee("b1", 20, LocalDate.now().plusDays(1), "e");
+        employeeService.submitShiftForEmployee("b1", 20, LocalDate.now().plusDays(1), "m");
+        employeeService.submitShiftForEmployee("b1", 21, LocalDate.now().plusDays(1), "m");
+        employeeService.submitShiftForEmployee("b1", 22, LocalDate.now().plusDays(1), "m");
+        employeeService.submitShiftForEmployee("b1", 23, LocalDate.now().plusDays(1), "m");
+        employeeService.submitShiftForEmployee("b1", 24, LocalDate.now().plusDays(1), "m");
+        employeeService.submitShiftForEmployee("b1", 25, LocalDate.now().plusDays(1), "m");
         employeeService.submitShiftForEmployee("b2", 16, LocalDate.now().plusDays(3), "e");
         employeeService.submitShiftForEmployee("b3", 17, LocalDate.now().plusDays(4), "m");
         employeeService.submitShiftForEmployee("b3", 18, LocalDate.now().plusDays(4), "e");
         employeeService.submitShiftForEmployee("b4", 19, LocalDate.now().plusDays(5), "m");
         employeeService.submitShiftForEmployee("b4", 20, LocalDate.now().plusDays(5), "e");
 
-        shiftService.assignAll("b1", LocalDate.now().plusDays(1).toString(), "m");
+        //shiftService.assignAll("b1", LocalDate.now().plusDays(1).toString(), "m");
         //shiftService.assignEmployeeForShift("b2", 16, LocalDate.now().plusDays(1).toString(), "m", PositionType.cleaning.name());
 
 
@@ -161,16 +182,16 @@ public class Data_init_HR {
 
         //adding drivers
 
-        employeeService.addNewDriver(21, "Driver 1", "123456789", "Driver with license type C and no cooling", 20000, "2023-05-14", "21", "C1", 3);
-        employeeService.addNewDriver(22, "Driver 2", "987654321", "Driver with license type C1 and fridge cooling", 21000, "2023-05-14", "22", "C1", 2);
-        employeeService.addNewDriver(23, "Driver 3", "456789123", "Driver with license type E and freezer cooling", 22000, "2023-05-14", "23", "E", 3);
-        employeeService.addNewDriver(24, "Driver 4", "789123456", "Driver with license type C and fridge cooling", 23000, "2023-05-14", "24", "C", 2);
-        employeeService.addNewDriver(25, "Driver 5", "321654987", "Driver with license type C1 and no cooling", 24000, "2023-05-14", "25", "C1", 1);
-        employeeService.addNewDriver(26, "Driver 6", "654987321", "Driver with license type E and no cooling", 25000, "2023-05-14", "26", "E", 1);
-        employeeService.addNewDriver(27, "Driver 7", "789654123", "Driver with license type C and freezer cooling", 26000, "2023-05-14", "27", "C", 3);
-        employeeService.addNewDriver(28, "Driver 8", "456321789", "Driver with license type C1 and fridge cooling", 27000, "2023-05-14", "28", "C1", 2);
-        employeeService.addNewDriver(29, "Driver 9", "789456123", "Driver with license type E and fridge cooling", 28000, "2023-05-14", "29", "E", 3);
-        employeeService.addNewDriver(30, "Driver 10", "123789456", "Driver with license type C and no cooling", 29000, "2023-05-14", "30", "C", 1);
+        employeeService.addNewDriver(31, "Driver 1", "123456789", "Driver with license type C and no cooling", 20000, "2023-05-14", "21", "C1", 3);
+        employeeService.addNewDriver(32, "Driver 2", "987654321", "Driver with license type C1 and fridge cooling", 21000, "2023-05-14", "22", "C1", 2);
+        employeeService.addNewDriver(33, "Driver 3", "456789123", "Driver with license type E and freezer cooling", 22000, "2023-05-14", "23", "E", 3);
+        employeeService.addNewDriver(34, "Driver 4", "789123456", "Driver with license type C and fridge cooling", 23000, "2023-05-14", "24", "C", 2);
+        employeeService.addNewDriver(35, "Driver 5", "321654987", "Driver with license type C1 and no cooling", 24000, "2023-05-14", "25", "C1", 1);
+        employeeService.addNewDriver(36, "Driver 6", "654987321", "Driver with license type E and no cooling", 25000, "2023-05-14", "26", "E", 1);
+        employeeService.addNewDriver(37, "Driver 7", "789654123", "Driver with license type C and freezer cooling", 26000, "2023-05-14", "27", "C", 3);
+        employeeService.addNewDriver(38, "Driver 8", "456321789", "Driver with license type C1 and fridge cooling", 27000, "2023-05-14", "28", "C1", 2);
+        employeeService.addNewDriver(39, "Driver 9", "789456123", "Driver with license type E and fridge cooling", 28000, "2023-05-14", "29", "E", 3);
+        employeeService.addNewDriver(40, "Driver 10", "123789456", "Driver with license type C and no cooling", 29000, "2023-05-14", "30", "C", 1);
 
 
         //submit shifts for drivers
