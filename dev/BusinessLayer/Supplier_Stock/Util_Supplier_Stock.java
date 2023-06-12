@@ -7,9 +7,12 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
+
 public class Util_Supplier_Stock {
     private static LocalDate currDay;
     private InventoryDalController inventoryDalController;
+
+
     public Util_Supplier_Stock(InventoryDalController inventoryDalController) throws SQLException {
         this.inventoryDalController = inventoryDalController;
        // currDay = Util.stringToDate(inventoryDalController.find("currDate","name", "inventory_constants",CurrDateDTO.class).getDate());
@@ -36,6 +39,8 @@ public class Util_Supplier_Stock {
        inventoryDalController.insert(setDate);
         currDay=Util.stringToDate("2023-09-17");
     }
+
+
 }
 
 
