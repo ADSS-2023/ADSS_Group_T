@@ -9,7 +9,9 @@ import BusinessLayer.Supplier.SupplierProductBusiness;
 import BusinessLayer.Supplier.Supplier_Util.Discounts;
 import BusinessLayer.Supplier.Supplier_Util.PaymentTerms;
 import BusinessLayer.Supplier_Stock.ItemToOrder;
+import ServiceLayer.Supplier_Stock.Response;
 
+import java.rmi.server.RemoteRef;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.*;
@@ -25,172 +27,170 @@ public class SupplierService {
         this.oc=oc;
     }
 
-    public String loadSuppliers(){
+    public Response loadSuppliers(){
         try {
             sc.loadSuppliers();
+            return Response.okResponse("suppliers successfully loaded");
         }
         catch (Exception e){
-            return e.getMessage();
+            return Response.errorResponse(e.getMessage());
         }
-        return "suppliers successfully loaded ";
     }
-    public String addSupplier(String name, String address, int supplierNum, int bankAccountNum, int daysToDeliver, HashMap<String, String> contacts, List<DayOfWeek> constDeliveryDays, boolean selfDelivery, PaymentTerms paymentTerms){
+
+    public Response addSupplier(String name, String address, int supplierNum, int bankAccountNum, int daysToDeliver, HashMap<String, String> contacts, List<DayOfWeek> constDeliveryDays, boolean selfDelivery, PaymentTerms paymentTerms){
         try{
             sc.addSupplier(name,address,supplierNum,bankAccountNum,contacts,constDeliveryDays, selfDelivery, paymentTerms, daysToDeliver);
-            return "Supplier added successfully";
+            return Response.okResponse("Supplier added successfully");
         }
         catch(Exception e){
-            return e.getMessage();
+            return Response.errorResponse(e.getMessage());
         }
     }
 
-    public String deleteSupplier(int supplierNum){
+    public Response deleteSupplier(int supplierNum){
         try {
             sc.deleteSupplier(supplierNum);
-            return "Supplier deleted successfully";
+            return Response.okResponse("Supplier deleted successfully");
         }
         catch (Exception e){
-            return e.getMessage();
+            return Response.errorResponse(e.getMessage());
         }
     }
 
-    public String deleteAll(){
+    public Response deleteAll(){
         try {
             sc.deleteAll();
-            return "Suppliers data deleted successfully";
+            return Response.okResponse("Suppliers data deleted successfully");
         }
         catch (Exception e){
-            return e.getMessage();
+            return Response.errorResponse(e.getMessage());
         }
     }
 
-    public String editSupplier(String name, String address, int supplierNum, int bankAccountNum, boolean selfDelivery, PaymentTerms paymentTerms){
+    public Response editSupplier(String name, String address, int supplierNum, int bankAccountNum, boolean selfDelivery, PaymentTerms paymentTerms){
         try {
             sc.getSupplier(supplierNum).editSupplier(name, address, bankAccountNum, selfDelivery,paymentTerms);
-            return "Supplier edited successfully";
+            return Response.okResponse("Supplier edited successfully");
         }
         catch (Exception e){
-            return e.getMessage();
+            return Response.errorResponse(e.getMessage());
         }
     }
 
-    public List<String> getProducts(int supplierNum) {
+    public Response getProducts(int supplierNum) {
         List<String> products = new LinkedList<>();
         try {
             ConcurrentHashMap<Integer, SupplierProductBusiness> productMap = sc.getProducts(supplierNum);
             for (Map.Entry<Integer, SupplierProductBusiness> entry : productMap.entrySet())
                 products.add(entry.getValue().toString() + '\n');
+                return Response.okResponse(products);
         }
         catch (Exception e){
-            products = new LinkedList<>();
-            products.add(e.getMessage());
-        }
-        finally {
-            return products;
+            return Response.errorResponse(e.getMessage());
         }
     }
 
 
 
-    public String addProduct(int supplierNum, int productNum, String productName, String manufacturer, int price, int maxAmount, LocalDate expiryDate){
+    public Response addProduct(int supplierNum, int productNum, String productName, String manufacturer, int price, int maxAmount, LocalDate expiryDate){
         try {
             sc.getSupplier(supplierNum).addProduct(productNum, productName, manufacturer, price, maxAmount, expiryDate);
-            return "Product added successfully";
+            return Response.okResponse("Product added successfully");
         }
         catch (Exception e){
-            return e.getMessage();
+            return Response.errorResponse(e.getMessage());
         }
     }
 
-    public String editProduct(int supplierNum, String productName, String manufacturer, int price, int maxAmount, LocalDate expiryDate){
+    public Response editProduct(int supplierNum, String productName, String manufacturer, int price, int maxAmount, LocalDate expiryDate){
         try {
             sc.getSupplier(supplierNum).editProduct(productName, manufacturer, price, maxAmount, expiryDate);
             if(sc.getSupplier(supplierNum) instanceof ConstantSupplier){
                 SupplierProductBusiness sProduct = sc.getSupplier(supplierNum).getProduct(productName, manufacturer);
                 oc.editRegularItem(sProduct.getName(), sProduct.getManufacturer(), supplierNum, ((ConstantSupplier) sc.getSupplier(supplierNum)).getConstDeliveryDays());
             }
-            return "Product edited successfully";
+            return Response.okResponse("Product edited successfully");
         }
         catch (Exception e){
-            return e.getMessage();
+            return Response.errorResponse(e.getMessage());
         }
     }
 
-    public String deleteProduct(int supplierNum, int productNum){
+    public Response deleteProduct(int supplierNum, int productNum){
         try {
             if(sc.getSupplier(supplierNum) instanceof ConstantSupplier){
                 SupplierProductBusiness sProduct = sc.getSupplier(supplierNum).getProduct(productNum);
                 oc.removeRegularItem(sProduct.getName(), sProduct.getManufacturer(), supplierNum, ((ConstantSupplier) sc.getSupplier(supplierNum)).getConstDeliveryDays());
             }
             sc.getSupplier(supplierNum).deleteProduct(productNum);
-            return "Product deleted successfully";
+            return Response.okResponse("Product deleted successfully");
         }
         catch (Exception e){
-            return e.getMessage();
+            return Response.errorResponse(e.getMessage());
         }
     }
 
-    public String editSupplierDiscount(int supplierNum, Discounts discountEnum, int amount, int discountToChange,boolean isPercentage){
+    public Response editSupplierDiscount(int supplierNum, Discounts discountEnum, int amount, int discountToChange,boolean isPercentage){
         try {
             sc.getSupplier(supplierNum).editSupplierDiscount(discountEnum, amount, discountToChange,isPercentage);
-            return "Supplier discount edited successfully";
+            return Response.okResponse("Supplier discount edited successfully");
         }
         catch (Exception e){
-            return e.getMessage();
+            return Response.errorResponse(e.getMessage());
         }
     }
 
-    public String addSupplierDiscount(int supplierNum, Discounts discountEnum, int amount, int discount,boolean isPercentage){
+    public Response addSupplierDiscount(int supplierNum, Discounts discountEnum, int amount, int discount,boolean isPercentage){
         try {
             sc.getSupplier(supplierNum).addSupplierDiscount(discountEnum, amount, discount,isPercentage);
-            return "Supplier discount added successfully";
+            return Response.okResponse("Supplier discount added successfully");
         }
         catch (Exception e){
-            return e.getMessage();
+            return Response.errorResponse(e.getMessage());
         }
     }
 
-    public String deleteSupplierDiscount(int supplierNum, Discounts discountEnum, int amount,boolean isPercentage){
+    public Response deleteSupplierDiscount(int supplierNum, Discounts discountEnum, int amount,boolean isPercentage){
         try {
             sc.getSupplier(supplierNum).deleteSupplierDiscount(discountEnum, amount,isPercentage);
-            return "Supplier discount deleted successfully";
+            return Response.okResponse("Supplier discount deleted successfully");
         }
         catch (Exception e){
-            return e.getMessage();
+            return Response.errorResponse(e.getMessage());
         }
     }
 
-    public String editProductDiscount(int supplierNum, int productNum, int productAmount, int discount, boolean isPercentage){
+    public Response editProductDiscount(int supplierNum, int productNum, int productAmount, int discount, boolean isPercentage){
         try {
             sc.getSupplier(supplierNum).editProductDiscount(productNum, productAmount, discount, isPercentage);
-            return "Product discount edited successfully";
+            return Response.okResponse("Product discount edited successfully");
         }
         catch (Exception e){
-            return e.getMessage();
+            return Response.errorResponse(e.getMessage());
         }
     }
 
-    public String addProductDiscount(int supplierNum, int productNum, int productAmount, int discount,boolean isPercentage){
+    public Response addProductDiscount(int supplierNum, int productNum, int productAmount, int discount,boolean isPercentage){
         try {
             sc.getSupplier(supplierNum).addProductDiscount(productNum, productAmount, discount,isPercentage);
-            return "Product discount added successfully";
+            return Response.okResponse("Product discount added successfully");
         }
         catch (Exception e){
-            return e.getMessage();
+            return Response.errorResponse(e.getMessage());
         }
     }
 
-    public String deleteProductDiscount(int supplierNum, int productNum, int productAmount, int discount,boolean isPercentage){
+    public Response deleteProductDiscount(int supplierNum, int productNum, int productAmount, int discount,boolean isPercentage){
         try {
             sc.getSupplier(supplierNum).deleteProductDiscount(productNum, productAmount, discount,isPercentage);
-            return "Product discount deleted successfully";
+            return Response.okResponse("Product discount deleted successfully");
         }
         catch (Exception e){
-            return e.getMessage();
+            return Response.errorResponse(e.getMessage());
         }
     }
 
-    public List<String> getSuppliers(){
+    public Response getSuppliers(){
        List<String> suppliersStrings = new LinkedList<>();
         try {
             ConcurrentHashMap<Integer, SupplierBusiness> suppliers = sc.getSuppliers();
@@ -199,16 +199,14 @@ public class SupplierService {
             }
         }
         catch (Exception e){
-            List<String> err = new LinkedList<>();
-            err.add(e.getMessage());
-            return err;
+            return Response.errorResponse(e.getMessage());
         }
         finally {
-            return suppliersStrings;
+            return Response.okResponse(suppliersStrings);
         }
     }
 
-    public List<String> getSupplierDiscounts(int supplierNum) {
+    public Response getSupplierDiscounts(int supplierNum) {
         List<String> discounts = new LinkedList<>();
         try {
             discounts.add("------Total Price Discounts------\n");
@@ -226,11 +224,10 @@ public class SupplierService {
             }
         }
         catch (Exception e){
-            discounts = new LinkedList<>();
-            discounts.add(e.getMessage());
+            return Response.errorResponse(e.getMessage());
         }
         finally {
-            return discounts;
+            return Response.okResponse(discounts);
         }
 
     }
