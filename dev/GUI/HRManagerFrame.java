@@ -6,22 +6,31 @@ import GUI.Generic.GenericLabel;
 import GUI.Generic.GenericTextField;
 import ServiceLayer.HR.EmployeeService;
 import ServiceLayer.HR.ShiftService;
+import ServiceLayer.Transport.BranchService;
+import ServiceLayer.Transport.LogisticCenterService;
 import UtilSuper.Response;
 import UtilSuper.ResponseSerializer;
 import UtilSuper.ServiceFactory;
 
 import javax.swing.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class HRManagerFrame  extends GenericFrameUser {
 
     private final ShiftService shiftService ;
     private final EmployeeService employeeService;
+    private  final LogisticCenterService logisticCenterService;
+    private final BranchService branchService;
 
     public HRManagerFrame(ServiceFactory serviceFactory) {
         super(serviceFactory);
-        setTitle("HR Manager");
+        setTitle("HR Manager : 1");
         this.employeeService = serviceFactory.getEmployeeService();
         this.shiftService = serviceFactory.getShiftService();
+        this.logisticCenterService = serviceFactory.getLogisticCenterService();
+        this.branchService = serviceFactory.getBranchService();
 
         GenericButton addnewEmployeeButton = new GenericButton("add new employee");
         leftPanel.add((addnewEmployeeButton));
@@ -63,6 +72,8 @@ public class HRManagerFrame  extends GenericFrameUser {
             GenericButton doneButton = new GenericButton("Done");
 
             doneButton.addActionListener(e1 ->{
+                setErrorText("");
+                setFeedbackText("");
                 int id = Integer.parseInt(idField.getText());
                 String name = nameField.getText();
                 String bank = bankField.getText();
@@ -121,6 +132,8 @@ public class HRManagerFrame  extends GenericFrameUser {
             GenericButton doneButton = new GenericButton("Done");
 
             doneButton.addActionListener(e1 ->{
+                setErrorText("");
+                setFeedbackText("");
                 int id = Integer.parseInt(idField.getText());
                 String selectedQuali = qualificationsComboBox.getSelectedItem().toString();
                 if ( id<0 ) {
@@ -166,6 +179,8 @@ public class HRManagerFrame  extends GenericFrameUser {
             GenericButton doneButton = new GenericButton("Done");
 
             doneButton.addActionListener(e1 ->{
+                setErrorText("");
+                setFeedbackText("");
                 int id = Integer.parseInt(idField.getText());
                 String name = nameField.getText();
                 String bank = bankField.getText();
@@ -215,7 +230,61 @@ public class HRManagerFrame  extends GenericFrameUser {
         });
 
         assignEmployeeButton.addActionListener(e->{
+            System.out.println("Button add new employee clicked");
+            rightPanel.removeAll();
+            GenericTextField idField = new GenericTextField();
+            GenericTextField dateField = new GenericTextField();
+            String[] shiftTypes = {"morning","evening"};
+            JComboBox<String> shiftTypesComboBox = new JComboBox<>(shiftTypes);
+            String[] branches = {"b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9"};
+            JComboBox<String> branchComboBox = new JComboBox<>(branches);
 
+            GenericButton doneButton = new GenericButton("Done");
+
+            doneButton.addActionListener(e1 ->{
+                setErrorText("");
+                setFeedbackText("");
+                int id = Integer.parseInt(idField.getText());
+                String date = dateField.getText();
+                String shiftType = shiftTypesComboBox.getSelectedItem().toString();
+                String branch = branchComboBox.getSelectedItem().toString();
+
+                //TODO: get positions of the employee and present them as combobox
+
+                if (date == null || shiftType == null || branch == null  ) {
+                    setErrorText("Please fill all fields");
+                }
+                else {
+                    Response response1 = ResponseSerializer.deserializeFromJson( shiftService.assignEmployeeForShift(branch,id,date,shiftType,"cashier"));
+                    if (response1.isError()) {
+                        setErrorText(response1.getErrorMessage());
+                    } else {
+                        setFeedbackText("assign employee successfully");
+                    }
+                }
+            });
+
+            rightPanel.add(new GenericLabel(""));
+            rightPanel.add(new GenericLabel(""));
+            rightPanel.add(new GenericLabel("Please enter the employee ID:"));
+            rightPanel.add(idField);
+            rightPanel.add(new GenericLabel("Please enter date:"));
+            rightPanel.add(dateField);
+            rightPanel.add(new GenericLabel("Please choose shift type :"));
+            rightPanel.add(shiftTypesComboBox);
+            rightPanel.add(new GenericLabel("Please choose branch :"));
+            rightPanel.add(branchComboBox);
+            rightPanel.add(new GenericLabel(""));
+            rightPanel.add(new GenericLabel(""));
+            rightPanel.add(new GenericLabel(""));
+            rightPanel.add(new GenericLabel(""));
+            rightPanel.add(new GenericLabel(""));
+            rightPanel.add(new GenericLabel(""));
+            rightPanel.add(new GenericLabel(""));
+            rightPanel.add(new GenericLabel(""));
+            rightPanel.add(doneButton);
+            rightPanel.revalidate();
+            rightPanel.repaint();
         });
     }
 }
