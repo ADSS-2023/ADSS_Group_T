@@ -19,6 +19,7 @@ import BusinessLayer.Transport.SupplierController;
 import DataLayer.HR_T_DAL.DalService.DalDeliveryService;
 import DataLayer.HR_T_DAL.DalService.DalLogisticCenterService;
 import DataLayer.Util.DAO;
+import GUI.TransportManagerFrame;
 import ServiceLayer.HR.EmployeeService;
 import ServiceLayer.HR.ShiftService;
 import ServiceLayer.Transport.BranchService;
@@ -36,6 +37,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class ServiceFactory {
+
 
     private ShiftController shiftController;
     private ShiftService shiftService;
@@ -61,6 +63,8 @@ public class ServiceFactory {
     private DAO dao;
     private Shift shift;
     private DriverController driverController;
+    private TransportManagerFrame transportManagerFrame;
+
 
     public ServiceFactory() throws Exception {
 
@@ -116,9 +120,16 @@ public class ServiceFactory {
     public void callbackEnterWeight(EnterWeightInterface enterWeightInterface){
         deliveryService.setEnterWeightInterface(enterWeightInterface);
     }
+//    public void callbackEnterWeightGUI(EnterWeightInterfaceGUI enterWeightInterfaceGUI){
+//        deliveryService.setEnterWeightInterfaceGUI(enterWeightInterfaceGUI);
+//    }
     public void callbackEnterOverWeight(EnterOverWeightInterface enterOverWeightInterface){
         deliveryService.setEnterOverWeightInterface(enterOverWeightInterface);
     }
+//    public void callbackEnterOverWeightGUI(EnterOverWeightInterfaceGUI enterOverWeightInterfaceGUI){
+//        deliveryService.setEnterOverWeightInterfaceGUI(enterOverWeightInterfaceGUI);
+//    }
+
 
     public ShiftController getShiftController() {
         return shiftController;
@@ -210,5 +221,12 @@ public class ServiceFactory {
 
     public DriverController getDriverController() {
         return driverController;
+    }
+
+    public void setTransportManagerFrame(TransportManagerFrame transportManagerFrame) {
+        this.transportManagerFrame = transportManagerFrame;
+    }
+    public TransportManagerFrame GettransportManagerFrame() {
+        return transportManagerFrame;
     }
 }

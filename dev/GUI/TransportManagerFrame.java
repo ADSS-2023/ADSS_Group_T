@@ -1,9 +1,6 @@
 package GUI;
 
-import GUI.Generic.GenericButton;
-import GUI.Generic.GenericFrameUser;
-import GUI.Generic.GenericLabel;
-import GUI.Generic.GenericTextField;
+import GUI.Generic.*;
 import ServiceLayer.Transport.BranchService;
 import ServiceLayer.Transport.DeliveryService;
 import ServiceLayer.Transport.LogisticCenterService;
@@ -15,6 +12,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class TransportManagerFrame extends GenericFrameUser {
     private final LogisticCenterService logisticCenterService;
@@ -29,6 +27,11 @@ public class TransportManagerFrame extends GenericFrameUser {
         this.deliveryService = serviceFactory.getDeliveryService();
         this.supplierService = serviceFactory.getSupplierService();
         this.branchService = serviceFactory.getBranchService();
+        this.serviceFactory.setTransportManagerFrame(this);
+        serviceFactory.callbackEnterWeight(this::enterWeightFunction);
+        serviceFactory.callbackEnterOverWeight(this::enterOverWeightAction);
+
+
         try {
             deliveryService.initCounters();
         }
@@ -87,7 +90,6 @@ public class TransportManagerFrame extends GenericFrameUser {
             }
             rightPanel.revalidate();
             rightPanel.repaint();
-
         });
 
 
@@ -398,6 +400,12 @@ public class TransportManagerFrame extends GenericFrameUser {
                 setErrorText(response1.getErrorMessage());
             } else {
                 String deliveries = (String) response1.getReturnValue();
+                //the deliveries string of deliveries separated by "Delivery ID: "
+                //create a jcobmo box with all the deliveries id and when the user chooses one, show the details of the delivery
+
+
+
+
                 rightPanel.add(new GenericLabel(deliveries));
                 rightPanel.revalidate();
                 rightPanel.repaint();
@@ -462,27 +470,72 @@ public class TransportManagerFrame extends GenericFrameUser {
         setVisible(true);
     }
     //CallBack-Functions:
-    public int enterWeightFunction(String address, int deliveryID) {
+    public int enterWeightFunction1(String address, int deliveryID) {
         Response response = ResponseSerializer.deserializeFromJson(deliveryService.getLoadedProducts(deliveryID, address));
-        if (response.isError())
-            System.out.println(response.getErrorMessage());
-        else {
-            Scanner scanner = new Scanner(System.in);
-            System.out.println("------- " + deliveryID + " -------");
-            String weight = "1111111111111111111111";
-            while(weight.length() > 10) {
-                System.out.println("the truck in:" + address + "." +
-                        "\nthe following products are loaded: " +
-                        "\n" + response.getReturnValue() +
-                        "\npls enter weight:");
-                weight = scanner.nextLine();//products weight
-                if(weight.length() > 10)
-                    System.out.println("the weight is not reasonable, please enter a valid weight\n");
+        int[] newWieghtInt;
+        if (response.isError()) {
+            setErrorText(response.getErrorMessage());
+        } else {
+            newWieghtInt = new int[]{-1};
+            JTextField deliveryDetails = new JTextField("The truck is in: " + address + "." +
+                    "\nThe following products are loaded:" +
+                    "\n" + response.getReturnValue());
+            deliveryDetails.setEditable(false);
+            JTextField newWeight = new JTextField();
+            JButton done = new JButton("Done");
+            JPanel panel = new JPanel(new GridLayout(3, 1));
+            panel.add(deliveryDetails);
+            panel.add(newWeight);
+            panel.add(done);
+            rightPanel.add(panel);
+            int[] finalNewWieghtInt = newWieghtInt;
+            done.addActionListener(e -> {
+                finalNewWieghtInt[0] = Integer.parseInt(newWeight.getText());
+            });
+            return newWieghtInt[0];
             }
-            return Integer.parseInt(weight);
-        }
         return 0;
     }
+    public int enterWeightFunction(String address, int deliveryID) {
+        JTextField newWeightTextField = new JTextField();
+        JPanel panel = new JPanel(new GridLayout(2, 1));
+        panel.add(newWeightTextField);
+
+        Response response = ResponseSerializer.deserializeFromJson(deliveryService.getLoadedProducts(deliveryID, address));
+        if (response.isError()) {
+            setErrorText(response.getErrorMessage());
+        } else {
+            JTextField deliveryDetails = new JTextField("The truck is in: " + address + "." +
+                    "\nThe following products are loaded:" +
+                    "\n" + response.getReturnValue());
+            deliveryDetails.setEditable(false);
+            panel.add(deliveryDetails);
+        }
+
+        JOptionPane optionPane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE, JOptionPane.DEFAULT_OPTION);
+        JDialog dialog = optionPane.createDialog("Enter new weight");
+        dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE); // Disable the close button
+        dialog.setVisible(true);
+
+        int result = 0; // Set default value to 0
+        String newWeightText = newWeightTextField.getText();
+        if (!newWeightText.isEmpty()) {
+            try {
+                result = Integer.parseInt(newWeightText);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+
+
+
+
+
+
+
+
     public int enterOverWeightAction(int deliveryID) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("There is overweight in delivery " + deliveryID + ".");

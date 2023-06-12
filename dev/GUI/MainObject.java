@@ -11,6 +11,7 @@ import ServiceLayer.Transport.DeliveryService;
 import ServiceLayer.Transport.LogisticCenterService;
 import ServiceLayer.Transport.SupplierService;
 import ServiceLayer.UserService;
+import UtilSuper.IsGUI;
 import UtilSuper.ServiceFactory;
 
 import javax.swing.*;
@@ -25,12 +26,15 @@ public class MainObject {
     private BranchService branchService;
     private SupplierService supplierService;
     private TransportManagerPresentation transportManagerPresentation;
+    private TransportManagerFrame transportManagerFrame;
     private HRManagerPresentation hrManagerPresentation;
     private EmployeePresentation employeePresentation;
     private DriverPresentation driverPresentation;
+
     public MainObject() {
         try {
             this.serviceFactory = new ServiceFactory();
+            IsGUI.setIsGUI(true);
         }
         catch (Exception exception){
             System.out.println(exception.toString());
@@ -47,8 +51,11 @@ public class MainObject {
         hrManagerPresentation = new HRManagerPresentation(shiftService,employeeService,branchService);
         employeePresentation = new EmployeePresentation(employeeService,branchService);
         driverPresentation = new DriverPresentation(employeeService);
-        serviceFactory.callbackEnterWeight(this.transportManagerPresentation::enterWeightFunction);
-        serviceFactory.callbackEnterOverWeight(this.transportManagerPresentation::enterOverWeightAction);
+
+        //serviceFactory.callbackEnterWeight(this.transportManagerPresentation::enterWeightFunction);
+        //   serviceFactory.callbackEnterWeightGUI(this.serviceFactory.GettransportManagerFrame()::enterWeightFunctionGUI);
+        //serviceFactory.callbackEnterOverWeight(this.transportManagerPresentation::enterOverWeightAction);
+        //serviceFactory.callbackEnterOverWeightGUI(this.serviceFactory.GettransportManagerFrame()::enterOverWeightActionGUI);
         MainFrame mainFrame = new MainFrame(serviceFactory);
     }
 }

@@ -6,9 +6,7 @@ import BusinessLayer.HR.DriverController;
 import BusinessLayer.HR.ShiftController;
 import DataLayer.HR_T_DAL.DTOs.CounterDTO;
 import DataLayer.HR_T_DAL.DalService.DalDeliveryService;
-import UtilSuper.EnterOverWeightInterface;
-import UtilSuper.EnterWeightInterface;
-import UtilSuper.Time;
+import UtilSuper.*;
 import org.w3c.dom.css.Counter;
 
 import java.sql.SQLException;
@@ -27,7 +25,9 @@ public class DeliveryController {
     private int filesCounter;
     private LocalDate currDate;
     private EnterWeightInterface enterWeightInterface;
+    //private EnterWeightInterfaceGUI enterWeightInterfaceGUI;
     private EnterOverWeightInterface overweightAction;
+ //   private EnterOverWeightInterfaceGUI overweightActionGUI;
     private final DalDeliveryService dalDeliveryService;
 
     public DeliveryController(LogisticCenterController logisticCenterController, SupplierController supplierController,
@@ -508,7 +508,11 @@ public class DeliveryController {
         //DropSite(deliveryID, address);
         if (action == 2) {
             if (!replaceTruck(deliveryID,weight)) {
-                int newAction = overweightAction.EnterOverweightAction(deliveryID);
+                int newAction;
+//                if (IsGUI.getIsGUI())
+//                    newAction = overweightActionGUI.EnterOverweightActionGUI(deliveryID);
+//                else
+                    newAction = overweightAction.EnterOverweightAction(deliveryID);
                 if (newAction == 3)
                     unloadProducts(deliveryID, weight, address);
             }
@@ -547,11 +551,19 @@ public class DeliveryController {
      */
     public void executeDelivery(Delivery delivery) throws Exception {
         if (isDeliveryFromLC(delivery)) {
-            int productsWeight = enterWeightInterface.enterWeightFunction(logisticCenterController.getAddress(), delivery.getId());
+            int productsWeight;
+//            if (IsGUI.getIsGUI())
+//                productsWeight = enterWeightInterfaceGUI.enterWeightFunctionGUI(logisticCenterController.getAddress(), delivery.getId());
+//            else
+                productsWeight = enterWeightInterface.enterWeightFunction(logisticCenterController.getAddress(), delivery.getId());
+
             int currentWeight = delivery.getTruckWeight();
             int maxWeight = logisticCenterController.getAllTrucks().get(delivery.getTruckNumber()).getMaxWeight();
             if (maxWeight < currentWeight + productsWeight) {
-                overWeightAction(delivery.getId(), overweightAction.EnterOverweightAction(delivery.getId()), logisticCenterController.getAddress(), productsWeight);
+//                if (IsGUI.getIsGUI())
+//                    overWeightAction(delivery.getId(), overweightActionGUI.EnterOverweightActionGUI(delivery.getId()), logisticCenterController.getAddress(), productsWeight);
+//                else
+                     overWeightAction(delivery.getId(), overweightAction.EnterOverweightAction(delivery.getId()), logisticCenterController.getAddress(), productsWeight);
             }
             logisticCenterController.removeFileFromStock(delivery.getFromLogisticsCenterFile());
             delivery.setTruckWeight(currentWeight + productsWeight);
@@ -559,11 +571,19 @@ public class DeliveryController {
         else if (isDeliveryToLC(delivery)) {
             ArrayList<Supplier> suppliersTmp = new ArrayList<>(delivery.getUnHandledSuppliers().keySet());
             for (Supplier supplier : suppliersTmp) {
-                int productsWeight = enterWeightInterface.enterWeightFunction(supplier.getAddress(), delivery.getId());
+                int productsWeight;
+//                if (IsGUI.getIsGUI())
+//                    productsWeight = enterWeightInterfaceGUI.enterWeightFunctionGUI(supplier.getAddress(), delivery.getId());
+//                else
+                    productsWeight = enterWeightInterface.enterWeightFunction(supplier.getAddress(), delivery.getId());
+
                 int currentWeight = delivery.getTruckWeight();
                 int maxWeight = logisticCenterController.getAllTrucks().get(delivery.getTruckNumber()).getMaxWeight();
                 if (maxWeight < currentWeight + productsWeight) {
-                    overWeightAction(delivery.getId(), overweightAction.EnterOverweightAction(delivery.getId()), supplier.getAddress(), productsWeight);
+//                    if (IsGUI.getIsGUI())
+//                        overWeightAction(delivery.getId(), overweightActionGUI.EnterOverweightActionGUI(delivery.getId()), logisticCenterController.getAddress(), productsWeight);
+//                    else
+                        overWeightAction(delivery.getId(), overweightAction.EnterOverweightAction(delivery.getId()), logisticCenterController.getAddress(), productsWeight);
                     if (delivery.getTruckWeight() == logisticCenterController.getAllTrucks().get(delivery.getTruckNumber()).getMaxWeight())
                         break;
                 } else {
@@ -578,11 +598,19 @@ public class DeliveryController {
         else {
             ArrayList<Supplier> suppliersTmp = new ArrayList<>(delivery.getUnHandledSuppliers().keySet());
             for (Supplier supplier : suppliersTmp) {
-                int productsWeight = enterWeightInterface.enterWeightFunction(supplier.getAddress(), delivery.getId());
+                int productsWeight;
+//                if (IsGUI.getIsGUI())
+//                    //productsWeight = enterWeightInterface.enterWeightFunction(supplier.getAddress(), delivery.getId());
+//                    productsWeight = enterWeightInterfaceGUI.enterWeightFunctionGUI(supplier.getAddress(), delivery.getId());
+//                else
+                    productsWeight = enterWeightInterface.enterWeightFunction(supplier.getAddress(), delivery.getId());
                 int currentWeight = delivery.getTruckWeight();
                 int maxWeight = logisticCenterController.getAllTrucks().get(delivery.getTruckNumber()).getMaxWeight();
                 if (maxWeight < currentWeight + productsWeight) {
-                    overWeightAction(delivery.getId(), overweightAction.EnterOverweightAction(delivery.getId()), supplier.getAddress(), productsWeight);
+//                    if (IsGUI.getIsGUI())
+//                        overWeightAction(delivery.getId(), overweightActionGUI.EnterOverweightActionGUI(delivery.getId()), logisticCenterController.getAddress(), productsWeight);
+//                    else
+                        overWeightAction(delivery.getId(), overweightAction.EnterOverweightAction(delivery.getId()), logisticCenterController.getAddress(), productsWeight);
                     if (delivery.getTruckWeight() == logisticCenterController.getAllTrucks().get(delivery.getTruckNumber()).getMaxWeight())
                         break;
                 } else {
@@ -676,10 +704,16 @@ public class DeliveryController {
     public void setEnterWeightInterface(EnterWeightInterface enterWeightInterface) {
         this.enterWeightInterface = enterWeightInterface;
     }
+//    public void setEnterWeightInterfaceGUI(EnterWeightInterfaceGUI enterWeightInterfaceGUI) {
+//        this.enterWeightInterfaceGUI = enterWeightInterfaceGUI;
+//    }
 
     public void setOverweightAction(EnterOverWeightInterface overweightAction) {
         this.overweightAction = overweightAction;
     }
+//    public void setOverweightActionGUI(EnterOverWeightInterfaceGUI overweightActionGUI) {
+//        this.overweightActionGUI = overweightActionGUI;
+//    }
 
     /**
      * get the details of tomorrow to present to the user
