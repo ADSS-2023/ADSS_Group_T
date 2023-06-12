@@ -382,7 +382,6 @@ public class SupplierManager {
         List<String> products =  serviceFactory.supplierService.getProducts(supplierNum);
         if(products.size()==0||(!products.get(0).contains("doesn't")&&!products.get(0).contains("exists")&&!products.get(0).contains("failed")&&!products.get(0).contains("Cannot"))) {
             System.out.println(products);
-
             String productName = getString(scannerString, "Enter the product name to be edited:");
             String manufacturer = getString(scannerString, "Enter the manufacturer name to be edited:");
             int price = getInteger(scannerInt,"Select the new product price:", 0, Integer.MAX_VALUE);

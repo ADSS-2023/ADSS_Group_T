@@ -6,6 +6,7 @@ import BusinessLayer.Supplier.SupplierController;
 import BusinessLayer.Supplier.SupplierProductBusiness;
 import BusinessLayer.Supplier.Suppliers.SupplierBusiness;
 import BusinessLayer.Supplier_Stock.ItemToOrder;
+import ServiceLayer.HR.Response;
 
 import java.rmi.server.ExportException;
 import java.time.DayOfWeek;
@@ -22,22 +23,24 @@ public class OrderService {
          this.oc = oc;
          this.sc=sc;
         }
-        public void loadOrders()  {
+
+        public Response loadOrders()  {
         try {
             sc.loadSuppliers();
             oc.loadOrders();
+            return okResonse("Load data succeeded.");
         }
         catch (Exception e){
-            System.out.println(e.getMessage());
+            return errorResponse(e.getMessage());
         }
         }
-    public boolean nextDay(){
+    public Response nextDay(){
         try {
             oc.executeTodayOrders();
-            return true;
+            return okResponse(true);
         }
         catch (Exception e){
-            return false;
+            return errorResponse(e.getMessage());
         }
     }
     public boolean createRegularOrder(List<ItemToOrder> items) {
@@ -104,23 +107,22 @@ public class OrderService {
             for (OrderBusiness order:orderBusinessList) {
                orders.add(order.toString());
             }
+            return okResonse(orders);
         }
         catch (Exception e){
-            return orders;
-        }
-        finally {
-            return orders;
+           return errorResponse(e.getMessage());
+            //return orders; TODO: why we didnt return e.getMessage()?
         }
     }
 
     public String deleteAllOrders(){
         try {
             oc.deleteOrders();
+            return okResonse("Deleted Successfully");
         }
         catch (Exception e){
-            return e.getMessage();
+            return errorResponse(e.getMessage());
         }
-        return "Deleted Successfully";
     }
 
     public List<ItemToOrder> getAllProducts() {
@@ -135,12 +137,10 @@ public class OrderService {
                             entry2.getValue().getManufacturer(),entry2.getValue().getMaxAmount(),
                             null,-1,entry2.getValue().getPrice()));
             }
+            return  items;
         }
         catch (Exception e){
-            return null;
-        }
-        finally {
-            return items;
+            return  null;
         }
     }
 
