@@ -1,2 +1,5 @@
-package ServiceLayer.Supplier_Stock;public class Response {
+package ServiceLayer.Supplier_Stock;
+
+public class Response {
+
 }
