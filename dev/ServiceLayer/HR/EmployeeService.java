@@ -3,6 +3,7 @@ package ServiceLayer.HR;
 import BusinessLayer.HR.*;
 import BusinessLayer.HR.User.PositionType;
 import BusinessLayer.HR.User.UserType;
+import UtilSuper.ResponseSerializer;
 import UtilSuper.Time;
 
 import java.time.LocalDate;
@@ -22,7 +23,7 @@ public class EmployeeService {
         this.shiftController = shiftController;
     }
 
-    public Response addNewEmployee(int id, String employeeName, String bankAccount, String description, int salary, String joiningDay, String password) {
+    public String addNewEmployee(int id, String employeeName, String bankAccount, String description, int salary, String joiningDay, String password) {
         Response response = new Response();
         try {
             employeeController.addNewEmployee(id, employeeName, bankAccount, description, salary, Time.stringToLocalDate(joiningDay), password, UserType.employee);
@@ -30,10 +31,10 @@ public class EmployeeService {
         } catch (Exception ex) {
             response.setErrorMessage(ex.getMessage());
         }
-        return response;
+        return ResponseSerializer.serializeToJson(response);
     }
 
-    public Response submitShiftForEmployee(String branch, int id, LocalDate date, String shiftType) {
+    public String submitShiftForEmployee(String branch, int id, LocalDate date, String shiftType) {
         Response response = new Response();
         try {
             boolean sht = shiftType.equals("m");
@@ -41,10 +42,10 @@ public class EmployeeService {
         } catch (Exception ex) {
             response.setErrorMessage(ex.getMessage());
         }
-        return response;
+        return ResponseSerializer.serializeToJson(response);
     }
 
-    public Response assignAll(String branch, LocalDate date, String shiftType) {
+    public String assignAll(String branch, LocalDate date, String shiftType) {
         Response response = new Response();
         try {
             boolean sht = shiftType.equals("m");
@@ -52,10 +53,10 @@ public class EmployeeService {
         } catch (Exception ex) {
             response.setErrorMessage(ex.getMessage());
         }
-        return response;
+        return ResponseSerializer.serializeToJson(response);
     }
 
-    public Response assignShiftForEmployee(String branch, int id, LocalDate date, String shiftType, String positionType) {
+    public String assignShiftForEmployee(String branch, int id, LocalDate date, String shiftType, String positionType) {
         Response response = new Response();
         try {
             boolean sht = shiftType.equals("m");
@@ -63,20 +64,20 @@ public class EmployeeService {
         } catch (Exception ex) {
             response.setErrorMessage(ex.getMessage());
         }
-        return response;
+        return ResponseSerializer.serializeToJson(response);
     }
 
-    public Response submitShiftForDriver(LocalDate date, int id) {
+    public String submitShiftForDriver(LocalDate date, int id) {
         Response response = new Response();
         try {
             response.setReturnValue(driverController.submitShift(date, id));
         } catch (Exception ex) {
             response.setErrorMessage(ex.getMessage());
         }
-        return response;
+        return ResponseSerializer.serializeToJson(response);
     }
 
-    public Response assignDriverForShift(LocalDate date, int id) {
+    public String assignDriverForShift(LocalDate date, int id) {
         Response response = new Response();
         try {
             driverController.assignDriver(date, id);
@@ -84,11 +85,11 @@ public class EmployeeService {
         } catch (Exception ex) {
             response.setErrorMessage(ex.getMessage());
         }
-        return response;
+        return ResponseSerializer.serializeToJson(response);
     }
 
 
-    public Response addQualification(int id, String quali) {
+    public String addQualification(int id, String quali) {
         Response response = new Response();
         try {
             employeeController.addQualification(id, quali);
@@ -96,10 +97,10 @@ public class EmployeeService {
         } catch (Exception ex) {
             response.setErrorMessage(ex.getMessage());
         }
-        return response;
+        return ResponseSerializer.serializeToJson(response);
     }
 
-    public Response addNewDriver(int id, String employeeName, String bankAccount, String description, int salary, String joiningDay, String password, String licenseType, int coolingLevel) {
+    public String addNewDriver(int id, String employeeName, String bankAccount, String description, int salary, String joiningDay, String password, String licenseType, int coolingLevel) {
         Response response = new Response();
         try {
             driverController.addDriver(id, employeeName, bankAccount, description, salary, joiningDay, password, UserType.employee, licenseType, coolingLevel);
@@ -107,17 +108,17 @@ public class EmployeeService {
         } catch (Exception ex) {
             response.setErrorMessage(ex.getMessage());
         }
-        return response;
+        return ResponseSerializer.serializeToJson(response);
     }
 
-    public Response getListOfSubmittion(int id) {
+    public String getListOfSubmittion(int id) {
         Response response = new Response();
         try {
             response.setReturnValue(employeeController.getEmployeeById(id).showShiftsStatusByEmployee(LocalDate.now()));
         } catch (Exception ex) {
             response.setErrorMessage(ex.getMessage());
         }
-        return response;
+        return ResponseSerializer.serializeToJson(response);
     }
 }
 

@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import UtilSuper.Response;
+import UtilSuper.ResponseSerializer;
 import UtilSuper.Time;
 
 public class ShiftService {
@@ -17,7 +18,7 @@ public class ShiftService {
         this.shiftController = shiftController;
     }
 
-    public Response addShiftRequirements(String branch, LinkedHashMap<String, Integer> howMany, String date, String shiftType) {
+    public String addShiftRequirements(String branch, LinkedHashMap<String, Integer> howMany, String date, String shiftType) {
         Response response = new Response();
         try {
             boolean bool = !shiftType.equals("e");
@@ -26,10 +27,10 @@ public class ShiftService {
         } catch (Exception ex) {
             response.setErrorMessage(ex.getMessage());
         }
-        return response;
+        return ResponseSerializer.serializeToJson(response);
     }
 
-    public Response getNotification() {
+    public String getNotification() {
         Response response = new Response();
         try {
             HashMap<LocalDate, String> noti = shiftController.getNotifications(LocalDate.now(), LocalDate.now().plusDays(1));
@@ -41,10 +42,10 @@ public class ShiftService {
         } catch (Exception ex) {
             response.setErrorMessage(ex.getMessage());
         }
-        return response;
+        return ResponseSerializer.serializeToJson(response);
     }
 
-    public Response ShowShiftStatus(String branch, String date, String shiftType) {
+    public String ShowShiftStatus(String branch, String date, String shiftType) {
         Response response = new Response();
         try {
             boolean bool = !shiftType.equals("e");
@@ -52,11 +53,11 @@ public class ShiftService {
         } catch (Exception ex) {
             response.setErrorMessage(ex.getMessage());
         }
-        return response;
+        return ResponseSerializer.serializeToJson(response);
     }
 
 
-    public Response assignEmployeeForShift(String branch, int ans_id, String ans_date, String ans_type, String position) {
+    public String assignEmployeeForShift(String branch, int ans_id, String ans_date, String ans_type, String position) {
         Response response = new Response();
         try {
             boolean bool = !ans_type.equals("e");
@@ -64,10 +65,10 @@ public class ShiftService {
         } catch (Exception ex) {
             response.setErrorMessage(ex.getMessage());
         }
-        return response;
+        return ResponseSerializer.serializeToJson(response);
     }
 
-    public Response assignAll(String branch, String ans_date, String ans_type) {
+    public String assignAll(String branch, String ans_date, String ans_type) {
         Response response = new Response();
         try {
             boolean bool = !ans_type.equals("e");
@@ -75,10 +76,10 @@ public class ShiftService {
         } catch (Exception ex) {
             response.setErrorMessage(ex.getMessage());
         }
-        return response;
+        return ResponseSerializer.serializeToJson(response);
     }
 
-    public Response addDriverReq(String date, String licenseType, String cooling) {
+    public String addDriverReq(String date, String licenseType, String cooling) {
         Response response = new Response();
         try {
             shiftController.addDriverRequirement(Time.stringToLocalDate(date), getByString(licenseType), getcoolingByString(cooling));
@@ -86,7 +87,7 @@ public class ShiftService {
         } catch (Exception ex) {
             response.setErrorMessage(ex.getMessage());
         }
-        return response;
+        return ResponseSerializer.serializeToJson(response);
     }
     public static Driver.LicenseType getByString (String licenseType ) {
         if (licenseType.equals("C1"))
