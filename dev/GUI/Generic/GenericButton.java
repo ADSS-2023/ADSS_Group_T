@@ -14,7 +14,7 @@ public class GenericButton extends JButton {
         Font buttonFont = new Font("Arial", Font.BOLD, 16);
         setFont(buttonFont);
         // Set the foreground and background color
-        Color backgroundColor = Color.gray;
+        Color backgroundColor = Color.white;
         setBackground(backgroundColor);
         // Set the button size
         Dimension buttonSize = new Dimension(300, 60);
@@ -23,6 +23,7 @@ public class GenericButton extends JButton {
         addActionListener(e -> {
             // Perform actions when the button is clicked
             System.out.println("Button clicked");
+            this.setBackground(new Color(131, 205, 210));
             // Add your custom code here
         });
     }

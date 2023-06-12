@@ -265,8 +265,14 @@ public class HRManagerFrame  extends GenericFrameUser {
                         setFeedbackText("assign employee successfully");
                     }
                 }
+                idField.add(new GenericLabel(""));
+                dateField.add(new GenericLabel(""));
             });
 
+            rightPanel.add(new GenericLabel(""));
+            rightPanel.add(new GenericLabel(""));
+            rightPanel.add(new GenericLabel(""));
+            rightPanel.add(new GenericLabel(""));
             rightPanel.add(new GenericLabel(""));
             rightPanel.add(new GenericLabel(""));
             rightPanel.add(new GenericLabel("Please enter the employee ID:"));
