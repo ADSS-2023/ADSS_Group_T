@@ -9,10 +9,10 @@ public class Response {
         error = isError;
         this.errorMassage = errorMassage;
     }
-    public Response okResponse(Object value){
+    public static Response okResponse(Object value){
         return new Response(value,false,null);
     }
-    public Response errorResponse(String errorMassage){
+    public static Response errorResponse(String errorMassage){
         return new Response(null,true,errorMassage);
     }
     public boolean isError() {
