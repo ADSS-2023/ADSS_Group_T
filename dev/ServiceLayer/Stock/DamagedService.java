@@ -2,6 +2,7 @@ package ServiceLayer.Stock;
 
 import BusinessLayer.Stock.Damaged;
 import BusinessLayer.Stock.Inventory;
+import ServiceLayer.Supplier_Stock.Response;
 
 public class DamagedService {
     private Inventory inventory;
@@ -14,11 +15,13 @@ public class DamagedService {
      * This function produces the report of the damaged items.
      * @return
      */
-    public String produce_damaged_report(){
+    public Response produce_damaged_report(){
 
-        try{return inventory.produce_damaged_report();}
+        try{
+            return Response.okResponse(inventory.produce_damaged_report());
+        }
         catch (Exception e){
-            return e.getMessage();
+            return Response.errorResponse(e.getMessage());
         }
     }
 
@@ -30,12 +33,12 @@ public class DamagedService {
      * @param description
      * @return
      */
-    public String report_damaged_item(int item_id,int order_id,int amount,String description){
+    public Response report_damaged_item(int item_id,int order_id,int amount,String description){
         try {
-            return inventory.addDamagedItem(item_id, order_id, amount, description);
+            return Response.okResponse(inventory.addDamagedItem(item_id, order_id, amount, description));
         }
         catch (Exception e){
-            return e.getMessage();
+            return Response.errorResponse(e.getMessage());
         }
 
     }

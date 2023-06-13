@@ -3,6 +3,7 @@ package ServiceLayer.Stock;
 
 import BusinessLayer.Stock.Inventory;
 import BusinessLayer.Stock.Item;
+import ServiceLayer.Supplier_Stock.Response;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -23,12 +24,12 @@ public class InventoryService {
      * @throws Exception
      */
 
-    public String show_data(){
+    public Response show_data(){
         try {
-            return inventory.show_data("");
+            return Response.okResponse(inventory.show_data(""));
         }
         catch (Exception e) {
-            return e.getMessage();
+            return Response.errorResponse(e.getMessage());
         }
     }
 
@@ -45,12 +46,12 @@ public class InventoryService {
      * @param categories_list
      * @return
      */
-    public String produce_inventory_report(LinkedList<String> categories_list){
+    public Response produce_inventory_report(LinkedList<String> categories_list){
         try {
-            return inventory.produce_inventory_report(categories_list);
+            return Response.okResponse(inventory.produce_inventory_report(categories_list));
         }
         catch (Exception e) {
-            return e.getMessage();
+            return Response.errorResponse(e.getMessage());
         }
     }
 
@@ -61,13 +62,13 @@ public class InventoryService {
      * @param end_date_string
      * @param start_date_string
      */
-    public void set_discount(String product, double percentageAmount, String end_date_string, String start_date_string) {
+    public Response set_discount(String product, double percentageAmount, String end_date_string, String start_date_string) {
         try {
-            inventory.set_discount(product , percentageAmount , end_date_string , start_date_string);
+            return Response.okResponse(inventory.set_discount(product , percentageAmount , end_date_string , start_date_string));
 
         }
         catch (Exception e){
-            e.getMessage();
+            return Response.errorResponse(e.getMessage());
         }
     }
 
@@ -75,28 +76,33 @@ public class InventoryService {
      * This function produces the report on the shortage items.
      * @return
      */
-    public String produce_shortage_report(){
-        return inventory.produce_shortage_list();
+    public Response produce_shortage_report(){
+        try {
+            return Response.okResponse(inventory.produce_shortage_list());
+        }
+        catch (Exception e){
+            return Response.errorResponse(inventory.produce_shortage_list());
+        }
     }
 
     /**
      * This function calls to set up the system with a data
      */
-    public void setUp() {
+    public Response setUp() {
         try {
-            inventory.setUp();
+            return Response.okResponse(inventory.setUp());
         }
         catch (Exception e){
-            System.out.println(e.getMessage());
+            return Response.errorResponse(e.getMessage());
         }
     }
 
-    public void loadData() {
+    public Response loadData() {
         try {
-            inventory.loadData();
+            return Response.okResponse(inventory.loadData());
         }
         catch (Exception e){
-            System.out.println(e.getMessage());
+            return Response.errorResponse(e.getMessage());
         }
     }
 

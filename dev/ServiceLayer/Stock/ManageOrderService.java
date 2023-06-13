@@ -5,6 +5,7 @@ import BusinessLayer.Stock.OrderController;
 import BusinessLayer.Supplier_Stock.ItemToOrder;
 import DataLayer.Inventory_Supplier_Dal.DalController.InventoryDalController;
 import ServiceLayer.Supplier.OrderService;
+import ServiceLayer.Supplier_Stock.Response;
 
 import java.sql.SQLException;
 import java.time.DayOfWeek;
@@ -27,13 +28,13 @@ public class ManageOrderService {
      * @param new_amount
      * @return
      */
-    public String editRegularOrder(int id ,DayOfWeek day , int new_amount){
+    public Response editRegularOrder(int id , DayOfWeek day , int new_amount){
         try {
             orderController.editRegularOrder(id , day , new_amount);
-            return "Order edited successfully";
+            return Response.okResponse("Order edited successfully");
         }
         catch (Exception e){
-            return e.getMessage();
+            return Response.errorResponse(e.getMessage());
         }
 
     }
@@ -42,14 +43,14 @@ public class ManageOrderService {
      * @param items_quantity
      * @return
      */
-    public String createRegularOrder(Map<Integer,Integer> items_quantity){
+    public Response createRegularOrder(Map<Integer,Integer> items_quantity){
         try {
-            orderController.createRegularOrder(items_quantity);
+            return Response.okResponse(orderController.createRegularOrder(items_quantity));
         }
         catch (Exception e){
-            return e.getMessage();
+            return Response.errorResponse(e.getMessage());
         }
-        return "Order received successfully";
+
     }
 
     /**
@@ -58,50 +59,50 @@ public class ManageOrderService {
      * @param isUrgent boolean flag to indicate whether the order priority is arrival.
      * @return string that indicates whether the action succeeded
      */
-    public String createSpecialOrder(Map<Integer,Integer> items_quantity,boolean isUrgent){
+    public Response createSpecialOrder(Map<Integer,Integer> items_quantity,boolean isUrgent){
         try{
             orderController.createSpecialOrder(items_quantity,isUrgent);
         }
         catch (Exception e){
-            return e.getMessage();
+            return Response.errorResponse(e.getMessage());
         }
-        return "Order received successfully";
+        return Response.okResponse("Order received successfully");
     }
 
-    public String nextDay() {
+    public Response nextDay() {
         try {
             this.orderController.nextDay();
         }
         catch (Exception e){
-            return e.getMessage();
+            return Response.errorResponse(e.getMessage());
         }
-        return "Next Day functions succeed";
+        return Response.okResponse("Next Day functions succeed");
     }
 
     /**
      * Receive new order that arrived to the store
      * @param newOrder all the new arrivals
      */
-    public String receiveOrders(List<ItemToOrder> newOrder){
+    public Response receiveOrders(List<ItemToOrder> newOrder){
         try{
             orderController.receiveOrders(newOrder);
         }
         catch (Exception e){
-            return e.getMessage();
+            return Response.errorResponse(e.getMessage());
         }
-        return "Order received successfully";
+        return Response.okResponse("Order received successfully");
     }
 
     /**
      * Presents all the items that hasn't been placed yet
      * @return
      */
-    public String presentItemsToBePlaced(){
+    public Response presentItemsToBePlaced(){
         try {
-            return orderController.presentItemsToBePlaced();
+            return Response.okResponse(orderController.presentItemsToBePlaced());
         }
         catch (Exception e){
-            return e.getMessage();
+            return Response.errorResponse(e.getMessage());
         }
     }
 
@@ -111,46 +112,48 @@ public class ManageOrderService {
      * @param location
      * @return
      */
-    public String placeNewArrival(int index,String location){
+    public Response placeNewArrival(int index,String location){
         try{
             orderController.placeNewArrival(index,location);
         }
         catch (Exception e){
-            return e.getMessage();
+            return Response.errorResponse(e.getMessage());
         }
-        return "Item has been placed successfully";
+        return Response.okResponse("Item has been placed successfully");
     }
 
-    public String presentItemsById(DayOfWeek cur_day) {
+    public Response presentItemsById(DayOfWeek cur_day) {
         try{
-            return orderController.presentItemsByDay(cur_day);
+            return Response.okResponse(orderController.presentItemsByDay(cur_day));
         }
         catch (Exception e){
-            return e.getMessage();
+            return Response.errorResponse(e.getMessage());
         }
     }
-    public void set_up()  {
+    public Response set_up()  {
         try {
             orderController.loadWaitingItems();
             orderController.loadOrderedItems();
             orderController.set_up_waiting_items();
         }
         catch (Exception e){
-            e.getMessage();
+            return Response.errorResponse(e.getMessage());
         }
+        return Response.okResponse("set up succeed");
     }
 
     public void setOrderController(Inventory inv, OrderService orderService, InventoryDalController inventoryDalController) {
+
         this.orderController = new OrderController(inv,orderService,inventoryDalController);
         orderController.setInventoryDalController(inventoryDalController);
     }
 
-    public String show_all_orders() {
+    public Response show_all_orders() {
         try{
-            return orderController.show_all_orders();
+            return Response.okResponse(orderController.show_all_orders());
         }
         catch(Exception e){
-            return e.getMessage();
+            return Response.errorResponse(e.getMessage());
         }
     }
 
@@ -158,21 +161,21 @@ public class ManageOrderService {
         return orderController;
     }
 
-    public String show_new_items() {
+    public Response show_new_items() {
         try {
-            return orderController.show_new_items();
+            return Response.okResponse(orderController.show_new_items());
         }
         catch (Exception e){
-            return e.getMessage();
+            return Response.errorResponse(e.getMessage());
         }
     }
-    public String loadData(){
+    public Response loadData(){
         try {
             orderController.loadData();
-            return "Action succeeded";
+            return Response.okResponse("Action succeeded");
         }
         catch (Exception e){
-           return e.getMessage();
+           return Response.errorResponse(e.getMessage());
         }
 
     }

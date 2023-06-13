@@ -55,7 +55,7 @@ class ItemTest {
     @Test
     void setMin_amount(){
         try {
-            String afterUpdate = itemService.setMinimalAmount(2 , 2);
+            String afterUpdate = (String) itemService.setMinimalAmount(2 , 2).getValue();
             assertEquals(inventory.get_item_by_id(2).get_name() + " new minimal amount:2" , afterUpdate);
         }
         catch (Exception e){

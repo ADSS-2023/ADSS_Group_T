@@ -134,7 +134,7 @@ public class Inventory {
      * @param end_date_string
      * @param start_date_string
      */
-    public void set_discount(String index , double percentageAmount , String end_date_string , String start_date_string) throws Exception {
+    public String set_discount(String index , double percentageAmount , String end_date_string , String start_date_string) throws Exception {
         int current_index = Integer.parseInt(Util.extractFirstNumber(index));
         String next_index = Util.extractNextIndex(index);
         LocalDate end_date = Util.stringToDate(end_date_string);
@@ -145,6 +145,7 @@ public class Inventory {
         categories.get(current_index).setDiscount(next_index , new_discount);
         inv_dal_controller.insert(new_discount.getDto());
         inv_dal_controller.update(new DiscountCounterDTO(discount_counter),new DiscountCounterDTO(++discount_counter));
+        return "Discount has been set";
     }
 
     public void set_discount(DiscountDTO discount) throws Exception {
@@ -177,7 +178,7 @@ public class Inventory {
      * This function is a setup function with specific items and categories
      * in order to test the system.
      */
-    public void setUp() throws Exception {
+    public String setUp() throws Exception {
         this.add_category("","Milk-product");
         this.add_category(".0","Cheese");
         this.add_category(".0","bottle milk");
@@ -196,6 +197,7 @@ public class Inventory {
         receive_order(155,4,20,"ile 5 shelf 10",Util.stringToDate("2023-05-20"),2.15);
         receive_order(345,5,15,"ile 6 shelf 2",Util.stringToDate("2023-10-20"),12.25);
         inv_dal_controller.insert(new DiscountCounterDTO(0));
+        return "Data has been set up";
     }
 
     /**
@@ -223,9 +225,10 @@ public class Inventory {
         return damaged.produce_damaged_report();
     }
 
-    public void add_item(String categories_index,int item_id, String name, int min_amount, String manufacturer_name, double original_price) throws Exception {
+    public String add_item(String categories_index,int item_id, String name, int min_amount, String manufacturer_name, double original_price) throws Exception {
         Item i = new Item(item_id,name,min_amount,manufacturer_name,original_price,itemDalController, categories_index);
         add_item(categories_index,i);
+        return "Item has been added successfully";
     }
 
     /**
@@ -364,7 +367,7 @@ public class Inventory {
      */
     public void nextDay(DayOfWeek tomorrow_day) {
     }
-    public void loadData() throws Exception {
+    public String loadData() throws Exception {
         DiscountCounterDTO discountCounterDTO = inv_dal_controller.find("discountCounter","name","inventory_constants", DiscountCounterDTO.class);
         if(discountCounterDTO == null)
             discount_counter = 0;
@@ -375,6 +378,7 @@ public class Inventory {
             add_category(categoryDTO);
         }
         loadItems();
+        return "Data has been loaded";
     }
     public void loadItems() throws Exception {
         List<ItemDTO> itemDTOList = itemDalController.findAll("inventory_item",ItemDTO.class);

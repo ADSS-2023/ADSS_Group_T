@@ -68,7 +68,7 @@ class InventoryTest {
                 "\t\tid:4, product:Click, manufacturer:Elite, amount in store:10, amount in warehouse:10\n" +
                 "\n";
 
-        String result = inventoryService.produce_inventory_report(indexes);
+        String result = (String) inventoryService.produce_inventory_report(indexes).getValue();
         assertEquals(result, actual);
     }
 
@@ -89,7 +89,7 @@ class InventoryTest {
     @Test
     void produce_shortage_report() {
         itemService.setMinimalAmount(1 , 300);
-        String result = inventoryService.produce_shortage_report();
+        String result = (String) inventoryService.produce_shortage_report().getValue();
         String expected = "1.5% milk, IDO LTD\n" +
                 " minimal amount: 300, current amount: 10, amount to order: 290\n" +
                 "-------------------------------------------\n";

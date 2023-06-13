@@ -41,7 +41,7 @@ public class OrderController {
      * This method send an order to suppliers which will be supplied each week in a permanent day.
      * @param items_quantity a map that maps item id to the desired amount
      */
-    public void createRegularOrder(Map<Integer, Integer> items_quantity) throws Exception {
+    public String createRegularOrder(Map<Integer, Integer> items_quantity) throws Exception {
         LinkedList<ItemOrderdDTO> insert_items = new LinkedList<>();
         LinkedList<ItemToOrder> list_to_order = new LinkedList<>();
         for (Map.Entry<Integer, Integer> entry : items_quantity.entrySet()) {
@@ -63,6 +63,7 @@ public class OrderController {
                 inventoryDalController.insert(item_dto);
             }
         }*/
+        return "Order created successfully";
     }
 
     /**
@@ -228,13 +229,13 @@ public class OrderController {
      *
      *  @return
      */
-    public String presentItemsToBePlaced() throws Exception {
-        String toReturn = "";
+    public List<String> presentItemsToBePlaced() throws Exception {
+        List<String> toReturn = new LinkedList<>();
         if (items_to_place.isEmpty())
             throw new Exception("No items to be placed");
         for(int i = 1; i<= items_to_place.size();i++){
             ItemToOrder item = items_to_place.get(i-1);
-            toReturn+=String.format("%d. Order id:%s, item:%s, manufacturer:%s, amount:%d\n",i,item.getOrderId(),item.getProductName(),item.getManufacturer(),item.getQuantity());
+            toReturn.add(String.format("%d. Order id:%s, item:%s, manufacturer:%s, amount:%d\n",i,item.getOrderId(),item.getProductName(),item.getManufacturer(),item.getQuantity()));
         }
         return toReturn;
     }
