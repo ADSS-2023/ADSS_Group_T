@@ -11,12 +11,15 @@ import ServiceLayer.Transport.LogisticCenterService;
 import UtilSuper.Response;
 import UtilSuper.ResponseSerializer;
 import UtilSuper.ServiceFactory;
+import UtilSuper.Time;
+import org.jdatepicker.impl.JDatePanelImpl;
+import org.jdatepicker.impl.JDatePickerImpl;
+import org.jdatepicker.impl.UtilDateModel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.List;
 
 public class HRManagerFrame  extends GenericFrameUser {
@@ -308,7 +311,17 @@ public class HRManagerFrame  extends GenericFrameUser {
 
             String [] numbers = {"1", "2", "3", "4", "5", "6", "7", "8", "9","10","11"};
 
-            GenericTextField dateField = new GenericTextField();
+
+            // GenericTextField dateField = new GenericTextField();
+            UtilDateModel model = new UtilDateModel();
+            Properties properties = new Properties();
+            // Set the properties
+            properties.put("text.today", "Today");
+            properties.put("text.month", "Month");
+            properties.put("text.year", "Year");
+            JDatePanelImpl datePanel = new JDatePanelImpl(model,properties);
+            JDatePickerImpl datePicker = new JDatePickerImpl(datePanel,null);
+            LocalDate datef = (LocalDate) datePicker.getModel().getValue();
 
             String[] shiftTypes = {"morning","evening"};
             JComboBox<String> shiftTypesComboBox = new JComboBox<>(shiftTypes);
@@ -334,7 +347,7 @@ public class HRManagerFrame  extends GenericFrameUser {
             doneButton.addActionListener(e1 ->{
                 setErrorText("");
                 setFeedbackText("");
-                String date = dateField.getText();
+                String date = Time.localDateToString(datef);
                 String shiftType = shiftTypesComboBox.getSelectedItem().toString();
                 String branch = branchComboBox.getSelectedItem().toString();
                 ArrayList<Integer> nums = new ArrayList();
@@ -373,7 +386,7 @@ public class HRManagerFrame  extends GenericFrameUser {
             rightPanel.add(new GenericLabel(""));
             rightPanel.add(new GenericLabel(""));
             rightPanel.add(new GenericLabel("Please enter date:"));
-            rightPanel.add(dateField);
+            rightPanel.add(datePicker);
             rightPanel.add(new GenericLabel("Please choose shift type :"));
             rightPanel.add(shiftTypesComboBox);
             rightPanel.add(new GenericLabel("Please choose branch :"));
