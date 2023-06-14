@@ -5,6 +5,7 @@ import BusinessLayer.Supplier.Supplier_Util.PaymentTerms;
 import PresentationLayer.Supplier.SupplierManager;
 import ServiceLayer.Supplier_Stock.ServiceFactory;
 import ServiceLayer.Supplier_Stock.Response;
+import
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -130,6 +131,24 @@ public class SupplierFrame extends JFrame {
     private void createProductsTable() {
         productsTableModel = new DefaultTableModel();
         productsTable = new JTable(productsTableModel);
+
+
+
+        productsTable.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                int selectedRow = productsTable.getSelectedRow();
+                if (selectedRow != -1) {
+                    Object selectedSupplierNumber = productsTable.getValueAt(selectedRow, 1);
+                    SupplierFrame.this.dispose();
+                    SupplierProductFrame supplierFrame = new SupplierProductFrame(sf, supplierNumber, (Integer.parseInt(selectedSupplierNumber.toString())));
+                    supplierFrame.setVisible(true);
+                }
+            }
+        });
+
+
+
+
         JScrollPane productsScrollPane = new JScrollPane(productsTable);
         JPanel productsPanel = new JPanel();
         productsPanel.setLayout(new BorderLayout());

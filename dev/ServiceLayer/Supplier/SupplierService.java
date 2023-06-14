@@ -232,24 +232,19 @@ public class SupplierService {
 
     }
 
-    public List<String> getProductDiscounts(int supplierNum,int productNum) {
+    public Response getProductDiscounts(int supplierNum,int productNum) {
         List<String> discounts = new LinkedList<>();
         try {
             List<Discount> discountList = sc.getSupplier(supplierNum).getSupplierProduct(productNum).getQuantitiesAgreement();
             for (Discount dis: discountList){
                 discounts.add(dis.toString());
                 discounts.add("\n");
-
             }
+            return Response.okResponse(discounts);
         }
         catch (Exception e){
-            discounts = new LinkedList<>();
-            discounts.add(e.getMessage());
+            return Response.errorResponse(e.getMessage());
         }
-        finally {
-            return discounts;
-        }
-
     }
 
 }

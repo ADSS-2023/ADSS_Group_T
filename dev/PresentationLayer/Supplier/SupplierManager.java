@@ -416,15 +416,21 @@ public class SupplierManager {
                 System.out.println(products);
                 int productNum = getInteger(scanner, "Enter the number of product", 0, Integer.MAX_VALUE);
                 System.out.println("The products discounts are:");
-                List<String> discounts = serviceFactory.supplierService.getProductDiscounts(supplierNum, productNum);
-                if (discounts.size() == 0 || (!discounts.get(0).contains("doesn't") && !discounts.get(0).contains("exists") && !discounts.get(0).contains("failed") && !discounts.get(0).contains("Cannot"))) {
-                    System.out.println(discounts);
-                    int productAmount = getInteger(scanner, "Enter the amount of products to be discounted", 0, Integer.MAX_VALUE);
-                    int discount = getInteger(scanner, "Enter the discount for that amount", 0, Integer.MAX_VALUE);
-                    boolean isPercentage = getInteger(scanner, "Is the discount is by percentage or by shekels?\n1.Percetage\n2.Shekels", 1, 2) == 1;
-                    System.out.println(serviceFactory.supplierService.addProductDiscount(supplierNum, productNum, productAmount, discount, isPercentage));
-                } else System.out.println(discounts.get(0));
-            } else System.out.println(products.get(0));
+                Response res2 = serviceFactory.supplierService.getProductDiscounts(supplierNum, productNum);
+                if (res2.isError())
+                    System.out.println(res2.getErrorMassage());
+                else {
+                    List<String> discounts = (List<String>) res2.getValue();
+                    if (discounts.size() == 0 || (!discounts.get(0).contains("doesn't") && !discounts.get(0).contains("exists") && !discounts.get(0).contains("failed") && !discounts.get(0).contains("Cannot"))) {
+                        System.out.println(discounts);
+                        int productAmount = getInteger(scanner, "Enter the amount of products to be discounted", 0, Integer.MAX_VALUE);
+                        int discount = getInteger(scanner, "Enter the discount for that amount", 0, Integer.MAX_VALUE);
+                        boolean isPercentage = getInteger(scanner, "Is the discount is by percentage or by shekels?\n1.Percetage\n2.Shekels", 1, 2) == 1;
+                        System.out.println(serviceFactory.supplierService.addProductDiscount(supplierNum, productNum, productAmount, discount, isPercentage));
+                    } else System.out.println(discounts.get(0));
+                }
+            }
+            else System.out.println(products.get(0));
         }
     }
 
@@ -444,15 +450,20 @@ public class SupplierManager {
 
                 int productNum = getInteger(scanner, "Enter the number of product", 0, Integer.MAX_VALUE);
                 System.out.println("The products discounts are:");
-                List<String> discounts = serviceFactory.supplierService.getProductDiscounts(supplierNum, productNum);
-                if (discounts.size() == 0 || (!discounts.get(0).contains("doesn't") && !discounts.get(0).contains("exists") && !discounts.get(0).contains("failed") && !discounts.get(0).contains("Cannot"))) {
-                    System.out.println(discounts);
+                Response res2 = serviceFactory.supplierService.getProductDiscounts(supplierNum, productNum);
+                if (res2.isError())
+                    System.out.println(res2.getErrorMassage());
+                else {
+                    List<String> discounts = (List<String>) res2.getValue();
+                    if (discounts.size() == 0 || (!discounts.get(0).contains("doesn't") && !discounts.get(0).contains("exists") && !discounts.get(0).contains("failed") && !discounts.get(0).contains("Cannot"))) {
+                        System.out.println(discounts);
 
-                    int productAmount = getInteger(scanner, "Enter the amount of products of the discount to be deleted", 0, Integer.MAX_VALUE);
-                    int discount = getInteger(scanner, "Enter the discount of that amount of products", 0, Integer.MAX_VALUE);
-                    boolean isPercentage = getInteger(scanner, "Is the discount is by percentage or by shekels?\n1.Percetage\n2.Shekels", 1, 2) == 1;
-                    System.out.println(serviceFactory.supplierService.deleteProductDiscount(supplierNum, productNum, productAmount, discount, isPercentage));
-                } else System.out.println(discounts.get(0));
+                        int productAmount = getInteger(scanner, "Enter the amount of products of the discount to be deleted", 0, Integer.MAX_VALUE);
+                        int discount = getInteger(scanner, "Enter the discount of that amount of products", 0, Integer.MAX_VALUE);
+                        boolean isPercentage = getInteger(scanner, "Is the discount is by percentage or by shekels?\n1.Percetage\n2.Shekels", 1, 2) == 1;
+                        System.out.println(serviceFactory.supplierService.deleteProductDiscount(supplierNum, productNum, productAmount, discount, isPercentage));
+                    } else System.out.println(discounts.get(0));
+                }
             } else System.out.println(products.get(0));
         }
     }
@@ -473,7 +484,11 @@ public class SupplierManager {
                 System.out.println(products);
                 int productNum = getInteger(scanner, "Enter the number of product that you are willing to edit one of it's discounts", 0, Integer.MAX_VALUE);
                 System.out.println("The products discounts are:");
-                List<String> discounts = serviceFactory.supplierService.getProductDiscounts(supplierNum, productNum);
+                Response res2 = serviceFactory.supplierService.getProductDiscounts(supplierNum, productNum);
+                if (res2.isError())
+                    System.out.println(res2.getErrorMassage());
+                else {
+                List<String> discounts = (List<String>) res2.getValue();
                 if (discounts.size() == 0 || (!discounts.get(0).contains("doesn't") && !discounts.get(0).contains("exists") && !discounts.get(0).contains("failed") && !discounts.get(0).contains("Cannot"))) {
                     System.out.println(discounts);
                     int productAmount = getInteger(scanner, "Enter the amount of products to be discounted", 0, Integer.MAX_VALUE);
@@ -481,7 +496,7 @@ public class SupplierManager {
                     int discount = getInteger(scanner, "Enter the new discount for that amount", 0, Integer.MAX_VALUE);
                     boolean isPercentage = getInteger(scanner, "Is the discount is by percentage or by shekels?\n1.Percetage\n2.Shekels", 1, 2) == 1;
                     System.out.println(serviceFactory.supplierService.editProductDiscount(supplierNum, productNum, productAmount, discount, isPercentage));
-                } else System.out.println(discounts.get(0));
+                } else System.out.println(discounts.get(0));}
             } else System.out.println(products.get(0));
         }
     }
