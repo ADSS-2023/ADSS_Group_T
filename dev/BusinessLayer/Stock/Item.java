@@ -224,7 +224,7 @@ public class Item implements ProductCategoryManagement {
         itemDalController.update(old_dto , new_dto);
         if (current_amount()<=min_amount)
             return alert();
-        return "The operation was carried out successfully";
+        return "Item : " + new_dto.getItemId() + " has been reported as damaged";
     }
 
     public void set_on_alert_callback(OnAlertCallBack c) {

@@ -47,7 +47,7 @@ public class Damaged {
             throw new Exception("no damaged items");
         String returnReport = "";
         for (DamagedItem curItem : damagedItems) {
-            returnReport+=curItem.produceReport();
+            returnReport+=curItem.produceReport() + ",,\n";
         }
         return returnReport;
     }

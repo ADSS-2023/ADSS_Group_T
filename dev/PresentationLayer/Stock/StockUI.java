@@ -79,7 +79,7 @@ public class StockUI {
         }
     }
 
-    private  void inventoryReport() {
+    public void inventoryReport() {
         Scanner scanner = new Scanner(System.in);
         LinkedList<String> categories = new LinkedList<>();
         boolean is_active = true;

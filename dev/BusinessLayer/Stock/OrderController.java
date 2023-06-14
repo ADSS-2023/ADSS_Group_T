@@ -286,7 +286,7 @@ public class OrderController {
         return to_return;
     }
 
-    private String show_special_orders(DayOfWeek cur_day){
+    public String show_special_orders(DayOfWeek cur_day){
         String toReturn = "";
         List<ItemToOrder> special_orders = order_service.getSpecialOrder(cur_day);
         Map<String , Integer> map_of_amount = new HashMap(); // list that sums all the items from a specific one
