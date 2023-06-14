@@ -92,7 +92,7 @@ public class SupplierService {
 
 
 
-    public Response addProduct(int supplierNum, int productNum, String productName, String manufacturer, int price, int maxAmount, LocalDate expiryDate){
+    public Response addProduct(int supplierNum, int productNum, String productName, String manufacturer, float price, int maxAmount, LocalDate expiryDate){
         try {
             sc.getSupplier(supplierNum).addProduct(productNum, productName, manufacturer, price, maxAmount, expiryDate);
             return Response.okResponse("Product added successfully");
