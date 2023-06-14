@@ -55,7 +55,17 @@ public abstract class GenericFrame extends JFrame {
     public void setErrorText(String errorText) {
         //the first word of the error message is always "Error: " in white color
         //the rest of the error message is in red color
+        //i want that the whole error message will show for 5 seconds and then disappear
         errorLabel.setText("<html><font color='white'>Error: </font><font color='red'>" + errorText + "</font></html>");
+        new Thread(() -> {
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            errorLabel.setText("<html><font color='white'>Error: </font><font color='red'>" + "</font></html>");
+        }).start();
     }
 
     protected void updateDateTime() {
