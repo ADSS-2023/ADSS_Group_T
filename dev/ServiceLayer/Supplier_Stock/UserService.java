@@ -8,9 +8,12 @@ public class UserService {
         this.uc = uc;
     }
     public Response login(String id){
-        try{uc.login(id);}
+        try{
+            uc.login(id);
+           return Response.okResponse(true);
+        }
         catch (Exception e){
-
+            return Response.errorResponse(e.getMessage());
         }
     }
 }
