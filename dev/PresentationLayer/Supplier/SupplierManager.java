@@ -87,17 +87,22 @@ public class SupplierManager {
         serviceFactory.supplierService.addSupplierDiscount(3,Discounts.DISCOUNT_BY_TOTAL_QUANTITY,40,5,true);
         serviceFactory.supplierService.addSupplierDiscount(1,Discounts.DISCOUNT_BY_TOTAL_PRICE,300,40,false);
 
-//        ItemToOrder item1  = new ItemToOrder("Bamba","Osem",550,Util_Supplier_Stock.getCurrDay().plusMonths(1),-1,-1);
-//        ItemToOrder item2  = new ItemToOrder("Ketchup","Heinz",50,Util_Supplier_Stock.getCurrDay().plusMonths(1),-1,-1);
-//        //ItemToOrder item3  = new ItemToOrder("Click","Elite",175,Util_Supplier_Stock.getCurrDay().plusMonths(1),-1,-1);
-//        List<ItemToOrder> itemsList = new LinkedList<>();
-//        //itemsList.add(item1);
-//       // itemsList.add(item2);
-//       // itemsList.add(item3);
-//        //System.out.println(serviceFactory.orderService.createSpecialOrder(itemsList,false));
-//        ItemToOrder item4  = new ItemToOrder("Click","Elite",2,Util_Supplier_Stock.getCurrDay().plusMonths(1),-1,-1);
-//        itemsList.add((item4));
-//        serviceFactory.orderService.createRegularOrder(itemsList);
+            ItemToOrder item1  = new ItemToOrder("Bamba","Osem",550,Util_Supplier_Stock.getCurrDay().plusMonths(1),-1,-1);
+        ItemToOrder item2  = new ItemToOrder("Ketchup","Heinz",50,Util_Supplier_Stock.getCurrDay().plusMonths(1),-1,-1);
+        //ItemToOrder item3  = new ItemToOrder("Click","Elite",175,Util_Supplier_Stock.getCurrDay().plusMonths(1),-1,-1);
+        List<ItemToOrder> itemsList = new LinkedList<>();
+        //itemsList.add(item1);
+       // itemsList.add(item2);
+       // itemsList.add(item3);
+        //System.out.println(serviceFactory.orderService.createSpecialOrder(itemsList,false));
+        ItemToOrder item4  = new ItemToOrder("Click","Elite",2,Util_Supplier_Stock.getCurrDay().plusMonths(1),-1,-1);
+        itemsList.add((item4));
+        serviceFactory.orderService.createSpecialOrder(itemsList,true);
+        nextDay();
+        nextDay();
+        nextDay();
+        nextDay();
+        nextDay();
     }
 
     public void start(){
@@ -542,7 +547,8 @@ public class SupplierManager {
 
     private void getOrders(){
         System.out.println("Orders saved in the system:\n");
-        System.out.println(serviceFactory.orderService.getOrders());
+        List<String> list = (List<String>)serviceFactory.orderService.getOrders().getValue();
+        System.out.println(list.get(0));
     }
 
     private void getSuppliers(){

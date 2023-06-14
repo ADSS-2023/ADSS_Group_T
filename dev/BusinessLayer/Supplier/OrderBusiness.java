@@ -83,13 +83,17 @@ public class OrderBusiness {
     @Override
     public String toString() {
         String s = "";
-        for (OrderProduct order:products) {
-            s=s+" "+order.toString();
+        for (OrderProduct product:products) {
+            s=s+" "+product.toString();
         }
         return
                 "Order Number: " + orderNum +
-                        ",Supplier Number: "+supplierNum+
-                        ",Products: " +"\n"+ s+"\n";
+                        " |Supplier Number: "+supplierNum+
+                        " |Order Date: "+orderDate.toString()+
+                        " |Destination Address: "+destinationAddress+
+                        " |Contact Name: "+contactName+
+                        " |Contact Number: "+contactNumber+
+                        " |Products: " +"\n"+ s+"\n";
 
     }
 

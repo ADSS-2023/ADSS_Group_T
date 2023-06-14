@@ -112,12 +112,12 @@ public class OrderProduct {
     @Override
     public String toString() {
         return
-                "productName: " + productName + '\'' +
-                ", productNumber: " + productNumber +
-                ", quantity: " + quantity +
-                ", initialPrice: " + initialPrice +
-                ", discount: " + discount +
-                ", finalPrice: " + finalPrice + "\n";
+                "productName: " + productName  +
+                " |productNumber: " + productNumber +
+                " |quantity: " + quantity +
+                " |initialPrice: " + initialPrice +
+                " |discount: " + discount +
+                " |finalPrice: " + finalPrice + "\n";
     }
 
     public void setQuantity(int quantity) {

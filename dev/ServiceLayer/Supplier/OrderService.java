@@ -1,9 +1,6 @@
 package ServiceLayer.Supplier;
 
-import BusinessLayer.Supplier.OrderBusiness;
-import BusinessLayer.Supplier.OrderController;
-import BusinessLayer.Supplier.SupplierController;
-import BusinessLayer.Supplier.SupplierProductBusiness;
+import BusinessLayer.Supplier.*;
 import BusinessLayer.Supplier.Suppliers.SupplierBusiness;
 import BusinessLayer.Supplier_Stock.ItemToOrder;
 import ServiceLayer.Supplier_Stock.Response;
@@ -111,6 +108,24 @@ public class OrderService {
         }
         catch (Exception e){
            return Response.errorResponse(e.getMessage());
+            //return orders; TODO: why we didnt return e.getMessage()?
+        }
+    }
+    public Response getProductsByOrder(int OrderNum){
+        List<String>  products = new LinkedList<>();
+        try{
+            List<OrderBusiness> orderBusinessList =  oc.getOrders();
+            for (OrderBusiness order:orderBusinessList) {
+                if(order.getOrderNum()==OrderNum) {
+                    for (OrderProduct product : order.getProducts()) {
+                        products.add(product.toString());
+                    }
+                }
+            }
+            return Response.okResponse(products);
+        }
+        catch (Exception e){
+            return Response.errorResponse(e.getMessage());
             //return orders; TODO: why we didnt return e.getMessage()?
         }
     }
