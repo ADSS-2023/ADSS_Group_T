@@ -41,7 +41,7 @@ public class SupplierGUI {
         } catch (Exception c) {
 
         }
-        String[] frameOptions = {"ManagerFrame", "StockFrame"};
+        String[] frameOptions = {"ManagerFrame", "StockFrame","AllSupplierFrame"};
         int frameChoice = JOptionPane.showOptionDialog(null, "Choose a frame to open", "Select Frame",
                 JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, frameOptions, frameOptions[0]);
         if (frameChoice == 0) {
@@ -52,6 +52,12 @@ public class SupplierGUI {
             // Open StockFrame
             run(new StockFrame(stockUI , supplierManager , sf));
         }
+        else if(frameChoice == 2){
+            run(new AllSupplierFrame(supplierManager , sf));
+        }
 
+    }
+    public static void run(JFrame curFrame) {
+        curFrame.setVisible(true);
     }
 }
