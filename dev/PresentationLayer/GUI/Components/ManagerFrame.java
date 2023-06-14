@@ -3,6 +3,7 @@ package PresentationLayer.GUI.Components;
 import BusinessLayer.Stock.Util.Util;
 import PresentationLayer.Stock.StockUI;
 import PresentationLayer.Supplier.SupplierManager;
+import ServiceLayer.Supplier_Stock.Response;
 import ServiceLayer.Supplier_Stock.ServiceFactory;
 
 import javax.swing.*;
@@ -17,16 +18,13 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 public class ManagerFrame extends JFrame {
-    private StockUI stockUI;
     private ServiceFactory sf;
-    private SupplierManager supplierManager;
     private JPanel contentPanel;
     private JPanel emptyBoxPanel;
     private CardLayout cardLayout;
     private JLabel messageField;
 
-    public ManagerFrame(StockUI stockUI, SupplierManager supplierManager, ServiceFactory sf) {
-        this.stockUI = stockUI;
+    public ManagerFrame(ServiceFactory sf) {
         this.sf = sf;
 
         setTitle("Manager window");
@@ -81,28 +79,32 @@ public class ManagerFrame extends JFrame {
         toolbar.setFloatable(false);
 
         addButtonToToolbar(toolbar, "Generate Inventory Report", this::inventoryReport);
-        addButtonToToolbar(toolbar, "Generate Damage Item Report", () -> {
-            String damagedReport = sf.damagedService.produce_damaged_report();
-            showDamageReportDialog(damagedReport);
-        });
+        addButtonToToolbar(toolbar, "Generate Damage Item Report", () -> {showDamageReportDialog(sf.damagedService.produce_damaged_report());});
         addButtonToToolbar(toolbar, "Generate Shortage Report", () -> {
-            String shortageReport = sf.inventoryService.produce_shortage_report();
-            showShortageReportDialog(shortageReport);
+            showShortageReportDialog(sf.inventoryService.produce_shortage_report());
         });
         addButtonToToolbar(toolbar, "Edit Regular Order", this::editRegularItemOrder);
         addButtonToToolbar(toolbar, "Show All Orders", this::show_all_orders);
         addButtonToToolbar(toolbar, "Create Regular Order - TESTING ONLY", this::createRegularOrder);
-        addButtonToToolbar(toolbar, "Show New Items", () -> {
-            String newItems = sf.manageOrderService.show_new_items();
+        addButtonToToolbar(toolbar, "Show New Items", this::showNewItems);
+
+        add(toolbar, BorderLayout.WEST);
+    }
+
+    private void showNewItems(){
+        try {
+            Response newItemsData = sf.manageOrderService.show_new_items();
+            if(newItemsData.isError()) throw new Exception(newItemsData.getErrorMassage());
+            String newItems = (String) newItemsData.getValue();
             JTextArea textArea = new JTextArea(newItems);
             JScrollPane scrollPane = new JScrollPane(textArea);
             textArea.setEditable(false);
             scrollPane.setPreferredSize(new Dimension(400, 300));
-
             JOptionPane.showMessageDialog(null, scrollPane, "New Items", JOptionPane.PLAIN_MESSAGE);
-        });
-
-        add(toolbar, BorderLayout.WEST);
+        }
+        catch (Exception exp) {
+            messageField.setText(exp.getMessage());
+        }
     }
 
     private void addButtonToToolbar(JToolBar toolbar, String label, Runnable action) {
@@ -117,8 +119,11 @@ public class ManagerFrame extends JFrame {
         toolbar.add(button);
     }
 
-    private void showDamageReportDialog(String damagedReport) {
+    private void showDamageReportDialog(Response damagedReportData) {
         try {
+            if (damagedReportData.isError())
+                throw new Exception(damagedReportData.getErrorMassage());
+            String damagedReport = (String) damagedReportData.getValue();
             String[] items = damagedReport.split(",,\n");
 
             StringBuilder formattedReport = new StringBuilder();
@@ -142,8 +147,11 @@ public class ManagerFrame extends JFrame {
         }
     }
 
-    private void showShortageReportDialog(String shortageReport) {
+    private void showShortageReportDialog(Response shortageReportData) {
         try {
+            if (shortageReportData.isError())
+                throw new Exception(shortageReportData.getErrorMassage());
+            String shortageReport = (String) shortageReportData.getValue();
             String[] items = shortageReport.split("-------------------------------------------");
 
             StringBuilder formattedReport = new StringBuilder();
@@ -171,7 +179,9 @@ public class ManagerFrame extends JFrame {
     //TODO : fix when click on final category
     public String presentCategories() {
         try {
-            String data = sf.inventoryService.show_data();
+            Response dataResponse = sf.inventoryService.show_data();
+            if (dataResponse.isError()) throw new Exception(dataResponse.getErrorMassage());
+            String data = (String) dataResponse.getValue();
             String[] categories = data.split(", ");
             String[] options = new String[categories.length + 1];
 
@@ -210,7 +220,9 @@ public class ManagerFrame extends JFrame {
                 } else {
                     nextIndex += "." + (Integer.parseInt(options[choice].split(" : ")[0]) - 1);
                     try {
-                        String toShow = sf.categoryService.show_data(nextIndex);
+                        Response dataToShow = sf.inventoryService.show_data();
+                        if (dataResponse.isError()) throw new Exception(dataToShow.getErrorMassage());
+                        String toShow = (String) dataToShow.getValue();
                         categories = toShow.split(", ");
                         options = new String[categories.length + 1];
 
@@ -270,7 +282,9 @@ public class ManagerFrame extends JFrame {
             if (categories.isEmpty()) {
                 System.out.println("You didn't choose any category.");
             } else {
-                String inventoryReport = sf.inventoryService.produce_inventory_report(categories);
+                Response inventoryReportData = sf.inventoryService.produce_inventory_report(categories);
+                if (inventoryReportData.isError()) throw new Exception(inventoryReportData.getErrorMassage());
+                String inventoryReport = (String) inventoryReportData.getValue();
                 showInventoryReportDialog(inventoryReport);
             }
         } catch (Exception e) {
@@ -336,17 +350,21 @@ public class ManagerFrame extends JFrame {
 
                 try {
                     DayOfWeek cur_day = DayOfWeek.valueOf(day.toUpperCase());
-                    String itemDetails = sf.manageOrderService.presentItemsById(cur_day);
+                    Response itemDetailsData = sf.manageOrderService.presentItemsById(cur_day);
+                    if (itemDetailsData.isError()) throw new Exception(itemDetailsData.getErrorMassage());
+                    String itemDetails = (String) itemDetailsData.getValue();
                     String message = "Item Details:\n" + itemDetails + "\n\nConfirm editing the order with the new amount: " + amount;
 
                     int confirmResult = JOptionPane.showConfirmDialog(null, message, "Confirm Edit", JOptionPane.YES_NO_OPTION);
                     if (confirmResult == JOptionPane.YES_OPTION) {
-                        String editResult = sf.manageOrderService.editRegularOrder(id, cur_day, amount);
+                        Response editResultData = sf.manageOrderService.editRegularOrder(id, cur_day, amount);
+                        if (editResultData.isError()) throw new Exception(editResultData.getErrorMassage());
+                        String editResult = (String) editResultData.getValue();
                         messageField.setText(editResult); // Update the messageField with the result
                     } else {
                         messageField.setText("Edit operation canceled."); // Update the messageField
                     }
-                } catch (IllegalArgumentException e) {
+                } catch (Exception e) {
                     messageField.setText("Invalid day of the week. Please enter a valid day in capital letters."); // Update the messageField
                 }
             } else {
@@ -359,7 +377,9 @@ public class ManagerFrame extends JFrame {
 
     private void show_all_orders() {
         try {
-            String allOrders = sf.manageOrderService.show_all_orders();
+            Response allOrdersData = sf.manageOrderService.show_all_orders();
+            if (allOrdersData.isError()) throw new Exception(allOrdersData.getErrorMassage());
+            String allOrders = (String) allOrdersData.getValue();
 
             if (allOrders.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "No orders available.", "All Orders", JOptionPane.INFORMATION_MESSAGE);
@@ -372,7 +392,9 @@ public class ManagerFrame extends JFrame {
             for (String day : days) {
                 sb.append("---------").append(day).append("---------\n");
 
-                String regularOrders = sf.manageOrderService.presentItemsById(DayOfWeek.valueOf(day));
+                Response regularOrdersData = sf.manageOrderService.presentItemsById(DayOfWeek.valueOf(day));
+                if (regularOrdersData.isError()) throw new Exception(regularOrdersData.getErrorMassage());
+                String regularOrders = regularOrdersData.getErrorMassage();
                 if (regularOrders.isEmpty()) {
                     sb.append("Regular orders:\n");
                     sb.append("\tNo orders on this day\n");
@@ -439,13 +461,14 @@ public class ManagerFrame extends JFrame {
         }
 
         try {
-            String message = sf.manageOrderService.createRegularOrder(products);
+            Response messageData = sf.manageOrderService.createRegularOrder(products);
+            if (messageData.isError()) throw new Exception(messageData.getErrorMassage());
+            String message = (String) messageData.getValue();
             JOptionPane.showMessageDialog(null, message, "Create Regular Order", JOptionPane.INFORMATION_MESSAGE);
         } catch (Exception e) {
             messageField.setText(e.getMessage()); // Update the messageField with the error message
         }
     }
-
 }
 
 
