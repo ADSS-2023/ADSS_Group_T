@@ -155,13 +155,13 @@ How to use,
 
 ### Deliveries
 
-| id    | deliveryDate | departureTime  | truckWeight | source | driverId | truckNumber | shippingArea |
-|-------|--------------|----------------|-------------|--------|----------|-------------|--------------|
-| 0     | 2023-06-16   | 12:00          | 6000        | s1     | 0        | 1002        | 1            |
-| 1     | 2023-06-16   | 12:00          | 4000        | s1     | 0        | 1001        | 1            |
-| 2     | 2023-06-17   | 12:00          | 8000        | s3     | 0        | 1003        | 1            |
-| 3     | 2023-06-17   | 12:00          | 6000        | s3     | 0        | 1002        | 1            |
-| 4     | 2023-06-17   | 12:00          | 4000        | s4     | 0        | 1001        | 1            |
+| id    | deliveryDate                | departureTime  | truckWeight | source | driverId | truckNumber | shippingArea |
+|-------|-----------------------------|----------------|-------------|--------|----------|-------------|--------------|
+| 0     | LocalDate.now().plusDays(2) | 12:00          | 6000        | s1     | 0        | 1002        | 1            |
+| 1     | LocalDate.now().plusDays(2) | 12:00          | 4000        | s1     | 0        | 1001        | 1            |
+| 2     | LocalDate.now().plusDays(3) | 12:00          | 8000        | s3     | 0        | 1003        | 1            |
+| 3     | LocalDate.now().plusDays(3) | 12:00          | 6000        | s3     | 0        | 1002        | 1            |
+| 4     | LocalDate.now().plusDays(3) | 12:00          | 4000        | s4     | 0        | 1001        | 1            |
 
 ### Trucks
 
