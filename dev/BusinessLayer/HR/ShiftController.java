@@ -47,6 +47,16 @@ public class ShiftController {
         LinkedHashMap<String, HashMap<LocalDate, ArrayList<Shift>>> shiftsByDateInAllBranch = dalShiftService.findAllShiftsByDateInAllBranches(date);
 
         // Initialize a notification string to collect information about illegal shifts
+        String notificationString = notificationBuilder(date, shiftsByDateInAllBranch);
+
+
+        // Output the notification string
+        notifications.put(date, notificationString);
+        dalShiftService.addNotification(date, notificationString);
+    }
+
+    public String notificationBuilder(LocalDate date, LinkedHashMap<String, HashMap<LocalDate, ArrayList<Shift>>> shiftsByDateInAllBranch) throws SQLException {
+        // Initialize a notification string to collect information about illegal shifts
         StringBuilder notificationBuilder = new StringBuilder();
 
         try {
@@ -99,7 +109,7 @@ public class ShiftController {
                     }
                 } catch (Exception ex) {
                     // Catch the exception and continue the loop
-                   // ex.printStackTrace();
+                    // ex.printStackTrace();
                     continue;
                 }
             }
@@ -107,12 +117,8 @@ public class ShiftController {
         } catch (Exception exp) {
             //exp.printStackTrace();
         }
-
-        // Output the notification string
-        notifications.put(date, notificationBuilder.toString());
-        dalShiftService.addNotification(date, notificationBuilder.toString());
+        return notificationBuilder.toString();
     }
-
 
 
     public HashMap<LocalDate, String> getNotifications(LocalDate fromDate, LocalDate toDate) throws SQLException {
@@ -130,6 +136,12 @@ public class ShiftController {
         LinkedHashMap<LocalDate, ArrayList<Shift>> branchShifts = lazyLoadFindShifsByBranch(branchId);
         Shift shift = shiftType ? branchShifts.get(date).get(0) : branchShifts.get(date).get(1);
         return shift.showShiftStatus(dalShiftService);
+    }
+
+    public Map<String, Object> showShiftStatusUI(String branchId, LocalDate date, boolean shiftType) throws SQLException {
+        LinkedHashMap<LocalDate, ArrayList<Shift>> branchShifts = lazyLoadFindShifsByBranch(branchId);
+        Shift shift = shiftType ? branchShifts.get(date).get(0) : branchShifts.get(date).get(1);
+        return shift.showShiftStatusUI(dalShiftService);
     }
 
     public Employee lazyLoadFindEmployeeByid(int id) throws SQLException {
@@ -236,7 +248,7 @@ public class ShiftController {
                 ArrayList<Shift> shiftsForDateInBranch = shiftsByDateInAllBranch.get(branch).get(date);
                 // Check if there is a storekeeper assigned to any of the shifts for the specified date and branch
                 for (Shift shift : shiftsForDateInBranch) {
-                    if (!shift.isThereAnyStoreKeeperReuirement()) {
+                    if (!shift.isThereAssignStoreKeeper()) {
                         branchesWithoutStoreKeeper.add(branch);
                         break;
                     }

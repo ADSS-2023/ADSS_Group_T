@@ -77,28 +77,24 @@ public class DalDriverService {
         return submissionByDriverIdAnDate;
     }
 
-
-
-    public LinkedList<Driver> findAllSubmissionByDate(LocalDate date) throws SQLException {
-        LinkedList<DriverDTO> driverDTOs = driverDAO.getDriversByDate(date.toString());
-
-        LinkedList<Driver> drivers = new LinkedList<>();
-
-        for (DriverDTO driverDTO : driverDTOs) {
-            User user = dalUserService.findUserById(driverDTO.getDriverId());
-            if (user != null) {
-                Driver driver = new Driver(driverDTO, user);
-                drivers.add(driver);
+    public LinkedHashMap<Driver, Boolean> findAllSubmissionByDate(LocalDate date) throws SQLException { // the boolean is if assigned or not
+        LinkedHashMap<String, Object> conditions = new LinkedHashMap<>();
+        conditions.put("shiftDate", date);
+        ArrayList<DateToDriverDTO> driverSubmissionsByDateDTOs = driverDAO.findAll("DateToDriver", conditions, DateToDriverDTO.class);
+        if (driverSubmissionsByDateDTOs == null)
+            return null;
+        LinkedHashMap<Driver, Boolean> submissionsByDriverIdDate = new LinkedHashMap<>();
+        // Loop through all the submissions
+        for (DateToDriverDTO submission : driverSubmissionsByDateDTOs) {
+                // Add the driver to the driverMap with the value set to true if the submission is approved, otherwise set false
+                boolean isAssigned = false;
+                if (submission.getIsAssigned() != null && submission.getIsAssigned().equals("true"))
+                    isAssigned = true;
+                Driver driver = findDriverById(submission.getDriverId());
+                submissionsByDriverIdDate.put(driver, isAssigned);
             }
+        return submissionsByDriverIdDate;
         }
-
-        return drivers;
-    }
-
-
-
-
-
 
 
 
