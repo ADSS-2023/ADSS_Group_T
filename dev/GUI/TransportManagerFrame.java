@@ -396,21 +396,55 @@ public class TransportManagerFrame extends GenericFrameUser {
                 setErrorText(response1.getErrorMessage());
             } else {
                 String deliveries = (String) response1.getReturnValue();
-                //the deliveries string of deliveries separated by "Delivery ID: "
-                //create a jcobmo box with all the deliveries id and when the user chooses one, show the details of the delivery
+                //create a string array of deliveries
+                //the deliveries string of deliveries separated by "---------------------------------------"
+                String[] deliveriesArray = deliveries.split("---------------------------------------");
+                //for each delivery in deliveriesArray find the delivery id
+                //and add a JComboBox with the delivery id to the rightPanel
+                JComboBox<String> deliveryComboBox = new JComboBox<>();
+                for (String delivery : deliveriesArray) {
+                    //find the delivery id of the delivery string (find where there is a "delivery id: " and take the next int)
+//getDeliveryId(delivery to string
+                    deliveryComboBox.addItem(getDeliveryId(delivery));
+                    rightPanel.add(deliveryComboBox);
+                    rightPanel.revalidate();
+                    rightPanel.repaint();
+                }
+                //for each choice in the JComboBox show the delivery details in the rightPanel
+                //when the user chooses a delivery from the JComboBox
+                //the details of the delivery will be shown in the rightPanel
+                //the details of the delivery are the lines in the delivery string separated by \n
+                //implement the action listener of the JComboBox
 
-
-
-
-                rightPanel.add(new GenericLabel(deliveries));
+                //add button to show delivery details
+                GenericButton showDeliveryDetailsButton = new GenericButton("Show delivery details");
+                rightPanel.add(showDeliveryDetailsButton);
+                //crete text area to show delivery details
+                JTextArea deliveryDetailsTextArea = new JTextArea();
+                rightPanel.add(deliveryDetailsTextArea);
                 rightPanel.revalidate();
                 rightPanel.repaint();
-            }
-            rightPanel.add(new GenericLabel(""));
-            rightPanel.add(new GenericTextField());
 
-            rightPanel.revalidate();
-            rightPanel.repaint();
+                //create listener for the button
+                //when the button is pressed the delivery details will be shown in the text area
+                //clear the text area before showing the delivery details
+                showDeliveryDetailsButton.addActionListener(e1 -> {
+                    deliveryDetailsTextArea.setText("");
+                    //get the selected delivery id from the JComboBox
+                    String selectedDeliveryId = (String) deliveryComboBox.getSelectedItem();
+                    //find the delivery string in the deliveriesArray that has the selected delivery id
+                    String selectedDelivery = "";
+                    //get the delivery string from the deliveriesArray that has the selected delivery id
+                    selectedDelivery = deliveriesArray[deliveryComboBox.getSelectedIndex()];
+                    //show the delivery details in the text area
+                    //the delivery details are the lines in the delivery string separated by \n
+                    String[] deliveryDetails = selectedDelivery.split("\n");
+                    for (String deliveryDetail : deliveryDetails) {
+                        deliveryDetailsTextArea.append(deliveryDetail + "\n");
+                    }
+                });
+
+            }
         });
 
 
@@ -523,4 +557,24 @@ public class TransportManagerFrame extends GenericFrameUser {
         result = overWeightActionComboBox.getSelectedIndex();
         return result;
     }
+        public static String getDeliveryId(String deliveryDetails) {
+            // Split the input string by line breaks
+            String[] lines = deliveryDetails.split("\\r?\\n");
+            // Iterate over the lines to find the line with "Delivery ID: <id>"
+            for (String line : lines) {
+                if (line.startsWith("Delivery ID:")) {
+                    // Extract the ID number by splitting the line
+                    String[] parts = line.split(":");
+                    if (parts.length > 1) {
+                        String idString = parts[1].trim();
+
+                        // Parse the ID string to an integer and return it
+                        return (idString);
+                    }
+                }
+            }
+            // Return -1 if the delivery ID is not found
+            return "";
+        }
+
 }
