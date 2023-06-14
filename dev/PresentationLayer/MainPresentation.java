@@ -11,6 +11,7 @@ import ServiceLayer.Transport.DeliveryService;
 import ServiceLayer.Transport.LogisticCenterService;
 import ServiceLayer.Transport.SupplierService;
 import ServiceLayer.UserService;
+import UtilSuper.IsGUI;
 import UtilSuper.Response;
 import UtilSuper.ResponseSerializer;
 import UtilSuper.ServiceFactory;
@@ -56,10 +57,12 @@ public class MainPresentation {
         driverPresentation = new DriverPresentation(employeeService);
         serviceFactory.callbackEnterWeight(this.transportManagerPresentation::enterWeightFunction);
         serviceFactory.callbackEnterOverWeight(this.transportManagerPresentation::enterOverWeightAction);
+
     }
 
 
     public void start() throws Exception {
+        IsGUI.setIsGUI(false);
         Scanner scanner = new Scanner(System.in);
         System.out.println("------ START -------");
         System.out.println("Please choose an option:");

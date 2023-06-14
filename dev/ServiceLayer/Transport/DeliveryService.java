@@ -1,10 +1,7 @@
 package ServiceLayer.Transport;
 
 import BusinessLayer.Transport.DeliveryController;
-import UtilSuper.EnterWeightInterface;
-import UtilSuper.EnterOverWeightInterface;
-import UtilSuper.Response;
-import UtilSuper.ResponseSerializer;
+import UtilSuper.*;
 
 import java.sql.SQLException;
 import java.util.LinkedHashMap;
@@ -108,9 +105,12 @@ public class DeliveryService {
         this.enterWeightInterface = enterWeightInterface;
     }
 
+
     public void setEnterOverWeightInterface(EnterOverWeightInterface enterOverWeightInterface) {
         this.enterOverWeightInterface = enterOverWeightInterface;
     }
+
+
 
     public String getCurrDate() {
         try {
