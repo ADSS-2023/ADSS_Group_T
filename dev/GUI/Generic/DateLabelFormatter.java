@@ -1,28 +1,31 @@
 package GUI.Generic;
 
+import UtilSuper.Time;
+
 import javax.swing.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
-public class DateLabelFormatter extends JFormattedTextField.AbstractFormatter {
-
+class DateLabelFormatter extends JFormattedTextField.AbstractFormatter {
     private String datePattern = "yyyy-MM-dd";
-    private SimpleDateFormat dateFormatter = new SimpleDateFormat(datePattern);
 
     @Override
     public Object stringToValue(String text) throws ParseException {
-        return dateFormatter.parseObject(text);
+        return new SimpleDateFormat(datePattern).parseObject(text);
     }
 
     @Override
     public String valueToString(Object value) throws ParseException {
-        if (value != null) {
-            Calendar cal = (Calendar) value;
-            return dateFormatter.format(cal.getTime());
-        }
+        String s= "";
+        if (value instanceof GregorianCalendar){
 
-        return "";
+            Date d = ((GregorianCalendar) value).getTime();
+            s = Time.localDateToString(new java.sql.Date(d.getTime()).toLocalDate());
+        }
+        return s;
     }
 
 }

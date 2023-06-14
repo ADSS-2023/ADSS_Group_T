@@ -337,7 +337,11 @@ public class HRManagerFrame  extends GenericFrameUser {
             doneButton.addActionListener(e1 ->{
                 setErrorText("");
                 setFeedbackText("");
+
+
                 String datef = datePicker.getModel().getValue().toString();
+
+
                 String shiftType = shiftTypesComboBox.getSelectedItem().toString();
                 String branch = branchComboBox.getSelectedItem().toString();
                 ArrayList<Integer> nums = new ArrayList();
