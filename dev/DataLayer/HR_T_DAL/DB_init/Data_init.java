@@ -1,18 +1,12 @@
 package DataLayer.HR_T_DAL.DB_init;
 
 import BusinessLayer.HR.Driver;
-import BusinessLayer.HR.Shift;
-import BusinessLayer.HR.User.PositionType;
-import BusinessLayer.HR.User.UserType;
-import BusinessLayer.Transport.DeliveryController;
 import DataLayer.HR_T_DAL.DTOs.*;
-import DataLayer.HR_T_DAL.DalService.DalDeliveryService;
 import DataLayer.Util.DAO;
 import ServiceLayer.Transport.DeliveryService;
 import ServiceLayer.Transport.SupplierService;
 import UtilSuper.Location;
 import UtilSuper.Time;
-
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
@@ -22,6 +16,9 @@ public class Data_init {
     public static void initBasicData(DAO dao) throws SQLException {
 
         dao.deleteAllDataFromDatabase();
+
+        SiteDTO logisticCenter = new SiteDTO("logistic center address","0000000000","logistic center contact",0,0,0,"logistic center");
+        dao.insert(logisticCenter);
 
         CounterDTO dateCounter = new CounterDTO("date counter", LocalDate.now().toString());
         dao.insert(dateCounter);
@@ -85,64 +82,63 @@ public class Data_init {
     public static void initSupplierProducts(SupplierService supplierService){
 
 // Supplier 1 - Butcher Shop
-        LinkedHashMap<String,Integer> productMap1 = new LinkedHashMap<String, Integer>();
+        LinkedHashMap<String,Integer> productMap1 = new LinkedHashMap<>();
         productMap1.put("Beef", 2);
         productMap1.put("Pork", 2);
         productMap1.put("Chicken", 1);
         supplierService.addProducts("s1", productMap1);
 
 // Supplier 2 - Bakery
-        LinkedHashMap<String,Integer> productMap2 = new LinkedHashMap<String, Integer>();
+        LinkedHashMap<String,Integer> productMap2 = new LinkedHashMap<>();
         productMap2.put("Bread", 1);
         productMap2.put("Cupcake", 1);
         productMap2.put("Croissant", 1);
         supplierService.addProducts("s2", productMap2);
 
 // Supplier 3 - Seafood Market
-        LinkedHashMap<String,Integer> productMap3 = new LinkedHashMap<String, Integer>();
+        LinkedHashMap<String,Integer> productMap3 = new LinkedHashMap<>();
         productMap3.put("Salmon", 2);
         productMap3.put("Shrimp", 3);
         productMap3.put("Tuna", 2);
-        String supplierAddress3 = "Sea to Table";
         supplierService.addProducts("s3", productMap3);
 
 // Supplier 4 - Fruit Stand
-        LinkedHashMap<String,Integer> productMap4 = new LinkedHashMap<String, Integer>();
+        LinkedHashMap<String,Integer> productMap4 = new LinkedHashMap<>();
         productMap4.put("Apple", 1);
         productMap4.put("Mango", 2);
         productMap4.put("Orange", 1);
         supplierService.addProducts("s4", productMap4);
 
 // Supplier 5 - Green Grocer
-        LinkedHashMap<String,Integer> productMap5 = new LinkedHashMap<String, Integer>();
+        LinkedHashMap<String,Integer> productMap5 = new LinkedHashMap<>();
         productMap5.put("Broccoli", 2);
         productMap5.put("Carrots", 1);
         productMap5.put("Kale", 2);
         supplierService.addProducts("s5", productMap5);
 
 // Supplier 6 - Wine and Spirits
-        LinkedHashMap<String,Integer> productMap6 = new LinkedHashMap<String, Integer>();
+        LinkedHashMap<String,Integer> productMap6 = new LinkedHashMap<>();
         productMap6.put("Red Wine", 2);
         productMap6.put("Whiskey", 3);
         productMap6.put("Tequila", 2);
         supplierService.addProducts("s6", productMap6);
 
 // Supplier 7 - Deli
-        LinkedHashMap<String,Integer> productMap7 = new LinkedHashMap<String, Integer>();
+        LinkedHashMap<String,Integer> productMap7 = new LinkedHashMap<>();
         productMap7.put("Ham", 1);
         productMap7.put("Turkey", 1);
         productMap7.put("Pastrami", 2);
         supplierService.addProducts("s7", productMap7);
 
 // Supplier 8 - Asian Market
-        LinkedHashMap<String,Integer> productMap8 = new LinkedHashMap<String, Integer>();
+        LinkedHashMap<String,Integer> productMap8 = new LinkedHashMap<>();
         productMap8.put("Sushi", 2);
         productMap8.put("Ramen", 2);
         productMap8.put("Tofu", 1);
         supplierService.addProducts("s8", productMap8);
 
 // Supplier 9 - Coffee Roastery
-        LinkedHashMap<String,Integer> productMap9 = new LinkedHashMap<String, Integer>();
+        LinkedHashMap<String,Integer> productMap9 = new LinkedHashMap<>();
         productMap9.put("Espresso", 1);
         productMap9.put("Latte", 1);
         productMap9.put("Cold Brew", 2);
