@@ -51,7 +51,7 @@ public class StockGUI2 extends JFrame {
                 String endDate = endDateField.getText();
                 double percentageAmount = Double.parseDouble(percentageField.getText());
 
-                sf.inventoryService.set_discount(product, percentageAmount, endDate, startDate);
+                //sf.inventoryService.set_discount(product, percentageAmount, endDate, startDate);
 
                 // Show a success message or perform any other actions after setting the discount
                 JOptionPane.showMessageDialog(StockGUI2.this, "Discount has been set successfully!");

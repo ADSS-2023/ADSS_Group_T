@@ -61,6 +61,7 @@ public class InventoryService {
      * @param end_date_string
      * @param start_date_string
      */
+    //TODO : takes the error
     public void set_discount(String product, double percentageAmount, String end_date_string, String start_date_string) {
         try {
             inventory.set_discount(product , percentageAmount , end_date_string , start_date_string);

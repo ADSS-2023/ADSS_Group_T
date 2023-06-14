@@ -35,14 +35,13 @@ public class ItemService {
      * @param manufacturer_name
      * @param price
      */
-    public void addItem(String index,int item_id,String name,int min_amount,String manufacturer_name,double price){
+    public void addItem(String index,int item_id,String name,int min_amount,String manufacturer_name,double price) {
         try {
             inventory.add_item(index,item_id,name,min_amount,manufacturer_name,price);
         }
         catch (Exception e){
             e.getMessage();
         }
-
     }
 
     /**

@@ -6,6 +6,8 @@ import PresentationLayer.Supplier.SupplierManager;
 import ServiceLayer.Supplier_Stock.ServiceFactory;
 
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.EtchedBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,6 +21,7 @@ public class StockFrame extends JFrame {
     private JPanel contentPanel;
     private JPanel emptyBoxPanel;
     private CardLayout cardLayout;
+    private JLabel messageField;
 
     public StockFrame(StockUI stockUI, SupplierManager supplierManager, ServiceFactory sf) {
         this.stockUI = stockUI;
@@ -33,6 +36,19 @@ public class StockFrame extends JFrame {
         createContentPanel();
         createEmptyBoxPanel();
 
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        Border border = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
+        JPanel messagePanel = new JPanel(new BorderLayout());
+        messagePanel.setBorder(BorderFactory.createCompoundBorder(border, BorderFactory.createLineBorder(Color.BLACK)));
+        messagePanel.add(messageField);
+
+        mainPanel.add(messagePanel, BorderLayout.NORTH);
+        messageField.setText("Welcome to stock system");
+
+        mainPanel.add(emptyBoxPanel, BorderLayout.CENTER);
+        mainPanel.add(contentPanel, BorderLayout.SOUTH);
+        add(mainPanel, BorderLayout.CENTER);
+
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
@@ -42,6 +58,11 @@ public class StockFrame extends JFrame {
         contentPanel = new JPanel();
         contentPanel.setLayout(new BorderLayout());
         add(contentPanel, BorderLayout.CENTER);
+
+        JPanel topPanel = new JPanel(new BorderLayout());
+        messageField = new JLabel();
+        topPanel.add(messageField, BorderLayout.NORTH);
+        contentPanel.add(topPanel, BorderLayout.NORTH);
     }
 
     private void createEmptyBoxPanel() {
@@ -55,156 +76,120 @@ public class StockFrame extends JFrame {
         JToolBar toolbar = new JToolBar(JToolBar.VERTICAL);
         toolbar.setFloatable(false);
 
-        JButton discountButton = new JButton("Set Discount");
-        discountButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                setDiscount();
-            }
-        });
-        toolbar.add(discountButton);
-
-        JButton receiveOrderButton = new JButton("Receive Order");
-        receiveOrderButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                receiveOrder();
-            }
-        });
-        toolbar.add(receiveOrderButton);
-
-        JButton addItemButton = new JButton("Add Item");
-        addItemButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                addItem();
-            }
-        });
-        toolbar.add(addItemButton);
-
-        JButton damagedItemButton = new JButton("Report Damaged Item");
-        damagedItemButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                damagedItem();
-            }
-        });
-        toolbar.add(damagedItemButton);
-
-        JButton addCategoryButton = new JButton("Add Category");
-        addCategoryButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                addCategory();
-            }
-        });
-        toolbar.add(addCategoryButton);
-
-        JButton btnSeeCategories = new JButton("See Categories");
-        btnSeeCategories.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                presentCategories();
-            }
-        });
-        toolbar.add(btnSeeCategories);
-
-        JButton btnSetMinimalAmount = new JButton("Set Minimal Amount");
-        btnSetMinimalAmount.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                setMinimalAmount();
-            }
-        });
-        toolbar.add(btnSetMinimalAmount);
-
-        JButton btnPlaceWaitingItems = new JButton("Place Waiting Items");
-        btnPlaceWaitingItems.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                placeWaitingItems();
-            }
-        });
-        toolbar.add(btnPlaceWaitingItems);
-
-        JButton btnCreateSpecialOrder = new JButton("Create Special Order");
-        btnCreateSpecialOrder.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                createSpecialOrder();
-            }
-        });
-        toolbar.add(btnCreateSpecialOrder);
-
-        JButton btnCreateRegularOrder = new JButton("Create Regular Order");
-        btnCreateRegularOrder.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                createRegularOrder();
-            }
-        });
-        toolbar.add(btnCreateRegularOrder);
-
-        JButton btnEditRegularItemOrder = new JButton("Edit Regular Item Order");
-        btnEditRegularItemOrder.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                editRegularItemOrder();
-            }
-        });
-        toolbar.add(btnEditRegularItemOrder);
-
-        JButton btnMoveToNextDay = new JButton("Move to Next Day");
-        btnMoveToNextDay.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                sf.manageOrderService.nextDay();
-                JOptionPane.showMessageDialog(null, "Moved to the next day successfully.", "Move to Next Day", JOptionPane.INFORMATION_MESSAGE);
-            }
-        });
-        toolbar.add(btnMoveToNextDay);
+        addButtonToToolbar(toolbar, "Set Discount", this::setDiscount);
+        addButtonToToolbar(toolbar, "Receive Order", this::receiveOrder);
+        addButtonToToolbar(toolbar, "Add Item", this::addItem);
+        addButtonToToolbar(toolbar, "Report Damaged Item", this::damagedItem);
+        addButtonToToolbar(toolbar, "Add Category", this::addCategory);
+        addButtonToToolbar(toolbar, "See Categories", this::presentCategories);
+        addButtonToToolbar(toolbar, "Set Minimal Amount", this::setMinimalAmount);
+        addButtonToToolbar(toolbar, "Place Waiting Items", this::placeWaitingItems);
+        addButtonToToolbar(toolbar, "Create Special Order", this::createSpecialOrder);
+        addButtonToToolbar(toolbar, "Create Regular Order", this::createRegularOrder);
+        addButtonToToolbar(toolbar, "Edit Regular Item Order", this::editRegularItemOrder);
+        addButtonToToolbar(toolbar, "Move to Next Day", this::nextDay);
 
         add(toolbar, BorderLayout.WEST);
     }
 
+    private void addButtonToToolbar(JToolBar toolbar, String label, Runnable action) {
+        JButton button = new JButton("<html><center>" + label + "</center></html>");
+        button.addActionListener(e -> action.run());
+        button.setPreferredSize(new Dimension(250, 100));
 
-    public String presentCategories() {
-        String data = sf.inventoryService.show_data();
-        String[] categories = data.split(", ");
-        String[] options = new String[categories.length];
+        // Apply custom styling
+        button.setFocusPainted(false);
+        button.setFont(button.getFont().deriveFont(Font.BOLD, 16));
 
-        for (int i = 0; i < categories.length; i++) {
-            String[] parts = categories[i].split(" : ");
-            String index = parts[0].trim();
-            String categoryName = parts[1].trim();
-            options[i] = index + " : " + categoryName;
-        }
-
-        String message = "Press the index of the category/item to dive in,\nPress 0 to choose the current category,\nPress -1 to exit";
-
-        String nextIndex = "";
-        boolean isActive = true;
-        String choice = (String) JOptionPane.showInputDialog(null, message, "Choose Category", JOptionPane.PLAIN_MESSAGE, null, options, null);
-
-        while (isActive) {
-            if (choice == null || choice.equals("-1")) {
-                isActive = false;
-                nextIndex = "exit";
-            } else if (choice.equals("0")) {
-                isActive = false;
-            } else {
-                nextIndex += "." + (Integer.parseInt(choice.split(" : ")[0]) - 1);
-                try {
-                    String toShow = sf.categoryService.show_data(nextIndex);
-                    categories = toShow.split(", ");
-                    options = new String[categories.length];
-
-                    for (int i = 0; i < categories.length; i++) {
-                        String[] parts = categories[i].split(" : ");
-                        String index = parts[0].trim();
-                        String categoryName = parts[1].trim();
-                        options[i] = index + " : " + categoryName;
-                    }
-
-                    choice = (String) JOptionPane.showInputDialog(null, message, "Choose Category", JOptionPane.PLAIN_MESSAGE, null, options, null);
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        }
-        return nextIndex;
+        toolbar.add(button);
     }
 
+    private void nextDay(){
+        sf.manageOrderService.nextDay();
+        JOptionPane.showMessageDialog(null, "Moved to the next day successfully.", "Move to Next Day", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    //TODO : make only one function here and in stock
+    public String presentCategories() {
+        try {
+            String data = sf.inventoryService.show_data();
+            String[] categories = data.split(", ");
+            String[] options = new String[categories.length + 1];
+
+            for (int i = 0; i < categories.length; i++) {
+                String[] parts = categories[i].split(" : ");
+                String index = parts[0].trim();
+                String categoryName = parts[1].trim();
+                options[i] = index + " : " + categoryName;
+            }
+
+            options[categories.length] = "Choose Current Category";
+
+            String message = "Press Choose Current Category to select the current category";
+
+            String nextIndex = "";
+            boolean isActive = true;
+
+            int choice = JOptionPane.showOptionDialog(
+                    null,
+                    message,
+                    "Choose Category",
+                    JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.PLAIN_MESSAGE,
+                    null,
+                    options,
+                    options[0]
+            );
+
+            while (isActive) {
+                if (choice == JOptionPane.CLOSED_OPTION || choice == -1) {
+                    isActive = false;
+                    nextIndex = "exit";
+                } else if (choice == categories.length) {
+                    isActive = false;
+                    return nextIndex;
+                } else {
+                    nextIndex += "." + (Integer.parseInt(options[choice].split(" : ")[0]) - 1);
+                    try {
+                        String toShow = sf.categoryService.show_data(nextIndex);
+                        categories = toShow.split(", ");
+                        options = new String[categories.length + 1];
+
+                        for (int i = 0; i < categories.length; i++) {
+                            String[] parts = categories[i].split(" : ");
+                            String index = parts[0].trim();
+                            String categoryName = parts[1].trim();
+                            options[i] = index + " : " + categoryName;
+                        }
+
+                        options[categories.length] = "Choose Current Category";
+
+                        choice = JOptionPane.showOptionDialog(
+                                null,
+                                message,
+                                "Choose Category",
+                                JOptionPane.DEFAULT_OPTION,
+                                JOptionPane.PLAIN_MESSAGE,
+                                null,
+                                options,
+                                options[0]
+                        );
+                    } catch (Exception e) {
+                        messageField.setText(e.getMessage()); // Update the messageField with the error message
+                        return "exit";
+                    }
+                }
+            }
+
+            return nextIndex;
+        } catch (Exception e) {
+            messageField.setText(e.getMessage()); // Update the messageField with the error message
+            return "exit";
+        }
+    }
 
     private void setDiscount() {
+        String product = presentCategories();
         JTextField productField = new JTextField(10);
         JTextField startDateField = new JTextField(10);
         JTextField endDateField = new JTextField(10);
@@ -212,8 +197,6 @@ public class StockFrame extends JFrame {
 
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(5, 2));
-        panel.add(new JLabel("Product:"));
-        panel.add(productField);
         panel.add(new JLabel("Start Date:"));
         panel.add(startDateField);
         panel.add(new JLabel("End Date:"));
@@ -223,11 +206,18 @@ public class StockFrame extends JFrame {
 
         int result = JOptionPane.showConfirmDialog(null, panel, "Set Discount", JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
-            String product = productField.getText();
-            String startDate = startDateField.getText();
-            String endDate = endDateField.getText();
-            double amount = Double.parseDouble(amountField.getText());
-            stockUI.setDiscount();
+            try {
+                String startDate = startDateField.getText();
+                String endDate = endDateField.getText();
+                double amount = Double.parseDouble(amountField.getText());
+                // Send the data to set discount
+                // TODO: Implement and take the error message
+                sf.inventoryService.set_discount(product, amount, startDate, endDate);
+            } catch (NumberFormatException ex) {
+                messageField.setText("Invalid input format");
+            } catch (Exception ex) {
+                messageField.setText(ex.getMessage());
+            }
         }
     }
 
@@ -250,14 +240,21 @@ public class StockFrame extends JFrame {
 
         int result = JOptionPane.showConfirmDialog(null, panel, "Report Damaged Item", JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
-            int item_id = Integer.parseInt(itemIdField.getText());
-            int order_id = Integer.parseInt(orderIdField.getText());
-            int amount = Integer.parseInt(amountField.getText());
-            String description = descriptionField.getText();
-            sf.damagedService.report_damaged_item(item_id, order_id, amount, description);
+            try {
+                int item_id = Integer.parseInt(itemIdField.getText());
+                int order_id = Integer.parseInt(orderIdField.getText());
+                int amount = Integer.parseInt(amountField.getText());
+                String description = descriptionField.getText();
+                messageField.setText(sf.damagedService.report_damaged_item(item_id, order_id, amount, description));
+            } catch (NumberFormatException ex) {
+                messageField.setText("Invalid input format");
+            } catch (Exception ex) {
+                messageField.setText(ex.getMessage());
+            }
         }
     }
 
+    //TODO : change from an alert to just a string of error
     private void setMinimalAmount() {
         JTextField itemIdField = new JTextField(10);
         JTextField amountField = new JTextField(10);
@@ -278,13 +275,16 @@ public class StockFrame extends JFrame {
                 String message = sf.itemService.setMinimalAmount(item_id, amount);
                 JOptionPane.showMessageDialog(null, message, "Set Minimal Amount", JOptionPane.INFORMATION_MESSAGE);
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(null, "Invalid input format", "Error", JOptionPane.ERROR_MESSAGE);
+                messageField.setText("Invalid input format");
+            } catch (Exception ex) {
+                messageField.setText(ex.getMessage());
             }
         }
     }
 
     private void addItem() {
-        JTextField categoryIdField = new JTextField(10);
+        String categoryId = presentCategories();
+
         JTextField itemIdField = new JTextField(10);
         JTextField nameField = new JTextField(10);
         JTextField amountField = new JTextField(10);
@@ -293,8 +293,8 @@ public class StockFrame extends JFrame {
 
         JPanel addItemPanel = new JPanel();
         addItemPanel.setLayout(new GridLayout(6, 2));
-        addItemPanel.add(new JLabel("Category ID:"));
-        addItemPanel.add(categoryIdField);
+
+
         addItemPanel.add(new JLabel("Item ID:"));
         addItemPanel.add(itemIdField);
         addItemPanel.add(new JLabel("Name:"));
@@ -311,13 +311,19 @@ public class StockFrame extends JFrame {
 
         int result = JOptionPane.showConfirmDialog(emptyBoxPanel, addItemPanel, "Add Item", JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
-            String categoryId = categoryIdField.getText();
-            int itemId = Integer.parseInt(itemIdField.getText());
-            String name = nameField.getText();
-            int amount = Integer.parseInt(amountField.getText());
-            String manufacturer = manufacturerField.getText();
-            double price = Double.parseDouble(priceField.getText());
-            sf.itemService.addItem(categoryId, itemId, name, amount, manufacturer, price);
+            try {
+                int itemId = Integer.parseInt(itemIdField.getText());
+                String name = nameField.getText();
+                int amount = Integer.parseInt(amountField.getText());
+                String manufacturer = manufacturerField.getText();
+                double price = Double.parseDouble(priceField.getText());
+                sf.itemService.addItem(categoryId, itemId, name, amount, manufacturer, price);
+                messageField.setText("Item " + name + " added successfully");
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null, "Invalid input format", "Error", JOptionPane.ERROR_MESSAGE);
+            } catch (Exception ex) {
+                messageField.setText(ex.getMessage());
+            }
         }
         emptyBoxPanel.removeAll();
         emptyBoxPanel.revalidate();
@@ -349,14 +355,21 @@ public class StockFrame extends JFrame {
 
         int result = JOptionPane.showConfirmDialog(null, panel, "Receive Order", JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
-            int orderId = Integer.parseInt(orderIdField.getText());
-            int itemId = Integer.parseInt(itemIdField.getText());
-            int amount = Integer.parseInt(amountField.getText());
-            String location = locationField.getText();
-            String validity = validityField.getText();
-            double costPrice = Double.parseDouble(costPriceField.getText());
+            try {
+                int orderId = Integer.parseInt(orderIdField.getText());
+                int itemId = Integer.parseInt(itemIdField.getText());
+                int amount = Integer.parseInt(amountField.getText());
+                String location = locationField.getText();
+                String validity = validityField.getText();
+                double costPrice = Double.parseDouble(costPriceField.getText());
 
-            System.out.println(sf.itemService.receive_order(orderId, itemId, amount, location, Util.stringToDate(validity), costPrice));
+                String message = sf.itemService.receive_order(orderId, itemId, amount, location, Util.stringToDate(validity), costPrice);
+                JOptionPane.showMessageDialog(null, message, "Receive Order", JOptionPane.INFORMATION_MESSAGE);
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null, "Invalid input format", "Error", JOptionPane.ERROR_MESSAGE);
+            } catch (Exception ex) {
+                messageField.setText(ex.getMessage());
+            }
         }
     }
 
@@ -373,8 +386,13 @@ public class StockFrame extends JFrame {
 
         int result = JOptionPane.showConfirmDialog(null, panel, "Add Category", JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
-            String name = nameField.getText();
-            System.out.println(sf.categoryService.add_category(index, name));
+            try {
+                String name = nameField.getText();
+                String message = sf.categoryService.add_category(index, name);
+                JOptionPane.showMessageDialog(null, message, "Add Category", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception ex) {
+                messageField.setText(ex.getMessage());
+            }
         }
     }
 
@@ -405,13 +423,14 @@ public class StockFrame extends JFrame {
                     isActive = confirmChoice == JOptionPane.YES_OPTION;
                 } catch (NumberFormatException ex) {
                     JOptionPane.showMessageDialog(null, "Invalid input format", "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (Exception ex) {
+                    messageField.setText(ex.getMessage());
                 }
             } else {
                 isActive = false;
             }
         }
     }
-
 
     //orders
     private void createSpecialOrder() {
@@ -450,8 +469,12 @@ public class StockFrame extends JFrame {
         int urgentChoice = JOptionPane.showConfirmDialog(null, "Mark this order as urgent?", "Create Special Order", JOptionPane.YES_NO_OPTION);
         boolean isUrgent = urgentChoice == JOptionPane.YES_OPTION;
 
-        String message = sf.manageOrderService.createSpecialOrder(products, isUrgent);
-        JOptionPane.showMessageDialog(null, message, "Create Special Order", JOptionPane.INFORMATION_MESSAGE);
+        try {
+            String message = sf.manageOrderService.createSpecialOrder(products, isUrgent);
+            JOptionPane.showMessageDialog(null, message, "Create Special Order", JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception ex) {
+            messageField.setText(ex.getMessage());
+        }
     }
 
     private void createRegularOrder() {
@@ -487,124 +510,109 @@ public class StockFrame extends JFrame {
             }
         }
 
-        String message = sf.manageOrderService.createRegularOrder(products);
-        JOptionPane.showMessageDialog(null, message, "Create Regular Order", JOptionPane.INFORMATION_MESSAGE);
+        try {
+            String message = sf.manageOrderService.createRegularOrder(products);
+            JOptionPane.showMessageDialog(null, message, "Create Regular Order", JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception ex) {
+            messageField.setText(ex.getMessage());
+        }
     }
+
 
     private void editRegularItemOrder() {
-        String day = JOptionPane.showInputDialog(null, "Insert the day of the week (big letters only):");
-        DayOfWeek curDay = DayOfWeek.valueOf(day);
+        show_all_orders();
+        try {
+            JTextField dayField = new JTextField(10);
+            JTextField idField = new JTextField(10);
+            JTextField amountField = new JTextField(10);
 
-        String itemsData = sf.manageOrderService.presentItemsById(curDay);
-        String[] items = itemsData.split("\\r?\\n");
-        String[] options = new String[items.length];
+            JPanel panel = new JPanel();
+            panel.setLayout(new GridLayout(3, 2));
+            panel.add(new JLabel("Day of the week:"));
+            panel.add(dayField);
+            panel.add(new JLabel("Product ID:"));
+            panel.add(idField);
+            panel.add(new JLabel("New amount:"));
+            panel.add(amountField);
 
-        for (int i = 0; i < items.length; i++) {
-            String[] parts = items[i].split(" : ");
-            String itemId = parts[0].trim();
-            String itemName = parts[1].trim();
-            options[i] = itemId + " : " + itemName;
-        }
+            int result = JOptionPane.showConfirmDialog(null, panel, "Edit Regular Item Order", JOptionPane.OK_CANCEL_OPTION);
+            if (result == JOptionPane.OK_OPTION) {
+                String day = dayField.getText();
+                int id = Integer.parseInt(idField.getText());
+                int amount = Integer.parseInt(amountField.getText());
 
-        String selectedItemId = (String) JOptionPane.showInputDialog(null, "Select the item to edit:", "Edit Regular Item Order", JOptionPane.PLAIN_MESSAGE, null, options, null);
+                try {
+                    DayOfWeek cur_day = DayOfWeek.valueOf(day.toUpperCase());
+                    String itemDetails = sf.manageOrderService.presentItemsById(cur_day);
+                    String message = "Item Details:\n" + itemDetails + "\n\nConfirm editing the order with the new amount: " + amount;
 
-        if (selectedItemId != null && !selectedItemId.isEmpty()) {
-            int itemId = Integer.parseInt(selectedItemId.split(" : ")[0].trim());
-
-            String newAmountStr = JOptionPane.showInputDialog(null, "Enter the new amount of the product:", "Edit Regular Item Order", JOptionPane.PLAIN_MESSAGE);
-
-            if (newAmountStr != null && !newAmountStr.isEmpty()) {
-                int newAmount = Integer.parseInt(newAmountStr);
-                sf.manageOrderService.editRegularOrder(itemId, curDay, newAmount);
-                JOptionPane.showMessageDialog(null, "Regular item order has been updated successfully.", "Edit Regular Item Order", JOptionPane.INFORMATION_MESSAGE);
-            }
-        }
-    }
-
-    //move to next day?
-
-/*    private void addCategory2() {
-        JTextField nameField = new JTextField(10);
-
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(1, 2));
-        panel.add(new JLabel("Category Name:"));
-        panel.add(nameField);
-
-        int result = JOptionPane.showConfirmDialog(null, panel, "Add Category", JOptionPane.OK_CANCEL_OPTION);
-        if (result == JOptionPane.OK_OPTION) {
-            String name = nameField.getText();
-
-            System.out.println(sf.categoryService.add_category(".0" , name));
-        }
-    }
-
-    public String presentCategories2() {
-        String[] options = sf.inventoryService.show_data().split("\\r?\\n");
-        String message = "Press the index of the category/item to dive in,\nPress 0 to choose the current category,\nPress -1 to exit";
-
-        String nextIndex = "";
-        boolean isActive = true;
-
-        while (isActive) {
-            String choice = (String) JOptionPane.showInputDialog(null, message, "Choose Category", JOptionPane.PLAIN_MESSAGE, null, options, null);
-
-            if (choice == null || choice.equals("-1")) {
-                isActive = false;
-                nextIndex = "exit";
-            } else if (choice.equals("0")) {
-                isActive = false;
+                    int confirmResult = JOptionPane.showConfirmDialog(null, message, "Confirm Edit", JOptionPane.YES_NO_OPTION);
+                    if (confirmResult == JOptionPane.YES_OPTION) {
+                        String editResult = sf.manageOrderService.editRegularOrder(id, cur_day, amount);
+                        messageField.setText(editResult); // Update the messageField with the result
+                    } else {
+                        messageField.setText("Edit operation canceled."); // Update the messageField
+                    }
+                } catch (IllegalArgumentException e) {
+                    messageField.setText("Invalid day of the week. Please enter a valid day in capital letters."); // Update the messageField
+                }
             } else {
-                nextIndex += "." + (Integer.parseInt(choice) - 1);
-                String toShow = sf.categoryService.show_data(nextIndex);
-                JOptionPane.showMessageDialog(null, toShow, "Category Details", JOptionPane.INFORMATION_MESSAGE);
+                messageField.setText("Edit operation canceled."); // Update the messageField
             }
+        } catch (NumberFormatException e) {
+            messageField.setText("Invalid input. Please enter numeric values for ID and amount."); // Update the messageField
         }
-
-        return nextIndex;
     }
 
-    public String presentCategories5() {
-        String data = sf.inventoryService.show_data();
-        String[] categories = data.split(", ");
-        String[] options = new String[categories.length];
+    //TODO : make only one function
+    private void show_all_orders() {
+        try {
+            String allOrders = sf.manageOrderService.show_all_orders();
 
-        for (int i = 0; i < categories.length; i++) {
-            String[] parts = categories[i].split(" : ");
-            String index = parts[0].trim();
-            String categoryName = parts[1].trim();
-            options[i] = index + " : " + categoryName;
-        }
-
-        String message = "Press the index of the category/item to dive in,\nPress 0 to choose the current category,\nPress -1 to exit";
-
-        String nextIndex = "";
-        boolean isActive = true;
-
-        while (isActive) {
-            String choice = (String) JOptionPane.showInputDialog(null, message, "Choose Category", JOptionPane.PLAIN_MESSAGE, null, options, null);
-
-            if (choice == null || choice.equals("-1")) {
-                isActive = false;
-                nextIndex = "exit";
-            } else if (choice.equals("0")) {
-                isActive = false;
-            } else {
-                nextIndex += "." + (Integer.parseInt(choice.split(" : ")[0]) - 1);
-                String toShow = sf.categoryService.show_data(nextIndex);
-                JOptionPane.showMessageDialog(null, toShow, "Category Details", JOptionPane.INFORMATION_MESSAGE);
+            if (allOrders.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "No orders available.", "All Orders", JOptionPane.INFORMATION_MESSAGE);
+                return;
             }
+
+            String[] days = {"SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"};
+            StringBuilder sb = new StringBuilder();
+
+            for (String day : days) {
+                sb.append("---------").append(day).append("---------\n");
+
+                String regularOrders = sf.manageOrderService.presentItemsById(DayOfWeek.valueOf(day));
+                if (regularOrders.isEmpty()) {
+                    sb.append("Regular orders:\n");
+                    sb.append("\tNo orders on this day\n");
+                } else {
+                    sb.append("Regular orders:\n");
+                    sb.append(regularOrders);
+                }
+
+                String specialOrders = ""; // Replace with the actual special orders implementation
+                if (specialOrders.isEmpty()) {
+                    sb.append("Special orders:\n");
+                    sb.append("\tNo orders on this day\n");
+                } else {
+                    sb.append("Special orders:\n");
+                    sb.append(specialOrders);
+                }
+
+                sb.append("\n");
+            }
+
+            JTextArea textArea = new JTextArea(sb.toString());
+            JScrollPane scrollPane = new JScrollPane(textArea);
+            scrollPane.setPreferredSize(new Dimension(400, 300));
+            textArea.setEditable(false);
+
+            JOptionPane.showMessageDialog(null, scrollPane, "All Orders", JOptionPane.PLAIN_MESSAGE);
+        } catch (Exception e) {
+            messageField.setText(e.getMessage()); // Update the messageField with the error message
         }
-
-        return nextIndex;
     }
-
-
-
-*/
 
     // Create methods to handle other actions here
 }
-
 
 
