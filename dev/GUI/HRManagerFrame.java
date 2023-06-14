@@ -16,6 +16,8 @@ import org.jdatepicker.impl.UtilDateModel;
 import javax.swing.*;
 import java.awt.*;
 import java.time.LocalDate;
+import java.sql.SQLException;
+
 import java.util.*;
 import java.util.List;
 
@@ -296,8 +298,103 @@ public class HRManagerFrame  extends GenericFrameUser {
             rightPanel.repaint();
         });
 
-        showShiftStatusButton.addActionListener(e-> {
+
+        showShiftStatusButton.addActionListener(e -> {
+            System.out.println("Button show shift status clicked");
+
+            GenericTextField dateField = new GenericTextField();
+            String[] shiftTypes = {"morning", "evening"};
+            JComboBox<String> shiftTypesComboBox = new JComboBox<>(shiftTypes);
+            String[] branches = {"b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9"};
+            JComboBox<String> branchComboBox = new JComboBox<>(branches);
+            GenericButton doneButton = new GenericButton("Done");
+
+            doneButton.addActionListener(e1 -> {
+                setErrorText("");
+                setFeedbackText("");
+                String date = dateField.getText();
+                String shiftType = shiftTypesComboBox.getSelectedItem().toString();
+                String branch = branchComboBox.getSelectedItem().toString();
+
+                if (date.isEmpty() || shiftType == null || branch == null) {
+                    setErrorText("Please fill all fields");
+                } else {
+                    try {
+                        // Call the showShiftStatusUI function and get the shift status data
+                        Map<String, Object> shiftStatusData = shiftService.ShowShiftStatusUI(branch, date, shiftType);
+
+                        boolean isLegalShift = (boolean) shiftStatusData.get("isLegalShift");
+                        List<Map<String, Object>> positionDataList = (List<Map<String, Object>>) shiftStatusData.get("positions");
+
+
+
+
+                        // Create a table to display the position data
+                        String[] columnNames = {"Position", "Assigned", "Required", "Submissions Not Assigned", "Employee IDs Not Assigned"};
+                        Object[][] rowData = new Object[positionDataList.size()][columnNames.length];
+                        int rowIndex = 0;
+                        for (Map<String, Object> positionData : positionDataList) {
+                            rowData[rowIndex][0] = positionData.get("position");
+                            rowData[rowIndex][1] = positionData.get("assigned");
+                            rowData[rowIndex][2] = positionData.get("required");
+                            rowData[rowIndex][3] = positionData.get("submissionsNotAssigned");
+                            rowData[rowIndex][4] = positionData.get("employeeIdsNotAssigned");
+                            rowIndex++;
+                        }
+
+                        JTable shiftStatusTable =  new JTable(rowData, columnNames);
+                        JLabel shiftStatusLabel;
+                        if (isLegalShift) {
+                            shiftStatusLabel = new GenericLabel("The shift is approved");
+                        } else {
+                            shiftStatusLabel = new GenericLabel((String) shiftStatusData.get("missingRequirements"));
+                        }
+
+                        // Create a JScrollPane and set the table as its view
+                        JScrollPane tableScrollPane = new JScrollPane(shiftStatusTable);
+                        // Customize the scroll pane
+                        tableScrollPane.setPreferredSize(new Dimension(400, 300));
+                        // Set the preferred size of the scroll pane
+                        // Add the scroll pane to the layout
+                        GridBagConstraints scrollPaneLocation = new GridBagConstraints();
+                        scrollPaneLocation.gridx = 0;
+                        scrollPaneLocation.gridy = 0;
+                        //scrollPaneLocation.fill = GridBagConstraints.BOTH; // Allow the scroll pane to resize in both directions
+                      //  scrollPaneLocation.weightx = 1.0;
+                        //scrollPaneLocation.weighty = 1.0;
+
+                        GridBagConstraints commetLocation = new GridBagConstraints();
+                        commetLocation.gridx = 0;
+                        commetLocation.gridy = 1;
+
+                        // Remove previous components from rightPanel and add the shift status panel
+                        rightPanel.removeAll();
+                        rightPanel.add(tableScrollPane, scrollPaneLocation);
+                        rightPanel.add(shiftStatusLabel, commetLocation);
+                        rightPanel.revalidate();
+                        rightPanel.repaint();
+
+                    } catch (Exception ex) {
+                        // Handle the exception
+                        setErrorText("Error occurred while retrieving shift status: " + ex.getMessage());
+                    }
+                }
+            });
+
+            rightPanel.removeAll();
+            rightPanel.add(new GenericLabel("Please enter date:"));
+            rightPanel.add(dateField);
+            rightPanel.add(new GenericLabel("Please choose shift type:"));
+            rightPanel.add(shiftTypesComboBox);
+            rightPanel.add(new GenericLabel("Please choose branch:"));
+            rightPanel.add(branchComboBox);
+            rightPanel.add(doneButton);
+            rightPanel.revalidate();
+            rightPanel.repaint();
         });
+
+
+
 
         assignDriverButton.addActionListener(e-> {
         });

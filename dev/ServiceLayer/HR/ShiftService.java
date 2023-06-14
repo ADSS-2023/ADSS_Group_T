@@ -3,9 +3,11 @@ package ServiceLayer.HR;
 import BusinessLayer.HR.Driver;
 import BusinessLayer.HR.ShiftController;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import UtilSuper.Response;
 import UtilSuper.ResponseSerializer;
@@ -54,6 +56,12 @@ public class ShiftService {
             response.setErrorMessage(ex.getMessage());
         }
         return ResponseSerializer.serializeToJson(response);
+    }
+
+    public Map<String, Object> ShowShiftStatusUI(String branch, String date, String shiftType) throws SQLException {
+        //Response response = new Response();
+            boolean bool = !shiftType.equals("e");
+            return shiftController.showShiftStatusUI(branch, Time.stringToLocalDate(date), bool);
     }
 
 
