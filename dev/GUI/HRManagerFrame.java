@@ -8,6 +8,8 @@ import ServiceLayer.Transport.LogisticCenterService;
 import UtilSuper.Response;
 import UtilSuper.ResponseSerializer;
 import UtilSuper.ServiceFactory;
+import UtilSuper.Time;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -28,7 +30,6 @@ public class HRManagerFrame  extends GenericFrameUser {
         this.shiftService = serviceFactory.getShiftService();
         this.logisticCenterService = serviceFactory.getLogisticCenterService();
         this.branchService = serviceFactory.getBranchService();
-        //JDatePickerImpl datePicker = new JDatePickerImpl(datePanel);
 
         GenericButton addnewEmployeeButton = new GenericButton("add new employee");
         leftPanel.add((addnewEmployeeButton));
@@ -145,10 +146,14 @@ public class HRManagerFrame  extends GenericFrameUser {
             rightPanel.add(new GenericLabel(""));
             rightPanel.add(new GenericLabel(""));
             rightPanel.add(new GenericLabel(""));
+            rightPanel.add(new GenericLabel(""));
+            rightPanel.add(new GenericLabel(""));
             rightPanel.add(new GenericLabel("Please enter the employee ID:"));
             rightPanel.add(idField);
             rightPanel.add(new GenericLabel("Please choose new Qualification"));
             rightPanel.add(qualificationsComboBox);
+            rightPanel.add(new GenericLabel(""));
+            rightPanel.add(new GenericLabel(""));
             rightPanel.add(new GenericLabel(""));
             rightPanel.add(new GenericLabel(""));
             rightPanel.add(new GenericLabel(""));
@@ -231,7 +236,7 @@ public class HRManagerFrame  extends GenericFrameUser {
             System.out.println("Button add new employee clicked");
             rightPanel.removeAll();
             GenericTextField idField = new GenericTextField();
-            GenericTextField dateField = new GenericTextField();
+            GenericDatePicker dateField = GenericDatePicker.getNewGenericDatePicker();
             String[] shiftTypes = {"morning","evening"};
             JComboBox<String> shiftTypesComboBox = new JComboBox<>(shiftTypes);
             String[] branches = {"b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9"};
@@ -243,7 +248,7 @@ public class HRManagerFrame  extends GenericFrameUser {
                 setErrorText("");
                 setFeedbackText("");
                 int id = Integer.parseInt(idField.getText());
-                String date = dateField.getText();
+                String date = dateField.getDate();
                 String shiftType = shiftTypesComboBox.getSelectedItem().toString();
                 String branch = branchComboBox.getSelectedItem().toString();
 
@@ -291,11 +296,9 @@ public class HRManagerFrame  extends GenericFrameUser {
             rightPanel.repaint();
         });
 
-
         showShiftStatusButton.addActionListener(e -> {
             System.out.println("Button show shift status clicked");
-
-            GenericTextField dateField = new GenericTextField();
+            GenericDatePicker dateField = GenericDatePicker.getNewGenericDatePicker();
             String[] shiftTypes = {"morning", "evening"};
             JComboBox<String> shiftTypesComboBox = new JComboBox<>(shiftTypes);
             String[] branches = {"b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9"};
@@ -305,7 +308,7 @@ public class HRManagerFrame  extends GenericFrameUser {
             doneButton.addActionListener(e1 -> {
                 setErrorText("");
                 setFeedbackText("");
-                String date = dateField.getText();
+                String date = dateField.getDate();
                 String shiftType = shiftTypesComboBox.getSelectedItem().toString();
                 String branch = branchComboBox.getSelectedItem().toString();
 
@@ -375,21 +378,87 @@ public class HRManagerFrame  extends GenericFrameUser {
             });
 
             rightPanel.removeAll();
+            rightPanel.add(new GenericLabel(""));
+            rightPanel.add(new GenericLabel(""));
+            rightPanel.add(new GenericLabel(""));
+            rightPanel.add(new GenericLabel(""));
             rightPanel.add(new GenericLabel("Please enter date:"));
             rightPanel.add(dateField);
             rightPanel.add(new GenericLabel("Please choose shift type:"));
             rightPanel.add(shiftTypesComboBox);
             rightPanel.add(new GenericLabel("Please choose branch:"));
             rightPanel.add(branchComboBox);
+            rightPanel.add(new GenericLabel(""));
+            rightPanel.add(new GenericLabel(""));
+            rightPanel.add(new GenericLabel(""));
+            rightPanel.add(new GenericLabel(""));
             rightPanel.add(doneButton);
             rightPanel.revalidate();
             rightPanel.repaint();
         });
 
-
-
-
         assignDriverButton.addActionListener(e-> {
+            System.out.println("Button assign driver clicked");
+            rightPanel.removeAll();
+            GenericTextField idField = new GenericTextField();
+            GenericDatePicker dateField = GenericDatePicker.getNewGenericDatePicker();
+            String[] shiftTypes = {"morning","evening"};
+            JComboBox<String> shiftTypesComboBox = new JComboBox<>(shiftTypes);
+            String[] branches = {"b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9"};
+            JComboBox<String> branchComboBox = new JComboBox<>(branches);
+
+            GenericButton doneButton = new GenericButton("Done");
+
+            doneButton.addActionListener(e1 ->{
+                setErrorText("");
+                setFeedbackText("");
+                int id = Integer.parseInt(idField.getText());
+                String date = dateField.getDate();
+                String shiftType = shiftTypesComboBox.getSelectedItem().toString();
+                String branch = branchComboBox.getSelectedItem().toString();
+
+                //TODO: get positions of the employee and present them as combobox
+
+                if (date == null || shiftType == null || branch == null  ) {
+                    setErrorText("Please fill all fields");
+                }
+                else {
+                    Response response1 = ResponseSerializer.deserializeFromJson( employeeService.assignDriverForShift(Time.stringToLocalDate(date),id));
+                    if (response1.isError()) {
+                        setErrorText(response1.getErrorMessage());
+                    } else {
+                        setFeedbackText("assign employee successfully");
+                    }
+                }
+                idField.add(new GenericLabel(""));
+                dateField.add(new GenericLabel(""));
+            });
+
+            rightPanel.add(new GenericLabel(""));
+            rightPanel.add(new GenericLabel(""));
+            rightPanel.add(new GenericLabel(""));
+            rightPanel.add(new GenericLabel(""));
+            rightPanel.add(new GenericLabel(""));
+            rightPanel.add(new GenericLabel(""));
+            rightPanel.add(new GenericLabel(""));
+            rightPanel.add(new GenericLabel(""));
+            rightPanel.add(new GenericLabel("Please enter the employee ID:"));
+            rightPanel.add(idField);
+            rightPanel.add(new GenericLabel("Please choose date:"));
+            rightPanel.add(dateField);
+            rightPanel.add(new GenericLabel(""));
+            rightPanel.add(new GenericLabel(""));
+            rightPanel.add(new GenericLabel(""));
+            rightPanel.add(new GenericLabel(""));
+            rightPanel.add(new GenericLabel(""));
+            rightPanel.add(new GenericLabel(""));
+            rightPanel.add(new GenericLabel(""));
+            rightPanel.add(new GenericLabel(""));
+            rightPanel.add(new GenericLabel(""));
+            rightPanel.add(new GenericLabel(""));
+            rightPanel.add(doneButton);
+            rightPanel.revalidate();
+            rightPanel.repaint();
         });
 
         ShiftRequirementsButton.addActionListener(e-> {

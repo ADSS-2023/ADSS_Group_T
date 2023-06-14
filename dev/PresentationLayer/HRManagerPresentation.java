@@ -44,18 +44,18 @@ public class HRManagerPresentation {
             );
             int choice = scanner.nextInt();
             scanner.nextLine(); // Consume the newline character
-//            switch (choice) {
-//                case 1 -> addNewEmployee();
-//                case 2 -> notification();
-//                case 3 -> addQualification();
-//                case 4 -> ShowShiftStatus();
-//                case 5 -> addNewDriver();
-//                case 6 -> manageAssignEmployeeForShift();
-//                case 7 -> addShiftRequirements();
-//                case 8 -> manageAssignDriverForShift();
-//                case 9 -> {return;}//exit
-//                default -> System.out.println("Invalid choice. Please try again.");
-//            }
+            switch (choice) {
+                case 1 -> addNewEmployee();
+                case 2 -> notification();
+                case 3 -> addQualification();
+                case 4 -> ShowShiftStatus();
+                case 5 -> addNewDriver();
+                case 6 -> manageAssignEmployeeForShift();
+                case 7 -> addShiftRequirements();
+                case 8 -> manageAssignDriverForShift();
+                case 9 -> {return;}//exit
+                default -> System.out.println("Invalid choice. Please try again.");
+            }
         }
     }
 
@@ -66,135 +66,143 @@ public class HRManagerPresentation {
         String date = scanner.nextLine();
         System.out.println("Please enter the driver ID:");
         int id = scanner.nextInt();
-//        Response response = employeeService.assignDriverForShift(Time.stringToLocalDate(date), id);
-//        if (response.isError()) {
-//            System.out.println(response.getErrorMessage());
-//        } else {
-//            System.out.println(response.getReturnValue());
-//        }
+        String response1 = employeeService.assignDriverForShift(Time.stringToLocalDate(date), id);
+        Response response = ResponseSerializer.deserializeFromJson(response1);
+        if (response.isError()) {
+            System.out.println(response.getErrorMessage());
+        } else {
+            System.out.println(response.getReturnValue());
+        }
     }
 
-//    private void notification() {
-//        System.out.println("notification : ");
-//        Response response = shiftService.getNotification();
-//        if (response.isError()) {
-//            System.out.println(response.getErrorMessage());
-//        } else {
-//            System.out.println(response.getReturnValue());
-//        }
-//    }
+    private void notification() {
+        System.out.println("notification : ");
+        String response1 = shiftService.getNotification();
+        Response response = ResponseSerializer.deserializeFromJson(response1);
+        if (response.isError()) {
+            System.out.println(response.getErrorMessage());
+        } else {
+            System.out.println(response.getReturnValue());
+        }
+    }
 
-//    private void manageAssignEmployeeForShift() {
-//        Scanner scanner = new Scanner(System.in);
-//        System.out.println("assign employee for shift : ");
-//        System.out.println("Please enter the shift details:");
-//        System.out.println("assign employee for shift - choose shift date");
-//        String date = scanner.nextLine();
-//        System.out.println("assign employee for shift - enter morning(m)/evening(e)");
-//        String shiftType = scanner.nextLine();
-//        System.out.println("choose Branch from the list:");
-//        Response branchResponse = ResponseSerializer.deserializeFromJson(branchService.getAllBranches());
-//        if (branchResponse.isError()) {
-//            System.out.println(branchResponse.getErrorMessage());
-//            return;
-//        } else {
-//            System.out.println(branchResponse.getReturnValue());
-//        }
-//        String branch = scanner.nextLine();
-//        Response shiftStatusResponse = shiftService.ShowShiftStatus(branch, date, shiftType);
-//        if (shiftStatusResponse.isError()) {
-//            System.out.println(shiftStatusResponse.getErrorMessage());
-//            return;
-//        } else {
-//            System.out.println(shiftStatusResponse.getReturnValue());
-//        }
-//        System.out.println("assign employee for shift - would you like to approve all? y/n");
-//        String ansForApproveAll = scanner.nextLine();
-//        if (ansForApproveAll.equals("y")) {
-//            Response assignAllResponse = shiftService.assignAll(branch, date, shiftType);
-//            if (assignAllResponse.isError()) {
-//                System.out.println(assignAllResponse.getErrorMessage());
-//            } else {
-//                System.out.println(assignAllResponse.getReturnValue());
-//            }
-//        } else {
-//            while (true) {
-//                System.out.println("assign employee for shift - Please enter the employee ID:");
-//                int employeeId = scanner.nextInt();
-//                scanner.nextLine();
-//                System.out.println("assign employee for shift - choose position for employee : " + employeeId);
-//                String position = scanner.nextLine();
-//                Response assignResponse = shiftService.assignEmployeeForShift(branch, employeeId, date, shiftType, position);
-//                if (assignResponse.isError()) {
-//                    System.out.println(assignResponse.getErrorMessage());
-//                } else {
-//                    System.out.println(assignResponse.getReturnValue());
-//                }
-//                System.out.println("assign employee for shift - would you like to assign more? y/n");
-//                String ansForContinue = scanner.nextLine();
-//                if (ansForContinue.equals("n")) {
-//                    return;
-//                }
-//            }
-//        }
-//    }
+    private void manageAssignEmployeeForShift() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("assign employee for shift : ");
+        System.out.println("Please enter the shift details:");
+        System.out.println("assign employee for shift - choose shift date");
+        String date = scanner.nextLine();
+        System.out.println("assign employee for shift - enter morning(m)/evening(e)");
+        String shiftType = scanner.nextLine();
+        System.out.println("choose Branch from the list:");
+        Response branchResponse = ResponseSerializer.deserializeFromJson(branchService.getAllBranches());
+        if (branchResponse.isError()) {
+            System.out.println(branchResponse.getErrorMessage());
+            return;
+        } else {
+            System.out.println(branchResponse.getReturnValue());
+        }
+        String branch = scanner.nextLine();
+        String shiftStatusResponse1 = shiftService.ShowShiftStatus(branch, date, shiftType);
+        Response shiftStatusResponse = ResponseSerializer.deserializeFromJson(shiftStatusResponse1);
+        if (shiftStatusResponse.isError()) {
+            System.out.println(shiftStatusResponse.getErrorMessage());
+            return;
+        } else {
+            System.out.println(shiftStatusResponse.getReturnValue());
+        }
+        System.out.println("assign employee for shift - would you like to approve all? y/n");
+        String ansForApproveAll = scanner.nextLine();
+        if (ansForApproveAll.equals("y")) {
+            String assignAllResponse1 = shiftService.assignAll(branch, date, shiftType);
+            Response assignAllResponse = ResponseSerializer.deserializeFromJson(assignAllResponse1);
+            if (assignAllResponse.isError()) {
+                System.out.println(assignAllResponse.getErrorMessage());
+            } else {
+                System.out.println(assignAllResponse.getReturnValue());
+            }
+        } else {
+            while (true) {
+                System.out.println("assign employee for shift - Please enter the employee ID:");
+                int employeeId = scanner.nextInt();
+                scanner.nextLine();
+                System.out.println("assign employee for shift - choose position for employee : " + employeeId);
+                String position = scanner.nextLine();
+                String assignResponse1 = shiftService.assignEmployeeForShift(branch, employeeId, date, shiftType, position);
+                Response assignResponse = ResponseSerializer.deserializeFromJson(assignResponse1);
+                if (assignResponse.isError()) {
+                    System.out.println(assignResponse.getErrorMessage());
+                } else {
+                    System.out.println(assignResponse.getReturnValue());
+                }
+                System.out.println("assign employee for shift - would you like to assign more? y/n");
+                String ansForContinue = scanner.nextLine();
+                if (ansForContinue.equals("n")) {
+                    return;
+                }
+            }
+        }
+    }
 
-//    private void addShiftRequirements() {
-//        Scanner scanner = new Scanner(System.in);
-//        System.out.println("Add shift requirements");
-//        System.out.println("Please enter the shift details:");
-//        Response branchResponse = ResponseSerializer.deserializeFromJson(branchService.getAllBranches());
-//        if (branchResponse.isError()) {
-//            System.out.println(branchResponse.getErrorMessage());
-//            return;
-//        } else {
-//            System.out.println(branchResponse.getReturnValue());
-//        }
-//        System.out.println("choose Branch from the list:");
-//        String branch = scanner.nextLine();
-//        System.out.println("add shift requirements - choose shift date");
-//        String date = scanner.nextLine();
-//        System.out.println("add shift requirements - enter morning(m)/evening(e)");
-//        String shiftType = scanner.nextLine();
-//        System.out.println("add shift requirements - shift :" + date + " , " + shiftType);
-//        LinkedHashMap<String, Integer> howMany = new LinkedHashMap<>();
-//        for (PositionType p : PositionType.values()) {
-//            System.out.println("how many " + p.name() + " for that shift?");
-//            int ans_quantity = scanner.nextInt();
-//            howMany.put(p.name(), ans_quantity);
-//        }
-//        Response response = shiftService.addShiftRequirements(branch, howMany, date, shiftType);
-//        if (response.isError()) {
-//            System.out.println(response.getErrorMessage());
-//        } else {
-//            System.out.println(response.getReturnValue());
-//        }
-//    }
+    private void addShiftRequirements() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Add shift requirements");
+        System.out.println("Please enter the shift details:");
+        Response branchResponse = ResponseSerializer.deserializeFromJson(branchService.getAllBranches());
+        if (branchResponse.isError()) {
+            System.out.println(branchResponse.getErrorMessage());
+            return;
+        } else {
+            System.out.println(branchResponse.getReturnValue());
+        }
+        System.out.println("choose Branch from the list:");
+        String branch = scanner.nextLine();
+        System.out.println("add shift requirements - choose shift date");
+        String date = scanner.nextLine();
+        System.out.println("add shift requirements - enter morning(m)/evening(e)");
+        String shiftType = scanner.nextLine();
+        System.out.println("add shift requirements - shift :" + date + " , " + shiftType);
+        LinkedHashMap<String, Integer> howMany = new LinkedHashMap<>();
+        for (PositionType p : PositionType.values()) {
+            System.out.println("how many " + p.name() + " for that shift?");
+            int ans_quantity = scanner.nextInt();
+            howMany.put(p.name(), ans_quantity);
+        }
+        String response1 = shiftService.addShiftRequirements(branch, howMany, date, shiftType);
+        Response response = ResponseSerializer.deserializeFromJson(response1);
+        if (response.isError()) {
+            System.out.println(response.getErrorMessage());
+        } else {
+            System.out.println(response.getReturnValue());
+        }
+    }
 
-//    private void ShowShiftStatus() {
-//        Scanner scanner = new Scanner(System.in);
-//        System.out.println("shift status");
-//        System.out.println("Please enter the shift details:");
-//        Response branchResponse = ResponseSerializer.deserializeFromJson(branchService.getAllBranches());
-//        if (branchResponse.isError()) {
-//            System.out.println(branchResponse.getErrorMessage());
-//            return;
-//        } else {
-//            System.out.println(branchResponse.getReturnValue());
-//        }
-//        System.out.println("choose Branch from the list:");
-//        String branch = scanner.nextLine();
-//        System.out.println("shift status - choose shift date");
-//        String date = scanner.nextLine();
-//        System.out.println("shift status - enter morning(m)/evening(e)");
-//        String shiftType = scanner.nextLine();
-//        Response shiftStatusResponse = shiftService.ShowShiftStatus(branch, date, shiftType);
-//        if (shiftStatusResponse.isError()) {
-//            System.out.println(shiftStatusResponse.getErrorMessage());
-//        } else {
-//            System.out.println(shiftStatusResponse.getReturnValue());
-//        }
-//    }
+    private void ShowShiftStatus() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("shift status");
+        System.out.println("Please enter the shift details:");
+        Response branchResponse = ResponseSerializer.deserializeFromJson(branchService.getAllBranches());
+
+        if (branchResponse.isError()) {
+            System.out.println(branchResponse.getErrorMessage());
+            return;
+        } else {
+            System.out.println(branchResponse.getReturnValue());
+        }
+        System.out.println("choose Branch from the list:");
+        String branch = scanner.nextLine();
+        System.out.println("shift status - choose shift date");
+        String date = scanner.nextLine();
+        System.out.println("shift status - enter morning(m)/evening(e)");
+        String shiftType = scanner.nextLine();
+        String shiftStatusResponse1 = shiftService.ShowShiftStatus(branch, date, shiftType);
+        Response shiftStatusResponse = ResponseSerializer.deserializeFromJson(shiftStatusResponse1);
+        if (shiftStatusResponse.isError()) {
+            System.out.println(shiftStatusResponse.getErrorMessage());
+        } else {
+            System.out.println(shiftStatusResponse.getReturnValue());
+        }
+    }
 
     private void addQualification() {
         Scanner scanner = new Scanner(System.in);
@@ -206,12 +214,13 @@ public class HRManagerPresentation {
         System.out.println("Please enter the employee new Qualification from those options:" +
                 "\n" + "cashier, storekeeper, security, cleaning, orderly, general_worker, shiftManager");
         String quali = scanner.nextLine();
-//        Response response = employeeService.addQualification(employeeId, quali);
-//        if (response.isError()) {
-//            System.out.println(response.getErrorMessage());
-//        } else {
-//            System.out.println(response.getReturnValue());
-//        }
+        String response1 = employeeService.addQualification(employeeId, quali);
+        Response response = ResponseSerializer.deserializeFromJson(response1);
+        if (response.isError()) {
+            System.out.println(response.getErrorMessage());
+        } else {
+            System.out.println(response.getReturnValue());
+        }
     }
 
     private void addNewEmployee() {
@@ -232,12 +241,13 @@ public class HRManagerPresentation {
         String password = scanner.nextLine();
         System.out.println("Please enter the employee salary:");
         int salary = scanner.nextInt();
-//        Response response = employeeService.addNewEmployee(employeeId, employeeName, employeebank, description, salary, joiningDay, password);
-//        if (response.isError()) {
-//            System.out.println(response.getErrorMessage());
-//        } else {
-//            System.out.println(response.getReturnValue());
-//        }
+        String response1 = employeeService.addNewEmployee(employeeId, employeeName, employeebank, description, salary, joiningDay, password);
+        Response response = ResponseSerializer.deserializeFromJson(response1);
+        if (response.isError()) {
+            System.out.println(response.getErrorMessage());
+        } else {
+            System.out.println(response.getReturnValue());
+        }
     }
 
     // option 3
@@ -268,12 +278,13 @@ public class HRManagerPresentation {
         scanner.nextLine();
         System.out.println("Please enter the driver license type : C1 , C , E " );
         String licenseType = scanner.nextLine();
-//        Response response = employeeService.addNewDriver(id,Name,bank,description,salary,joiningDay,password,licenseType,coolinglevel);
-//        if (response.isError()) {
-//            System.out.println(response.getErrorMessage());
-//        } else {
-//            System.out.println(response.getReturnValue());
-//        }
+        String response1 = employeeService.addNewDriver(id,Name,bank,description,salary,joiningDay,password,licenseType,coolinglevel);
+        Response response = ResponseSerializer.deserializeFromJson(response1);
+        if (response.isError()) {
+            System.out.println(response.getErrorMessage());
+        } else {
+            System.out.println(response.getReturnValue());
+        }
     }
 
 }
