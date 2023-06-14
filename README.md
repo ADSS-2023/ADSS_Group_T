@@ -52,6 +52,7 @@ Follow the prompts to enter any required information.
 - show logistic center products - show the list of products in the logistic center
 - show all deliveries 
 - add new product to supplier - follow the prompts
+- logout 
 
 ## Employee Menu
 
@@ -154,3 +155,24 @@ How to use,
 
 ### Deliveries
 
+| id    | deliveryDate | departureTime  | truckWeight | source | driverId | truckNumber | shippingArea |
+|-------|--------------|----------------|-------------|--------|----------|-------------|--------------|
+| 0     | 2023-06-16   | 12:00          | 6000        | s1     | 0        | 1002        | 1            |
+| 1     | 2023-06-16   | 12:00          | 4000        | s1     | 0        | 1001        | 1            |
+| 2     | 2023-06-17   | 12:00          | 8000        | s3     | 0        | 1003        | 1            |
+| 3     | 2023-06-17   | 12:00          | 6000        | s3     | 0        | 1002        | 1            |
+| 4     | 2023-06-17   | 12:00          | 4000        | s4     | 0        | 1001        | 1            |
+
+### Trucks
+
+| licenseNumber | model | weight | maxWeight | licenseType | coolingLevel |
+|---------------|-------|--------|-----------|-------------|--------------|
+| 1001          | t1    | 4000   | 8000      | C1          | non          |
+| 1002          | t2    | 6000   | 12000     | C1          | fridge       |
+| 1003          | t3    | 8000   | 160000    | C1          | freezer      |
+| 1004          | t4    | 10000  | 20000     | C1          | non          |
+| 1005          | t5    | 12000  | 24000     | C1          | fridge       |
+| 1006          | t6    | 14000  | 28000     | C1          | freezer      |
+| 1007          | t7    | 160000 | 32000     | C1          | non          |
+| 1008          | t8    | 18000  | 36000     | C1          | fridge       |
+| 1009          | t9    | 20000  | 40000     | C           | freezer      |
