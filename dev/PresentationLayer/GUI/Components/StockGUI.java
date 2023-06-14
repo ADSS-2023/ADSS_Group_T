@@ -1,7 +1,6 @@
 package PresentationLayer.GUI.Components;
 
-import PresentationLayer.Stock.StockUI;
-import PresentationLayer.Supplier.SupplierManager;
+
 import ServiceLayer.Supplier_Stock.ServiceFactory;
 
 import javax.swing.*;
@@ -11,13 +10,8 @@ import java.awt.event.ActionListener;
 import java.net.SocketTimeoutException;
 
 public class StockGUI extends JFrame {
-    private StockUI stockUI;
-    private SupplierManager supplierManager;
     private ServiceFactory sf;
-
-    public StockGUI(StockUI stockUI, SupplierManager supplierManager, ServiceFactory sf) {
-        this.stockUI = stockUI;
-        this.supplierManager = supplierManager;
+    public StockGUI(ServiceFactory sf) {
         this.sf = sf;
         setTitle("Stock Management");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -25,51 +19,46 @@ public class StockGUI extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new GridLayout(4, 3));
 
-        createButtons();
+//        createButtons();
 
         setVisible(true);
     }
 
-    private void createButtons() {
-        JButton btnSeeCategories = new JButton("See categories");
-        btnSeeCategories.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                stockUI.presentCategories();
-            }
-        });
-        add(btnSeeCategories);
-
-        JButton btnProduceInventoryReport = new JButton("Produce inventory report");
-        btnProduceInventoryReport.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                stockUI.inventoryReport();
-            }
-        });
-        add(btnProduceInventoryReport);
-
-        JButton btnSetDiscount = new JButton("Set discount");
-        btnSetDiscount.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                stockUI.setDiscount();
-            }
-        });
-        add(btnSetDiscount);
-
-        // Add other buttons similarly
-
-        // ...
-
-        // Add more buttons as needed
-
-    }
+//    private void createButtons() {
+//        JButton btnSeeCategories = new JButton("See categories");
+//        btnSeeCategories.addActionListener(new ActionListener() {
+//            public void actionPerformed(ActionEvent e) {
+//                stockUI.presentCategories();
+//            }
+//        });
+//        add(btnSeeCategories);
+//
+//        JButton btnProduceInventoryReport = new JButton("Produce inventory report");
+//        btnProduceInventoryReport.addActionListener(new ActionListener() {
+//            public void actionPerformed(ActionEvent e) {
+//                stockUI.inventoryReport();
+//            }
+//        });
+//        add(btnProduceInventoryReport);
+//
+//        JButton btnSetDiscount = new JButton("Set discount");
+//        btnSetDiscount.addActionListener(new ActionListener() {
+//            public void actionPerformed(ActionEvent e) {
+//                stockUI.setDiscount();
+//            }
+//        });
+//        add(btnSetDiscount);
+//
+//        // Add other buttons similarly
+//
+//        // ...
+//
+//        // Add more buttons as needed
+//
+//    }
 
     public static void main(String[] args) {
         ServiceFactory sf = new ServiceFactory();
-        StockUI stockUI = new StockUI(sf);
-        SupplierManager supplierManager = new SupplierManager(sf);
-        stockUI.setPreviousCallBack(() -> run(new StockFrame(stockUI , supplierManager , sf)));
-        supplierManager.setPreviousCallBack(() -> run(new StockFrame(stockUI , supplierManager , sf)));
-
         String[] options = {"Load data", "Empty system", "Set data to the system"};
         int action = JOptionPane.showOptionDialog(null, "Welcome to Superly inventory and supplier system", "Superly",
                 JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
@@ -77,21 +66,16 @@ public class StockGUI extends JFrame {
             if (action == 0) {
                 // Read from DB
                 sf.uss.loadDate();
-                stockUI.loadData();
-                supplierManager.loadData();
-
+                ///TODO activate service methods of load data for both modules
             } else if (action == 1) {
-                // Delete all the DB
-                supplierManager.deleteAll();
-                stockUI.deleteData();
+                ///TODO activate service methods of delete data for both modules
             } else if (action == 2) {
-                stockUI.deleteData();
+
                 sf.uss.setUpDate();
-                stockUI.setUpData();
-                supplierManager.setUpData();
+                ///TODO activate service methods of setup data for both modules
             }
         } catch (Exception c) {
-
+            ///TODO what to do here?
         }
         String[] frameOptions = {"ManagerFrame", "StockFrame"};
         int frameChoice = JOptionPane.showOptionDialog(null, "Choose a frame to open", "Select Frame",
@@ -99,10 +83,10 @@ public class StockGUI extends JFrame {
         if (frameChoice == 0) {
             // Open ManagerFrame
             // Create an instance of ManagerFrame and activate it
-            run(new ManagerFrame(stockUI , supplierManager , sf));
+//            run(new ManagerFrame(stockUI , supplierManager , sf));
         } else if (frameChoice == 1) {
             // Open StockFrame
-            run(new StockFrame(stockUI , supplierManager , sf));
+            run(new StockFrame(sf));
         }
 
     }
