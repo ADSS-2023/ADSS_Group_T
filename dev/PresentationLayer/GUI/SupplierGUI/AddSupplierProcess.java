@@ -148,11 +148,15 @@ public class AddSupplierProcess extends JFrame {
         JCheckBox addAnotherCheckBox = new JCheckBox("Add Another Contact Details");
         panel.add(addAnotherCheckBox,BorderLayout.CENTER);
 
+        JCheckBox deliverBySupplierCheckbox = new JCheckBox("Supplier Delivers by Himeself?");
+        panel.add(deliverBySupplierCheckbox, BorderLayout.SOUTH);
 
         // Next Button
         JButton nextButton = new JButton("Next");
         nextButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                if(deliverBySupplierCheckbox.isSelected())
+                    selfDelivery=true;
                 contacts.put(contactNameField.getText(),contactNumberField.getText());
                 if (addAnotherCheckBox.isSelected()) {
                     // Go to Step 2 again to add another contact
@@ -193,7 +197,7 @@ public class AddSupplierProcess extends JFrame {
         panel.add(radioPanel, BorderLayout.CENTER);
 
         // Days of the Week (Constant Days)
-        String[] daysOfWeek = {"Sunday","Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
+        String[] daysOfWeek = {"SUNDAY","MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"};
         JList<String> daysList = new JList<>(daysOfWeek);
         JScrollPane daysScrollPane = new JScrollPane(daysList);
 
@@ -204,8 +208,7 @@ public class AddSupplierProcess extends JFrame {
         JPanel deliveryOptionsPanel = new JPanel(new BorderLayout());
         deliveryOptionsPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        JCheckBox deliverBySupplierCheckbox = new JCheckBox("Supplier Delivers by Himeself?");
-        panel.add(deliverBySupplierCheckbox, BorderLayout.SOUTH);
+
 
         // Add components based on selected radio button
         constantDaysRadio.addActionListener(new ActionListener() {
@@ -225,16 +228,13 @@ public class AddSupplierProcess extends JFrame {
                 panel.repaint();
             }
         });
-        deliveryOptionsPanel.add(deliverBySupplierCheckbox, BorderLayout.SOUTH); // Add this line
-        panel.add(deliveryOptionsPanel, BorderLayout.SOUTH);
+        panel.add(deliveryOptionsPanel, BorderLayout.NORTH);
 
 
         // Next Button
         JButton nextButton = new JButton("Finish");
         nextButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if(deliverBySupplierCheckbox.isSelected())
-                    selfDelivery=true;
                 if(expectedDaysRadio.isSelected())
                     daysToDeliver = Integer.parseInt(expectedDaysField.getText());
                 else{

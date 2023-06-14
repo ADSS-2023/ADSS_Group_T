@@ -89,7 +89,7 @@ public class OrderProductsFrame extends JFrame {
         JButton backButton = new JButton("Back");
         backButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-
+                dispose();
                 run(new OrdersFrame(sf,supplierManager));
             }
         });
