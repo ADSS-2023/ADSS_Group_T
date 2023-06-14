@@ -1,68 +1,16 @@
-package PresentationLayer.GUI.Components;
+package PresentationLayer.GUI.SupplierGUI;
 
+import PresentationLayer.GUI.Components.ManagerFrame;
+import PresentationLayer.GUI.Components.StockFrame;
 import PresentationLayer.Stock.StockUI;
 import PresentationLayer.Supplier.SupplierManager;
 import ServiceLayer.Supplier_Stock.ServiceFactory;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.net.SocketTimeoutException;
 
-public class StockGUI extends JFrame {
-    private StockUI stockUI;
-    private SupplierManager supplierManager;
-    private ServiceFactory sf;
+import static PresentationLayer.GUI.Components.StockGUI.run;
 
-    public StockGUI(StockUI stockUI, SupplierManager supplierManager, ServiceFactory sf) {
-        this.stockUI = stockUI;
-        this.supplierManager = supplierManager;
-        this.sf = sf;
-        setTitle("Stock Management");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(400, 300);
-        setLocationRelativeTo(null);
-        setLayout(new GridLayout(4, 3));
-
-        createButtons();
-
-        setVisible(true);
-    }
-
-    private void createButtons() {
-        JButton btnSeeCategories = new JButton("See categories");
-        btnSeeCategories.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                stockUI.presentCategories();
-            }
-        });
-        add(btnSeeCategories);
-
-        JButton btnProduceInventoryReport = new JButton("Produce inventory report");
-        btnProduceInventoryReport.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                stockUI.inventoryReport();
-            }
-        });
-        add(btnProduceInventoryReport);
-
-        JButton btnSetDiscount = new JButton("Set discount");
-        btnSetDiscount.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                stockUI.setDiscount();
-            }
-        });
-        add(btnSetDiscount);
-
-        // Add other buttons similarly
-
-        // ...
-
-        // Add more buttons as needed
-
-    }
-
+public class SupplierGUI {
     public static void main(String[] args) {
         ServiceFactory sf = new ServiceFactory();
         StockUI stockUI = new StockUI(sf);
@@ -106,10 +54,4 @@ public class StockGUI extends JFrame {
         }
 
     }
-
-
-    public static void run(JFrame curFrame) {
-        curFrame.setVisible(true);
-    }
 }
-
