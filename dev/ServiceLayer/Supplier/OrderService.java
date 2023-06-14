@@ -6,7 +6,7 @@ import BusinessLayer.Supplier.SupplierController;
 import BusinessLayer.Supplier.SupplierProductBusiness;
 import BusinessLayer.Supplier.Suppliers.SupplierBusiness;
 import BusinessLayer.Supplier_Stock.ItemToOrder;
-import ServiceLayer.HR.Response;
+import ServiceLayer.Supplier_Stock.Response;
 
 import java.rmi.server.ExportException;
 import java.time.DayOfWeek;
@@ -28,19 +28,19 @@ public class OrderService {
         try {
             sc.loadSuppliers();
             oc.loadOrders();
-            return okResonse("Load data succeeded.");
+            return Response.okResponse("Load data succeeded.");
         }
         catch (Exception e){
-            return errorResponse(e.getMessage());
+            return Response.errorResponse(e.getMessage());
         }
         }
     public Response nextDay(){
         try {
             oc.executeTodayOrders();
-            return okResponse(true);
+            return Response.okResponse(true);
         }
         catch (Exception e){
-            return errorResponse(e.getMessage());
+            return Response.errorResponse(e.getMessage());
         }
     }
     public boolean createRegularOrder(List<ItemToOrder> items) {
@@ -100,28 +100,28 @@ public class OrderService {
     }
 
 
-    public List<String> getOrders(){
+    public Response getOrders(){
         List<String>  orders = new LinkedList<>();
         try{//TODO:change implementation to display both types of order.
              List<OrderBusiness> orderBusinessList =  oc.getOrders();
             for (OrderBusiness order:orderBusinessList) {
                orders.add(order.toString());
             }
-            return okResonse(orders);
+            return Response.okResponse(orders);
         }
         catch (Exception e){
-           return errorResponse(e.getMessage());
+           return Response.errorResponse(e.getMessage());
             //return orders; TODO: why we didnt return e.getMessage()?
         }
     }
 
-    public String deleteAllOrders(){
+    public Response deleteAllOrders(){
         try {
             oc.deleteOrders();
-            return okResonse("Deleted Successfully");
+            return Response.errorResponse("Deleted Successfully");
         }
         catch (Exception e){
-            return errorResponse(e.getMessage());
+            return Response.errorResponse(e.getMessage());
         }
     }
 
