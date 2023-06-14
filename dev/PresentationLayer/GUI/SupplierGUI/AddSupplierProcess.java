@@ -123,9 +123,7 @@ public class AddSupplierProcess extends JFrame {
                 address=addressField.getText();
                 bankAccount=Integer.parseInt(accountField.getText());
                 paymentTerm = PaymentTerms.valueOf((String)paymentComboBox.getSelectedItem()) ;
-                dispose();
                 cardLayout.show(cardPanel, "step2");
-
             }
         });
         panel.add(nextButton, gbc);
@@ -161,11 +159,8 @@ public class AddSupplierProcess extends JFrame {
                     contactNameField.setText("");
                     contactNumberField.setText("");
                     addAnotherCheckBox.setSelected(false);
-
-                    dispose();
                     cardLayout.show(cardPanel, "step2");
                 } else {
-                    dispose();
                     cardLayout.show(cardPanel, "step3");
                 }
             }
@@ -230,7 +225,7 @@ public class AddSupplierProcess extends JFrame {
                 panel.repaint();
             }
         });
-
+        deliveryOptionsPanel.add(deliverBySupplierCheckbox, BorderLayout.SOUTH); // Add this line
         panel.add(deliveryOptionsPanel, BorderLayout.SOUTH);
 
 
