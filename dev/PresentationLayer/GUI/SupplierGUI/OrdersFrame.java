@@ -8,6 +8,8 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +44,14 @@ public class OrdersFrame extends JFrame {
         List<String> orders = getOrdersFromBusinessLayer();
         updateTable(orders);
 
+
+        // Create a panel for the buttons
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new GridLayout(4, 1)); // Adjust the number of rows as needed
+
+        // Create the buttons and add them to the button panel
+        createOrderButton(buttonPanel);
+
         orderTable.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 int selectedRow = orderTable.getSelectedRow();
@@ -66,7 +76,7 @@ public class OrdersFrame extends JFrame {
 
         // Fetch the orders from the business layer and update the table
 
-
+        add(buttonPanel, BorderLayout.SOUTH);
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
@@ -112,5 +122,16 @@ public class OrdersFrame extends JFrame {
         }
 
         return values;
+    }
+
+    private void createOrderButton(JPanel buttonPanel) {
+        JButton backButton = new JButton("Back");
+        backButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+                run(new AllSupplierFrame(supplierManager,sf));
+            }
+        });
+        buttonPanel.add(backButton);
     }
 }

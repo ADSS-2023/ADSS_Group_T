@@ -1,18 +1,40 @@
 package PresentationLayer.GUI.SupplierGUI;
 
+import BusinessLayer.Supplier.Supplier_Util.PaymentTerms;
+import PresentationLayer.Supplier.SupplierManager;
 import ServiceLayer.Supplier_Stock.ServiceFactory;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.DayOfWeek;
+import java.util.HashMap;
+import java.util.LinkedList;
+
+import static PresentationLayer.GUI.SupplierGUI.SupplierGUI.run;
 
 public class AddSupplierProcess extends JFrame {
     private JPanel cardPanel;
     private CardLayout cardLayout;
     private ServiceFactory sf;
+    private String name;
+    private String address;
+    private int supplierNum;
+    private int bankAccount;
+    private int daysToDeliver;
+    private HashMap<String, String> contacts;
+    private LinkedList<DayOfWeek> constDeliveryDays;
+    private boolean selfDelivery;
+    private PaymentTerms paymentTerm;
+    private SupplierManager sp;
 
-    public AddSupplierProcess(ServiceFactory sf) {
+    public AddSupplierProcess(ServiceFactory sf, SupplierManager sp) {
+        daysToDeliver=-1;
+        selfDelivery=false;
+        constDeliveryDays=new LinkedList<>();
+        this.sp=sp;
+        contacts=new HashMap<>();
         this.sf = sf;
         setTitle("Add New Supplier");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -36,11 +58,6 @@ public class AddSupplierProcess extends JFrame {
         // Step 3: Delivery Information
         JPanel step3Panel = createStep3Panel();
         cardPanel.add(step3Panel, "step3");
-
-        // Step 4: Confirmation
-        JPanel step4Panel = createStep4Panel();
-        cardPanel.add(step4Panel, "step4");
-
 
         setLocationRelativeTo(null);
         setVisible(true);
@@ -101,7 +118,14 @@ public class AddSupplierProcess extends JFrame {
         JButton nextButton = new JButton("Next");
         nextButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                name=nameField.getText();
+                supplierNum=Integer.parseInt(numberField.getText());
+                address=addressField.getText();
+                bankAccount=Integer.parseInt(accountField.getText());
+                paymentTerm = PaymentTerms.valueOf((String)paymentComboBox.getSelectedItem()) ;
+                dispose();
                 cardLayout.show(cardPanel, "step2");
+
             }
         });
         panel.add(nextButton, gbc);
@@ -126,27 +150,22 @@ public class AddSupplierProcess extends JFrame {
         JCheckBox addAnotherCheckBox = new JCheckBox("Add Another Contact Details");
         panel.add(addAnotherCheckBox,BorderLayout.CENTER);
 
-        // Previous Button
-        JButton prevButton = new JButton("Previous");
-
-        prevButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                cardLayout.show(cardPanel, "step1");
-            }
-        });
-        panel.add(prevButton,BorderLayout.SOUTH);
 
         // Next Button
         JButton nextButton = new JButton("Next");
         nextButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                contacts.put(contactNameField.getText(),contactNumberField.getText());
                 if (addAnotherCheckBox.isSelected()) {
                     // Go to Step 2 again to add another contact
                     contactNameField.setText("");
                     contactNumberField.setText("");
                     addAnotherCheckBox.setSelected(false);
+
+                    dispose();
                     cardLayout.show(cardPanel, "step2");
                 } else {
+                    dispose();
                     cardLayout.show(cardPanel, "step3");
                 }
             }
@@ -179,7 +198,7 @@ public class AddSupplierProcess extends JFrame {
         panel.add(radioPanel, BorderLayout.CENTER);
 
         // Days of the Week (Constant Days)
-        String[] daysOfWeek = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
+        String[] daysOfWeek = {"Sunday","Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
         JList<String> daysList = new JList<>(daysOfWeek);
         JScrollPane daysScrollPane = new JScrollPane(daysList);
 
@@ -189,6 +208,9 @@ public class AddSupplierProcess extends JFrame {
         // Panel for constant days and expected days components
         JPanel deliveryOptionsPanel = new JPanel(new BorderLayout());
         deliveryOptionsPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        JCheckBox deliverBySupplierCheckbox = new JCheckBox("Supplier Delivers by Himeself?");
+        panel.add(deliverBySupplierCheckbox, BorderLayout.SOUTH);
 
         // Add components based on selected radio button
         constantDaysRadio.addActionListener(new ActionListener() {
@@ -211,56 +233,27 @@ public class AddSupplierProcess extends JFrame {
 
         panel.add(deliveryOptionsPanel, BorderLayout.SOUTH);
 
-        // Previous Button
-        JButton prevButton = new JButton("Previous");
-        prevButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                cardLayout.show(cardPanel, "step2");
-            }
-        });
-        panel.add(prevButton, BorderLayout.WEST);
 
         // Next Button
-        JButton nextButton = new JButton("Next");
+        JButton nextButton = new JButton("Finish");
         nextButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                cardLayout.show(cardPanel, "step4");
+                if(deliverBySupplierCheckbox.isSelected())
+                    selfDelivery=true;
+                if(expectedDaysRadio.isSelected())
+                    daysToDeliver = Integer.parseInt(expectedDaysField.getText());
+                else{
+                    for (String day:daysList.getSelectedValuesList()) {
+                        constDeliveryDays.add(DayOfWeek.valueOf(day));
+                    }
+                }
+                sf.supplierService.addSupplier(name,address,supplierNum,bankAccount,daysToDeliver,
+                        contacts,constDeliveryDays,selfDelivery,paymentTerm);
+                dispose();
+                run(new AllSupplierFrame(sp,sf));
             }
         });
         panel.add(nextButton, BorderLayout.EAST);
-
-        return panel;
-    }
-
-    private JPanel createStep4Panel() {
-        JPanel panel = new JPanel(new BorderLayout());
-
-        // Supplier Confirmation
-        JLabel confirmationLabel = new JLabel("Supplier Added Successfully!");
-        panel.add(confirmationLabel, BorderLayout.CENTER);
-
-        // Deliver by Supplier Checkbox
-        JCheckBox deliverBySupplierCheckbox = new JCheckBox("Supplier Delivers by Themselves");
-        panel.add(deliverBySupplierCheckbox, BorderLayout.SOUTH);
-
-        // Previous Button
-        JButton prevButton = new JButton("Previous");
-        prevButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                cardLayout.show(cardPanel, "step3");
-            }
-        });
-        panel.add(prevButton, BorderLayout.WEST);
-
-        // Next Button
-        JButton nextButton = new JButton("Next");
-        nextButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-
-            }
-        });
-        panel.add(nextButton, BorderLayout.EAST);
-
         return panel;
     }
 

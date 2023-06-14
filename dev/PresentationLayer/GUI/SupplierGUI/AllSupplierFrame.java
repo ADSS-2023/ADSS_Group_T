@@ -1,5 +1,6 @@
 package PresentationLayer.GUI.SupplierGUI;
 
+import BusinessLayer.Supplier.Supplier_Util.PaymentTerms;
 import PresentationLayer.Stock.StockUI;
 import PresentationLayer.Supplier.SupplierManager;
 import ServiceLayer.Supplier_Stock.ServiceFactory;
@@ -26,6 +27,10 @@ public class AllSupplierFrame extends JFrame {
     private CardLayout cardLayout;
     private JTable supplierTable;
     private DefaultTableModel tableModel;
+
+
+
+
 
     public AllSupplierFrame(SupplierManager supplierManager, ServiceFactory sf) {
         this.sf=sf;
@@ -56,8 +61,6 @@ public class AllSupplierFrame extends JFrame {
 
         // Set the preferred size of the table
         supplierTable.setPreferredScrollableViewportSize(new Dimension(300, 200)); // Adjust the dimensions as needed
-
-
 
         // Add the table to the table panel
         JScrollPane scrollPane = new JScrollPane(supplierTable);
@@ -165,16 +168,19 @@ public class AllSupplierFrame extends JFrame {
         JButton ordersView = new JButton("View All orders");
         ordersView.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                    dispose();
                     run(new OrdersFrame(sf,supplierManager));
             }
         });
         buttonPanel.add(ordersView);
+
     }
     private void createAddSupplierButton(JPanel buttonPanel) {
         JButton addSupplier = new JButton("Add Supplier");
         addSupplier.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                new AddSupplierProcess(sf);
+                dispose();
+                run(new AddSupplierProcess(sf,supplierManager));
             }
         });
         addSupplier.setPreferredSize(new Dimension(100, 40)); // Adjust the dimensions as needed

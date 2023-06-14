@@ -8,7 +8,11 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
+
+import static PresentationLayer.GUI.SupplierGUI.SupplierGUI.run;
 
 public class OrderProductsFrame extends JFrame {
     private ServiceFactory sf;
@@ -21,6 +25,14 @@ public class OrderProductsFrame extends JFrame {
         setTitle("Order Number: "+ orderId);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
+
+        // Create a panel for the buttons
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new GridLayout(4, 1)); // Adjust the number of rows as needed
+        add(buttonPanel,BorderLayout.SOUTH);
+        // Create the buttons and add them to the button panel
+        createOrderButton(buttonPanel);
+
 
         Response res= sf.orderService.getProductsByOrder(orderId);
         String[] columnNames = {"Product Name", "Product Number", "Quantity","Initial Price","Discount","Final Price"};
@@ -71,6 +83,17 @@ public class OrderProductsFrame extends JFrame {
         for (String order : orders) {
             tableModel.addRow(extractValues(order));
         }
+    }
+
+    private void createOrderButton(JPanel buttonPanel) {
+        JButton backButton = new JButton("Back");
+        backButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+
+                run(new OrdersFrame(sf,supplierManager));
+            }
+        });
+        buttonPanel.add(backButton);
     }
     private List<String> getOrdersFromBusinessLayer(int orderId) {
         Response res=sf.orderService.getProductsByOrder(orderId);
