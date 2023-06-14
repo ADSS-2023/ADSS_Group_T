@@ -24,43 +24,7 @@ public class StockGUI extends JFrame {
         setSize(400, 300);
         setLocationRelativeTo(null);
         setLayout(new GridLayout(4, 3));
-
-        createButtons();
-
         setVisible(true);
-    }
-
-    private void createButtons() {
-        JButton btnSeeCategories = new JButton("See categories");
-        btnSeeCategories.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                stockUI.presentCategories();
-            }
-        });
-        add(btnSeeCategories);
-
-        JButton btnProduceInventoryReport = new JButton("Produce inventory report");
-        btnProduceInventoryReport.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                stockUI.inventoryReport();
-            }
-        });
-        add(btnProduceInventoryReport);
-
-        JButton btnSetDiscount = new JButton("Set discount");
-        btnSetDiscount.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                stockUI.setDiscount();
-            }
-        });
-        add(btnSetDiscount);
-
-        // Add other buttons similarly
-
-        // ...
-
-        // Add more buttons as needed
-
     }
 
     public static void main(String[] args) {
@@ -99,14 +63,13 @@ public class StockGUI extends JFrame {
         if (frameChoice == 0) {
             // Open ManagerFrame
             // Create an instance of ManagerFrame and activate it
-            run(new ManagerFrame(stockUI , supplierManager , sf));
+            run(new ManagerFrame(sf));
         } else if (frameChoice == 1) {
             // Open StockFrame
             run(new StockFrame(stockUI , supplierManager , sf));
         }
 
     }
-
 
     private static void run(JFrame curFrame) {
         curFrame.setVisible(true);

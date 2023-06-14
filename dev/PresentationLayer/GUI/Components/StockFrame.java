@@ -40,7 +40,7 @@ public class StockFrame extends JFrame {
         Border border = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
         JPanel messagePanel = new JPanel(new BorderLayout());
         messagePanel.setBorder(BorderFactory.createCompoundBorder(border, BorderFactory.createLineBorder(Color.BLACK)));
-        messagePanel.add(messageField);
+        //messagePanel.add(messageField);
 
         mainPanel.add(messagePanel, BorderLayout.NORTH);
         messageField.setText("Welcome to stock system");
