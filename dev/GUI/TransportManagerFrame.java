@@ -1,5 +1,4 @@
 package GUI;
-
 import GUI.Generic.*;
 import ServiceLayer.Transport.BranchService;
 import ServiceLayer.Transport.DeliveryService;
@@ -12,7 +11,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class TransportManagerFrame extends GenericFrameUser {
     private final LogisticCenterService logisticCenterService;
@@ -30,7 +28,6 @@ public class TransportManagerFrame extends GenericFrameUser {
         this.serviceFactory.setTransportManagerFrame(this);
         serviceFactory.callbackEnterWeight(this::enterWeightFunction);
         serviceFactory.callbackEnterOverWeight(this::enterOverWeightAction);
-
 
         try {
             deliveryService.initCounters();
@@ -63,8 +60,6 @@ public class TransportManagerFrame extends GenericFrameUser {
         GenericButton addNewProductsButton = new GenericButton("Add new products");
         leftPanel.add((addNewProductsButton));
 
-
-        //TODO: implement this button
         skipDayButton.addActionListener(e -> {
             System.out.println("Button skip day clicked");
             rightPanel.removeAll();
@@ -83,7 +78,6 @@ public class TransportManagerFrame extends GenericFrameUser {
                 setErrorText(skipDayResponse.getErrorMessage());
             } else {
                 //show next day details in the right panel in big textBox
-
                 JTextArea skipDayTextArea = new JTextArea();
                 skipDayTextArea.setText((String) skipDayResponse.getReturnValue());
                 rightPanel.add(skipDayTextArea);
@@ -496,6 +490,40 @@ public class TransportManagerFrame extends GenericFrameUser {
             }
         return 0;
     }
+//    public int enterWeightFunction(String address, int deliveryID) {
+//        JTextField newWeightTextField = new JTextField();
+//        JPanel panel = new JPanel(new GridLayout(2, 1));
+//        panel.add(newWeightTextField);
+//
+//        Response response = ResponseSerializer.deserializeFromJson(deliveryService.getLoadedProducts(deliveryID, address));
+//        if (response.isError()) {
+//            setErrorText(response.getErrorMessage());
+//        } else {
+//            //make a text long text field with delivery details
+//            JTextField deliveryDetails = new JTextField("The truck is in: " + address + ".\n" +
+//                    "\nThe following products are loaded:" +
+//                    "\n" + response.getReturnValue());
+//            deliveryDetails.setEditable(false);
+//            panel.add(deliveryDetails);
+//        }
+//
+//        JOptionPane optionPane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE, JOptionPane.DEFAULT_OPTION);
+//        JDialog dialog = optionPane.createDialog("Enter new weight");
+//        dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE); // Disable the close button
+//        dialog.setVisible(true);
+//
+//        int result = 0; // Set default value to 0
+//        String newWeightText = newWeightTextField.getText();
+//        if (!newWeightText.isEmpty()) {
+//            try {
+//                result = Integer.parseInt(newWeightText);
+//            } catch (NumberFormatException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        return result;
+//    }
+
     public int enterWeightFunction(String address, int deliveryID) {
         JTextField newWeightTextField = new JTextField();
         JPanel panel = new JPanel(new GridLayout(2, 1));
@@ -505,10 +533,13 @@ public class TransportManagerFrame extends GenericFrameUser {
         if (response.isError()) {
             setErrorText(response.getErrorMessage());
         } else {
-            JTextField deliveryDetails = new JTextField("The truck is in: " + address + "." +
-                    "\nThe following products are loaded:" +
-                    "\n" + response.getReturnValue());
+            // Make a text area with delivery details
+            JTextArea deliveryDetails = new JTextArea("The truck is in: " + address + ".\n" +
+                    "\nThe following products are loaded:\n" +
+                    response.getReturnValue());
             deliveryDetails.setEditable(false);
+            deliveryDetails.setLineWrap(true); // Enable line wrapping
+            deliveryDetails.setWrapStyleWord(true); // Wrap at word boundaries
             panel.add(deliveryDetails);
         }
 
@@ -530,19 +561,25 @@ public class TransportManagerFrame extends GenericFrameUser {
     }
 
 
-
-
-
-
-
-
     public int enterOverWeightAction(int deliveryID) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("There is overweight in delivery " + deliveryID + ".");
-        System.out.println("Please choose an action to handle the overweight:");
-        System.out.println("1.drop site");
-        System.out.println("2.replace truck");
-        System.out.println("3.unload products");
-        return scanner.nextInt();//overweight action
+        JPanel panel = new JPanel(new GridLayout(2, 1));
+        // Make a text area with delivery details
+        JTextArea deliveryDetails = new JTextArea("The truck is over weight.\n" +
+                                                    "\nThe delivery is:\n" + deliveryID);
+        deliveryDetails.setEditable(false);
+        deliveryDetails.setLineWrap(true); // Enable line wrapping
+        deliveryDetails.setWrapStyleWord(true); // Wrap at word boundaries
+        panel.add(deliveryDetails);
+        JComboBox<String> overWeightActionComboBox = new JComboBox<>(new String[]{"1.drop site", "2.replace truck","3.unload products"});
+        panel.add(overWeightActionComboBox);
+        JOptionPane optionPane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE, JOptionPane.DEFAULT_OPTION);
+        JDialog dialog = optionPane.createDialog("Enter over weight action");
+        dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE); // Disable the close button
+        dialog.setVisible(true);
+        int result = 0; // Set default value to 0
+        //create a combo box with the options
+        //the result is the selected option
+        result = overWeightActionComboBox.getSelectedIndex();
+        return result;
     }
 }
