@@ -105,5 +105,6 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="google-maps-services-2.2.0" level="project" />
   </component>
 </module>

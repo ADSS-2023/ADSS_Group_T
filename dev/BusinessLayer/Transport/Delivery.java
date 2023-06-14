@@ -12,6 +12,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 public class Delivery {
     /** the delivery id */
@@ -459,5 +460,20 @@ public class Delivery {
 
     public void setHandledBranches(LinkedHashMap<Branch, File> allHandledBranchesForDelivery) {
         this.handledBranches = allHandledBranchesForDelivery;
+    }
+
+    public List<String> getTrack() {
+        //return the list of address of the sites that the delivery unhandeled
+        List<String> track = new ArrayList<>();
+
+        //track.add(source.getAddress());
+        for (Supplier s : unHandledSuppliers.keySet()) {
+            track.add(s.getAddress());
+        }
+        for (Branch b : unHandledBranches.keySet()) {
+            track.add(b.getAddress());
+        }
+        return track;
+
     }
 }

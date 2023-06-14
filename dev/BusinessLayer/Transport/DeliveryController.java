@@ -894,6 +894,10 @@ public class DeliveryController {
     private void removeDeliveryFromDate(LocalDate date,Delivery d) throws Exception {
         dalDeliveryService.deleteDateToDelivery(date,d);
     }
+
+    public List<String> getDeliveryTrack(int i) throws SQLException {
+        return getDelivery(i).getTrack();
+    }
 }
 
 

@@ -44,7 +44,7 @@ public class Data_init {
     public static void initSites(DAO dao) throws SQLException {
 
 
-        dao.insert(new SiteDTO("b1", "000000001", "Contact B1", 1, 30, Location.getShippingArea(1,30),"branch"));
+        dao.insert(new SiteDTO("Rami Levy, Shoken Street, Tel Aviv-Yafo", "000000001", "Contact B1", 1, 30, Location.getShippingArea(1,30),"branch"));
         dao.insert(new SiteDTO("b2", "000000002", "Contact B2", 30, 34, Location.getShippingArea(30, 34), "branch"));
         dao.insert(new SiteDTO("b3", "000000003", "Contact B3", 11, 40, Location.getShippingArea(11, 40), "branch"));
         dao.insert(new SiteDTO("b4", "000000004", "Contact B4", -41, -30, Location.getShippingArea(-41, -30), "branch"));
@@ -54,8 +54,8 @@ public class Data_init {
         dao.insert(new SiteDTO("b8", "000000008", "Contact B8", -13, -7, Location.getShippingArea(-13, -7), "branch"));
         dao.insert(new SiteDTO("b9", "000000009", "Contact B9", 17, 5, Location.getShippingArea(17, 5), "branch"));
 
-        dao.insert(new SiteDTO("s1", "000000011", "Contact S1", 1, -30, Location.getShippingArea(1, -30), "supplier"));
-        dao.insert(new SiteDTO("s2", "000000012", "Contact S2", -10, 20, Location.getShippingArea(-10, 20), "supplier"));
+        dao.insert(new SiteDTO("Tnuva Rehovot, Rehovot", "000000011", "Contact S1", 1, -30, Location.getShippingArea(1, -30), "supplier"));
+        dao.insert(new SiteDTO("Coca-Cola, HaRav Kahanman Street, Bnei Brak", "000000012", "Contact S2", -10, 20, Location.getShippingArea(-10, 20), "supplier"));
         dao.insert(new SiteDTO("s3", "000000013", "Contact S3", 15, 35, Location.getShippingArea(15, 35), "supplier"));
         dao.insert(new SiteDTO("s4", "000000014", "Contact S4", -25, 5, Location.getShippingArea(-25, 5), "supplier"));
         dao.insert(new SiteDTO("s5", "000000015", "Contact S5", 40, -20, Location.getShippingArea(40, -20), "supplier"));
@@ -86,14 +86,14 @@ public class Data_init {
         productMap1.put("Beef", 2);
         productMap1.put("Pork", 2);
         productMap1.put("Chicken", 1);
-        supplierService.addProducts("s1", productMap1);
+        supplierService.addProducts("Tnuva Rehovot, Rehovot", productMap1);
 
 // Supplier 2 - Bakery
         LinkedHashMap<String,Integer> productMap2 = new LinkedHashMap<>();
         productMap2.put("Bread", 1);
         productMap2.put("Cupcake", 1);
         productMap2.put("Croissant", 1);
-        supplierService.addProducts("s2", productMap2);
+        supplierService.addProducts("Coca-Cola, HaRav Kahanman Street, Bnei Brak", productMap2);
 
 // Supplier 3 - Seafood Market
         LinkedHashMap<String,Integer> productMap3 = new LinkedHashMap<>();
@@ -147,17 +147,17 @@ public class Data_init {
     }
     public static void initDelivery(DeliveryService deliveryService){
         // Delivery 1
-        String branch1 = "b1";
+        String branch1 = "Rami Levy, Shoken Street, Tel Aviv-Yafo";
         LinkedHashMap<String, LinkedHashMap<String, Integer>> products1 = new LinkedHashMap<>();
         LinkedHashMap<String, Integer> supplierProducts1 = new LinkedHashMap<>();
         supplierProducts1.put("Beef", 5);
         supplierProducts1.put("Pork", 10);
         supplierProducts1.put("Chicken", 20);
-        products1.put("s1", supplierProducts1);
+        products1.put("Tnuva Rehovot, Rehovot", supplierProducts1);
         LinkedHashMap<String, Integer> supplierProducts2 = new LinkedHashMap<>();
         supplierProducts2.put("Bread", 8);
         supplierProducts2.put("Cupcake", 5);
-        products1.put("s2", supplierProducts2);
+        products1.put("Coca-Cola, HaRav Kahanman Street, Bnei Brak", supplierProducts2);
         String date1 = Time.localDateToString(LocalDate.now().plusDays(2));
         deliveryService.orderDelivery(branch1, products1, date1);
 
