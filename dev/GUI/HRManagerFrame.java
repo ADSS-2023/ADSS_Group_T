@@ -8,15 +8,8 @@ import ServiceLayer.Transport.LogisticCenterService;
 import UtilSuper.Response;
 import UtilSuper.ResponseSerializer;
 import UtilSuper.ServiceFactory;
-import UtilSuper.Time;
-import org.jdatepicker.impl.JDatePanelImpl;
-import org.jdatepicker.impl.JDatePickerImpl;
-import org.jdatepicker.impl.UtilDateModel;
-
 import javax.swing.*;
 import java.awt.*;
-import java.time.LocalDate;
-import java.sql.SQLException;
 
 import java.util.*;
 import java.util.List;
@@ -436,7 +429,8 @@ public class HRManagerFrame  extends GenericFrameUser {
                 setFeedbackText("");
 
 
-                String datef = datePicker.getModel().getValue().toString();
+
+                String datef = datePicker.getDate();
 
 
                 String shiftType = shiftTypesComboBox.getSelectedItem().toString();

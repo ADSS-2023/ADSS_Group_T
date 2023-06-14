@@ -21,9 +21,8 @@ class DateLabelFormatter extends JFormattedTextField.AbstractFormatter {
     public String valueToString(Object value) throws ParseException {
         String s= "";
         if (value instanceof GregorianCalendar){
-
-            Date d = ((GregorianCalendar) value).getTime();
-            s = Time.localDateToString(new java.sql.Date(d.getTime()).toLocalDate());
+            //convert the date to a string in the format yyyy-MM-dd
+            s = Time.localDateToString(((GregorianCalendar) value).toZonedDateTime().toLocalDate());
         }
         return s;
     }
