@@ -63,7 +63,7 @@ public class DamagedTest {
         damagedService.report_damaged_item( 1, 120,3, "Damaged during transit");
 
         try {
-            String result = damagedService.produce_damaged_report();
+            String  result =(String) damagedService.produce_damaged_report().getValue();
             // Check if the returned report is not empty and contains the correct item details
             assertNotNull(result);
             assertEquals("Item name : 1.5% milk , Item ID : 1 , Amount : 3 , Description : Damaged during transit\n" +

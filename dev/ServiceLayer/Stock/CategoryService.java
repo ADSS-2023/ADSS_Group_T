@@ -1,6 +1,7 @@
 package ServiceLayer.Stock;
 
 import BusinessLayer.Stock.Inventory;
+import ServiceLayer.Supplier_Stock.Response;
 
 import java.time.LocalDate;
 import java.util.Date;
@@ -18,21 +19,21 @@ public class CategoryService {
      * @throws Exception
      */
 
-    public String show_data(String index){
+    public Response show_data(String index){
         try {
-            return inventory.show_data(index);
+            return Response.okResponse(inventory.show_data(index));
         }
         catch (Exception e) {
-            return e.getMessage();
+            return Response.errorResponse(e.getMessage());
         }
     }
-    public String add_category(String index,String name){
+    public Response add_category(String index,String name){
         try {
               inventory.add_category(index,name);
         }
         catch (Exception e){
-            return e.getMessage();
+            return Response.errorResponse(e.getMessage());
         }
-        return "Category added";
+        return Response.okResponse("Category added");
     }
 }

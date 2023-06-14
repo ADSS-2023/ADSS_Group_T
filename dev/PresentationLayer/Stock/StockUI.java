@@ -3,6 +3,7 @@ import BusinessLayer.Stock.Util.Util;
 import PresentationLayer.Supplier_Stock.PreviousCallBack;
 import ServiceLayer.Stock.*;
 import ServiceLayer.Supplier.OrderService;
+import ServiceLayer.Supplier_Stock.Response;
 import ServiceLayer.Supplier_Stock.ServiceFactory;
 
 import java.sql.SQLException;
@@ -35,34 +36,54 @@ public class StockUI {
         System.out.println("\u001B[32m13.Back to start menu\u001B[0m");
     }
 
+    public boolean handleError(Response response){
+        if(response.isError()) {
+            System.out.println(response.getErrorMassage());
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
     public  String presentCategories(){
         System.out.println("press index of category/item in order to dive in,\npress 0 in order to choose the current category\npress -1 to exit");
         Scanner scanner = new Scanner(System.in);
-        System.out.println(sf.inventoryService.show_data());
-        boolean is_active = true;
-        String next_index="";
-        while (is_active){
-            int choise = scanner.nextInt();
-            if (choise == -1){
-                is_active = false;
-                next_index = "exit";
-            }
-            else if(choise == 0)
-                is_active = false;
-            else {
-                next_index += "." + (choise-1);
-                String toShow = sf.categoryService.show_data(next_index);
-                System.out.println(toShow);
-            }
+        Response res =
+        sf.inventoryService.show_data();
+        if (handleError(res)){
+            return "exit";
         }
-        return next_index;
+        else {
+            System.out.println((String) res.getValue());
+            boolean is_active = true;
+            String next_index = "";
+            while (is_active) {
+                int choise = scanner.nextInt();
+                if (choise == -1) {
+                    is_active = false;
+                    next_index = "exit";
+                } else if (choise == 0)
+                    is_active = false;
+                else {
+                    next_index += "." + (choise - 1);
+                    res = sf.categoryService.show_data(next_index);
+                    if (handleError(res)){
+                        is_active = false;
+                        next_index = "exit";
+                    }
+                    else
+                        System.out.println((String) res.getValue());
+                }
+            }
+            return next_index;
+        }
     }
 
     private  void inventoryReport() {
         Scanner scanner = new Scanner(System.in);
         LinkedList<String> categories = new LinkedList<>();
         boolean is_active = true;
-        while (is_active){
+        while (is_active) {
             String result = presentCategories();
             if (result != "exit")
                 categories.add(result);
@@ -72,10 +93,12 @@ public class StockUI {
         }
         if (categories.isEmpty())
             System.out.println("you didn't choose any category");
-        else
-            System.out.println(sf.inventoryService.produce_inventory_report(categories));
+        else {
+            Response res = sf.inventoryService.produce_inventory_report(categories);
+            if(!handleError(res))
+                System.out.println((String) res.getValue());
+        }
     }
-
     public  void setDiscount(){
         Scanner scanner = new Scanner(System.in);
         String product = presentCategories();
@@ -87,7 +110,10 @@ public class StockUI {
         String end_date_string = scanner.nextLine();
         System.out.println("Choose percentage amount :");
         double percentageAmount = scanner.nextDouble();
-        sf.inventoryService.set_discount(product , percentageAmount , end_date_string , start_date_string);
+        Response res = sf.inventoryService.set_discount(product , percentageAmount , end_date_string , start_date_string);
+        if(!handleError(res)){
+            System.out.println((String) res.getValue());
+        }
     }
 
     private void setMinimalAmount() {
@@ -96,7 +122,10 @@ public class StockUI {
         int item_id = scanner.nextInt();
         System.out.println("insert minimal amount:");
         int amount = scanner.nextInt();
-        System.out.println(sf.itemService.setMinimalAmount(item_id,amount));
+        Response res = sf.itemService.setMinimalAmount(item_id,amount);
+        if(!handleError(res)){
+            System.out.println((String) res.getValue());
+        }
     }
 
     private void damagedItem() {
@@ -109,28 +138,37 @@ public class StockUI {
         int amount = scanner.nextInt();
         System.out.println("insert reason of damaged");
         String description = scanner.next();
-        System.out.println(sf.damagedService.report_damaged_item(item_id,order_id,amount,description));
+        Response res = sf.damagedService.report_damaged_item(item_id,order_id,amount,description);
+        if(!handleError(res)){
+            System.out.println((String) res.getValue());
+        }
     }
 
     private void damageItemReport() {
-        System.out.println(sf.damagedService.produce_damaged_report());
+        Response res = sf.damagedService.produce_damaged_report();
+        if(!handleError(res))
+            System.out.println((String) res.getValue());
     }
 
     private void addItem() {
         Scanner scanner = new Scanner(System.in);
         String choise = presentCategories();
-        System.out.println("insert item id:");
-        int item_id = scanner.nextInt();
-        scanner.nextLine();
-        System.out.println("insert name:");
-        String name = scanner.nextLine();
-        System.out.println("what is the minimal amount for alert for this item?");
-        int amount = scanner.nextInt();
-        System.out.println("insert manufacturer name:");
-        String manufacturer = scanner.next();
-        System.out.println("insert price for costumer:");
-        double price = scanner.nextDouble();
-        sf.itemService.addItem(choise,item_id,name,amount,manufacturer,price);
+        if(!choise.equals("exit")) {
+            System.out.println("insert item id:");
+            int item_id = scanner.nextInt();
+            scanner.nextLine();
+            System.out.println("insert name:");
+            String name = scanner.nextLine();
+            System.out.println("what is the minimal amount for alert for this item?");
+            int amount = scanner.nextInt();
+            System.out.println("insert manufacturer name:");
+            String manufacturer = scanner.next();
+            System.out.println("insert price for costumer:");
+            double price = scanner.nextDouble();
+            Response res = sf.itemService.addItem(choise, item_id, name, amount, manufacturer, price);
+            if (!handleError(res))
+                System.out.println((String) res.getValue());
+        }
     }
 
     public void receive_order(){
@@ -153,7 +191,10 @@ public class StockUI {
     }
 
     private void produceShortageReport() {
-        System.out.println(sf.inventoryService.produce_shortage_report());
+        Response res = sf.inventoryService.produce_shortage_report();
+        if(!handleError(res))
+            System.out.println((String) res.getValue());
+
     }
 
     public void act(String choise){
@@ -224,13 +265,17 @@ public class StockUI {
     }
 
     private void show_new_items() {
-        System.out.println(sf.manageOrderService.show_new_items());
+        Response res = sf.manageOrderService.show_new_items();
+        if(!handleError(res))
+            System.out.println((String) res.getValue());
         System.out.println("If you wish to order an item that does not exist in the system,\n " +
                 "first, add new item to the system, with the corresponding names");
     }
 
     private void show_all_orders() {
-        System.out.println(sf.manageOrderService.show_all_orders());
+        Response res = sf.manageOrderService.show_all_orders();
+        if(!handleError(res))
+            System.out.println((String) res.getValue());
     }
 
     private void place_waiting_items() {
@@ -238,15 +283,22 @@ public class StockUI {
         while (isActive) {
             Scanner scanner = new Scanner(System.in);
             System.out.println("Choose item to be placed:");
-            System.out.println(sf.manageOrderService.presentItemsToBePlaced());
-            int choise = scanner.nextInt();
-            scanner.nextLine();
-            System.out.println("Where to place the item? ile:'ile number' shelf:'shelf number'");
-            String location = scanner.nextLine();
-            System.out.println(sf.manageOrderService.placeNewArrival(choise,location));
-            System.out.println("Would you like to place another item?\n1.yes 2.no");
-            choise = scanner.nextInt();
-            isActive = choise==1;
+            Response res = sf.manageOrderService.presentItemsToBePlaced();
+            if(!handleError(res)) {
+                int choise = scanner.nextInt();
+                scanner.nextLine();
+                System.out.println("Where to place the item? ile:'ile number' shelf:'shelf number'");
+                String location = scanner.nextLine();
+                res = sf.manageOrderService.placeNewArrival(choise, location);
+                if(!handleError(res)) {
+                    System.out.println("Would you like to place another item?\n1.yes 2.no");
+                    choise = scanner.nextInt();
+                    isActive = choise == 1;
+                }
+                else
+                    isActive = false;
+            }
+            else isActive = false;
         }
 
     }
@@ -268,7 +320,9 @@ public class StockUI {
         System.out.println("Do you want to mark this order as urgent?\n1.yes 2.no");
         int choice = scanner.nextInt();
         boolean isUrgent = choice == 1;
-        System.out.println(sf.manageOrderService.createSpecialOrder(products,isUrgent));
+        Response res = sf.manageOrderService.createSpecialOrder(products,isUrgent);
+        if(!handleError(res))
+            System.out.println((String) res.getValue());
     }
 
     private  void create_regular_order() {
@@ -285,7 +339,10 @@ public class StockUI {
             products.put(id,amount);
             isActive = choice==1;
         }
-        System.out.println(sf.manageOrderService.createRegularOrder(products));
+        Response res = sf.manageOrderService.createRegularOrder(products);
+        if(!handleError(res))
+            System.out.println((String) res.getValue());
+
     }
 
     private  void edit_create_orders() {
@@ -317,25 +374,34 @@ public class StockUI {
         System.out.println("Insert the day of the week (big letters only):");
         String day = scanner.nextLine();
         DayOfWeek cur_day = DayOfWeek.valueOf(day);
-        System.out.println(sf.manageOrderService.presentItemsById(cur_day));
-        System.out.println("Insert id of product:");
-        int id = scanner.nextInt();
-        //maybe present him the item details from the order?
-        System.out.println("Insert the new amount of product:");
-        int amount = scanner.nextInt();
-        sf.manageOrderService.editRegularOrder(id , cur_day , amount);
+        Response res = sf.manageOrderService.presentItemsById(cur_day);
+        if(!handleError(res)) {
+            System.out.println((String) res.getValue());
+            System.out.println("Insert id of product:");
+            int id = scanner.nextInt();
+            //maybe present him the item details from the order?
+            System.out.println("Insert the new amount of product:");
+            int amount = scanner.nextInt();
+            res = sf.manageOrderService.editRegularOrder(id, cur_day, amount);
+            if(!handleError(res)) {
+                System.out.println((String) res.getValue());
+            }
+        }
     }
 
     public void moveToNextDay() {
-        sf.manageOrderService.nextDay();
+        Response res = sf.manageOrderService.nextDay();
+        handleError(res);
     }
 
     private  void addCategory() {
         Scanner scanner = new Scanner(System.in);
         String index = presentCategories();
-        System.out.println("Insert name of category:");
-        String name = scanner.nextLine();
-        sf.categoryService.add_category(index,name);
+        if(!index.equals("exit")) {
+            System.out.println("Insert name of category:");
+            String name = scanner.nextLine();
+            handleError(sf.categoryService.add_category(index, name));
+        }
     }
 
     public void run(){
@@ -371,10 +437,14 @@ public class StockUI {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Insert item id");
         int id = scanner.nextInt();
-        System.out.println(sf.itemService.present_item_amount(id));
-        System.out.println("Insert amount to move");
-        int amount = scanner.nextInt();
-        sf.itemService.move_items_to_store(id,amount);
+        Response res = sf.itemService.present_item_amount(id);
+        if(!handleError(res)) {
+            System.out.println((String) res.getValue());
+            System.out.println("Insert amount to move");
+            int amount = scanner.nextInt();
+            res = sf.itemService.move_items_to_store(id, amount);
+            handleError(res);
+        }
     }
 
     public void deleteData() {

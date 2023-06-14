@@ -8,9 +8,11 @@ public class UserService {
         this.uc = uc;
     }
     public Response login(String id){
+        ///TODO implement this ido!
         try{uc.login(id);}
         catch (Exception e){
 
         }
+        return Response.errorResponse("todo");
     }
 }
