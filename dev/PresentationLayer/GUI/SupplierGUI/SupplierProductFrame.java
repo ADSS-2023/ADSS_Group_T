@@ -1,3 +1,4 @@
+package PresentationLayer.GUI.SupplierGUI;
 import PresentationLayer.GUI.SupplierGUI.SupplierFrame;
 import ServiceLayer.Supplier_Stock.ServiceFactory;
 
@@ -11,6 +12,7 @@ public class SupplierProductFrame extends JFrame {
 
     private ServiceFactory sf;
     private int supplierNum;
+    private String supplierName;
     private int productNum;
 
     // Swing components
@@ -29,9 +31,10 @@ public class SupplierProductFrame extends JFrame {
     private JButton btnDeleteDiscount;
     private JButton btnEditDiscount;
 
-    public SupplierProductFrame(ServiceFactory sf, int supplierNum, int productNum) {
+    public SupplierProductFrame(ServiceFactory sf, int supplierNum, int productNum, String supplierName) {
         this.sf = sf;
         this.supplierNum = supplierNum;
+        this.supplierName = supplierName;
         this.productNum = productNum;
         initializeComponents();
         setupLayout();
@@ -104,7 +107,7 @@ public class SupplierProductFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();
-                new SupplierFrame();
+                new SupplierFrame(sf, supplierNum, supplierName);
             }
         });
 
@@ -182,7 +185,7 @@ public class SupplierProductFrame extends JFrame {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new SupplierProductFrame(123, 456);
+                new SupplierProductFrame(new ServiceFactory(), 2, 456, "Sapak2");
             }
         });
     }

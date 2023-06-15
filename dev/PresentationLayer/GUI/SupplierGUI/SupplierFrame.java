@@ -5,7 +5,6 @@ import BusinessLayer.Supplier.Supplier_Util.PaymentTerms;
 import PresentationLayer.Supplier.SupplierManager;
 import ServiceLayer.Supplier_Stock.ServiceFactory;
 import ServiceLayer.Supplier_Stock.Response;
-import
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -140,7 +139,7 @@ public class SupplierFrame extends JFrame {
                 if (selectedRow != -1) {
                     Object selectedSupplierNumber = productsTable.getValueAt(selectedRow, 1);
                     SupplierFrame.this.dispose();
-                    SupplierProductFrame supplierFrame = new SupplierProductFrame(sf, supplierNumber, (Integer.parseInt(selectedSupplierNumber.toString())));
+                    SupplierProductFrame supplierFrame = new SupplierProductFrame(sf, supplierNumber, (Integer.parseInt(selectedSupplierNumber.toString())), supplierName);
                     supplierFrame.setVisible(true);
                 }
             }
@@ -259,8 +258,8 @@ public class SupplierFrame extends JFrame {
     private void back(){
         SupplierFrame.this.dispose();
 
-        //AllSupplierFrame allSupplierFrame = new AllSupplierFrame(supplierManager, sf);
-        //allSupplierFrame.setVisible(true);
+//        AllSupplierFrame allSupplierFrame = new AllSupplierFrame(, sf);
+//        allSupplierFrame.setVisible(true);
         //JOptionPane.showMessageDialog(this, response.getValue(), "Delete Supplier", JOptionPane.INFORMATION_MESSAGE);
     }
 
@@ -577,7 +576,7 @@ public class SupplierFrame extends JFrame {
             if (response.isError()) {
                 JOptionPane.showMessageDialog(this, response.getErrorMassage(), "Error", JOptionPane.ERROR_MESSAGE);
             } else {
-                JOptionPane.showMessageDialog(this, "Success", "Success", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, response.getValue(), "Success", JOptionPane.INFORMATION_MESSAGE);
             }
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "Invalid price or max amount.", "Error", JOptionPane.ERROR_MESSAGE);
