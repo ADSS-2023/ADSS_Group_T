@@ -90,8 +90,9 @@ public class Item implements ProductCategoryManagement {
      * @param item
      */
     @Override
-    public void add_item(String index, Item item) {
+    public void add_item(String index, Item item) throws Exception {
         //do nothing
+        throw new Exception("Cannot add item to another item");
     }
 
     @Override

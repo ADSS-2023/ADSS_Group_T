@@ -24,6 +24,7 @@ public class ManagerFrame extends JFrame {
     private CardLayout cardLayout;
     private JLabel messageField;
 
+
     public ManagerFrame(ServiceFactory sf) {
         this.sf = sf;
 
@@ -32,39 +33,38 @@ public class ManagerFrame extends JFrame {
         setPreferredSize(new Dimension(800, 600));
         setLayout(new BorderLayout());
 
-        //TODO : split the error and the string value
+        //TODO: split the error and the string value
         createToolbar();
         createEmptyBoxPanel();
-        createContentPanel();
-
-        JPanel mainPanel = new JPanel(new BorderLayout());
-
-        Border border = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
-        JPanel messagePanel = new JPanel(new BorderLayout());
-        messagePanel.setBorder(BorderFactory.createCompoundBorder(border, BorderFactory.createLineBorder(Color.BLACK)));
-        messagePanel.add(messageField);
-
-        mainPanel.add(messagePanel, BorderLayout.NORTH);
-        messageField.setText("Welcome to manager system");
-
-        mainPanel.add(emptyBoxPanel, BorderLayout.CENTER);
-        mainPanel.add(contentPanel, BorderLayout.SOUTH);
-        add(mainPanel, BorderLayout.CENTER);
+        createErrorOkMessages();
 
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
     }
 
-    private void createContentPanel() {
-        contentPanel = new JPanel();
-        contentPanel.setLayout(new BorderLayout());
-        add(contentPanel, BorderLayout.CENTER);
+    private void createErrorOkMessages() {
+        messageField = new JLabel("Welcome to inventory system");
+        Font currentFont = messageField.getFont();
+        Font newFont = currentFont.deriveFont(currentFont.getSize() + 2f);
+        messageField.setFont(newFont);
+        add(messageField,BorderLayout.NORTH);
+    }
 
-        JPanel topPanel = new JPanel(new BorderLayout());
-        messageField = new JLabel();
-        topPanel.add(messageField, BorderLayout.NORTH);
-        contentPanel.add(topPanel, BorderLayout.NORTH);
+    private void handleErrorOrOk(Response res) {
+        if (res.isError())
+            updateError(res.getErrorMassage());
+        else
+            updateOkMessage((String) res.getValue());
+    }
+
+    public void updateError(String msg){
+        messageField.setText(msg);
+        messageField.setForeground(Color.RED);
+    }
+    public void updateOkMessage(String msg){
+        messageField.setText(msg);
+        messageField.setForeground(Color.GREEN);
     }
 
     private void createEmptyBoxPanel() {
@@ -101,9 +101,11 @@ public class ManagerFrame extends JFrame {
             textArea.setEditable(false);
             scrollPane.setPreferredSize(new Dimension(400, 300));
             JOptionPane.showMessageDialog(null, scrollPane, "New Items", JOptionPane.PLAIN_MESSAGE);
+            updateOkMessage("Items viewed");
+
         }
         catch (Exception exp) {
-            messageField.setText(exp.getMessage());
+            updateError(exp.getMessage());
         }
     }
 
@@ -142,8 +144,10 @@ public class ManagerFrame extends JFrame {
             scrollPane.setPreferredSize(new Dimension(400, 300));
 
             JOptionPane.showMessageDialog(null, scrollPane, "Damage Item Report", JOptionPane.PLAIN_MESSAGE);
+            updateOkMessage("Report exported");
+
         } catch (Exception e) {
-            messageField.setText(e.getMessage()); // Update the messageField with the error message
+            updateError(e.getMessage()); // Update the messageField with the error message
         }
     }
 
@@ -171,8 +175,10 @@ public class ManagerFrame extends JFrame {
             scrollPane.setPreferredSize(new Dimension(400, 300));
 
             JOptionPane.showMessageDialog(null, scrollPane, "Shortage Report", JOptionPane.PLAIN_MESSAGE);
+            updateOkMessage("Report exported");
+
         } catch (Exception e) {
-            messageField.setText(e.getMessage()); // Update the messageField with the error message
+            updateError(e.getMessage()); // Update the messageField with the error message
         }
     }
 
@@ -220,7 +226,7 @@ public class ManagerFrame extends JFrame {
                 } else {
                     nextIndex += "." + (Integer.parseInt(options[choice].split(" : ")[0]) - 1);
                     try {
-                        Response dataToShow = sf.inventoryService.show_data();
+                        Response dataToShow = sf.categoryService.show_data(nextIndex);
                         if (dataResponse.isError()) throw new Exception(dataToShow.getErrorMassage());
                         String toShow = (String) dataToShow.getValue();
                         categories = toShow.split(", ");
@@ -246,15 +252,14 @@ public class ManagerFrame extends JFrame {
                                 options[0]
                         );
                     } catch (Exception e) {
-                        messageField.setText(e.getMessage()); // Update the messageField with the error message
+                        updateError(e.getMessage()); // Update the messageField with the error message
                         return "exit";
                     }
                 }
             }
-
             return nextIndex;
         } catch (Exception e) {
-            messageField.setText(e.getMessage()); // Update the messageField with the error message
+            updateOkMessage(e.getMessage()); // Update the messageField with the error message
             return "exit";
         }
     }
@@ -288,7 +293,7 @@ public class ManagerFrame extends JFrame {
                 showInventoryReportDialog(inventoryReport);
             }
         } catch (Exception e) {
-            messageField.setText(e.getMessage()); // Update the messageField with the error message
+            updateError(e.getMessage()); // Update the messageField with the error message
         }
     }
 
@@ -298,10 +303,10 @@ public class ManagerFrame extends JFrame {
             JScrollPane scrollPane = new JScrollPane(textArea);
             textArea.setEditable(false);
             scrollPane.setPreferredSize(new Dimension(400, 300));
-
             JOptionPane.showMessageDialog(null, scrollPane, "Inventory Report", JOptionPane.PLAIN_MESSAGE);
+            updateOkMessage("Report exported");
         } catch (Exception e) {
-            messageField.setText(e.getMessage()); // Update the messageField with the error message
+            updateError(e.getMessage()); // Update the messageField with the error message
         }
     }
 
@@ -322,7 +327,7 @@ public class ManagerFrame extends JFrame {
 
             return formattedReport.toString();
         } catch (Exception e) {
-            messageField.setText(e.getMessage()); // Update the messageField with the error message
+            updateError(e.getMessage()); // Update the messageField with the error message
             return ""; // Return an empty string if an exception occurs
         }
     }
@@ -360,18 +365,18 @@ public class ManagerFrame extends JFrame {
                         Response editResultData = sf.manageOrderService.editRegularOrder(id, cur_day, amount);
                         if (editResultData.isError()) throw new Exception(editResultData.getErrorMassage());
                         String editResult = (String) editResultData.getValue();
-                        messageField.setText(editResult); // Update the messageField with the result
+                        updateOkMessage(editResult); // Update the messageField with the result
                     } else {
-                        messageField.setText("Edit operation canceled."); // Update the messageField
+                        updateOkMessage("Edit operation canceled."); // Update the messageField
                     }
                 } catch (Exception e) {
-                    messageField.setText("Invalid day of the week. Please enter a valid day in capital letters."); // Update the messageField
+                    updateError("Invalid day of the week. Please enter a valid day in capital letters."); // Update the messageField
                 }
             } else {
-                messageField.setText("Edit operation canceled."); // Update the messageField
+                updateError("Edit operation canceled."); // Update the messageField
             }
         } catch (NumberFormatException e) {
-            messageField.setText("Invalid input. Please enter numeric values for ID and amount."); // Update the messageField
+            updateError("Invalid input. Please enter numeric values for ID and amount."); // Update the messageField
         }
     }
 
@@ -395,7 +400,7 @@ public class ManagerFrame extends JFrame {
                 Response regularOrdersData = sf.manageOrderService.presentItemsById(DayOfWeek.valueOf(day));
                 if (regularOrdersData.isError()) throw new Exception(regularOrdersData.getErrorMassage());
                 String regularOrders = regularOrdersData.getErrorMassage();
-                if (regularOrders.isEmpty()) {
+                if (regularOrders == null || regularOrders.isEmpty()) {
                     sb.append("Regular orders:\n");
                     sb.append("\tNo orders on this day\n");
                 } else {
@@ -421,8 +426,9 @@ public class ManagerFrame extends JFrame {
             textArea.setEditable(false);
 
             JOptionPane.showMessageDialog(null, scrollPane, "All Orders", JOptionPane.PLAIN_MESSAGE);
+            updateOkMessage("Report exported");
         } catch (Exception e) {
-            messageField.setText(e.getMessage()); // Update the messageField with the error message
+            updateError(e.getMessage()); // Update the messageField with the error message
         }
     }
 
@@ -464,9 +470,10 @@ public class ManagerFrame extends JFrame {
             Response messageData = sf.manageOrderService.createRegularOrder(products);
             if (messageData.isError()) throw new Exception(messageData.getErrorMassage());
             String message = (String) messageData.getValue();
-            JOptionPane.showMessageDialog(null, message, "Create Regular Order", JOptionPane.INFORMATION_MESSAGE);
+            updateOkMessage(message);
+            //JOptionPane.showMessageDialog(null, message, "Create Regular Order", JOptionPane.INFORMATION_MESSAGE);
         } catch (Exception e) {
-            messageField.setText(e.getMessage()); // Update the messageField with the error message
+            updateError(e.getMessage()); // Update the messageField with the error message
         }
     }
 }

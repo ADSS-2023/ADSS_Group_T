@@ -87,7 +87,8 @@ public class AllSupplierFrame extends JFrame {
         tableModel = new DefaultTableModel(columnNames, 0);
 
         // Retrieve the list of suppliers from the business layer
-        List<String> suppliersData = sf.supplierService.getSuppliers();
+        //List<String> suppliersData = sf.supplierService.getSuppliers();
+        List<String> suppliersData = new LinkedList<>();
         List<String> suppliersNumber = new ArrayList<>();
         // Add each supplier as a row in the table
         for (String supplierData : suppliersData) {
@@ -123,7 +124,7 @@ public class AllSupplierFrame extends JFrame {
                     String selectedSupplier = suppliersNumber.get(selectedRow);
 
                     // Open the SupplierFrame and pass the selected supplier
-                    SupplierFrame supplierFrame = new SupplierFrame(selectedSupplier);
+                    SupplierFrame supplierFrame = new SupplierFrame(sf , 1 , "liran");
                     supplierFrame.setVisible(true);
                 }
             }

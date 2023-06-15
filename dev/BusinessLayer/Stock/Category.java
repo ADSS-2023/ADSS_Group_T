@@ -113,12 +113,11 @@ public class Category implements ProductCategoryManagement{
      * This function present the names of this specific category
      * @return
      */
-    private String present_names(){
+    private String present_names() throws Exception {
         if(categories_list.size() == 0){
-            System.out.println("No products in this category");
-            return "";
+            throw new Exception("empty category");
         }
-        String names = name+":\n";
+        String names = "";
         int index = 1;
         for(ProductCategoryManagement cur_category : categories_list){
             names += index++ + " : " + cur_category.get_name() + ", ";
@@ -215,7 +214,7 @@ public class Category implements ProductCategoryManagement{
      */
     public void add_item(String index, Item i) throws Exception {
         for (Discount d:discount_list
-             ) {
+        ) {
             i.setDiscount("",d);
         }
         if (index == ""){

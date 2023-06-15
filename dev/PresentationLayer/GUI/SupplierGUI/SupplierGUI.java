@@ -8,7 +8,7 @@ import ServiceLayer.Supplier_Stock.ServiceFactory;
 
 import javax.swing.*;
 
-import static PresentationLayer.GUI.Components.StockGUI.run;
+//import static PresentationLayer.GUI.Components.StockGUI.run;
 
 public class SupplierGUI {
     public static void main(String[] args) {
@@ -47,7 +47,7 @@ public class SupplierGUI {
         if (frameChoice == 0) {
             // Open ManagerFrame
             // Create an instance of ManagerFrame and activate it
-            run(new ManagerFrame(stockUI , supplierManager , sf));
+            run(new ManagerFrame(sf));
         } else if (frameChoice == 1) {
             // Open StockFrame
             run(new StockFrame(stockUI , supplierManager , sf));

@@ -37,7 +37,13 @@ class CategoryTest {
 
     @Test
     void present_categories_on_empty_data() {
-        String output = inventory.present_names();
+        String output = "";
+        try {
+            output = inventory.present_names();
+        }
+        catch (Exception c){
+            output = c.getMessage();
+        }
         assertEquals("No categories", output);
     }
 

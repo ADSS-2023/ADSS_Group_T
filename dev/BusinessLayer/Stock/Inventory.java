@@ -93,9 +93,9 @@ public class Inventory {
      * This function present the names of this specific category
      * @return
      */
-    public String present_names(){
+    public String present_names() throws Exception{
         if (categories.isEmpty())
-            return "No categories";
+            throw new Exception("No categories");
         String names = "";
         int index = 1;
         for(Category cur_category : categories){
@@ -247,6 +247,7 @@ public class Inventory {
         int current_index = Integer.parseInt(Util.extractFirstNumber(categories_index));
         String next_index = Util.extractNextIndex(categories_index);
         categories.get(current_index).add_item(next_index, i);
+
         shortage_list.add(i); // why is it here?
         name_to_id.put(i.name+" "+i.manufacturer_name,i.item_id);
     }
