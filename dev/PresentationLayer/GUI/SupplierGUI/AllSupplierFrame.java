@@ -81,6 +81,7 @@ public class AllSupplierFrame extends JFrame {
         String[] columnNames = {"Supplier Name", "Address", "Supplier Number", "Bank Account Number", "Payment Terms"};
 
         // Create table model with the column names
+        // Create table model with the column names
         tableModel = new DefaultTableModel(columnNames, 0);
 
         // Retrieve the list of suppliers from the business layer
@@ -131,8 +132,8 @@ public class AllSupplierFrame extends JFrame {
 
                     // Open the SupplierFrame and pass the selected supplier
                     dispose();
-                    SupplierFrame supplierFrame = new SupplierFrame(sf,supplierNum,supplierName);
-                    supplierFrame.setVisible(true);
+                    run(new SupplierFrame(sf,supplierNum,supplierName));
+
                 }
             }
         });

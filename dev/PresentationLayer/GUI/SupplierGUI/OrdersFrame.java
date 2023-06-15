@@ -27,6 +27,7 @@ public class OrdersFrame extends JFrame {
         // Create a table model with column names and empty data
         String[] columnNames = {"Order Number", "Supplier Number", "Order Date","Destination Address","Contact Name","Contact Number"};
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
+        setPreferredSize(new Dimension(800, 600));
 
         // Create the table with the model
         orderTable = new JTable(tableModel);

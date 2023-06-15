@@ -64,29 +64,11 @@ public class SupplierFrame extends JFrame {
 
 
 
-        createHeader();
+
         createProductsTable();
         createDiscountsTable();
         createButtons();
         setVisible(true);
-    }
-
-    private void createHeader() {
-        JPanel headerPanel = new JPanel();
-        headerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        headerPanel.setLayout(new BorderLayout());
-
-        JLabel titleLabel = new JLabel("Supplier Details");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        headerPanel.add(titleLabel, BorderLayout.NORTH);
-
-        JLabel supplierLabel = new JLabel("Supplier Number: " + supplierNumber);
-        supplierLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        supplierLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        headerPanel.add(supplierLabel, BorderLayout.CENTER);
-
-        add(headerPanel, BorderLayout.NORTH);
     }
 
     private void showSupplierProducts() {
@@ -130,12 +112,14 @@ public class SupplierFrame extends JFrame {
     private void createProductsTable() {
         productsTableModel = new DefaultTableModel();
         productsTable = new JTable(productsTableModel);
+
         Response response = sf.supplierService.getProducts(supplierNumber);
         if (response.isError()) {
             JOptionPane.showMessageDialog(this, response.getErrorMassage(), "Error", JOptionPane.ERROR_MESSAGE);
         } else {
             List<String> products = (List<String>) response.getValue();
-            displayProducts(products);
+            if(products.size()!=0)
+                displayProducts(products);
         }
 
 
@@ -182,7 +166,8 @@ public class SupplierFrame extends JFrame {
             JOptionPane.showMessageDialog(this, response.getErrorMassage(), "Error", JOptionPane.ERROR_MESSAGE);
         } else {
             List<String> discounts = (List<String>) response.getValue();
-            displayDiscounts(discounts);
+            if(discounts.size()!=0)
+                displayDiscounts(discounts);
         }
 
 
@@ -290,7 +275,6 @@ public class SupplierFrame extends JFrame {
 
         if (products.isEmpty()) {
             JOptionPane.showMessageDialog(this, "No products found.", "Information", JOptionPane.INFORMATION_MESSAGE);
-            return;
         }
 
         // Add column headers
@@ -541,7 +525,6 @@ public class SupplierFrame extends JFrame {
 
         if (discounts.isEmpty()) {
             JOptionPane.showMessageDialog(this, "No discounts found.", "Information", JOptionPane.INFORMATION_MESSAGE);
-            return;
         }
 
         // Add column headers
