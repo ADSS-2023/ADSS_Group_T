@@ -110,7 +110,7 @@ public abstract class  SupplierBusiness {
         return null;
     }
 
-    public void addProduct(int productNum, String productName, String manufacturer, int price, int maxAmount, LocalDate expiryDate) throws Exception {
+    public void addProduct(int productNum, String productName, String manufacturer, float price, int maxAmount, LocalDate expiryDate) throws Exception {
         if (getProduct(productName,manufacturer) != null)
             throw new Exception("product already exists.");
         else

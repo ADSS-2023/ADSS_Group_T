@@ -92,7 +92,7 @@ public class SupplierService {
 
 
 
-    public Response addProduct(int supplierNum, int productNum, String productName, String manufacturer, int price, int maxAmount, LocalDate expiryDate){
+    public Response addProduct(int supplierNum, int productNum, String productName, String manufacturer, float price, int maxAmount, LocalDate expiryDate){
         try {
             sc.getSupplier(supplierNum).addProduct(productNum, productName, manufacturer, price, maxAmount, expiryDate);
             return Response.okResponse("Product added successfully");
@@ -232,24 +232,19 @@ public class SupplierService {
 
     }
 
-    public List<String> getProductDiscounts(int supplierNum,int productNum) {
+    public Response getProductDiscounts(int supplierNum,int productNum) {
         List<String> discounts = new LinkedList<>();
         try {
             List<Discount> discountList = sc.getSupplier(supplierNum).getSupplierProduct(productNum).getQuantitiesAgreement();
             for (Discount dis: discountList){
                 discounts.add(dis.toString());
                 discounts.add("\n");
-
             }
+            return Response.okResponse(discounts);
         }
         catch (Exception e){
-            discounts = new LinkedList<>();
-            discounts.add(e.getMessage());
+            return Response.errorResponse(e.getMessage());
         }
-        finally {
-            return discounts;
-        }
-
     }
 
 }

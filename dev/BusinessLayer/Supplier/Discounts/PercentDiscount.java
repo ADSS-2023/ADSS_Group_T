@@ -32,7 +32,6 @@ public class PercentDiscount extends Discount {
     public String toString() {
         return "Amount to be discounted: " + amount +
                 ", Discount: " + discount +
-                ", is a Percent discount: " + isPercentage +
-                '}';
+                ", is a Percent discount: " + isPercentage;
     }
 }
