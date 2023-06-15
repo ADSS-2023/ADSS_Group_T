@@ -234,7 +234,15 @@ public class HRManagerFrame  extends GenericFrameUser {
             GenericTextField dateField = new GenericTextField();
             String[] shiftTypes = {"morning","evening"};
             JComboBox<String> shiftTypesComboBox = new JComboBox<>(shiftTypes);
-            String[] branches = {"b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9"};
+            //TODO: get branches from service and not like this
+            //String[] branches = {"b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9"};
+            Response response = ResponseSerializer.deserializeFromJson(branchService.getAllBranches());
+            String[] branches = new String[0];
+            if (response.isError()) {
+                setErrorText(response.getErrorMessage());
+            } else {
+                branches = ((String) response.getReturnValue()).split("\n");
+            }
             JComboBox<String> branchComboBox = new JComboBox<>(branches);
 
             GenericButton doneButton = new GenericButton("Done");
@@ -298,7 +306,13 @@ public class HRManagerFrame  extends GenericFrameUser {
             GenericTextField dateField = new GenericTextField();
             String[] shiftTypes = {"morning", "evening"};
             JComboBox<String> shiftTypesComboBox = new JComboBox<>(shiftTypes);
-            String[] branches = {"b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9"};
+            Response response = ResponseSerializer.deserializeFromJson(branchService.getAllBranches());
+            String[] branches = new String[0];
+            if (response.isError()) {
+                setErrorText(response.getErrorMessage());
+            } else {
+                branches = ((String) response.getReturnValue()).split("\n");
+            }
             JComboBox<String> branchComboBox = new JComboBox<>(branches);
             GenericButton doneButton = new GenericButton("Done");
 
@@ -405,7 +419,13 @@ public class HRManagerFrame  extends GenericFrameUser {
 
             String[] shiftTypes = {"morning","evening"};
             JComboBox<String> shiftTypesComboBox = new JComboBox<>(shiftTypes);
-            String[] branches = {"b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9"};
+            Response response = ResponseSerializer.deserializeFromJson(branchService.getAllBranches());
+            String[] branches = new String[0];
+            if (response.isError()) {
+                setErrorText(response.getErrorMessage());
+            } else {
+                branches = ((String) response.getReturnValue()).split("\n");
+            }
             JComboBox<String> branchComboBox = new JComboBox<>(branches);
             String[] cashiers = numbers;
             JComboBox<String> cashiersComboBox = new JComboBox<>(cashiers);
