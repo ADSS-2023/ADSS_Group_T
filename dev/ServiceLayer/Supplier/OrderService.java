@@ -1,11 +1,9 @@
 package ServiceLayer.Supplier;
 
-import BusinessLayer.Supplier.OrderBusiness;
-import BusinessLayer.Supplier.OrderController;
-import BusinessLayer.Supplier.SupplierController;
-import BusinessLayer.Supplier.SupplierProductBusiness;
+import BusinessLayer.Supplier.*;
 import BusinessLayer.Supplier.Suppliers.SupplierBusiness;
 import BusinessLayer.Supplier_Stock.ItemToOrder;
+import ServiceLayer.Supplier_Stock.Response;
 
 import java.rmi.server.ExportException;
 import java.time.DayOfWeek;
@@ -22,22 +20,24 @@ public class OrderService {
          this.oc = oc;
          this.sc=sc;
         }
-        public void loadOrders()  {
+
+        public Response loadOrders()  {
         try {
             sc.loadSuppliers();
             oc.loadOrders();
+            return Response.okResponse("Load data succeeded.");
         }
         catch (Exception e){
-            System.out.println(e.getMessage());
+            return Response.errorResponse(e.getMessage());
         }
         }
-    public boolean nextDay(){
+    public Response nextDay(){
         try {
             oc.executeTodayOrders();
-            return true;
+            return Response.okResponse(true);
         }
         catch (Exception e){
-            return false;
+            return Response.errorResponse(e.getMessage());
         }
     }
     public boolean createRegularOrder(List<ItemToOrder> items) {
@@ -97,30 +97,47 @@ public class OrderService {
     }
 
 
-    public List<String> getOrders(){
+    public Response getOrders(){
         List<String>  orders = new LinkedList<>();
         try{//TODO:change implementation to display both types of order.
              List<OrderBusiness> orderBusinessList =  oc.getOrders();
             for (OrderBusiness order:orderBusinessList) {
                orders.add(order.toString());
             }
+            return Response.okResponse(orders);
         }
         catch (Exception e){
-            return orders;
+           return Response.errorResponse(e.getMessage());
+            //return orders; TODO: why we didnt return e.getMessage()?
         }
-        finally {
-            return orders;
+    }
+    public Response getProductsByOrder(int OrderNum){
+        List<String>  products = new LinkedList<>();
+        try{
+            List<OrderBusiness> orderBusinessList =  oc.getOrders();
+            for (OrderBusiness order:orderBusinessList) {
+                if(order.getOrderNum()==OrderNum) {
+                    for (OrderProduct product : order.getProducts()) {
+                        products.add(product.toString());
+                    }
+                }
+            }
+            return Response.okResponse(products);
+        }
+        catch (Exception e){
+            return Response.errorResponse(e.getMessage());
+            //return orders; TODO: why we didnt return e.getMessage()?
         }
     }
 
-    public String deleteAllOrders(){
+    public Response deleteAllOrders(){
         try {
             oc.deleteOrders();
+            return Response.errorResponse("Deleted Successfully");
         }
         catch (Exception e){
-            return e.getMessage();
+            return Response.errorResponse(e.getMessage());
         }
-        return "Deleted Successfully";
     }
 
     public List<ItemToOrder> getAllProducts() {
@@ -135,12 +152,10 @@ public class OrderService {
                             entry2.getValue().getManufacturer(),entry2.getValue().getMaxAmount(),
                             null,-1,entry2.getValue().getPrice()));
             }
+            return  items;
         }
         catch (Exception e){
-            return null;
-        }
-        finally {
-            return items;
+            return  null;
         }
     }
 
