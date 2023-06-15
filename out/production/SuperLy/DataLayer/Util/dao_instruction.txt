@@ -1,5 +1,0 @@
------------------------------read this before implement anything in dal--------------------------------------------------------
-DAO- generic class that provides static function such as insert etc. (enter the class and find out more).
-The DAO expect a dto instance, which is a class that represents each row in a table.
-DTO- Each DTO instance should extend DTO class, and contain only fields. One of the fields must be the table name,
-which should be received as the first constructor argument.
