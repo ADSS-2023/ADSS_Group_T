@@ -117,12 +117,12 @@ public abstract class  SupplierBusiness {
             products.put(productNum, new SupplierProductBusiness(supplierNum,productName,productNum, manufacturer, price, maxAmount, expiryDate, supplierDalController));
     }
 
-    public void editProduct(String productName, String manufacturer, int price, int maxAmount, LocalDate expiryDate) throws Exception {
+    public void editProduct(String productName, String manufacturer, float price, int maxAmount, LocalDate expiryDate) throws Exception {
         if(expiryDate.isBefore(Util_Supplier_Stock.getCurrDay()))
             throw new Exception("expiry date has passed.");
         SupplierProductBusiness sp = getProduct(productName,manufacturer);
         if (sp != null) {
-            sp.editProduct(supplierNum, productName, manufacturer, price, maxAmount, expiryDate);
+            sp.editProduct( price, maxAmount, expiryDate);
             SupplierProductDTO newProductDTO = new SupplierProductDTO(
                     supplierNum, sp.getProductNum(), productName, manufacturer,
                     price, maxAmount,expiryDate.toString());
@@ -154,25 +154,25 @@ public abstract class  SupplierBusiness {
         contactDTOS = new ArrayList<>();
     }
 
-    public void editProductDiscount(int productNum, int productAmount, int discount, boolean isPercentage) throws Exception {
+    public void editProductDiscount(int productNum, int productAmount, float discount, boolean isPercentage) throws Exception {
         if(getSupplierProduct(productNum) == null)
             throw new Exception("product doesn't exist.");
         getSupplierProduct(productNum).editProductDiscount(productAmount, discount, isPercentage);
     }
 
-    public void addProductDiscount(int productNum, int productAmount, int discount, boolean isPercentage) throws Exception {
+    public void addProductDiscount(int productNum, int productAmount, float discount, boolean isPercentage) throws Exception {
         if(getSupplierProduct(productNum) == null)
             throw new Exception("product doesn't exist.");
         getSupplierProduct(productNum).addProductDiscount(productAmount, discount, isPercentage);
     }
 
-    public void deleteProductDiscount(int productNum, int productAmount, int discount, boolean isPercentage) throws Exception {
+    public void deleteProductDiscount(int productNum, int productAmount, float discount, boolean isPercentage) throws Exception {
         if(getSupplierProduct(productNum) == null)
             throw new Exception("product doesn't exist.");
         getSupplierProduct(productNum).deleteProductDiscount(productAmount, discount, isPercentage);
     }
 
-    public void editSupplierDiscount(Discounts discountEnum, int amount, int discountToChange, boolean isPercentage) throws Exception {
+    public void editSupplierDiscount(Discounts discountEnum, int amount, float discountToChange, boolean isPercentage) throws Exception {
         if(!isDiscountExist(discountEnum,amount,isPercentage))
             throw new Exception("No such discount");
         getDiscount(discountEnum,amount,isPercentage).editDiscount(amount,discountToChange);

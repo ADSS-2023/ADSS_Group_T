@@ -5,7 +5,6 @@ import BusinessLayer.Supplier.Supplier_Util.PaymentTerms;
 import PresentationLayer.Supplier.SupplierManager;
 import ServiceLayer.Supplier_Stock.ServiceFactory;
 import ServiceLayer.Supplier_Stock.Response;
-import
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -131,6 +130,13 @@ public class SupplierFrame extends JFrame {
     private void createProductsTable() {
         productsTableModel = new DefaultTableModel();
         productsTable = new JTable(productsTableModel);
+        Response response = sf.supplierService.getProducts(supplierNumber);
+        if (response.isError()) {
+            JOptionPane.showMessageDialog(this, response.getErrorMassage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } else {
+            List<String> products = (List<String>) response.getValue();
+            displayProducts(products);
+        }
 
 
 
@@ -140,7 +146,12 @@ public class SupplierFrame extends JFrame {
                 if (selectedRow != -1) {
                     Object selectedSupplierNumber = productsTable.getValueAt(selectedRow, 1);
                     SupplierFrame.this.dispose();
-                    SupplierProductFrame supplierFrame = new SupplierProductFrame(sf, supplierNumber, (Integer.parseInt(selectedSupplierNumber.toString())));
+                    SupplierProductFrame supplierFrame = new SupplierProductFrame(sf, supplierNumber, supplierName,
+                            (Integer.parseInt(selectedSupplierNumber.toString())),(String)productsTable.getValueAt(selectedRow,0),
+                            (String) productsTable.getValueAt(selectedRow,2),
+                              Float.parseFloat((String) productsTable.getValueAt(selectedRow,3)),
+                            Integer.parseInt((String) productsTable.getValueAt(selectedRow,4)),
+                            (String) productsTable.getValueAt(selectedRow,5));
                     supplierFrame.setVisible(true);
                 }
             }
@@ -165,6 +176,16 @@ public class SupplierFrame extends JFrame {
     private void createDiscountsTable() {
         discountsTableModel = new DefaultTableModel();
         discountsTable = new JTable(discountsTableModel);
+
+        Response response = sf.supplierService.getSupplierDiscounts(supplierNumber);
+        if (response.isError()) {
+            JOptionPane.showMessageDialog(this, response.getErrorMassage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } else {
+            List<String> discounts = (List<String>) response.getValue();
+            displayDiscounts(discounts);
+        }
+
+
         JScrollPane discountsScrollPane = new JScrollPane(discountsTable);
         JPanel discountsPanel = new JPanel();
         discountsPanel.setLayout(new BorderLayout());
@@ -259,9 +280,8 @@ public class SupplierFrame extends JFrame {
     private void back(){
         SupplierFrame.this.dispose();
 
-        //AllSupplierFrame allSupplierFrame = new AllSupplierFrame(supplierManager, sf);
-        //allSupplierFrame.setVisible(true);
-        //JOptionPane.showMessageDialog(this, response.getValue(), "Delete Supplier", JOptionPane.INFORMATION_MESSAGE);
+        AllSupplierFrame allSupplierFrame = new AllSupplierFrame( sf);
+        allSupplierFrame.setVisible(true);
     }
 
     private void displayProducts(List<String> products) {

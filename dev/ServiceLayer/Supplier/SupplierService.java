@@ -102,7 +102,7 @@ public class SupplierService {
         }
     }
 
-    public Response editProduct(int supplierNum, String productName, String manufacturer, int price, int maxAmount, LocalDate expiryDate){
+    public Response editProduct(int supplierNum, String productName, String manufacturer, float price, int maxAmount, LocalDate expiryDate){
         try {
             sc.getSupplier(supplierNum).editProduct(productName, manufacturer, price, maxAmount, expiryDate);
             if(sc.getSupplier(supplierNum) instanceof ConstantSupplier){
@@ -160,7 +160,7 @@ public class SupplierService {
         }
     }
 
-    public Response editProductDiscount(int supplierNum, int productNum, int productAmount, int discount, boolean isPercentage){
+    public Response editProductDiscount(int supplierNum, int productNum, int productAmount, float discount, boolean isPercentage){
         try {
             sc.getSupplier(supplierNum).editProductDiscount(productNum, productAmount, discount, isPercentage);
             return Response.okResponse("Product discount edited successfully");
@@ -170,7 +170,7 @@ public class SupplierService {
         }
     }
 
-    public Response addProductDiscount(int supplierNum, int productNum, int productAmount, int discount,boolean isPercentage){
+    public Response addProductDiscount(int supplierNum, int productNum, int productAmount, float discount,boolean isPercentage){
         try {
             sc.getSupplier(supplierNum).addProductDiscount(productNum, productAmount, discount,isPercentage);
             return Response.okResponse("Product discount added successfully");
@@ -180,7 +180,7 @@ public class SupplierService {
         }
     }
 
-    public Response deleteProductDiscount(int supplierNum, int productNum, int productAmount, int discount,boolean isPercentage){
+    public Response deleteProductDiscount(int supplierNum, int productNum, int productAmount, float discount,boolean isPercentage){
         try {
             sc.getSupplier(supplierNum).deleteProductDiscount(productNum, productAmount, discount,isPercentage);
             return Response.okResponse("Product discount deleted successfully");
@@ -238,7 +238,7 @@ public class SupplierService {
             List<Discount> discountList = sc.getSupplier(supplierNum).getSupplierProduct(productNum).getQuantitiesAgreement();
             for (Discount dis: discountList){
                 discounts.add(dis.toString());
-                discounts.add("\n");
+
             }
             return Response.okResponse(discounts);
         }

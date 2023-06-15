@@ -59,7 +59,7 @@ public class SupplierProductBusiness {
         return false;
     }
 
-    private boolean isDiscountValid(int productAmount, int discount, boolean isPercentage){
+    private boolean isDiscountValid(int productAmount, float discount, boolean isPercentage){
         boolean valid = true;
         for(Discount dis: quantitiesAgreement) {
             if (dis.isPercentage() == isPercentage && productAmount > dis.getAmount() && discount <= dis.getDiscount()){
@@ -70,7 +70,7 @@ public class SupplierProductBusiness {
         return valid;
     }
 
-    public void editProductDiscount(int productAmount, int newDiscount, boolean isPercentage) throws Exception {
+    public void editProductDiscount(int productAmount, float newDiscount, boolean isPercentage) throws Exception {
         if(!isDiscountExists(productAmount, isPercentage))
             throw new Exception("Discount doesn't exists");
         if(!isDiscountValid(productAmount, newDiscount, isPercentage))
@@ -91,7 +91,7 @@ public class SupplierProductBusiness {
             }
     }
 
-    public void addProductDiscount(int productAmount, int discount, boolean isPercentage) throws Exception {
+    public void addProductDiscount(int productAmount, float discount, boolean isPercentage) throws Exception {
         if(isDiscountExists(productAmount, isPercentage))
             throw new Exception("Discount already exists");
         if(!isDiscountValid(productAmount, discount, isPercentage))
@@ -180,10 +180,7 @@ public class SupplierProductBusiness {
         return supplierNum;
     }
 
-    public void editProduct(int supplierNum, String productName, String manufacturer, float price, int maxAmount, LocalDate expiryDate) throws SQLException {
-        this.supplierNum = supplierNum;
-        this.name = productName;
-        this.manufacturer = manufacturer;
+    public void editProduct(float price, int maxAmount, LocalDate expiryDate) throws SQLException {
         this.price = price;
         this.maxAmount = maxAmount;
         this.expiryDate = expiryDate;

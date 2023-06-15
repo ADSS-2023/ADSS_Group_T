@@ -18,14 +18,12 @@ import static PresentationLayer.GUI.SupplierGUI.SupplierGUI.run;
 public class OrdersFrame extends JFrame {
     private JTable orderTable;
     private ServiceFactory sf;
-    private SupplierManager supplierManager;
 
-    public OrdersFrame(ServiceFactory sf,SupplierManager supplierManager) {
+    public OrdersFrame(ServiceFactory sf) {
         setTitle("Orders");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
         this.sf=sf;
-        this.supplierManager=supplierManager;
         // Create a table model with column names and empty data
         String[] columnNames = {"Order Number", "Supplier Number", "Order Date","Destination Address","Contact Name","Contact Number"};
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
@@ -59,6 +57,7 @@ public class OrdersFrame extends JFrame {
                     // Get the selected supplier from the table model
 
                     // Open the SupplierFrame and pass the selected supplier
+                    dispose();
                     OrderProductsFrame orderProductsFrame = new OrderProductsFrame(sf,Integer.parseInt(orderTable.getValueAt(selectedRow, 0).toString()));
                     orderProductsFrame.setVisible(true);
                 }
@@ -85,6 +84,9 @@ public class OrdersFrame extends JFrame {
     private List<String> getOrdersFromBusinessLayer() {
        Response res=sf.orderService.getOrders();
        if(res.isError()){
+           JOptionPane.showMessageDialog(this, res.getErrorMassage(), "Error", JOptionPane.ERROR_MESSAGE);
+            dispose();
+            run(new OrdersFrame(sf));
            return null;
        }
        else{
@@ -129,7 +131,7 @@ public class OrdersFrame extends JFrame {
         backButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 dispose();
-                run(new AllSupplierFrame(supplierManager,sf));
+                run(new AllSupplierFrame(sf));
             }
         });
         buttonPanel.add(backButton);
