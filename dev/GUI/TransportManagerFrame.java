@@ -1,4 +1,5 @@
 package GUI;
+import DataLayer.HR_T_DAL.DB_init.SiteAddresses;
 import GUI.Generic.*;
 import ServiceLayer.Transport.BranchService;
 import ServiceLayer.Transport.DeliveryService;
@@ -422,12 +423,17 @@ public class TransportManagerFrame extends GenericFrameUser {
                 }
                 GenericButton showDeliveryDetailsButton = new GenericButton("Show delivery details");
                 rightPanel.add(showDeliveryDetailsButton);
+                //i want that the delivery text area will be with scroll bar and that the text area will be in the right panel
+                // i want to be able to see the delivery details in the text area and scroll down to see all the if the delivery is long
+
                 JTextArea deliveryDetailsTextArea = new JTextArea();
+                JScrollPane scrollPane = new JScrollPane(deliveryDetailsTextArea);
                 GenericButton showDeliveryOnMapButton = new GenericButton("Show delivery on map");
                 rightPanel.add(showDeliveryOnMapButton);
-                rightPanel.add(deliveryDetailsTextArea);
+                rightPanel.add(scrollPane);
                 rightPanel.revalidate();
                 rightPanel.repaint();
+
                 showDeliveryDetailsButton.addActionListener(e1 -> {
                     deliveryDetailsTextArea.setText("");
                     String selectedDelivery = deliveriesArray[deliveryComboBox.getSelectedIndex()];
@@ -436,6 +442,7 @@ public class TransportManagerFrame extends GenericFrameUser {
                         deliveryDetailsTextArea.append(deliveryDetail + "\n");
                     }
                 });
+
                 showDeliveryOnMapButton.addActionListener(e1 -> {
                     Response response2 = ResponseSerializer.deserializeFromJson(deliveryService.getDeliveryTrack(Integer.parseInt(deliveryComboBox.getSelectedItem().toString())));
                     if (response2.isError()) {
@@ -444,7 +451,11 @@ public class TransportManagerFrame extends GenericFrameUser {
 
 
                         String track = (String) response2.getReturnValue();
-                        String[] trackArray = track.split("\n");
+                       String[] trackArray = track.split("\n");
+//                        List<String> trackArray = new java.util.ArrayList<>();
+//                        for (int i = 0; i < 9; i++) {
+//                            trackArray.add(SiteAddresses.getSupplierAddress(i));
+//                        }
 
 // Show track on Google Maps
                         StringBuilder urlBuilder = new StringBuilder("https://www.google.com/maps/dir/");
@@ -468,7 +479,7 @@ public class TransportManagerFrame extends GenericFrameUser {
 
 
 
-
+//קניון מול 7, HaAyin Lamed St, Be'er Sheva, 8485536
 
                     }
                 });
