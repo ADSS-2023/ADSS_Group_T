@@ -1,4 +1,5 @@
 package GUI;
+import DataLayer.HR_T_DAL.DB_init.SiteAddresses;
 import GUI.Generic.*;
 import ServiceLayer.Transport.BranchService;
 import ServiceLayer.Transport.DeliveryService;
@@ -9,8 +10,23 @@ import UtilSuper.ResponseSerializer;
 import UtilSuper.ServiceFactory;
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.List;
+import com.google.maps.DirectionsApi;
+import com.google.maps.DirectionsApiRequest;
+import com.google.maps.GeoApiContext;
+import com.google.maps.GeocodingApi;
+import com.google.maps.model.DirectionsLeg;
+import com.google.maps.model.DirectionsResult;
+import com.google.maps.model.DirectionsRoute;
+import com.google.maps.model.LatLng;
+import com.google.maps.model.TravelMode;
 
 public class TransportManagerFrame extends GenericFrameUser {
     private final LogisticCenterService logisticCenterService;
@@ -59,6 +75,8 @@ public class TransportManagerFrame extends GenericFrameUser {
 
         GenericButton addNewProductsButton = new GenericButton("Add new products");
         leftPanel.add((addNewProductsButton));
+
+
 
         skipDayButton.addActionListener(e -> {
             System.out.println("Button skip day clicked");
@@ -388,7 +406,6 @@ public class TransportManagerFrame extends GenericFrameUser {
         });
 
 
-        //TODO: implement this button
         showAllDeliveriesButton.addActionListener(e -> {
             rightPanel.removeAll();
             Response response1 = ResponseSerializer.deserializeFromJson(deliveryService.showAllDeliveries());
@@ -396,34 +413,89 @@ public class TransportManagerFrame extends GenericFrameUser {
                 setErrorText(response1.getErrorMessage());
             } else {
                 String deliveries = (String) response1.getReturnValue();
-                //the deliveries string of deliveries separated by "Delivery ID: "
-                //create a jcobmo box with all the deliveries id and when the user chooses one, show the details of the delivery
+                String[] deliveriesArray = deliveries.split("---------------------------------------");
+                JComboBox<String> deliveryComboBox = new JComboBox<>();
+                for (String delivery : deliveriesArray) {
+                    deliveryComboBox.addItem(getDeliveryId(delivery));
+                    rightPanel.add(deliveryComboBox);
+                    rightPanel.revalidate();
+                    rightPanel.repaint();
+                }
+                GenericButton showDeliveryDetailsButton = new GenericButton("Show delivery details");
+                rightPanel.add(showDeliveryDetailsButton);
+                //i want that the delivery text area will be with scroll bar and that the text area will be in the right panel
+                // i want to be able to see the delivery details in the text area and scroll down to see all the if the delivery is long
 
-
-
-
-                rightPanel.add(new GenericLabel(deliveries));
+                JTextArea deliveryDetailsTextArea = new JTextArea();
+                JScrollPane scrollPane = new JScrollPane(deliveryDetailsTextArea);
+                GenericButton showDeliveryOnMapButton = new GenericButton("Show delivery on map");
+                rightPanel.add(showDeliveryOnMapButton);
+                rightPanel.add(scrollPane);
                 rightPanel.revalidate();
                 rightPanel.repaint();
-            }
-            rightPanel.add(new GenericLabel(""));
-            rightPanel.add(new GenericTextField());
 
-            rightPanel.revalidate();
-            rightPanel.repaint();
+                showDeliveryDetailsButton.addActionListener(e1 -> {
+                    deliveryDetailsTextArea.setText("");
+                    String selectedDelivery = deliveriesArray[deliveryComboBox.getSelectedIndex()];
+                    String[] deliveryDetails = selectedDelivery.split("\n");
+                    for (String deliveryDetail : deliveryDetails) {
+                        deliveryDetailsTextArea.append(deliveryDetail + "\n");
+                    }
+                });
+
+                showDeliveryOnMapButton.addActionListener(e1 -> {
+                    Response response2 = ResponseSerializer.deserializeFromJson(deliveryService.getDeliveryTrack(Integer.parseInt(deliveryComboBox.getSelectedItem().toString())));
+                    if (response2.isError()) {
+                        setErrorText(response2.getErrorMessage());
+                    } else {
+
+
+                        String track = (String) response2.getReturnValue();
+                       String[] trackArray = track.split("\n");
+//                        List<String> trackArray = new java.util.ArrayList<>();
+//                        for (int i = 0; i < 9; i++) {
+//                            trackArray.add(SiteAddresses.getSupplierAddress(i));
+//                        }
+
+// Show track on Google Maps
+                        StringBuilder urlBuilder = new StringBuilder("https://www.google.com/maps/dir/");
+                        for (String trackPoint : trackArray) {
+                            String encodedTrackPoint = null;
+                            try {
+                                encodedTrackPoint = URLEncoder.encode(trackPoint, StandardCharsets.UTF_8.toString());
+                            } catch (UnsupportedEncodingException ee) {
+                                ee.printStackTrace();
+                            }
+                            urlBuilder.append(encodedTrackPoint).append("/");
+                        }
+                        String url = urlBuilder.toString();
+
+                        try {
+                            // Open URL in default web browser
+                            Desktop.getDesktop().browse(new URI(url));
+                        } catch (IOException | URISyntaxException ee) {
+                            ee.printStackTrace();
+                        }
+
+
+
+//קניון מול 7, HaAyin Lamed St, Be'er Sheva, 8485536
+
+                    }
+                });
+
+            }
         });
 
 
         addNewProductsButton.addActionListener(e -> {
                     rightPanel.removeAll();
-                    //supplier JComboBox
                     JComboBox<String> supplierComboBox = new JComboBox<>();
                     Response response1 = ResponseSerializer.deserializeFromJson(supplierService.getAllSuppliers());
                     if (response1.isError()) {
                         setErrorText(response1.getErrorMessage());
                     } else {
                         String suppliers = (String) response1.getReturnValue();
-                        //the suppliers string of suppliers separated by \n
                         String[] suppliersArray = suppliers.split("\n");
                         supplierComboBox = new JComboBox<>(suppliersArray);
                     }
@@ -439,7 +511,6 @@ public class TransportManagerFrame extends GenericFrameUser {
                         if (name == null || supplier == null) {
                             setErrorText("Please fill all fields");
                         } else {
-                            //creat LinkedHashMap<String,Integer> products with the product name and the cooling level\
                             LinkedHashMap<String,Integer> products = new LinkedHashMap<>();
                             products.put(name,coolingLevel);
                             Response response2 = ResponseSerializer.deserializeFromJson(supplierService.addProducts(supplier,products));
@@ -465,32 +536,28 @@ public class TransportManagerFrame extends GenericFrameUser {
         leftPanel.repaint();
         setVisible(true);
     }
+
     //CallBack-Functions:
     public int enterWeightFunction(String address, int deliveryID) {
         JTextField newWeightTextField = new JTextField();
         JPanel panel = new JPanel(new GridLayout(2, 1));
         panel.add(newWeightTextField);
-
         Response response = ResponseSerializer.deserializeFromJson(deliveryService.getLoadedProducts(deliveryID, address));
         if (response.isError()) {
             setErrorText(response.getErrorMessage());
         } else {
-            // Make a text area with delivery details
-            JTextArea deliveryDetails = new JTextArea("The truck is in: " + address + ".\n" +
-                    "\nThe following products are loaded:\n" +
-                    response.getReturnValue());
+            JTextArea deliveryDetails = new JTextArea("The truck is in: " + address + ".\n" + "\nThe following products are loaded:\n" + response.getReturnValue());
             deliveryDetails.setEditable(false);
-            deliveryDetails.setLineWrap(true); // Enable line wrapping
-            deliveryDetails.setWrapStyleWord(true); // Wrap at word boundaries
+            deliveryDetails.setLineWrap(true);
+            deliveryDetails.setWrapStyleWord(true);
             panel.add(deliveryDetails);
         }
 
         JOptionPane optionPane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE, JOptionPane.DEFAULT_OPTION);
         JDialog dialog = optionPane.createDialog("Enter new weight");
-        dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE); // Disable the close button
+        dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         dialog.setVisible(true);
-
-        int result = 0; // Set default value to 0
+        int result = 0;
         String newWeightText = newWeightTextField.getText();
         if (!newWeightText.isEmpty()) {
             try {
@@ -505,7 +572,6 @@ public class TransportManagerFrame extends GenericFrameUser {
 
     public int enterOverWeightAction(int deliveryID) {
         JPanel panel = new JPanel(new GridLayout(2, 1));
-        // Make a text area with delivery details
         JTextArea deliveryDetails = new JTextArea("The truck is over weight.\n" + "\nThe delivery is:\n" + deliveryID);
         deliveryDetails.setEditable(false);
         deliveryDetails.setLineWrap(true); // Enable line wrapping
@@ -518,9 +584,20 @@ public class TransportManagerFrame extends GenericFrameUser {
         dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE); // Disable the close button
         dialog.setVisible(true);
         int result = 0; // Set default value to 0
-        //create a combo box with the options
-        //the result is the selected option
         result = overWeightActionComboBox.getSelectedIndex();
         return result;
     }
+        public static String getDeliveryId(String deliveryDetails) {
+            String[] lines = deliveryDetails.split("\\r?\\n");
+            for (String line : lines) {
+                if (line.startsWith("Delivery ID:")) {
+                    String[] parts = line.split(":");
+                    if (parts.length > 1) {
+                        String idString = parts[1].trim();
+                        return (idString);
+                    }
+                }
+            }
+            return "";
+        }
 }

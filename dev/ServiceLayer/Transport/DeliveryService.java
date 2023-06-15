@@ -144,6 +144,19 @@ public class DeliveryService {
         deliveryController.initCounters();
     }
 
+    public String getDeliveryTrack(int i) {
+        try {
+            Response response = new Response();
+            response.setReturnValue(transportJsonConvert.deliveryTrackToString(deliveryController.getDeliveryTrack(i)));
+            return ResponseSerializer.serializeToJson(response);
+        } catch (Exception ex) {
+            Response response = new Response();
+            response.setErrorMessage(ex.getMessage());
+            return ResponseSerializer.serializeToJson(response);
+        }
+
+    }
+
 //    public String orderDelivery(String branchString, LinkedHashMap<String, LinkedHashMap<String, Integer>> suppliersString,
 //                                String requiredDateString) {
 //        try {

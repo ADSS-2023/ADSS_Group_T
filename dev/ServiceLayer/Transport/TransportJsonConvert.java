@@ -6,6 +6,7 @@ import BusinessLayer.Transport.*;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class TransportJsonConvert {
@@ -130,5 +131,12 @@ public class TransportJsonConvert {
     }
 
 
-
+    public String deliveryTrackToString(List<String> deliveryTrack) {
+        //create string builder with all the delivery track saparated by new line
+        StringBuilder sb = new StringBuilder();
+        for (String str : deliveryTrack) {
+            sb.append(str).append("\n");
+        }
+        return sb.toString();
+    }
 }

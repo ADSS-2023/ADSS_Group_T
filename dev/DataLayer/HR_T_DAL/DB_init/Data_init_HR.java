@@ -20,6 +20,8 @@ import java.util.List;
 
 public class Data_init_HR {
 
+
+
     public static void initBasicData(DAO dao,ShiftService shiftService) throws Exception {
         //UserDTO userDTO = new UserDTO("User", "1", "1", "HRManager", 1, "123456", "2023-04-03", "good worker", 10000);
         //dao.deleteTableDataWithDTO(userDTO);
@@ -29,7 +31,16 @@ public class Data_init_HR {
         LocalDate startDate = LocalDate.now(); // Start date is one year from now
         LocalDate endDate = startDate.plusWeeks(2); // End date is one month from the start date
 
-        List<String> branches = Arrays.asList("b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9");
+        //this was the old before map:
+       // List<String> branches = Arrays.asList("b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9");
+        //get 0-8 branches from site addresses and insert them to List
+        //from 0 to 8 because we have 9 branches
+        //use the static method getBranchAddress from SiteAddresses class
+        //use for loop to insert the branches to the list
+        List<String> branches = new java.util.ArrayList<>();
+        for (int i = 0; i < 9; i++) {
+            branches.add(SiteAddresses.getBranchAddress(i));
+        }
 
 
         // Loop through each date and insert shifts for the morning and evening
@@ -147,31 +158,63 @@ public class Data_init_HR {
 
 
 
-
+        List<String> branches = new java.util.ArrayList<>();
+        for (int i = 0; i < 9; i++) {
+            branches.add(SiteAddresses.getBranchAddress(i));
+        }
         // submit shift for employee
-        employeeService.submitShiftForEmployee("b1", 13, LocalDate.now().plusDays(1), "m");
-        employeeService.submitShiftForEmployee("b1", 11, LocalDate.now().plusDays(1), "m");
-        employeeService.submitShiftForEmployee("b1", 12, LocalDate.now().plusDays(1), "m");
-        employeeService.submitShiftForEmployee("b1", 14, LocalDate.now().plusDays(1), "m");
-        employeeService.submitShiftForEmployee("b2", 15, LocalDate.now().plusDays(1), "m");
-        employeeService.submitShiftForEmployee("b1", 13, LocalDate.now().plusDays(1), "m");
-        employeeService.submitShiftForEmployee("b1", 14, LocalDate.now().plusDays(1), "m");
-        employeeService.submitShiftForEmployee("b1", 15, LocalDate.now().plusDays(1), "m");
-        employeeService.submitShiftForEmployee("b1", 16, LocalDate.now().plusDays(1), "m");
-        employeeService.submitShiftForEmployee("b1", 17, LocalDate.now().plusDays(1), "m");
-        employeeService.submitShiftForEmployee("b1", 18, LocalDate.now().plusDays(1), "m");
-        employeeService.submitShiftForEmployee("b1", 19, LocalDate.now().plusDays(1), "m");
-        employeeService.submitShiftForEmployee("b1", 20, LocalDate.now().plusDays(1), "m");
-        employeeService.submitShiftForEmployee("b1", 21, LocalDate.now().plusDays(1), "m");
-        employeeService.submitShiftForEmployee("b1", 22, LocalDate.now().plusDays(1), "m");
-        employeeService.submitShiftForEmployee("b1", 23, LocalDate.now().plusDays(1), "m");
-        employeeService.submitShiftForEmployee("b1", 24, LocalDate.now().plusDays(1), "m");
-        employeeService.submitShiftForEmployee("b1", 25, LocalDate.now().plusDays(1), "m");
-        employeeService.submitShiftForEmployee("b2", 16, LocalDate.now().plusDays(3), "e");
-        employeeService.submitShiftForEmployee("b3", 17, LocalDate.now().plusDays(4), "m");
-        employeeService.submitShiftForEmployee("b3", 18, LocalDate.now().plusDays(4), "e");
-        employeeService.submitShiftForEmployee("b4", 19, LocalDate.now().plusDays(5), "m");
-        employeeService.submitShiftForEmployee("b4", 20, LocalDate.now().plusDays(5), "e");
+        //old:
+//        employeeService.submitShiftForEmployee(branches.get(0), 13, LocalDate.now().plusDays(1), "m");
+//        employeeService.submitShiftForEmployee("b1", 11, LocalDate.now().plusDays(1), "m");
+//        employeeService.submitShiftForEmployee("b1", 12, LocalDate.now().plusDays(1), "m");
+//        employeeService.submitShiftForEmployee("b1", 14, LocalDate.now().plusDays(1), "m");
+//        employeeService.submitShiftForEmployee("b2", 15, LocalDate.now().plusDays(1), "m");
+//        employeeService.submitShiftForEmployee("b1", 13, LocalDate.now().plusDays(1), "m");
+//        employeeService.submitShiftForEmployee("b1", 14, LocalDate.now().plusDays(1), "m");
+//        employeeService.submitShiftForEmployee("b1", 15, LocalDate.now().plusDays(1), "m");
+//        employeeService.submitShiftForEmployee("b1", 16, LocalDate.now().plusDays(1), "m");
+//        employeeService.submitShiftForEmployee("b1", 17, LocalDate.now().plusDays(1), "m");
+//        employeeService.submitShiftForEmployee("b1", 18, LocalDate.now().plusDays(1), "m");
+//        employeeService.submitShiftForEmployee("b1", 19, LocalDate.now().plusDays(1), "m");
+//        employeeService.submitShiftForEmployee("b1", 20, LocalDate.now().plusDays(1), "m");
+//        employeeService.submitShiftForEmployee("b1", 21, LocalDate.now().plusDays(1), "m");
+//        employeeService.submitShiftForEmployee("b1", 22, LocalDate.now().plusDays(1), "m");
+//        employeeService.submitShiftForEmployee("b1", 23, LocalDate.now().plusDays(1), "m");
+//        employeeService.submitShiftForEmployee("b1", 24, LocalDate.now().plusDays(1), "m");
+//        employeeService.submitShiftForEmployee("b1", 25, LocalDate.now().plusDays(1), "m");
+//        employeeService.submitShiftForEmployee("b2", 16, LocalDate.now().plusDays(3), "e");
+//        employeeService.submitShiftForEmployee("b3", 17, LocalDate.now().plusDays(4), "m");
+//        employeeService.submitShiftForEmployee("b3", 18, LocalDate.now().plusDays(4), "e");
+//        employeeService.submitShiftForEmployee("b4", 19, LocalDate.now().plusDays(5), "m");
+//        employeeService.submitShiftForEmployee("b4", 20, LocalDate.now().plusDays(5), "e");
+
+        //new:
+        employeeService.submitShiftForEmployee(branches.get(0), 13, LocalDate.now().plusDays(1), "m");
+        employeeService.submitShiftForEmployee(branches.get(0), 11, LocalDate.now().plusDays(1), "m");
+        employeeService.submitShiftForEmployee(branches.get(0), 12, LocalDate.now().plusDays(1), "m");
+        employeeService.submitShiftForEmployee(branches.get(0), 14, LocalDate.now().plusDays(1), "m");
+        employeeService.submitShiftForEmployee(branches.get(1), 15, LocalDate.now().plusDays(1), "m");
+        employeeService.submitShiftForEmployee(branches.get(0), 13, LocalDate.now().plusDays(1), "m");
+        employeeService.submitShiftForEmployee(branches.get(0), 14, LocalDate.now().plusDays(1), "m");
+        employeeService.submitShiftForEmployee(branches.get(0), 15, LocalDate.now().plusDays(1), "m");
+        employeeService.submitShiftForEmployee(branches.get(0), 16, LocalDate.now().plusDays(1), "m");
+        employeeService.submitShiftForEmployee(branches.get(0), 17, LocalDate.now().plusDays(1), "m");
+        employeeService.submitShiftForEmployee(branches.get(0), 18, LocalDate.now().plusDays(1), "m");
+        employeeService.submitShiftForEmployee(branches.get(0), 19, LocalDate.now().plusDays(1), "m");
+        employeeService.submitShiftForEmployee(branches.get(0), 20, LocalDate.now().plusDays(1), "m");
+        employeeService.submitShiftForEmployee(branches.get(0), 21, LocalDate.now().plusDays(1), "m");
+        employeeService.submitShiftForEmployee(branches.get(0), 22, LocalDate.now().plusDays(1), "m");
+        employeeService.submitShiftForEmployee(branches.get(0), 23, LocalDate.now().plusDays(1), "m");
+        employeeService.submitShiftForEmployee(branches.get(0), 24, LocalDate.now().plusDays(1), "m");
+        employeeService.submitShiftForEmployee(branches.get(0), 25, LocalDate.now().plusDays(1), "m");
+        employeeService.submitShiftForEmployee(branches.get(1), 16, LocalDate.now().plusDays(3), "e");
+        employeeService.submitShiftForEmployee(branches.get(2), 17, LocalDate.now().plusDays(4), "m");
+        employeeService.submitShiftForEmployee(branches.get(2), 18, LocalDate.now().plusDays(4), "e");
+        employeeService.submitShiftForEmployee(branches.get(3), 19, LocalDate.now().plusDays(5), "m");
+        employeeService.submitShiftForEmployee(branches.get(3), 20, LocalDate.now().plusDays(5), "e");
+
+
+
 
         //shiftService.assignAll("b1", LocalDate.now().plusDays(1).toString(), "m");
         //shiftService.assignEmployeeForShift("b2", 16, LocalDate.now().plusDays(1).toString(), "m", PositionType.cleaning.name());
