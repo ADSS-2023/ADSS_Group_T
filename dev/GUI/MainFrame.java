@@ -6,6 +6,7 @@ import GUI.Generic.GenericButton;
 import GUI.Generic.GenericFrame;
 import UtilSuper.ServiceFactory;
 import java.awt.*;
+import java.security.PublicKey;
 
 public class MainFrame extends GenericFrame {
     private GenericButton startNewButton;
@@ -13,7 +14,7 @@ public class MainFrame extends GenericFrame {
     private GenericButton lastSaveButton;
     private GenericButton exitButton;
 
-    public MainFrame(ServiceFactory serviceFactory) {
+    public MainFrame(ServiceFactory serviceFactory,String param ) {
         // Customize properties if needed
         super( serviceFactory);
         setTitle("Main");
@@ -42,7 +43,7 @@ public class MainFrame extends GenericFrame {
             System.out.println("Button start clicked");
             try {
                 Data_init.initBasicData(this.serviceFactory.getDAO());
-                Data_init_HR.initBasicData(this.serviceFactory.getDAO(),serviceFactory.getShiftService());
+                Data_init_HR.initBasicData(this.serviceFactory.getDAO(),serviceFactory.getShiftService(),this.serviceFactory.getEmployeeService());
                 LoginFrame loginFrame = new LoginFrame(serviceFactory);
                 dispose();
             }
@@ -76,7 +77,19 @@ public class MainFrame extends GenericFrame {
                 setErrorText(exception.getMessage());
             }
         });
-
         setVisible(true);
     }
+//    public void OpenNext (String param){
+//        if (param.equals("StoreManager")){
+//            SuperManager superManager = new SuperManager(serviceFactory);
+//            dispose();
+//        }
+//        else if (param.equals("HRManager") || param.equals("TransporterManager") || param.equals("Employee") || param.equals("Driver")){
+//            LoginFrame loginFrame = new LoginFrame(serviceFactory);
+//            dispose();
+//        }
+//        else {
+//            //TODO
+//        }
+//    }
 }

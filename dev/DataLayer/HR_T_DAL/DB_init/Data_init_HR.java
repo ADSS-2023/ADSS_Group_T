@@ -22,7 +22,9 @@ public class Data_init_HR {
 
 
 
-    public static void initBasicData(DAO dao,ShiftService shiftService) throws Exception {
+    public static void initBasicData(DAO dao,ShiftService shiftService,EmployeeService employeeService) throws Exception {
+
+        employeeService.addNewSuper(1111, "SuperManager", "1237894561", "Route SuperManager expert", 22000, "2023-05-14", "1111");
         //UserDTO userDTO = new UserDTO("User", "1", "1", "HRManager", 1, "123456", "2023-04-03", "good worker", 10000);
         //dao.deleteTableDataWithDTO(userDTO);
         //dao.insert(userDTO);
@@ -87,7 +89,7 @@ public class Data_init_HR {
 
     }
     public static void initOldData(DAO dao, EmployeeService employeeService , ShiftService shiftService, EmployeeController employeeController, ShiftController shiftController, DalShiftService dalShiftService) throws Exception {
-        initBasicData(dao,shiftService);
+        initBasicData(dao,shiftService,employeeService);
 
         //adding employees
 //        UserDTO user1 = new UserDTO("User", "JohnDoe", "1", "employee", 11, "123456789", "2023-05-14", "Good worker", 15000);
@@ -126,6 +128,12 @@ public class Data_init_HR {
         employeeService.addNewEmployee(23, "EmilyDavis3", "1237894562", "Route optimization expert", 22000, "2023-05-14", "23");
         employeeService.addNewEmployee(24, "EmilyDavis4", "1237894563", "Route optimization expert", 22000, "2023-05-14", "24");
         employeeService.addNewEmployee(25, "EmilyDavis5", "1237894561", "Route optimization expert", 22000, "2023-05-14", "25");
+
+
+
+
+
+
 
 
 

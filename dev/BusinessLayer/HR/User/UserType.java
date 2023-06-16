@@ -1,5 +1,5 @@
 package BusinessLayer.HR.User;
 
 public enum UserType {
-    employee, driver, HRManager, TransportManager ;
+    employee, driver, HRManager, TransportManager,SuperManager ;
 }

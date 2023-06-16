@@ -69,40 +69,14 @@ public class LoginFrame extends GenericFrame {
                     DriverMenuframe driverMenuframe = new DriverMenuframe(serviceFactory,username);
                     dispose();
                 }
+                case "SuperManager" ->{
+                    SuperManager superManager = new SuperManager(serviceFactory);
+                    dispose();
+                }
                 case "error" -> {
                     setErrorText("Incorrect ID or password. Please try again.");
                 }
             }
-//
-//            if (result.equals("error")) {
-//                System.out.println("Incorrect ID or password. Please try again.");
-//            }
-//            else
-//
-//            if(result.equals("employee")) {
-//                setErrorText("employee");
-//                EmployeeMenueFrame employeeMenueFrame = new EmployeeMenueFrame(serviceFactory,username);
-//                dispose();
-//            }
-//            else if(result.equals("driver")) {
-//                setErrorText("driver");
-//                DriverMenuframe driverMenuframe = new DriverMenuframe(serviceFactory,username);
-//                dispose();
-//
-//            }
-//            else if(result.equals("TransportManager")) {
-//                setErrorText("transport manager");
-//                TransportManagerFrame transportManagerFrame = new TransportManagerFrame(serviceFactory);
-//                dispose();
-//            }
-//            else if(result.equals("HRManager")) {
-//                setErrorText("HRManager");
-//                HRManagerFrame hrManagerFrame = new HRManagerFrame(serviceFactory);
-//                dispose();
-//            }
-//            else
-//                setErrorText("invalid username or password");
-//            // Perform actions when the button is clicked
         });
 
     }

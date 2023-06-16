@@ -45,6 +45,8 @@ public  class  User {
             return UserType.driver;
         if (type.equals("TransportManager"))
             return UserType.TransportManager;
+        if (type.equals("SuperManager"))
+            return UserType.SuperManager;
         else
             return UserType.employee;
     }

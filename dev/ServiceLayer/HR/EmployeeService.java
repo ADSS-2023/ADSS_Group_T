@@ -33,6 +33,16 @@ public class EmployeeService {
         }
         return ResponseSerializer.serializeToJson(response);
     }
+    public String addNewSuper(int id, String employeeName, String bankAccount, String description, int salary, String joiningDay, String password) {
+        Response response = new Response();
+        try {
+            employeeController.addNewEmployee(id, employeeName, bankAccount, description, salary, Time.stringToLocalDate(joiningDay), password, UserType.SuperManager);
+            response.setReturnValue("Super manager added");
+        } catch (Exception ex) {
+            response.setErrorMessage(ex.getMessage());
+        }
+        return ResponseSerializer.serializeToJson(response);
+    }
 
     public String submitShiftForEmployee(String branch, int id, LocalDate date, String shiftType) {
         Response response = new Response();
