@@ -36,7 +36,7 @@ public class MainPresentation {
     private DriverPresentation driverPresentation;
 
 
-    public MainPresentation() {
+    public MainPresentation(String param) {
         try {
             this.serviceFactory = new ServiceFactory();
         }
@@ -74,7 +74,7 @@ public class MainPresentation {
         scanner.nextLine();
         if (choice == 1){
             Data_init.initBasicData(this.serviceFactory.getDAO());
-            Data_init_HR.initBasicData(this.serviceFactory.getDAO(),this.shiftService);
+            Data_init_HR.initBasicData(this.serviceFactory.getDAO(),this.shiftService,this.employeeService);
 
         }
         if (choice == 2) {

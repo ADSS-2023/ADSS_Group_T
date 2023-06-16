@@ -31,7 +31,7 @@ public class MainObject {
     private EmployeePresentation employeePresentation;
     private DriverPresentation driverPresentation;
 
-    public MainObject() {
+    public MainObject(String param) {
         try {
             this.serviceFactory = new ServiceFactory();
             IsGUI.setIsGUI(true);
@@ -56,6 +56,7 @@ public class MainObject {
         //   serviceFactory.callbackEnterWeightGUI(this.serviceFactory.GettransportManagerFrame()::enterWeightFunctionGUI);
         //serviceFactory.callbackEnterOverWeight(this.transportManagerPresentation::enterOverWeightAction);
         //serviceFactory.callbackEnterOverWeightGUI(this.serviceFactory.GettransportManagerFrame()::enterOverWeightActionGUI);
-        MainFrame mainFrame = new MainFrame(serviceFactory);
+        MainFrame mainFrame = new MainFrame(serviceFactory,param);
+
     }
 }

@@ -137,7 +137,7 @@ public class MainPresentationUI extends JFrame {
         try {
             // Perform actions for starting a new program
             Data_init.initBasicData(this.serviceFactory.getDAO());
-            Data_init_HR.initBasicData(this.serviceFactory.getDAO(), this.shiftService);
+            Data_init_HR.initBasicData(this.serviceFactory.getDAO(), this.shiftService,this.employeeService);
             loginWindow();
         } catch (Exception exception) {
             System.out.println(exception.toString());
