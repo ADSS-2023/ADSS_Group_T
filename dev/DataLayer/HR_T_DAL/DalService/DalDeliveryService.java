@@ -106,7 +106,7 @@ public class DalDeliveryService {
 
     public void deleteDateToDelivery(LocalDate shiftDate, Delivery delivery) throws Exception {
         if(!date2deliveries.containsKey(shiftDate) || !date2deliveries.get(shiftDate).contains(delivery))
-            throw new Exception("this truck is not assigned in this date, so cannot be deleted");
+            throw new Exception("this delivery is not assigned in this date, so cannot be deleted");
         DateToDeliveryDTO dto = new DateToDeliveryDTO(shiftDate.toString(), delivery.getId());
         dao.delete(dto);
         date2deliveries.get(shiftDate).remove(delivery);
