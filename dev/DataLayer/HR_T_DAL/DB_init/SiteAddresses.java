@@ -1,33 +1,45 @@
 package DataLayer.HR_T_DAL.DB_init;
+
+import java.util.HashMap;
+import java.util.Map;
+
 //static class for site addresses
 // 2 static methods:
 //1 get i and return the address of the i'th branch
 //2 get i and return the address of the i'th supplier
 public class SiteAddresses {
+
+
+
+
+    public static Map <String,String> supplierAddressMap;
+
     public static String getBranchAddress(int i){
         switch (i){
             case 0:
-                return "רמי לוי, הע״ל, באר שבע";
+                return "Rami Levy, Beit HaGadi";
             case 1:
-                return "רמי לוי בשכונה, יעקב כהן, באר שבע";
+                return "Rami Levy Supermarket, HaMeshek Street, Beer Sheva";
             case 2:
-                return "רמי לוי שיווק השקמה באר טוביה";
+                return "Rami Levy, Derekh ha-Darom, Kiryat Gat";
             case 3:
-                return "רמי לוי נתיבות, בית הגדי";
+                return "Rami Levy, Ha-Metakhnen Street, Ashkelon";
             case 4:
-                return "רמי לוי העמל, בת ים";
+                return "rami levy Tidhar St 1, Pardes Hanna-Karkur";
             case 5:
-                return "רמי לוי אשקלון צה״ל 99, צה״ל, אשקלון";
+                return "rami levy Ha-Mavreg St 1, Tiberias";
             case 6:
-                return "רמי לוי - סניף עטרות";
+                return "rami levy Flieman St 4, Haifa";
             case 7:
-                return "רמי לוי קרית גת";
+                return "rami levy HaZerem St 2, Kadima Zoran";
             case 8:
-                return "רמי לוי אילת";
+                return "rami levy HaHaroshet St 12, Raanana";
             default:
-                return "רמי לוי העמל, בת ים";
+                return "rami levy HaHaroshet St 12, Raanana";
         }
     }
+
+
     public static String getSupplierAddress(int i){
         switch (i){
             case 0:
