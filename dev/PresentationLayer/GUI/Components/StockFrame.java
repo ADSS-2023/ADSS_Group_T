@@ -2,10 +2,14 @@ package PresentationLayer.GUI.Components;
 
 import BusinessLayer.HR.Constraint;
 import BusinessLayer.Stock.Util.Util;
+import BusinessLayer.Supplier_Stock.ItemToOrder;
 import PresentationLayer.Stock.StockUI;
 import PresentationLayer.Supplier.SupplierManager;
 import ServiceLayer.Supplier_Stock.Response;
 import ServiceLayer.Supplier_Stock.ServiceFactory;
+
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
@@ -18,6 +22,7 @@ import org.jdatepicker.impl.UtilDateModel;
 
 
 import java.time.chrono.JapaneseDate;
+import java.util.List;
 import java.util.Properties;
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -27,6 +32,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.DayOfWeek;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 public class StockFrame extends JFrame {
     private ServiceFactory sf;
@@ -41,6 +47,7 @@ public class StockFrame extends JFrame {
     public StockFrame(StockUI stockUI, SupplierManager supplierManager, ServiceFactory sf) {
         this.sf = sf;
         cardLayout = new CardLayout();
+        setTitle("Stock");
         setTitle("Stock");
         setPreferredSize(new Dimension(800, 600));
         setLayout(new BorderLayout());
@@ -98,7 +105,14 @@ private void createEmptyBoxPanel() {
     add(emptyBoxPanel);
 }
 
+    private void refreshEmptyBox() {
+        emptyBoxPanel.removeAll();
+        emptyBoxPanel.setLayout(new GridLayout(10,2));
 
+        emptyBoxPanel.revalidate();
+        emptyBoxPanel.repaint();
+
+    }
     private void createToolbar() {
         JToolBar toolbar = new JToolBar(JToolBar.VERTICAL);
         toolbar.setFloatable(false);
@@ -112,7 +126,7 @@ private void createEmptyBoxPanel() {
         addButtonToToolbar(toolbar, "Set Minimal Amount", this::setMinimalAmount);
         addButtonToToolbar(toolbar, "Place Waiting Items", this::placeWaitingItems);
         addButtonToToolbar(toolbar, "Show all orders", this::show_all_orders);
-        addButtonToToolbar(toolbar, "Create Special Order", this::createSpecialOrder);
+        addButtonToToolbar(toolbar, "Create Special Order", this::createSpecialOrder2);
         addButtonToToolbar(toolbar, "Create Regular Order", this::createRegularOrder);
         addButtonToToolbar(toolbar, "Edit Regular Item Order", this::editRegularItemOrder);
         addButtonToToolbar(toolbar, "Move to Next Day", this::nextDay);
@@ -133,6 +147,7 @@ private void createEmptyBoxPanel() {
     }
 
     private void nextDay(){
+        createEmptyBoxPanel();
         Response res = sf.manageOrderService.nextDay();
         handleErrorOrOk(res);
 //        JOptionPane.showMessageDialog(null, "Moved to the next day successfully.", "Move to Next Day", JOptionPane.INFORMATION_MESSAGE);
@@ -275,7 +290,7 @@ private void createEmptyBoxPanel() {
     }
 
     private void setDiscount() {
-        emptyBoxPanel.removeAll();
+        refreshEmptyBox();
         String product = presentCategories();
         if (!product.equals("exit")) {
         try {
@@ -350,7 +365,7 @@ private void createEmptyBoxPanel() {
     }
 
     private void damagedItem() {
-        emptyBoxPanel.removeAll();
+        createEmptyBoxPanel();
         try {
             JTextField itemIdField = new JTextField();
             JTextField orderIdField = new JTextField();
@@ -395,34 +410,45 @@ private void createEmptyBoxPanel() {
 
     //TODO : change from an alert to just a string of error
     private void setMinimalAmount() {
+        createEmptyBoxPanel();
+        try{
         JTextField itemIdField = new JTextField(0);
         JTextField amountField = new JTextField(0);
 
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(2, 2));
-        panel.add(new JLabel("Item ID:"));
-        panel.add(itemIdField);
-        panel.add(new JLabel("Minimal Amount:"));
-        panel.add(amountField);
+        emptyBoxPanel.add(new JLabel("Item ID:"));
+        emptyBoxPanel.add(itemIdField);
+        emptyBoxPanel.add(new JLabel("Minimal Amount:"));
+        emptyBoxPanel.add(amountField);
+            addButton(emptyBoxPanel, "Ok", () -> handleErrorOrOk(
+                    sf.itemService.setMinimalAmount(Integer.parseInt(itemIdField.getText()),
+                            Integer.parseInt(amountField.getText()))));
+            addButton(emptyBoxPanel, "Cancel", () -> {
+                emptyBoxPanel.removeAll(); // Remove all components from the panel
+                emptyBoxPanel.revalidate(); // Revalidate the panel
+                emptyBoxPanel.repaint(); // Repaint the panel
+            });
+            emptyBoxPanel.add(new JLabel());
+            emptyBoxPanel.add(new JLabel());
+            emptyBoxPanel.add(new JLabel());
+            emptyBoxPanel.add(new JLabel());
+            emptyBoxPanel.add(new JLabel());
+            emptyBoxPanel.add(new JLabel());
+            emptyBoxPanel.add(new JLabel());
+            emptyBoxPanel.add(new JLabel());
 
-        int result = JOptionPane.showConfirmDialog(null, panel, "Set Minimal Amount", JOptionPane.OK_CANCEL_OPTION);
-        if (result == JOptionPane.OK_OPTION) {
-            try {
-                int item_id = Integer.parseInt(itemIdField.getText());
-                int amount = Integer.parseInt(amountField.getText());
-
-                handleErrorOrOk(sf.itemService.setMinimalAmount(item_id, amount));
-                //JOptionPane.showMessageDialog(null, message, "Set Minimal Amount", JOptionPane.INFORMATION_MESSAGE);
+            emptyBoxPanel.revalidate();
+            emptyBoxPanel.repaint();
+            emptyBoxPanel.setVisible(true);
             } catch (NumberFormatException ex) {
                 messageField.setText("Invalid input format");
-            } catch (Exception ex) {
-                messageField.setText(ex.getMessage());
-            }
+
         }
     }
 
     private void addItem() {
-        emptyBoxPanel.removeAll();
+        createEmptyBoxPanel();
         String categoryId = presentCategories();
         if (categoryId != "exit") {
             JTextField itemIdField = new JTextField(10);
@@ -474,7 +500,7 @@ private void createEmptyBoxPanel() {
 
 
     public void receiveOrder() {
-        emptyBoxPanel.removeAll();
+        createEmptyBoxPanel();
         try {
             JTextField orderIdField = new JTextField();
             JTextField itemIdField = new JTextField();
@@ -528,7 +554,7 @@ private void createEmptyBoxPanel() {
     }
 
     private void addCategory() {
-        emptyBoxPanel.removeAll();
+        createEmptyBoxPanel();
         String index = presentCategories();
         try {
 
@@ -568,43 +594,122 @@ private void createEmptyBoxPanel() {
     }
 
     private void placeWaitingItems() {
-        boolean isActive = true;
-
-        while (isActive) {
-            JTextField choiceField = new JTextField(10);
-            JTextField locationField = new JTextField(10);
-
-            JPanel panel = new JPanel();
-            panel.setLayout(new GridLayout(3, 2));
-            panel.add(new JLabel("Choose item to be placed:"));
-            panel.add(choiceField);
-            panel.add(new JLabel("Where to place the item? (e.g., ile:'ile number' shelf:'shelf number')"));
-            panel.add(locationField);
-
-            int result = JOptionPane.showConfirmDialog(null, panel, "Place Waiting Items", JOptionPane.OK_CANCEL_OPTION);
-            if (result == JOptionPane.OK_OPTION) {
-                try {
-                    int choice = Integer.parseInt(choiceField.getText());
-                    String location = locationField.getText();
-
-                    handleErrorOrOk( sf.manageOrderService.placeNewArrival(choice, location));
-                    //JOptionPane.showMessageDialog(null, message, "Place Waiting Items", JOptionPane.INFORMATION_MESSAGE);
-
-                    int confirmChoice = JOptionPane.showConfirmDialog(null, "Would you like to place another item?", "Continue", JOptionPane.YES_NO_OPTION);
-                    isActive = confirmChoice == JOptionPane.YES_OPTION;
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(null, "Invalid input format", "Error", JOptionPane.ERROR_MESSAGE);
-                } catch (Exception ex) {
-                    messageField.setText(ex.getMessage());
-                }
-            } else {
-                isActive = false;
+        refreshEmptyBox();
+        try {
+            Response res = sf.manageOrderService.presentItemsToBePlaced();
+            if (res.isError()) {
+                throw new Exception(res.getErrorMassage());
             }
+            List<String> stringList = (List<String>) res.getValue();
+            String itemsString = stringList.stream().collect(Collectors.joining(""));
+
+            // Split the items string into individual items
+            String[] items = itemsString.split("\\n");
+
+            for (String item : items) {
+                JLabel itemLabel = new JLabel(item);
+                emptyBoxPanel.add(itemLabel);
+                itemLabel.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        String selectedItem = itemLabel.getText();
+                        int itemID = Character.getNumericValue(selectedItem.charAt(0));
+                        openLocationInputDialog(itemID);
+                        placeWaitingItems();
+                    }
+                });
+            }
+            addButton(emptyBoxPanel,"Cancel",()-> {
+                emptyBoxPanel.removeAll(); // Remove all components from the panel
+                emptyBoxPanel.revalidate(); // Revalidate the panel
+                emptyBoxPanel.repaint();
+            });
+            emptyBoxPanel.revalidate();
+            emptyBoxPanel.repaint();
+            emptyBoxPanel.setVisible(true);
+        } catch (Exception ex) {
+            messageField.setText(ex.getMessage());
         }
     }
 
+
+    private void openLocationInputDialog(int itemId) {
+            JTextField locationField = new JTextField(10);
+            JPanel panel = new JPanel();
+            panel.add(new JLabel("Where to place item with ID: " + itemId + "? (e.g., ile:'ile number' shelf:'shelf number')"));
+            panel.add(locationField);
+
+            int result = JOptionPane.showConfirmDialog(null, panel, "Item Location", JOptionPane.OK_CANCEL_OPTION);
+            if (result == JOptionPane.OK_OPTION) {
+                String location = locationField.getText();
+                handleErrorOrOk(sf.manageOrderService.placeNewArrival(itemId, location));
+            }
+        }
+
+
+
+    private void createSpecialOrder2(){
+        try {
+            refreshEmptyBox();
+            HashMap<Integer, Integer> items = new HashMap<>();
+            emptyBoxPanel.add(new JLabel("Item id"), 0);
+            JTextField itemId = new JTextField(5);
+            emptyBoxPanel.add(itemId, 1);
+
+            emptyBoxPanel.add(new JLabel("Amount"), 2);
+            JTextField amountField = new JTextField(5);
+            emptyBoxPanel.add(amountField, 3);
+
+            addButton(emptyBoxPanel, "add", () -> {
+                addItemToEmptyBoxPanel(itemId.getText(), amountField.getText(), items)
+                ;
+                itemId.setText("");
+                amountField.setText("");
+            });
+
+            JCheckBox isUrgent = new JCheckBox("Mark as urgent");
+            addButton(emptyBoxPanel, "make order", () -> handleErrorOrOk(sf.manageOrderService.createSpecialOrder(items, isUrgent.isSelected())));
+            emptyBoxPanel.add(isUrgent);
+            emptyBoxPanel.add(new Label());
+            emptyBoxPanel.add(new Label());
+            emptyBoxPanel.add(new Label());
+
+            JButton clearButton = new JButton("<html><center>" + "clear" + "</center></html>");
+            clearButton.addActionListener((e) -> createSpecialOrder2());
+            emptyBoxPanel.add(clearButton, 7);
+            pack();
+            emptyBoxPanel.revalidate();
+            setVisible(true);
+        }
+        catch (Exception e){
+            updateError(e.getMessage());
+        }
+
+    }
+
+
+
+
+    private void addItemToEmptyBoxPanel(String itemId, String amount,HashMap<Integer,Integer> items) {
+        // Create a panel to display the added item
+        JPanel itemPanel = new JPanel();
+        itemPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        itemPanel.add(new JLabel("Item ID: " + itemId));
+        itemPanel.add(new JLabel("Amount: " + amount));
+
+        items.put(Integer.parseInt(itemId),Integer.parseInt(amount));
+        // Add the item panel to the emptyBoxPanel
+        emptyBoxPanel.add(itemPanel);
+
+        // Refresh the emptyBoxPanel to reflect the changes
+        emptyBoxPanel.revalidate();
+        emptyBoxPanel.repaint();
+    }
+
+
     //orders
     private void createSpecialOrder() {
+        createEmptyBoxPanel();
         boolean isActive = true;
         HashMap<Integer, Integer> products = new HashMap<>();
 
@@ -649,86 +754,84 @@ private void createEmptyBoxPanel() {
     }
 
     private void createRegularOrder() {
-        boolean isActive = true;
-        HashMap<Integer, Integer> products = new HashMap<>();
-
-        while (isActive) {
-            JTextField idField = new JTextField(10);
-            JTextField amountField = new JTextField(10);
-
-            JPanel panel = new JPanel();
-            panel.setLayout(new GridLayout(3, 2));
-            panel.add(new JLabel("Insert item ID:"));
-            panel.add(idField);
-            panel.add(new JLabel("Insert amount desired:"));
-            panel.add(amountField);
-
-            int result = JOptionPane.showConfirmDialog(null, panel, "Create Regular Order", JOptionPane.OK_CANCEL_OPTION);
-            if (result == JOptionPane.OK_OPTION) {
-                try {
-                    int id = Integer.parseInt(idField.getText());
-                    int amount = Integer.parseInt(amountField.getText());
-
-                    products.put(id, amount);
-
-                    int choice = JOptionPane.showConfirmDialog(null, "Add more products?", "Create Regular Order", JOptionPane.YES_NO_OPTION);
-                    isActive = choice == JOptionPane.YES_OPTION;
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(null, "Invalid input format", "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            } else {
-                isActive = false;
-            }
-        }
-
         try {
-            handleErrorOrOk(sf.manageOrderService.createRegularOrder(products));
-            //JOptionPane.showMessageDialog(null, message, "Create Regular Order", JOptionPane.INFORMATION_MESSAGE);
-        } catch (Exception ex) {
-            messageField.setText(ex.getMessage());
+            refreshEmptyBox();
+            HashMap<Integer, Integer> items = new HashMap<>();
+            emptyBoxPanel.add(new JLabel("Item id"), 0);
+            JTextField itemId = new JTextField(5);
+            emptyBoxPanel.add(itemId, 1);
+
+            emptyBoxPanel.add(new JLabel("Amount"), 2);
+            JTextField amountField = new JTextField(5);
+            emptyBoxPanel.add(amountField, 3);
+
+            addButton(emptyBoxPanel, "add", () -> {
+                addItemToEmptyBoxPanel(itemId.getText(), amountField.getText(), items)
+                ;
+                itemId.setText("");
+                amountField.setText("");
+            });
+
+
+            addButton(emptyBoxPanel, "make order", () -> handleErrorOrOk(sf.manageOrderService.createRegularOrder(items)));
+
+            emptyBoxPanel.add(new Label());
+            emptyBoxPanel.add(new Label());
+            emptyBoxPanel.add(new Label());
+            emptyBoxPanel.add(new Label());
+
+            JButton clearButton = new JButton("<html><center>" + "clear" + "</center></html>");
+            clearButton.addActionListener((e) -> createRegularOrder());
+            emptyBoxPanel.add(clearButton, 7);
+            pack();
+            emptyBoxPanel.revalidate();
+            setVisible(true);
         }
+        catch (Exception e){
+            updateError(e.getMessage());
+        }
+
     }
 
 
     private void editRegularItemOrder() {
         try {
+           refreshEmptyBox();
             JTextField dayField = new JTextField(10);
             JTextField idField = new JTextField(10);
             JTextField amountField = new JTextField(10);
 
             JPanel panel = new JPanel();
-            panel.setLayout(new GridLayout(3, 2));
-            panel.add(new JLabel("Day of the week:"));
-            panel.add(dayField);
-            panel.add(new JLabel("Product ID:"));
-            panel.add(idField);
-            panel.add(new JLabel("New amount:"));
-            panel.add(amountField);
 
-            int result = JOptionPane.showConfirmDialog(null, panel, "Edit Regular Item Order", JOptionPane.OK_CANCEL_OPTION);
-            if (result == JOptionPane.OK_OPTION) {
-                String day = dayField.getText();
-                int id = Integer.parseInt(idField.getText());
-                int amount = Integer.parseInt(amountField.getText());
+            JComboBox<String> dayComboBox;
+            String[] daysOfWeek = {"Sunday","Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+            dayComboBox = new JComboBox<>(daysOfWeek);
+            emptyBoxPanel.add(new JLabel("Day"),0);
+            emptyBoxPanel.add(dayComboBox,1);
+            emptyBoxPanel.add(new JLabel("Product ID:"),2);
+            emptyBoxPanel.add(idField,3);
+            emptyBoxPanel.add(new JLabel("New amount:"),4);
+            emptyBoxPanel.add(amountField,5);
 
-                try {
-                    DayOfWeek cur_day = DayOfWeek.valueOf(day.toUpperCase());
-                    String itemDetails =(String) sf.manageOrderService.presentItemsById(cur_day).getValue();
-                    String message = "Item Details:\n" + itemDetails + "\n\nConfirm editing the order with the new amount: " + amount;
+            addButton(emptyBoxPanel,"edit",()->handleErrorOrOk(
+                    sf.manageOrderService.editRegularOrder(Integer.parseInt(idField.getText()),
+                            DayOfWeek.of(dayComboBox.getSelectedIndex())
+                            ,Integer.parseInt(amountField.getText()))));
+            addButton(emptyBoxPanel,"Cancel",()-> {
+                emptyBoxPanel.removeAll(); // Remove all components from the panel
+                emptyBoxPanel.revalidate(); // Revalidate the panel
+                emptyBoxPanel.repaint();
+            });
+            emptyBoxPanel.add(new JLabel());
+            emptyBoxPanel.add(new JLabel());
+            emptyBoxPanel.add(new JLabel());
+            emptyBoxPanel.add(new JLabel());
+            emptyBoxPanel.add(new JLabel());
+            emptyBoxPanel.add(new JLabel());
 
-                    int confirmResult = JOptionPane.showConfirmDialog(null, message, "Confirm Edit", JOptionPane.YES_NO_OPTION);
-                    if (confirmResult == JOptionPane.YES_OPTION) {
-                        handleErrorOrOk(sf.manageOrderService.editRegularOrder(id, cur_day, amount));
-
-                    } else {
-                        messageField.setText("Edit operation canceled."); // Update the messageField
-                    }
-                } catch (IllegalArgumentException e) {
-                    messageField.setText("Invalid day of the week. Please enter a valid day in capital letters."); // Update the messageField
-                }
-            } else {
-                messageField.setText("Edit operation canceled."); // Update the messageField
-            }
+            emptyBoxPanel.revalidate();
+            emptyBoxPanel.repaint();
+            emptyBoxPanel.setVisible(true);
         } catch (NumberFormatException e) {
             messageField.setText("Invalid input. Please enter numeric values for ID and amount."); // Update the messageField
         }
@@ -736,55 +839,35 @@ private void createEmptyBoxPanel() {
 
     //TODO : make only one function
     private void show_all_orders() {
+        emptyBoxPanel.removeAll(); // Clear the empty box panel
+
         try {
-            Response res = sf.manageOrderService.show_all_orders();
-            String allOrders = "";
-            if(res.isError())
-                throw new Exception(res.getErrorMassage());
-            else
-                allOrders = (String) res.getValue();
-//            if (allOrders.isEmpty()) {
-//                JOptionPane.showMessageDialog(null, "No orders available.", "All Orders", JOptionPane.INFORMATION_MESSAGE);
-//                return;
-//            }
-//
-//            String[] days = {"SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"};
-//            StringBuilder sb = new StringBuilder();
-//
-//            for (String day : days) {
-//                sb.append("---------").append(day).append("---------\n");
-//
-//                String regularOrders =(String) sf.manageOrderService.presentItemsById(DayOfWeek.valueOf(day)).getValue();
-//                if (regularOrders.isEmpty()) {
-//                    sb.append("Regular orders:\n");
-//                    sb.append("\tNo orders on this day\n");
-//                } else {
-//                    sb.append("Regular orders:\n");
-//                    sb.append(regularOrders);
-//                }
-//
-//                String specialOrders = ""; // Replace with the actual special orders implementation
-//                if (specialOrders.isEmpty()) {
-//                    sb.append("Special orders:\n");
-//                    sb.append("\tNo orders on this day\n");
-//                } else {
-//                    sb.append("Special orders:\n");
-//                    sb.append(specialOrders);
-//                }
-//
-//                sb.append("\n");
-//            }
+            Response allOrdersData = sf.manageOrderService.show_all_orders();
+            if (allOrdersData.isError()) throw new Exception(allOrdersData.getErrorMassage());
+            String allOrders = (String) allOrdersData.getValue();
+
+            if (allOrders.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "No orders available.", "All Orders", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
 
             JTextArea textArea = new JTextArea(allOrders);
             JScrollPane scrollPane = new JScrollPane(textArea);
-            scrollPane.setPreferredSize(new Dimension(400, 300));
             textArea.setEditable(false);
 
-            JOptionPane.showMessageDialog(null, scrollPane, "All Orders", JOptionPane.PLAIN_MESSAGE);
+            emptyBoxPanel.setLayout(new BorderLayout());
+            emptyBoxPanel.add(scrollPane, BorderLayout.CENTER); // Add the scroll pane to the empty box panel
+
+            emptyBoxPanel.revalidate();
+            emptyBoxPanel.repaint();
         } catch (Exception e) {
-            messageField.setText(e.getMessage()); // Update the messageField with the error message
+            updateError(e.getMessage()); // Update the messageField with the error message
         }
+
     }
+
+
+
 
     // Create methods to handle other actions here
 }
