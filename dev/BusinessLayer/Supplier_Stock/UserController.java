@@ -1,5 +1,7 @@
 package BusinessLayer.Supplier_Stock;
 
+import PresentationLayer.GUI.Components.ManagerFrame;
+
 import java.sql.Connection;
 import java.util.LinkedList;
 
@@ -46,5 +48,6 @@ public class UserController {
     public void  loadData(){
         users.add(new Employee("123", Employee.Occupation.WareHouse));
         users.add(new Employee("2",Employee.Occupation.Suppliers));
+        users.add(new Employee("1", Employee.Occupation.Manager));
     }
 }

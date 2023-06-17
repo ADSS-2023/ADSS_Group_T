@@ -1,6 +1,7 @@
 package PresentationLayer.GUI.Components;
 
 import BusinessLayer.Stock.Util.Util;
+import BusinessLayer.Supplier_Stock.Employee;
 import PresentationLayer.Stock.StockUI;
 import PresentationLayer.Supplier.SupplierManager;
 import ServiceLayer.Supplier_Stock.Response;
@@ -87,8 +88,56 @@ public class ManagerFrame extends JFrame {
         addButtonToToolbar(toolbar, "Show All Orders", this::show_all_orders);
         addButtonToToolbar(toolbar, "Create Regular Order - TESTING ONLY", this::createRegularOrder);
         addButtonToToolbar(toolbar, "Show New Items", this::showNewItems);
+        addButtonToToolbar(toolbar,"add new employee",this::addNewEmployee);
 
         add(toolbar, BorderLayout.WEST);
+    }
+
+    private void addNewEmployee() {
+        Panel panel = new Panel();
+
+        panel.add(new JLabel("New employee id:"));
+        JTextField id = new JTextField(10);
+        panel.add(id);
+        String[] options = {"Manager", "Warehouse", "Suppliers"};
+
+        // Create the container to hold the options
+        JPanel optionsPanel = new JPanel();
+        ButtonGroup buttonGroup = new ButtonGroup();
+        for (String option : options) {
+            JRadioButton radioButton = new JRadioButton(option);
+            optionsPanel.add(radioButton);
+            buttonGroup.add(radioButton);
+        }
+        // Create the scroll pane and add the container
+        JScrollPane scrollPane = new JScrollPane(optionsPanel);
+        panel.add(scrollPane);
+        int result = JOptionPane.showOptionDialog(null, panel, "options", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
+        if (result == JOptionPane.OK_OPTION) {
+            ButtonModel selectedButtonModel = buttonGroup.getSelection();
+            if (selectedButtonModel != null) {
+                String selectedOption = selectedButtonModel.getActionCommand();
+                Employee.Occupation occupation;
+                switch (selectedOption) {
+                    case "Manager":
+                        occupation = Employee.Occupation.Manager;
+                        break;
+                    case "Warehouse":
+                        occupation = Employee.Occupation.WareHouse;
+                        break;
+                    case "Suppliers":
+                        occupation = Employee.Occupation.Suppliers;
+                        break;
+                }
+                Response res = sf.userService.register(id.getText(),occupation);
+                if(res.isError()) {
+                    ///TODO show error message
+                }
+            }
+            else {
+
+            }
+        }
     }
 
     private void showNewItems(){
