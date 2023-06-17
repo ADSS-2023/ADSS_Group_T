@@ -364,7 +364,7 @@ private void createEmptyBoxPanel() {
     }
 
     private void damagedItem() {
-        createEmptyBoxPanel();
+        refreshEmptyBox();
         try {
             JTextField itemIdField = new JTextField();
             JTextField orderIdField = new JTextField();
