@@ -130,8 +130,18 @@ public class Data_init_HR {
         employeeService.addNewEmployee(25, "EmilyDavis5", "1237894561", "Route optimization expert", 22000, "2023-05-14", "25");
 
 
-
-
+        // Store keepers
+        for (int id = 80; id <= 98; id++) {
+            String employeeName = "Store Keeper " + id ; // Generate a unique name for each store keeper
+            String employeePhoneNumber = "123789456" + id ; // Generate a unique phone number for each store keeper
+            String employeePosition = "storekeeper" + id;
+            int employeeSalary = 22000 + id;
+            String employeeStartDate = "2023-05-14";
+            String employeePassword = Integer.toString(id);
+            employeeService.addNewEmployee(id, employeeName, employeePhoneNumber, employeePosition, employeeSalary, employeeStartDate, employeePassword);
+            employeeService.addQualification(id , "storekeeper");
+            System.out.println("addEmployee" + id);
+        }
 
 
 
@@ -170,31 +180,7 @@ public class Data_init_HR {
         for (int i = 0; i < 9; i++) {
             branches.add(SiteAddresses.getBranchAddress(i));
         }
-        // submit shift for employee
-        //old:
-//        employeeService.submitShiftForEmployee(branches.get(0), 13, LocalDate.now().plusDays(1), "m");
-//        employeeService.submitShiftForEmployee("b1", 11, LocalDate.now().plusDays(1), "m");
-//        employeeService.submitShiftForEmployee("b1", 12, LocalDate.now().plusDays(1), "m");
-//        employeeService.submitShiftForEmployee("b1", 14, LocalDate.now().plusDays(1), "m");
-//        employeeService.submitShiftForEmployee("b2", 15, LocalDate.now().plusDays(1), "m");
-//        employeeService.submitShiftForEmployee("b1", 13, LocalDate.now().plusDays(1), "m");
-//        employeeService.submitShiftForEmployee("b1", 14, LocalDate.now().plusDays(1), "m");
-//        employeeService.submitShiftForEmployee("b1", 15, LocalDate.now().plusDays(1), "m");
-//        employeeService.submitShiftForEmployee("b1", 16, LocalDate.now().plusDays(1), "m");
-//        employeeService.submitShiftForEmployee("b1", 17, LocalDate.now().plusDays(1), "m");
-//        employeeService.submitShiftForEmployee("b1", 18, LocalDate.now().plusDays(1), "m");
-//        employeeService.submitShiftForEmployee("b1", 19, LocalDate.now().plusDays(1), "m");
-//        employeeService.submitShiftForEmployee("b1", 20, LocalDate.now().plusDays(1), "m");
-//        employeeService.submitShiftForEmployee("b1", 21, LocalDate.now().plusDays(1), "m");
-//        employeeService.submitShiftForEmployee("b1", 22, LocalDate.now().plusDays(1), "m");
-//        employeeService.submitShiftForEmployee("b1", 23, LocalDate.now().plusDays(1), "m");
-//        employeeService.submitShiftForEmployee("b1", 24, LocalDate.now().plusDays(1), "m");
-//        employeeService.submitShiftForEmployee("b1", 25, LocalDate.now().plusDays(1), "m");
-//        employeeService.submitShiftForEmployee("b2", 16, LocalDate.now().plusDays(3), "e");
-//        employeeService.submitShiftForEmployee("b3", 17, LocalDate.now().plusDays(4), "m");
-//        employeeService.submitShiftForEmployee("b3", 18, LocalDate.now().plusDays(4), "e");
-//        employeeService.submitShiftForEmployee("b4", 19, LocalDate.now().plusDays(5), "m");
-//        employeeService.submitShiftForEmployee("b4", 20, LocalDate.now().plusDays(5), "e");
+
 
         //new:
         employeeService.submitShiftForEmployee(branches.get(0), 13, LocalDate.now().plusDays(1), "m");
@@ -221,11 +207,24 @@ public class Data_init_HR {
         employeeService.submitShiftForEmployee(branches.get(3), 19, LocalDate.now().plusDays(5), "m");
         employeeService.submitShiftForEmployee(branches.get(3), 20, LocalDate.now().plusDays(5), "e");
 
+        for (int days = 1; days <= 6; days++) {
+                for (int branch = 0; branch < 9; branch++) {
+                    String branchName = branches.get(branch);
+                    LocalDate shiftDate = LocalDate.now().plusDays(days);
 
+                    // Submit morning shift for store keeper
+                    String morningShiftType = "m";
+                    employeeService.submitShiftForEmployee(branchName, 80+branch , shiftDate, morningShiftType);
+                    shiftService.assignEmployeeForShift(branchName, 80 + branch, shiftDate.toString(), morningShiftType, PositionType.storekeeper.name());
+                    System.out.println("submitEmployee" + 80 + branchName);
 
-
-        //shiftService.assignAll("b1", LocalDate.now().plusDays(1).toString(), "m");
-        //shiftService.assignEmployeeForShift("b2", 16, LocalDate.now().plusDays(1).toString(), "m", PositionType.cleaning.name());
+                    // Submit evening shift for store keeper
+                    String eveningShiftType = "e";
+                    employeeService.submitShiftForEmployee(branchName, 80+branch +1, shiftDate, eveningShiftType);
+                    shiftService.assignEmployeeForShift(branchName, 80 + branch +1, shiftDate.toString(), eveningShiftType, PositionType.storekeeper.name());
+                    System.out.println("assignEmployee" + 80 + branch +1);
+                }
+        }
 
 
 
@@ -233,36 +232,42 @@ public class Data_init_HR {
 
         //adding drivers
 
-        employeeService.addNewDriver(31, "Driver 1", "123456789", "Driver with license type C and no cooling", 20000, "2023-05-14", "21", "C1", 3);
-        employeeService.addNewDriver(32, "Driver 2", "987654321", "Driver with license type C1 and fridge cooling", 21000, "2023-05-14", "22", "C1", 2);
-        employeeService.addNewDriver(33, "Driver 3", "456789123", "Driver with license type E and freezer cooling", 22000, "2023-05-14", "23", "E", 3);
-        employeeService.addNewDriver(34, "Driver 4", "789123456", "Driver with license type C and fridge cooling", 23000, "2023-05-14", "24", "C", 2);
-        employeeService.addNewDriver(35, "Driver 5", "321654987", "Driver with license type C1 and no cooling", 24000, "2023-05-14", "25", "C1", 1);
-        employeeService.addNewDriver(36, "Driver 6", "654987321", "Driver with license type E and no cooling", 25000, "2023-05-14", "26", "E", 1);
-        employeeService.addNewDriver(37, "Driver 7", "789654123", "Driver with license type C and freezer cooling", 26000, "2023-05-14", "27", "C", 3);
-        employeeService.addNewDriver(38, "Driver 8", "456321789", "Driver with license type C1 and fridge cooling", 27000, "2023-05-14", "28", "C1", 2);
-        employeeService.addNewDriver(39, "Driver 9", "789456123", "Driver with license type E and fridge cooling", 28000, "2023-05-14", "29", "E", 3);
-        employeeService.addNewDriver(40, "Driver 10", "123789456", "Driver with license type C and no cooling", 29000, "2023-05-14", "30", "C", 1);
+        employeeService.addNewDriver(31, "Driver 1", "123456789", "Driver with license type C and no cooling", 20000, "2023-05-14", "31", "C1", 3);
+        employeeService.addNewDriver(32, "Driver 2", "987654321", "Driver with license type C1 and fridge cooling", 21000, "2023-05-14", "32", "C1", 2);
+        employeeService.addNewDriver(33, "Driver 3", "456789123", "Driver with license type E and freezer cooling", 22000, "2023-05-14", "33", "E", 3);
+        employeeService.addNewDriver(34, "Driver 4", "789123456", "Driver with license type C and fridge cooling", 23000, "2023-05-14", "34", "C", 2);
+        employeeService.addNewDriver(35, "Driver 5", "321654987", "Driver with license type C1 and no cooling", 24000, "2023-05-14", "35", "C1", 1);
+        employeeService.addNewDriver(36, "Driver 6", "654987321", "Driver with license type E and no cooling", 25000, "2023-05-14", "36", "E", 1);
+        employeeService.addNewDriver(37, "Driver 7", "789654123", "Driver with license type C and freezer cooling", 26000, "2023-05-14", "37", "C", 3);
+        employeeService.addNewDriver(38, "Driver 8", "456321789", "Driver with license type C1 and fridge cooling", 27000, "2023-05-14", "38", "C1", 2);
+        employeeService.addNewDriver(39, "Driver 9", "789456123", "Driver with license type E and fridge cooling", 28000, "2023-05-14", "39", "E", 3);
+        employeeService.addNewDriver(40, "Driver 10", "123789456", "Driver with license type C and no cooling", 29000, "2023-05-14", "40", "C", 1);
+
 
 
         //submit shifts for drivers
-        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 21);
-        employeeService.submitShiftForDriver(LocalDate.now().plusDays(2), 21);
-        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 22);
-        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 23);
-        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 24);
-        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 25);
-        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 26);
-        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 27);
-        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 28);
-        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 29);
-        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 30);
+        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 31);
+        employeeService.submitShiftForDriver(LocalDate.now().plusDays(2), 32);
+        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 33);
+        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 34);
+        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 35);
+        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 36);
+        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 37);
+        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 38);
+        employeeService.submitShiftForDriver(LocalDate.now().plusDays(1), 39);
+        employeeService.submitShiftForDriver(LocalDate.now().plusDays(3), 39);
+        employeeService.submitShiftForDriver(LocalDate.now().plusDays(3), 31);
+
+        //store keepers
+        for (int id = 1; id <= 6; id++) {
+            employeeService.submitShiftForDriver(LocalDate.now().plusDays(id), 40);
+            System.out.println("submitDriver" + id);
+            employeeService.assignDriverForShift(LocalDate.now().plusDays(id), 40);
+            System.out.println("assignDriver" + id);
+        }
 
 
-        employeeService.submitShiftForDriver(LocalDate.now().plusDays(2), 21);
-        employeeService.submitShiftForDriver(LocalDate.now().plusDays(3), 29);
-        employeeService.submitShiftForDriver(LocalDate.now().plusDays(3), 21);
-        employeeService.assignDriverForShift(LocalDate.now().plusDays(2), 21);
+
         //employeeService.assignDriverForShift(LocalDate.now().plusDays(1), 29, "C1", "fridge" );
 //        shiftService.addDriverReq(LocalDate.now().plusDays(2).toString(),"C1", "1");
 //        shiftService.addDriverReq(LocalDate.now().plusDays(2).toString(),"C", "2");
