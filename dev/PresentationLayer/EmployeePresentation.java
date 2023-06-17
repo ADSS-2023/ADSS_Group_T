@@ -58,7 +58,7 @@ public class EmployeePresentation {
     }
 
     public void showMyShifts(){
-        System.out.println(employeeService.getListOfSubmittion(id));
+        System.out.println(employeeService.getListOfSubmittion(id,"CLI"));
     }
 
 }
