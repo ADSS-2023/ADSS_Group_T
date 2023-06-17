@@ -7,7 +7,7 @@ import PresentationLayer.Stock.StockUI;
 import PresentationLayer.Supplier.SupplierManager;
 import ServiceLayer.Supplier_Stock.Response;
 import ServiceLayer.Supplier_Stock.ServiceFactory;
-
+import java.awt.List;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.time.LocalDate;
@@ -22,7 +22,6 @@ import org.jdatepicker.impl.UtilDateModel;
 
 
 import java.time.chrono.JapaneseDate;
-import java.util.List;
 import java.util.Properties;
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -31,6 +30,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.DayOfWeek;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
@@ -47,7 +47,6 @@ public class StockFrame extends JFrame {
     public StockFrame(StockUI stockUI, SupplierManager supplierManager, ServiceFactory sf) {
         this.sf = sf;
         cardLayout = new CardLayout();
-        setTitle("Stock");
         setTitle("Stock");
         setPreferredSize(new Dimension(800, 600));
         setLayout(new BorderLayout());
@@ -126,7 +125,7 @@ private void createEmptyBoxPanel() {
         addButtonToToolbar(toolbar, "Set Minimal Amount", this::setMinimalAmount);
         addButtonToToolbar(toolbar, "Place Waiting Items", this::placeWaitingItems);
         addButtonToToolbar(toolbar, "Show all orders", this::show_all_orders);
-        addButtonToToolbar(toolbar, "Create Special Order", this::createSpecialOrder2);
+        addButtonToToolbar(toolbar, "Create Special Order", this::createSpecialOrder);
         addButtonToToolbar(toolbar, "Create Regular Order", this::createRegularOrder);
         addButtonToToolbar(toolbar, "Edit Regular Item Order", this::editRegularItemOrder);
         addButtonToToolbar(toolbar, "Move to Next Day", this::nextDay);
@@ -410,7 +409,7 @@ private void createEmptyBoxPanel() {
 
     //TODO : change from an alert to just a string of error
     private void setMinimalAmount() {
-        createEmptyBoxPanel();
+        refreshEmptyBox();
         try{
         JTextField itemIdField = new JTextField(0);
         JTextField amountField = new JTextField(0);
@@ -448,7 +447,7 @@ private void createEmptyBoxPanel() {
     }
 
     private void addItem() {
-        createEmptyBoxPanel();
+        refreshEmptyBox();
         String categoryId = presentCategories();
         if (categoryId != "exit") {
             JTextField itemIdField = new JTextField(10);
@@ -500,7 +499,7 @@ private void createEmptyBoxPanel() {
 
 
     public void receiveOrder() {
-        createEmptyBoxPanel();
+        refreshEmptyBox();
         try {
             JTextField orderIdField = new JTextField();
             JTextField itemIdField = new JTextField();
@@ -554,7 +553,7 @@ private void createEmptyBoxPanel() {
     }
 
     private void addCategory() {
-        createEmptyBoxPanel();
+        refreshEmptyBox();
         String index = presentCategories();
         try {
 
@@ -600,7 +599,7 @@ private void createEmptyBoxPanel() {
             if (res.isError()) {
                 throw new Exception(res.getErrorMassage());
             }
-            List<String> stringList = (List<String>) res.getValue();
+            java.util.List<String> stringList = (java.util.List<String>) res.getValue();
             String itemsString = stringList.stream().collect(Collectors.joining(""));
 
             // Split the items string into individual items
@@ -635,6 +634,7 @@ private void createEmptyBoxPanel() {
 
     private void openLocationInputDialog(int itemId) {
             JTextField locationField = new JTextField(10);
+
             JPanel panel = new JPanel();
             panel.add(new JLabel("Where to place item with ID: " + itemId + "? (e.g., ile:'ile number' shelf:'shelf number')"));
             panel.add(locationField);
@@ -709,7 +709,7 @@ private void createEmptyBoxPanel() {
 
     //orders
     private void createSpecialOrder() {
-        createEmptyBoxPanel();
+        refreshEmptyBox();
         boolean isActive = true;
         HashMap<Integer, Integer> products = new HashMap<>();
 
@@ -802,6 +802,13 @@ private void createEmptyBoxPanel() {
             JTextField amountField = new JTextField(10);
 
             JPanel panel = new JPanel();
+            panel.setLayout(new GridLayout(3, 2));
+            panel.add(new JLabel("Day of the week:"));
+            panel.add(dayField);
+            panel.add(new JLabel("Product ID:"));
+            panel.add(idField);
+            panel.add(new JLabel("New amount:"));
+            panel.add(amountField);
 
             JComboBox<String> dayComboBox;
             String[] daysOfWeek = {"Sunday","Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
@@ -853,6 +860,7 @@ private void createEmptyBoxPanel() {
 
             JTextArea textArea = new JTextArea(allOrders);
             JScrollPane scrollPane = new JScrollPane(textArea);
+            scrollPane.setPreferredSize(new Dimension(400, 300));
             textArea.setEditable(false);
 
             emptyBoxPanel.setLayout(new BorderLayout());
@@ -861,7 +869,7 @@ private void createEmptyBoxPanel() {
             emptyBoxPanel.revalidate();
             emptyBoxPanel.repaint();
         } catch (Exception e) {
-            updateError(e.getMessage()); // Update the messageField with the error message
+            messageField.setText(e.getMessage()); // Update the messageField with the error message
         }
 
     }
