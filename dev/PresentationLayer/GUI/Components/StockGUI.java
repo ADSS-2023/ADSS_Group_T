@@ -1,7 +1,9 @@
 package PresentationLayer.GUI.Components;
 
+import PresentationLayer.GUI.SupplierGUI.SupplierFrame;
 import PresentationLayer.Stock.StockUI;
 import PresentationLayer.Supplier.SupplierManager;
+import ServiceLayer.Supplier_Stock.Response;
 import ServiceLayer.Supplier_Stock.ServiceFactory;
 
 import javax.swing.*;
@@ -29,10 +31,7 @@ public class StockGUI extends JFrame {
 
     public static void main(String[] args) {
         ServiceFactory sf = new ServiceFactory();
-        StockUI stockUI = new StockUI(sf);
-        SupplierManager supplierManager = new SupplierManager(sf);
-        stockUI.setPreviousCallBack(() -> run(new StockFrame(stockUI , supplierManager , sf)));
-        supplierManager.setPreviousCallBack(() -> run(new StockFrame(stockUI , supplierManager , sf)));
+
 
         String[] options = {"Load data", "Empty system", "Set data to the system"};
         int action = JOptionPane.showOptionDialog(null, "Welcome to Superly inventory and supplier system", "Superly",
@@ -40,36 +39,73 @@ public class StockGUI extends JFrame {
         try {
             if (action == 0) {
                 // Read from DB
-                sf.uss.loadDate();
-                stockUI.loadData();
-                supplierManager.loadData();
+                loadData(sf);
+
 
             } else if (action == 1) {
                 // Delete all the DB
-                supplierManager.deleteAll();
-                stockUI.deleteData();
+
             } else if (action == 2) {
-                stockUI.deleteData();
+
                 sf.uss.setUpDate();
-                stockUI.setUpData();
-                supplierManager.setUpData();
+
             }
         } catch (Exception c) {
 
         }
-        String[] frameOptions = {"ManagerFrame", "StockFrame"};
-        int frameChoice = JOptionPane.showOptionDialog(null, "Choose a frame to open", "Select Frame",
-                JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, frameOptions, frameOptions[0]);
-        if (frameChoice == 0) {
-            // Open ManagerFrame
-            // Create an instance of ManagerFrame and activate it
-            run(new ManagerFrame(sf));
-        } else if (frameChoice == 1) {
-            // Open StockFrame
-            run(new StockFrame(stockUI , supplierManager , sf));
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(2, 2));
+        panel.add(new JLabel("ID:"));
+        JTextField idField = new JTextField();
+        panel.add(idField);
+
+        String[] options2 = {"Login", "Cancel"};
+        int choice = JOptionPane.showOptionDialog(null, panel, "Login",
+                JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
+
+        if (choice == 0) {
+            // Login button clicked
+            String id = idField.getText();
+            // Perform login logic
+            Response res = sf.userService.login(id);
+            if (res.isError()){
+                JOptionPane.showMessageDialog(null, "Login Failed: " + res.getErrorMassage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            else {
+                continueToFrame(res,sf);
+            }
+
+        } else {
+            // Cancel button clicked or dialog closed
         }
+//        if (frameChoice == 0) {
+//            // Open ManagerFrame
+//            // Create an instance of ManagerFrame and activate it
+//            run(new ManagerFrame(sf));
+//        } else if (frameChoice == 1) {
+//            // Open StockFrame
+//            run(new StockFrame(stockUI , supplierManager , sf));
+//        }
 
     }
+
+    private static void loadData(ServiceFactory sf) {
+        sf.userService.loadData();
+        sf.inventoryService.loadData();
+        ///TODO ask goz what need to be loaded
+        sf.orderService.loadOrders();
+    }
+
+    private static void continueToFrame(Response res,ServiceFactory sf) {
+        if (((String) res.getValue().toString()).equals("WareHouse"))
+            run(new StockFrame(sf));
+        else if(((String) res.getValue().toString()).equals("Suppliers"))
+            run(new ManagerFrame(sf));
+//        else
+//            run(new SupplierFrame(sf));
+    }
+
+
 
     private static void run(JFrame curFrame) {
         curFrame.setVisible(true);

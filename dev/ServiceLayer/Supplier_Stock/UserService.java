@@ -9,10 +9,21 @@ public class UserService {
     }
     public Response login(String id){
         ///TODO implement this ido!
-        try{uc.login(id);}
+        try{return Response.okResponse(uc.login(id));}
         catch (Exception e){
-
+            return Response.errorResponse(e.getMessage());
         }
-        return Response.errorResponse("todo");
+
     }
+    public Response loadData(){
+        try {
+            uc.loadData();
+            return Response.okResponse("load data succeeded");
+        }
+        catch (Exception e){
+            return Response.errorResponse(e.getMessage());
+        }
+
+    }
+
 }

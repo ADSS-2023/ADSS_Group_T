@@ -1,6 +1,7 @@
 package ServiceLayer.Supplier_Stock;
 
 import BusinessLayer.Supplier.OrderController;
+import BusinessLayer.Supplier_Stock.UserController;
 import ServiceLayer.Supplier.OrderService;
 import BusinessLayer.Supplier.SupplierController;
 import BusinessLayer.Supplier_Stock.Util_Supplier_Stock;
@@ -41,8 +42,11 @@ public class ServiceFactory {
     public Connection connection;
     public Util_Supplier_Stock uss;
 
+    public UserService userService;
+
     public ServiceFactory()  {
         this.connection = makeCon();
+
         this.inventoryService = new InventoryService();
         this.categoryService = new CategoryService(this.inventoryService.get_inventory());
         this.damagedService = new DamagedService(this.inventoryService.get_inventory());
@@ -58,6 +62,7 @@ public class ServiceFactory {
         this.manageOrderService.setOrderController(this.inventoryService.get_inventory(), this.orderService,inventoryDalController);
         this.inventoryService.get_inventory().setInventoryDalController(inventoryDalController);
         inventoryService.get_inventory().setItemDalController(new ItemDalController(connection));
+        this.userService = new UserService(new UserController(connection));
         try {
             uss = new Util_Supplier_Stock(inventoryDalController);
         }

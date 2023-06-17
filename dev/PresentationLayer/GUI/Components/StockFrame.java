@@ -25,7 +25,7 @@ public class StockFrame extends JFrame {
     private JLabel messageField;
 
 
-    public StockFrame(StockUI stockUI, SupplierManager supplierManager, ServiceFactory sf) {
+    public StockFrame(ServiceFactory sf) {
         this.sf = sf;
 
         setTitle("Stock");
