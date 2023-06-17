@@ -121,10 +121,15 @@ public class EmployeeService {
         return ResponseSerializer.serializeToJson(response);
     }
 
-    public String getListOfSubmittion(int id) {
+    public String getListOfSubmittion(int id, String format) {
         Response response = new Response();
         try {
-            response.setReturnValue(employeeController.getEmployeeById(id).showShiftsStatusByEmployee(LocalDate.now()));
+            if(format.equals("GUI")){
+                response.setReturnValue(employeeController.getEmployeeById(id).getShiftsStatusByEmployee(LocalDate.now()));
+            }
+            else if (format.equals("CLI")) {
+                response.setReturnValue(employeeController.getEmployeeById(id).showShiftsStatusByEmployee(LocalDate.now()));
+            }
         } catch (Exception ex) {
             response.setErrorMessage(ex.getMessage());
         }

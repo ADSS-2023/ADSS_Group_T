@@ -145,6 +145,36 @@ public class Employee extends User {
         return sb.toString();
     }
 
+    public List<Map<String, String>> getShiftsStatusByEmployee(LocalDate localDate) throws SQLException {
+        List<Map<String, String>> shiftsStatus = new ArrayList<>();
+
+        List<Constraint> constraints = dalEmployeeService.findAllConstraintByIdBetweenDates(id, localDate, localDate.plusMonths(1));
+
+        for (Constraint constraint : constraints) {
+            LocalDate date = constraint.getDate();
+            Map<String, String> shiftData = new HashMap<>();
+            shiftData.put("Date", date.toString());
+            shiftData.put("Shift Type", "Morning");
+            shiftData.put("Is Approved", "");
+            shiftData.put("Assigned Position", "");
+
+            shiftsStatus.add(shiftData);
+
+            if (constraint.getAssignedPosition()!= null) {
+                shiftData = new HashMap<>();
+                shiftData.put("Date", "");
+                shiftData.put("Shift Type", "Evening");
+                shiftData.put("Is Approved", "Yes");
+                shiftData.put("Assigned Position", constraint.getAssignedPosition().toString());
+
+                shiftsStatus.add(shiftData);
+            }
+        }
+
+        return shiftsStatus;
+    }
+
+
 
 
 

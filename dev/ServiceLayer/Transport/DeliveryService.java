@@ -80,7 +80,7 @@ public class DeliveryService {
             if(s == null)
                 response.setReturnValue("\nno deliveries today! :)\n");
             else
-                response.setReturnValue("\nthe following deliveries will be reschedule due to lack of drivers:\n" + s);
+                response.setReturnValue("\nthe following deliveries will be reschedule due to lack of drivers or storeKipper:\n" + s);
             return ResponseSerializer.serializeToJson(response);
         } catch (Exception ex) {
             Response response = new Response();

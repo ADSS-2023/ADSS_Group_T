@@ -595,21 +595,14 @@ public class DeliveryController {
             }
             reScheduleDelivery(delivery.getUnHandledSuppliers(), delivery.getUnHandledBranches());
         }
-        else {
+        else {//delivery from supplier to branch
             ArrayList<Supplier> suppliersTmp = new ArrayList<>(delivery.getUnHandledSuppliers().keySet());
             for (Supplier supplier : suppliersTmp) {
                 int productsWeight;
-//                if (IsGUI.getIsGUI())
-//                    //productsWeight = enterWeightInterface.enterWeightFunction(supplier.getAddress(), delivery.getId());
-//                    productsWeight = enterWeightInterfaceGUI.enterWeightFunctionGUI(supplier.getAddress(), delivery.getId());
-//                else
                     productsWeight = enterWeightInterface.enterWeightFunction(supplier.getAddress(), delivery.getId());
                 int currentWeight = delivery.getTruckWeight();
                 int maxWeight = logisticCenterController.getAllTrucks().get(delivery.getTruckNumber()).getMaxWeight();
                 if (maxWeight < currentWeight + productsWeight) {
-//                    if (IsGUI.getIsGUI())
-//                        overWeightAction(delivery.getId(), overweightActionGUI.EnterOverweightActionGUI(delivery.getId()), logisticCenterController.getAddress(), productsWeight);
-//                    else
                         overWeightAction(delivery.getId(), overweightAction.EnterOverweightAction(delivery.getId()), logisticCenterController.getAddress(), productsWeight);
                     if (delivery.getTruckWeight() == logisticCenterController.getAllTrucks().get(delivery.getTruckNumber()).getMaxWeight())
                         break;
@@ -727,8 +720,7 @@ public class DeliveryController {
         catch (Exception exception){
             throw new Exception("Error while skipping in Shift day");
         }
-        ArrayList<Delivery> deliveriesThatReScheduleDelivery = new ArrayList<>();
-
+        Set<Delivery> deliveriesThatReScheduleDelivery = new HashSet<>();
         if(!getDeliveriesByDate(getCurrDate().plusDays(1)).isEmpty()) {
             deliveriesThatReScheduleDelivery.addAll(checkStoreKeeperForTomorrow());
             deliveriesThatReScheduleDelivery.addAll(scheduleDriversForTomorrow());
@@ -739,7 +731,7 @@ public class DeliveryController {
             removeTruckFromDate(delivery.getDate(),logisticCenterController.getTruck(delivery.getTruckNumber()));
             removeDelivery(delivery);
         }
-        return deliveriesThatReScheduleDelivery;
+        return new ArrayList<>(deliveriesThatReScheduleDelivery);
     }
 
     private void removeDelivery(Delivery delivery) throws SQLException {

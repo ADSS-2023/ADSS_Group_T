@@ -1,9 +1,6 @@
 package GUI;
 
-import GUI.Generic.GenericButton;
-import GUI.Generic.GenericFrameUser;
-import GUI.Generic.GenericLabel;
-import GUI.Generic.GenericTextField;
+import GUI.Generic.*;
 import ServiceLayer.HR.EmployeeService;
 import ServiceLayer.HR.ShiftService;
 import ServiceLayer.Transport.BranchService;
@@ -12,10 +9,13 @@ import UtilSuper.Response;
 import UtilSuper.ResponseSerializer;
 import UtilSuper.ServiceFactory;
 import UtilSuper.Time;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import javax.swing.*;
 import java.awt.*;
 import java.time.LocalDate;
+import java.util.Map;
 
 public class EmployeeMenueFrame extends GenericFrameUser {
     private final ShiftService shiftService ;
@@ -47,7 +47,7 @@ public class EmployeeMenueFrame extends GenericFrameUser {
         assignShiftButton.addActionListener(e->{
             System.out.println("Button assign shift clicked");
             rightPanel.removeAll();
-            GenericTextField dateField = new GenericTextField();
+            GenericDatePicker dateField = GenericDatePicker.getNewGenericDatePicker();
             String[] shiftTypes = {"morning","evening"};
             JComboBox<String> shiftTypesComboBox = new JComboBox<>(shiftTypes);
             String[] branches = {"b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9"};
@@ -58,7 +58,7 @@ public class EmployeeMenueFrame extends GenericFrameUser {
             submitButton.addActionListener(e1 ->{
                 setErrorText("");
                 setFeedbackText("");
-                String date = dateField.getText();
+                String date = dateField.getDate();
                 String shiftType = shiftTypesComboBox.getSelectedItem().toString();
                 String branch = branchComboBox.getSelectedItem().toString();
 
@@ -97,20 +97,18 @@ public class EmployeeMenueFrame extends GenericFrameUser {
         });
 
         showSubmissionsButton.addActionListener(e->{
+
+            String json = employeeService.getListOfSubmittion(id,"GUI");
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            Map<String, Object> data = gson.fromJson(json, Map.class);
+            String innerContent = gson.toJson(data.get("returnValue"));
+            String formattedJson = innerContent.replace(",", ",\n").replace("{", "{\n").replace("}", "\n}");
             System.out.println("Button show sub clicked");
             rightPanel.removeAll();
-
-//            Response response1 = ResponseSerializer.deserializeFromJson(employeeService.getListOfSubmittion(id));
-//            if (response1.isError()) {
-//                setErrorText(response1.getErrorMessage());
-//            } else {
-//                setFeedbackText("shift been submitted successfully");
-//            }
-            rightPanel.add(new GenericLabel(""));
-            rightPanel.add(new GenericLabel(""));
-            TextArea textArea = new TextArea(employeeService.getListOfSubmittion(id));
+            TextArea textArea = new TextArea(formattedJson);
             rightPanel.add(textArea);
-
+            rightPanel.revalidate();
+            rightPanel.repaint();
 
         });
     }

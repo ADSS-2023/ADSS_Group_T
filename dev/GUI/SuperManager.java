@@ -74,6 +74,7 @@ public class SuperManager extends GenericFrame {
             System.out.println("Button start clicked");
             try {
                 DriverMenuframe driverMenuframe = new DriverMenuframe(serviceFactory,1111);
+                dispose();
             }
             catch (Exception exception){
                 setErrorText(exception.getMessage());
