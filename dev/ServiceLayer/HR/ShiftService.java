@@ -58,7 +58,7 @@ public class ShiftService {
         return ResponseSerializer.serializeToJson(response);
     }
 
-    public Map<String, Object> ShowShiftStatusUI(String branch, String date, String shiftType) throws SQLException {
+    public Map<String, Object> showShiftStatusUI(String branch, String date, String shiftType) throws SQLException {
         //Response response = new Response();
             boolean bool = !shiftType.equals("e");
             return shiftController.showShiftStatusUI(branch, Time.stringToLocalDate(date), bool);
@@ -68,7 +68,7 @@ public class ShiftService {
     public String assignEmployeeForShift(String branch, int ans_id, String ans_date, String ans_type, String position) {
         Response response = new Response();
         try {
-            boolean bool = !ans_type.equals("e");
+            boolean bool = !ans_type.equals("e")  && !ans_type.equals("evening");
             response.setReturnValue(shiftController.assignEmployeeForShift(branch, ans_id, Time.stringToLocalDate(ans_date), bool, position));
         } catch (Exception ex) {
             response.setErrorMessage(ex.getMessage());
@@ -79,7 +79,7 @@ public class ShiftService {
     public String assignAll(String branch, String ans_date, String ans_type) {
         Response response = new Response();
         try {
-            boolean bool = !ans_type.equals("e");
+            boolean bool = !ans_type.equals("e") && !ans_type.equals("evening");
             response.setReturnValue(shiftController.assignAll(branch, Time.stringToLocalDate(ans_date), bool));
         } catch (Exception ex) {
             response.setErrorMessage(ex.getMessage());

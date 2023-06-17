@@ -7,16 +7,21 @@ import javax.swing.JTable;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 // Custom ButtonEditor class to handle button clicks in the table
-class ButtonEditor extends DefaultCellEditor {
-    protected JButton button;
+// Custom ButtonEditor class to handle button clicks in the table
+public class ButtonEditor extends DefaultCellEditor {
+    private JButton button;
     private String label;
     private boolean isPushed;
+    private List<String> selectedEmployeeIds;
 
-    public ButtonEditor(JCheckBox checkBox, JTable table) {
+    public ButtonEditor(JCheckBox checkBox, JTable table, List<String> selectedEmployeeIds) {
         super(checkBox);
         button = new JButton();
+        this.selectedEmployeeIds = selectedEmployeeIds;
         button.setOpaque(true);
         button.addActionListener(new ActionListener() {
             @Override
@@ -30,16 +35,12 @@ class ButtonEditor extends DefaultCellEditor {
     }
 
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        if (isSelected) {
-            button.setForeground(table.getSelectionForeground());
-            button.setBackground(table.getSelectionBackground());
-        } else {
-            button.setForeground(table.getForeground());
-            button.setBackground(table.getBackground());
+        button.setText(value != null ? value.toString() : "");
+        Object employeeId = table.getValueAt(row, 4);
+        if (employeeId instanceof String) {
+            button.putClientProperty("employeeId", (String) employeeId);
         }
-        label = (value == null) ? "" : value.toString();
-        button.setText(label);
-        isPushed = true;
+        selectedEmployeeIds.clear();
         return button;
     }
 

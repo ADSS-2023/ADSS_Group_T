@@ -61,7 +61,7 @@ public class Shift {
                 if(shiftType){s = "morning";}
                 else s = "evening";
                 amount = amount + employeeRequirements.get(pos);
-                dalShiftService.updateRequierement(branch, date.toString(),s, pos, amount);
+                dalShiftService.updateRequierement(branch, date.toString(),s, pos, amount, amount-1);
             }
             else{
                 employeeRequirements.put(pos, amount);
@@ -179,87 +179,6 @@ public class Shift {
         return st;
     }
 
-//    public Map<String, Object> showShiftStatusUI(DalShiftService dalShiftService) throws SQLException {
-//        lazyLoadFindRequiermentsBtDateAndShiftType();
-//        lazyLoadFindAllsubmittedPositionByEmployees();
-//
-//        Map<String, Object> shiftStatusData = new LinkedHashMap<>();
-//        List<Map<String, Object>> positionDataList = new ArrayList<>();
-//
-//        boolean isLegalShift = true;
-//        StringBuilder missing = new StringBuilder();
-//
-//        for (Map.Entry<String, Integer> entry : employeeRequirements.entrySet()) {
-//            String position = entry.getKey();
-//            int required = entry.getValue();
-//            int assigned = 0;
-//            List<Map<String, Object>> assignedEmployees = new ArrayList<>();
-//
-//            for (Map.Entry<String, LinkedHashMap<Employee, Boolean>> assignment : submittedPositionByEmployees.entrySet()) {
-//                String assignmentPosition = assignment.getKey();
-//                LinkedHashMap<Employee, Boolean> employeesToAssign = assignment.getValue();
-//
-//                for (Map.Entry<Employee, Boolean> employeeAssignment : employeesToAssign.entrySet()) {
-//                    Employee employee = employeeAssignment.getKey();
-//                    boolean isAssigned = employeeAssignment.getValue();
-//
-//                    if (isAssigned && position.equals(assignmentPosition)) {
-//                        Map<String, Object> assignedEmployeeData = new LinkedHashMap<>();
-//                        assignedEmployeeData.put("employeeId", employee.getId());
-//                        assignedEmployeeData.put("qualifiedPositions", employee.getQualifiedPositions());
-//                        assignedEmployees.add(assignedEmployeeData);
-//                        assigned++;
-//                    }
-//                }
-//            }
-//
-//            int submissionsNotAssigned = 0;
-//            List<Map<String, Object>> unassignedSubmissions = new ArrayList<>();
-//
-//            if (submittedPositionByEmployees.containsKey(position)) {
-//                HashMap<Employee, Boolean> employeesToAssign = submittedPositionByEmployees.get(position);
-//
-//                for (Map.Entry<Employee, Boolean> employeeAssignment : employeesToAssign.entrySet()) {
-//                    Employee employee = employeeAssignment.getKey();
-//                    boolean isAssigned = employeeAssignment.getValue();
-//
-//                    if (!isAssigned) {
-//                        Map<String, Object> unassignedEmployeeData = new LinkedHashMap<>();
-//                        unassignedEmployeeData.put("employeeId", employee.getId());
-//                        unassignedEmployeeData.put("qualifiedPositions", position);
-//                        unassignedSubmissions.add(unassignedEmployeeData);
-//                    }
-//                }
-//
-//                submissionsNotAssigned = unassignedSubmissions.size();
-//            }
-//
-//            Map<String, Object> positionData = new LinkedHashMap<>();
-//            positionData.put("position", position);
-//            positionData.put("assigned", assigned);
-//            positionData.put("required", required);
-//            positionData.put("submissionsNotAssigned", submissionsNotAssigned);
-//            positionData.put("unassignedSubmissions", unassignedSubmissions);
-//
-//            positionDataList.add(positionData);
-//
-//            if (required > assigned) {
-//                isLegalShift = false;
-//                missing.append(required).append(" employees are missing in the position of ").append(position).append("\n");
-//            }
-//        }
-//
-//        if (this.shiftManagerId == -1) {
-//            isLegalShift = false;
-//            missing.append("Noticed!! no such shift manager assign- the shift must have a manager!\n");
-//        }
-//
-//        shiftStatusData.put("isLegalShift", isLegalShift);
-//        shiftStatusData.put("missingRequirements", missing.toString());
-//        shiftStatusData.put("positions", positionDataList);
-//
-//        return shiftStatusData;
-//    }
 
 
 
@@ -311,39 +230,36 @@ public class Shift {
                     if (!isAssigned) {
                         Map<String, Object> unassignedEmployeeData = new LinkedHashMap<>();
                         unassignedEmployeeData.put("employeeId", employee.getId());
-                        unassignedEmployeeData.put("qualifiedPositions", position);
+                        unassignedEmployeeData.put("qualifiedPositions", employee.getQualifiedPositions());
                         unassignedSubmissions.add(unassignedEmployeeData);
+                        submissionsNotAssigned++;
                     }
                 }
-
-                submissionsNotAssigned = unassignedSubmissions.size();
             }
 
             Map<String, Object> positionData = new LinkedHashMap<>();
             positionData.put("position", position);
             positionData.put("assigned", assigned);
             positionData.put("required", required);
+            positionData.put("assignedEmployees", assignedEmployees);
             positionData.put("submissionsNotAssigned", submissionsNotAssigned);
             positionData.put("unassignedSubmissions", unassignedSubmissions);
-
             positionDataList.add(positionData);
 
             if (required > assigned) {
                 isLegalShift = false;
-                missingRequirements.append(required).append(" employees are missing in the position of ").append(position).append("\n");
+                missingRequirements.append(position).append(", ");
             }
         }
 
-        if (this.shiftManagerId == -1) {
-            isLegalShift = false;
-            missingRequirements.append("Noticed!! no such shift manager assign- the shift must have a manager!\n");
+        shiftStatusData.put("isLegalShift", isLegalShift);
+        shiftStatusData.put("positions", positionDataList);
+
+        if (!isLegalShift) {
+            shiftStatusData.put("missingRequirements", missingRequirements.toString());
         }
 
-        shiftStatusData.put("isLegalShift", isLegalShift);
-        shiftStatusData.put("missingRequirements", missingRequirements.toString());
-        shiftStatusData.put("positions", positionDataList);
         return shiftStatusData;
-
     }
 
 
@@ -432,7 +348,7 @@ public class Shift {
                 }
 
                 // remove the requierements
-                deleteRequirement(pos);
+                deleteRequirement(pos, amount);
                 return employee.getEmployeeName() + " has been assigned to position " + pos + " successfully.";
             }
         }
@@ -485,32 +401,17 @@ public class Shift {
         return result.toString();
     }
 
-    public boolean deleteRequirement(String positionType) throws SQLException {
+    public boolean deleteRequirement(String positionType, int amount) throws SQLException {
         String s;
-        if (employeeRequirements.containsKey(positionType)) {
-            int amount = employeeRequirements.get(positionType);
-            //delete from cache
-            if (amount > 1) {
-                employeeRequirements.put(positionType, amount - 1);
-                if (shiftType) {
-                    s = "morning";
-                } else {
-                    s = "evening";
-                }
-                dalShiftService.updateRequierement(branch, date.toString(), s, positionType, amount - 1);
-            } else {
-                if (shiftType) {
-                    s = "morning";
-                } else {
-                    s = "evening";
-                }
-                employeeRequirements.remove(positionType);
-                dalShiftService.deleteRequierement(branch, date.toString(), s, positionType);
-            }
-            return true;
+        if (shiftType) {
+            s = "m";
         } else {
-            return false;
+            s = "e";
         }
+        dalShiftService.updateRequierement(branch, date.toString(), s, positionType, amount, amount - 1);
+        employeeRequirements.replace(positionType, amount, amount - 1);
+        return true;
+
     }
 
 

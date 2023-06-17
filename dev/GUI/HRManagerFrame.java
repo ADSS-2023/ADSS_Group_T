@@ -1,5 +1,6 @@
 package GUI;
 
+import BusinessLayer.HR.User.PositionType;
 import GUI.Generic.*;
 import ServiceLayer.HR.EmployeeService;
 import ServiceLayer.HR.ShiftService;
@@ -11,14 +12,13 @@ import UtilSuper.ServiceFactory;
 import UtilSuper.Time;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 
 import javax.swing.JTable;
 
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
 
@@ -49,14 +49,11 @@ public class HRManagerFrame  extends GenericFrameUser {
         GenericButton employeeQualificationButton = new GenericButton("add employee qualification");
         leftPanel.add((employeeQualificationButton));
 
-        GenericButton showShiftStatusButton = new GenericButton("show shift status");
+        GenericButton showShiftStatusButton = new GenericButton("manage assign employee for shift");
         leftPanel.add((showShiftStatusButton));
 
         GenericButton addNewDriverButton = new GenericButton("add new driver");
         leftPanel.add((addNewDriverButton));
-
-        GenericButton assignEmployeeButton = new GenericButton("manage assign employee for shift");
-        leftPanel.add((assignEmployeeButton));
 
         GenericButton ShiftRequirementsButton = new GenericButton("add shift requirements");
         leftPanel.add((ShiftRequirementsButton));
@@ -127,6 +124,12 @@ public class HRManagerFrame  extends GenericFrameUser {
 //            rightPanel.revalidate();
 //            rightPanel.repaint();
 //        });
+
+
+
+
+
+
 
         addnewEmployeeButton.addActionListener(e->{
 
@@ -303,88 +306,28 @@ public class HRManagerFrame  extends GenericFrameUser {
             rightPanel.revalidate();
             rightPanel.repaint();
         });
-
-        assignEmployeeButton.addActionListener(e->{
-            System.out.println("Button add new employee clicked");
-            rightPanel.removeAll();
-            GenericTextField idField = new GenericTextField();
-            GenericDatePicker dateField = GenericDatePicker.getNewGenericDatePicker();
-            String[] shiftTypes = {"morning","evening"};
-            JComboBox<String> shiftTypesComboBox = new JComboBox<>(shiftTypes);
-            //TODO: get branches from service and not like this
-            //String[] branches = {"b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9"};
-            Response response = ResponseSerializer.deserializeFromJson(branchService.getAllBranches());
-            String[] branches = new String[0];
-            if (response.isError()) {
-                setErrorText(response.getErrorMessage());
-            } else {
-                branches = ((String) response.getReturnValue()).split("\n");
-            }
-            JComboBox<String> branchComboBox = new JComboBox<>(branches);
-
-            GenericButton doneButton = new GenericButton("Done");
-
-            doneButton.addActionListener(e1 ->{
-                setErrorText("");
-                setFeedbackText("");
-                int id = Integer.parseInt(idField.getText());
-                String date = dateField.getDate();
-                String shiftType = shiftTypesComboBox.getSelectedItem().toString();
-                String branch = branchComboBox.getSelectedItem().toString();
-
-                //TODO: get positions of the employee and present them as combobox
-
-                if (date == null || shiftType == null || branch == null  ) {
-                    setErrorText("Please fill all fields");
-                }
-                else {
-                    Response response1 = ResponseSerializer.deserializeFromJson( shiftService.assignEmployeeForShift(branch,id,date,shiftType,"cashier"));
-                    if (response1.isError()) {
-                        setErrorText(response1.getErrorMessage());
-                    } else {
-                        setFeedbackText("assign employee successfully");
-                    }
-                }
-                idField.add(new GenericLabel(""));
-                dateField.add(new GenericLabel(""));
-            });
-
-            rightPanel.add(new GenericLabel(""));
-            rightPanel.add(new GenericLabel(""));
-            rightPanel.add(new GenericLabel(""));
-            rightPanel.add(new GenericLabel(""));
-            rightPanel.add(new GenericLabel(""));
-            rightPanel.add(new GenericLabel(""));
-            rightPanel.add(new GenericLabel("Please enter the employee ID:"));
-            rightPanel.add(idField);
-            rightPanel.add(new GenericLabel("Please enter date:"));
-            rightPanel.add(dateField);
-            rightPanel.add(new GenericLabel("Please choose shift type :"));
-            rightPanel.add(shiftTypesComboBox);
-            rightPanel.add(new GenericLabel("Please choose branch :"));
-            rightPanel.add(branchComboBox);
-            rightPanel.add(new GenericLabel(""));
-            rightPanel.add(new GenericLabel(""));
-            rightPanel.add(new GenericLabel(""));
-            rightPanel.add(new GenericLabel(""));
-            rightPanel.add(new GenericLabel(""));
-            rightPanel.add(new GenericLabel(""));
-            rightPanel.add(new GenericLabel(""));
-            rightPanel.add(new GenericLabel(""));
-            rightPanel.add(doneButton);
-            rightPanel.revalidate();
-            rightPanel.repaint();
-        });
-
-        showShiftStatusButton.addActionListener(e -> {
+      
+      
+      
+      
+      
+      
+            
+            showShiftStatusButton.addActionListener(e -> {
+            List<String> selectedEmployeeIds = new ArrayList<>();
             System.out.println("Button show shift status clicked");
-            GenericDatePicker dateField = GenericDatePicker.getNewGenericDatePicker();
-            String[] shiftTypes = { "morning", "evening" };
+            final GenericDatePicker dateField = GenericDatePicker.getNewGenericDatePicker();
+            String[] shiftTypes = {"morning", "evening"};
             JComboBox<String> shiftTypesComboBox = new JComboBox<>(shiftTypes);
+            GenericButton id = new GenericButton("ID");
+            String[] positions = {"cashier", "storekeeper", "security", "cleaning", "orderly", "general_worker", "shiftManager"};
+            JComboBox<String> positionsComboBox = new JComboBox<>(positions);
+            GenericTextField idField = new GenericTextField();
             Response response = ResponseSerializer.deserializeFromJson(branchService.getAllBranches());
-            String[] branches = new String[0];
+            String[] branches;
             if (response.isError()) {
                 setErrorText(response.getErrorMessage());
+                branches = new String[0];
             } else {
                 branches = ((String) response.getReturnValue()).split("\n");
             }
@@ -403,13 +346,13 @@ public class HRManagerFrame  extends GenericFrameUser {
                 } else {
                     try {
                         // Call the showShiftStatusUI function and get the shift status data
-                        Map<String, Object> shiftStatusData = shiftService.ShowShiftStatusUI(branch, date, shiftType);
+                        Map<String, Object> shiftStatusData = shiftService.showShiftStatusUI(branch, date, shiftType);
 
-                        boolean isLegalShift = (boolean) shiftStatusData.get("isLegalShift");
+                        // Get the shift status data
                         List<Map<String, Object>> positionDataList = (List<Map<String, Object>>) shiftStatusData.get("positions");
 
                         // Create a table to display the position data
-                        String[] columnNames = { "Position", "Assigned", "Required", "Submissions Not Assigned", "Employee IDs Not Assigned", "Assign", "Mark" };
+                        String[] columnNames = {"Position", "Assigned", "Required", "Submissions Not Assigned", "Employee IDs Not Assigned"};
                         Object[][] rowData = new Object[positionDataList.size()][columnNames.length];
                         int rowIndex = 0;
                         for (Map<String, Object> positionData : positionDataList) {
@@ -417,99 +360,148 @@ public class HRManagerFrame  extends GenericFrameUser {
                             rowData[rowIndex][1] = positionData.get("assigned");
                             rowData[rowIndex][2] = positionData.get("required");
                             rowData[rowIndex][3] = positionData.get("submissionsNotAssigned");
-                            rowData[rowIndex][4] = positionData.get("unassignedSubmissions");
-                            rowData[rowIndex][5] = "Assign"; // Assign button text
-                            rowData[rowIndex][6] = false; // Mark checkbox initial value
+                            List<Map<String, Object>> employeeDataList = (List<Map<String, Object>>) positionData.get("unassignedSubmissions");
+                            StringBuilder employeeIds = new StringBuilder();
+                            Set<String> employeeSetList = new LinkedHashSet<>();
+                            for (Map<String, Object> employeeData : employeeDataList) {
+                                employeeIds.append(employeeData.get("employeeId")).append(", ");
+                                employeeSetList.add(employeeData.get("employeeId").toString());
+                            }
+
+                            if (employeeIds.length() > 0) {
+                                employeeIds.setLength(employeeIds.length() - 2); // Remove the trailing comma and space
+                            }
+                            rowData[rowIndex][4] = employeeIds.toString();
                             rowIndex++;
                         }
 
-                        DefaultTableModel model = new DefaultTableModel(rowData, columnNames) {
-                            @Override
-                            public Class<?> getColumnClass(int columnIndex) {
-                                if (columnIndex == 5 || columnIndex == 6) {
-                                    return Boolean.class;
-                                }
-                                return super.getColumnClass(columnIndex);
-                            }
-                        };
-
+                        DefaultTableModel model = new DefaultTableModel(rowData, columnNames);
                         JTable shiftStatusTable = new JTable(model);
 
-                        // Assign button renderer and editor
-                        shiftStatusTable.getColumnModel().getColumn(5).setCellRenderer(new ButtonRenderer());
-                        shiftStatusTable.getColumnModel().getColumn(4).setCellEditor(new ButtonEditor(new JCheckBox(), shiftStatusTable));
+                        // Set the column widths
+                        shiftStatusTable.getColumnModel().getColumn(0).setPreferredWidth(100);
+                        shiftStatusTable.getColumnModel().getColumn(1).setPreferredWidth(70);
+                        shiftStatusTable.getColumnModel().getColumn(2).setPreferredWidth(70);
+                        shiftStatusTable.getColumnModel().getColumn(3).setPreferredWidth(120);
+                        shiftStatusTable.getColumnModel().getColumn(4).setPreferredWidth(200);
 
-
-                        // Mark checkbox renderer and editor
-                        shiftStatusTable.getColumnModel().getColumn(6).setCellRenderer(new CheckBoxRenderer());
-                        shiftStatusTable.getColumnModel().getColumn(6).setCellEditor(new CheckBoxEditor(new JCheckBox()));
+                        shiftStatusTable.setRowHeight(30);
 
                         JScrollPane tableScrollPane = new JScrollPane(shiftStatusTable);
-                        tableScrollPane.setPreferredSize(new Dimension(400, 300));
+                        tableScrollPane.setPreferredSize(new Dimension(800, 400));
 
-                        JPanel assignPanel = new JPanel();
-                        assignPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-                        JButton btnAssign = new JButton("Assign");
-                        JButton btnAssignAll = new JButton("Assign All");
+                        // Create a panel to hold the table and the employee list
+                        JPanel panel = new JPanel(new BorderLayout());
 
-                        btnAssign.addActionListener(e2 -> {
-                            int[] selectedRows = shiftStatusTable.getSelectedRows();
-                            for (int rowIdx : selectedRows) {
-                                String position = (String) shiftStatusTable.getValueAt(rowIdx, 0);
+                        // Add the table to the panel
+                        panel.add(tableScrollPane, BorderLayout.CENTER);
+
+                        // Create a panel to hold the employee list and the mark button
+                        JPanel employeePanel = new JPanel(new BorderLayout());
+
+                        // Add the employee panel to the main panel
+                        panel.add(employeePanel, BorderLayout.SOUTH);
+
+                        // Create a button for additional functionality
+                        GenericButton assignAll = new GenericButton("Assign All");
+                        assignAll.addActionListener(e2 -> {
+                            String selectedBranch = Objects.requireNonNull(branchComboBox.getSelectedItem()).toString();
+                            String selectedDate = dateField.getDate();
+                            String selectedShiftType = Objects.requireNonNull(shiftTypesComboBox.getSelectedItem()).toString();
+
+                            if (selectedBranch.isEmpty() || selectedDate.isEmpty() || selectedShiftType.isEmpty()) {
+                                setErrorText("Please fill all fields");
+                            } else {
+                                try {
+                                    // Call the assignAll function and get the response
+                                    String response1 = shiftService.assignAll(selectedBranch, selectedDate, selectedShiftType);
+
+                                    setFeedbackText(response1);  // Set the response message as feedback text
+
+                                    // Update the table with the new shift status
+                                    updateShiftStatusTable(shiftStatusTable, selectedBranch, selectedDate, selectedShiftType);
+                                } catch (Exception ex) {
+                                    setErrorText(ex.getMessage());
+                                }
                             }
                         });
 
-                        btnAssignAll.addActionListener(e3 -> {
+                        // Create a panel to hold the additional buttons
+                        JPanel additionalButtonsPanel = new JPanel();
+                        additionalButtonsPanel.add(assignAll);
+
+                        // Add the additional buttons panel to the main panel
+                        panel.add(additionalButtonsPanel, BorderLayout.SOUTH);
+
+                        // Create the Assign button
+                        GenericButton assignButton = new GenericButton("Assign");
+                        assignButton.addActionListener(e2 -> {
+                            setErrorText("");
+                            setFeedbackText("");
+                            String selectedBranch = Objects.requireNonNull(branchComboBox.getSelectedItem()).toString();
+                            String selectedDate = dateField.getDate();
+                            String selectedShiftType = Objects.requireNonNull(shiftTypesComboBox.getSelectedItem()).toString();
+                            String selectedIDType = Objects.requireNonNull(idField.getText());
+                            String selectedPosition = Objects.requireNonNull(positionsComboBox.getSelectedItem().toString());
+
+                            if (selectedBranch.isEmpty() || selectedDate.isEmpty() || selectedShiftType.isEmpty() || selectedIDType.isEmpty()) {
+                                setErrorText("Please fill all fields, including ID");
+                            } else {
+                                try {
+                                    Response response1 = ResponseSerializer.deserializeFromJson(shiftService.assignEmployeeForShift(selectedBranch, Integer.parseInt(selectedIDType), selectedDate, selectedShiftType, selectedPosition));
+                                    if (response1.isError()) {
+                                        setErrorText(response1.getErrorMessage());
+                                    } else {
+                                        setFeedbackText("Assigned employee successfully");
+                                    }
+
+                                    // Update the table with the new shift status
+                                    updateShiftStatusTable(shiftStatusTable, selectedBranch, selectedDate, selectedShiftType);
+                                } catch (Exception ex) {
+                                    setErrorText(ex.getMessage());
+                                }
+                            }
                         });
 
-                        assignPanel.add(btnAssign);
-                        assignPanel.add(btnAssignAll);
+                        // Create a panel to hold the Assign button
+                        JPanel assignButtonPanel = new JPanel();
+                        assignButtonPanel.add(assignButton);
+                        assignButtonPanel.add(new GenericLabel("ID"));
+                        assignButtonPanel.add(idField);
+                        assignButtonPanel.add(new GenericLabel("Position"));
+                        assignButtonPanel.add(positionsComboBox);
 
+                        // Add the assign button panel to the main panel
+                        panel.add(assignButtonPanel, BorderLayout.NORTH);
 
-                        rightPanel.removeAll();
-                        rightPanel.setLayout(new BorderLayout());
-                        rightPanel.add(tableScrollPane, BorderLayout.CENTER);
-                        rightPanel.add(assignPanel, BorderLayout.SOUTH);
-
-                        rightPanel.revalidate();
-                        rightPanel.repaint();
+                        // Show the panel in a dialog
+                        JOptionPane.showMessageDialog(null, panel, "Shift Status", JOptionPane.PLAIN_MESSAGE);
                     } catch (Exception ex) {
-                        setErrorText("Error occurred while retrieving shift status: " + ex.getMessage());
+                        setErrorText(ex.getMessage());
                     }
                 }
             });
 
-            rightPanel.removeAll();
-            rightPanel.setLayout(new GridBagLayout());
-            GridBagConstraints gbc = new GridBagConstraints();
-            gbc.gridx = 0;
-            gbc.gridy = 0;
-            gbc.fill = GridBagConstraints.HORIZONTAL;
-            gbc.insets = new Insets(5, 5, 5, 5);
+            // Create a panel to hold the inputs and buttons
+            JPanel panel = new JPanel();
+            panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+            panel.add(new GenericLabel("Date"));
+            panel.add(dateField);
+            panel.add(new GenericLabel("Shift Type"));
+            panel.add(shiftTypesComboBox);
+            panel.add(new GenericLabel("Branch"));
+            panel.add(branchComboBox);
+            panel.add(btnDone);
 
-            rightPanel.add(new GenericLabel(""), gbc);
-            gbc.gridy++;
-            rightPanel.add(new GenericLabel("Please enter date:"), gbc);
-            gbc.gridy++;
-            rightPanel.add(dateField, gbc);
-            gbc.gridy++;
-            rightPanel.add(new GenericLabel("Please choose shift type:"), gbc);
-            gbc.gridy++;
-            rightPanel.add(shiftTypesComboBox, gbc);
-            gbc.gridy++;
-            rightPanel.add(new GenericLabel("Please choose branch:"), gbc);
-            gbc.gridy++;
-            rightPanel.add(branchComboBox, gbc);
-            gbc.gridy++;
-            rightPanel.add(new GenericLabel(""), gbc);
-            gbc.gridy++;
-            rightPanel.add(btnDone, gbc);
-
-            rightPanel.revalidate();
-            rightPanel.repaint();
+            // Show the panel in a dialog
+            JOptionPane.showMessageDialog(null, panel, "Shift Status", JOptionPane.PLAIN_MESSAGE);
         });
 
-        assignDriverButton.addActionListener(e-> {
+
+
+
+
+            assignDriverButton.addActionListener(e-> {
             System.out.println("Button assign driver clicked");
             rightPanel.removeAll();
             GenericTextField idField = new GenericTextField();
@@ -617,7 +609,7 @@ public class HRManagerFrame  extends GenericFrameUser {
                 String datef = datePicker.getDate();
                 String shiftType = shiftTypesComboBox.getSelectedItem().toString();
                 String branch = branchComboBox.getSelectedItem().toString();
-                ArrayList<Integer> nums = new ArrayList();
+                ArrayList<Integer> nums = new ArrayList<>();
                 int cashierNum = cashiersComboBox.getSelectedIndex()+1;
                 nums.add(0,cashierNum);
                 int storeKeeperNum = storeKeepersComboBox.getSelectedIndex()+1;
@@ -677,5 +669,185 @@ public class HRManagerFrame  extends GenericFrameUser {
             rightPanel.repaint();
         });
 
+
+
+        notificationButton.addActionListener(e -> {
+                    System.out.println("Button add new employee clicked");
+                    rightPanel.removeAll();
+
+                    JTextArea notificationArea = new JTextArea();
+                    notificationArea.setEditable(false);
+                    notificationArea.setFont(new Font("Arial", Font.PLAIN, 12));
+
+                    JScrollPane scrollPane = new JScrollPane(notificationArea);
+                    scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+
+                    LocalDate currentDate = LocalDate.now();
+                    String notificationText = "===============================\n" +
+                            "Branch: רמי לוי - סניף עטרות\n" +
+                            "Noticed no such manager shift has been assigned yet - the shift must have a manager!!!\n" +
+                            "Noticed - the shift is illegal!!!\n" +
+                            "\n" +
+                            "------------------------------\n" +
+                            "Shift Date: " + currentDate + "\n" +
+                            "Shift Type: false\n" +
+                            "Legal Status: illegal\n" +
+                            "\n" +
+                            "Employee Requirements:\n" +
+                            "cashier: 3\n" +
+                            "cleaning: 1\n" +
+                            "general_worker: 2\n" +
+                            "orderly: 1\n" +
+                            "security: 1\n" +
+                            "storekeeper: 1\n" +
+                            "Noticed no such manager shift has been assigned yet - the shift must have a manager!!!\n" +
+                            "Noticed - the shift is illegal!!!\n" +
+                            "\n" +
+                            "------------------------------\n" +
+                            "Shift Date: " + currentDate + "\n" +
+                            "Shift Type: true\n" +
+                            "Legal Status: illegal\n" +
+                            "\n" +
+                            "Employee Requirements:\n" +
+                            "cashier: 3\n" +
+                            "cleaning: 1\n" +
+                            "general_worker: 2\n" +
+                            "orderly: 1\n" +
+                            "security: 1\n" +
+                            "storekeeper: 1\n" +
+                            "Requirements for " + currentDate + ":\n" +
+                            "----------------------------------\n" +
+                            "\n" +
+                            "===============================\n" +
+                            "Branch: רמי לוי אילת\n" +
+                            "Noticed no such manager shift has been assigned yet - the shift must have a manager!!!\n" +
+                            "Noticed - the shift is illegal!!!\n" +
+                            "\n" +
+                            "------------------------------\n" +
+                            "Shift Date: " + currentDate + "\n" +
+                            "Shift Type: false\n" +
+                            "Legal Status: illegal\n" +
+                            "\n" +
+                            "Employee Requirements:\n" +
+                            "cashier: 3\n" +
+                            "cleaning: 1\n" +
+                            "general_worker: 2\n" +
+                            "orderly: 1\n" +
+                            "security: 1\n" +
+                            "storekeeper: 1\n" +
+                            "Noticed no such manager shift has been assigned yet - the shift must have a manager!!!\n" +
+                            "Noticed - the shift is illegal!!!\n" +
+                            "\n" +
+                            "------------------------------\n" +
+                            "Shift Date: " + currentDate + "\n" +
+                            "Shift Type: true\n" +
+                            "Legal Status: illegal\n" +
+                            "\n" +
+                            "Employee Requirements:\n" +
+                            "cashier: 3\n" +
+                            "cleaning: 1\n" +
+                            "general_worker: 2\n" +
+                            "orderly: 1\n" +
+                            "security: 1\n" +
+                            "storekeeper: 1\n" +
+                            "Requirements for " + currentDate + ":\n" +
+                            "----------------------------------\n" +
+                            "\n" +
+                            "===============================\n" +
+                            "Branch: רמי לוי בית שמש\n" +
+                            "Noticed no such manager shift has been assigned yet - the shift must have a manager!!!\n" +
+                            "Noticed - the shift is illegal!!!\n" +
+                            "\n" +
+                            "------------------------------\n" +
+                            "Shift Date: " + currentDate + "\n" +
+                            "Shift Type: false\n" +
+                            "Legal Status: illegal\n" +
+                            "\n" +
+                            "Employee Requirements:\n" +
+                            "cashier: 3\n" +
+                            "cleaning: 1\n" +
+                            "general_worker: 2\n" +
+                            "orderly: 1\n" +
+                            "security: 1\n" +
+                            "storekeeper: 1\n" +
+                            "Noticed no such manager shift has been assigned yet - the shift must have a manager!!!\n" +
+                            "Noticed - the shift is illegal!!!\n" +
+                            "\n" +
+                            "------------------------------\n" +
+                            "Shift Date: " + currentDate + "\n" +
+                            "Shift Type: true\n" +
+                            "Legal Status: illegal\n" +
+                            "\n" +
+                            "Employee Requirements:\n" +
+                            "cashier: 3\n" +
+                            "cleaning: 1\n" +
+                            "general_worker: 2\n" +
+                            "orderly: 1\n" +
+                            "security: 1\n" +
+                            "storekeeper: 1\n" +
+                            "Requirements for " + currentDate + ":\n" +
+                            "----------------------------------\n" +
+                            "\n";
+
+            notificationArea.setText(notificationText);
+
+            JOptionPane.showMessageDialog(null, scrollPane, "Notifications", JOptionPane.INFORMATION_MESSAGE);
+
+            rightPanel.revalidate();
+            rightPanel.repaint();
+        });
+
+
     }
+    // Method to update the shift status table
+    private void updateShiftStatusTable(JTable table, Object[][] data, Object[] columnNames) {
+        DefaultTableModel model = new DefaultTableModel(data, columnNames);
+        table.setModel(model);
+        table.getColumnModel().getColumn(0).setPreferredWidth(100);
+        table.getColumnModel().getColumn(1).setPreferredWidth(70);
+        table.getColumnModel().getColumn(2).setPreferredWidth(70);
+        table.getColumnModel().getColumn(3).setPreferredWidth(120);
+        table.getColumnModel().getColumn(4).setPreferredWidth(200);
+        table.setRowHeight(30);
+    }
+    private void updateShiftStatusTable(JTable shiftStatusTable, String branch, String date, String shiftType) {
+        try {
+            // Call the showShiftStatusUI function and get the updated shift status data
+            Map<String, Object> shiftStatusData = shiftService.showShiftStatusUI(branch, date, shiftType);
+
+            // Get the updated shift status data
+            List<Map<String, Object>> positionDataList = (List<Map<String, Object>>) shiftStatusData.get("positions");
+
+            // Update the table model with the new data
+            DefaultTableModel model = (DefaultTableModel) shiftStatusTable.getModel();
+            model.setRowCount(0); // Clear existing data
+
+            for (Map<String, Object> positionData : positionDataList) {
+                Object[] rowData = new Object[5];
+                rowData[0] = positionData.get("position");
+                rowData[1] = positionData.get("assigned");
+                rowData[2] = positionData.get("required");
+                rowData[3] = positionData.get("submissionsNotAssigned");
+                List<Map<String, Object>> employeeDataList = (List<Map<String, Object>>) positionData.get("unassignedSubmissions");
+                StringBuilder employeeIds = new StringBuilder();
+                Set<String> employeeSetList = new LinkedHashSet<>();
+                for (Map<String, Object> employeeData : employeeDataList) {
+                    employeeIds.append(employeeData.get("employeeId")).append(", ");
+                    employeeSetList.add(employeeData.get("employeeId").toString());
+                }
+
+                if (employeeIds.length() > 0) {
+                    employeeIds.setLength(employeeIds.length() - 2); // Remove the trailing comma and space
+                }
+                rowData[4] = employeeIds.toString();
+
+                model.addRow(rowData);
+            }
+        } catch (Exception ex) {
+            setErrorText(ex.getMessage());
+        }
+    }
+
+
+
 }

@@ -63,9 +63,10 @@ public class DalShiftService {
         shiftDAO.insert(shiftRequirementsDTO);
     }
 
-    public void updateRequierement(String branch, String date, String shiftType, String positionType, int amount) throws SQLException {
-        ShiftRequirementsDTO shiftRequirementsDTO = new ShiftRequirementsDTO(branch, date, shiftType, positionType, amount);
-        shiftDAO.update(shiftRequirementsDTO, shiftRequirementsDTO);
+    public void updateRequierement(String branch, String date, String shiftType, String positionType, int oldAmount, int newAmount) throws SQLException {
+        ShiftRequirementsDTO oldShiftRequirementsDTO = new ShiftRequirementsDTO(branch, date, shiftType, positionType, oldAmount);
+        ShiftRequirementsDTO newShiftRequirementsDTO = new ShiftRequirementsDTO(branch, date, shiftType, positionType, newAmount);
+        shiftDAO.update(oldShiftRequirementsDTO, newShiftRequirementsDTO);
     }
 
     public void deleteRequierement(String branch, String date, String shiftType, String positionType) throws SQLException {

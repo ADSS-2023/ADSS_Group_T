@@ -58,7 +58,7 @@ public class EmployeeService {
     public String assignAll(String branch, LocalDate date, String shiftType) {
         Response response = new Response();
         try {
-            boolean sht = shiftType.equals("m");
+            boolean sht = shiftType.equals("m") || shiftType.equals("morning");
             response.setReturnValue(shiftController.assignAll(branch, date, sht));
         } catch (Exception ex) {
             response.setErrorMessage(ex.getMessage());

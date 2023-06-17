@@ -218,13 +218,13 @@ public class Data_init_HR {
 
                     // Submit morning shift for store keeper
                     String morningShiftType = "m";
-                    employeeService.submitShiftForEmployee(branchName, 80+branch , shiftDate, morningShiftType);
-                    shiftService.assignEmployeeForShift(branchName, 80 + branch, shiftDate.toString(), morningShiftType, PositionType.storekeeper.name());
+                    employeeService.submitShiftForEmployee(branchName, 80+(branch*2) , shiftDate, morningShiftType);
+                    shiftService.assignEmployeeForShift(branchName, 80 + (branch*2), shiftDate.toString(), morningShiftType, PositionType.storekeeper.name());
                     System.out.println("submitEmployee" + (80 + branch));
 
                     // Submit evening shift for store keeper
                     String eveningShiftType = "e";
-                    employeeService.submitShiftForEmployee(branchName, 80+branch +1, shiftDate, eveningShiftType);
+                    employeeService.submitShiftForEmployee(branchName, 80+ branch+1, shiftDate, eveningShiftType);
                     shiftService.assignEmployeeForShift(branchName, 80 + branch +1, shiftDate.toString(), eveningShiftType, PositionType.storekeeper.name());
                     System.out.println("assignEmployee" + (80 + branch +1));
                 }
