@@ -26,7 +26,7 @@ public class NumberDiscount extends Discount{
 
     @Override
     public String toString() {
-        return "Amount to be discounted: " + amount +
+        return "Amount: " + amount +
                 ", Discount: " + discount +
                 ", is a Percent discount: " + isPercentage;
     }

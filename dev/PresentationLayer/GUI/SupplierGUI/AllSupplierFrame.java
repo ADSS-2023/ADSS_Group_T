@@ -3,6 +3,7 @@ package PresentationLayer.GUI.SupplierGUI;
 import BusinessLayer.Supplier.Supplier_Util.PaymentTerms;
 import PresentationLayer.Stock.StockUI;
 import PresentationLayer.Supplier.SupplierManager;
+import ServiceLayer.Supplier_Stock.Response;
 import ServiceLayer.Supplier_Stock.ServiceFactory;
 
 import java.awt.event.ActionEvent;
@@ -21,7 +22,6 @@ import static PresentationLayer.GUI.SupplierGUI.SupplierGUI.run;
 public class AllSupplierFrame extends JFrame {
 
     private ServiceFactory sf;
-    private SupplierManager supplierManager;
     private JPanel contentPanel;
     private JPanel emptyBoxPanel;
     private CardLayout cardLayout;
@@ -32,9 +32,8 @@ public class AllSupplierFrame extends JFrame {
 
 
 
-    public AllSupplierFrame(SupplierManager supplierManager, ServiceFactory sf) {
+    public AllSupplierFrame(ServiceFactory sf) {
         this.sf=sf;
-        this.supplierManager=supplierManager;
         // Set up the frame properties
         setTitle("All Suppliers");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -42,9 +41,7 @@ public class AllSupplierFrame extends JFrame {
         // Initialize the table
         initializeTable();
 
-        int width = 1500; // Adjust the width as needed
-        int height = 1000; // Adjust the height as needed
-        setSize(width, height);
+        setPreferredSize(new Dimension(800, 600));
         // Create a panel for the buttons
         setLayout(new BorderLayout());
 
@@ -84,11 +81,20 @@ public class AllSupplierFrame extends JFrame {
         String[] columnNames = {"Supplier Name", "Address", "Supplier Number", "Bank Account Number", "Payment Terms"};
 
         // Create table model with the column names
+        // Create table model with the column names
         tableModel = new DefaultTableModel(columnNames, 0);
 
         // Retrieve the list of suppliers from the business layer
-        //List<String> suppliersData = sf.supplierService.getSuppliers();
-        List<String> suppliersData = new LinkedList<>();
+
+        Response res=sf.supplierService.getSuppliers();
+        if (res.isError()) {
+            JOptionPane.showMessageDialog(this, res.getErrorMassage(), "Error", JOptionPane.ERROR_MESSAGE);
+            dispose();
+            run(new AllSupplierFrame(sf));
+        }
+
+        List<String> suppliersData =  (List<String>) res.getValue();
+
         List<String> suppliersNumber = new ArrayList<>();
         // Add each supplier as a row in the table
         for (String supplierData : suppliersData) {
@@ -121,11 +127,13 @@ public class AllSupplierFrame extends JFrame {
                 if (selectedRow != -1) {
                     // Get the selected supplier from the table model
 
-                    String selectedSupplier = suppliersNumber.get(selectedRow);
+                    String supplierName = (String)supplierTable.getValueAt(selectedRow,0);
+                    int supplierNum = Integer.parseInt((String)supplierTable.getValueAt(selectedRow,2));
 
                     // Open the SupplierFrame and pass the selected supplier
-                    SupplierFrame supplierFrame = new SupplierFrame(sf , 1 , "liran");
-                    supplierFrame.setVisible(true);
+                    dispose();
+                    run(new SupplierFrame(sf,supplierNum,supplierName));
+
                 }
             }
         });
@@ -170,7 +178,7 @@ public class AllSupplierFrame extends JFrame {
         ordersView.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                     dispose();
-                    run(new OrdersFrame(sf,supplierManager));
+                    run(new OrdersFrame(sf));
             }
         });
         buttonPanel.add(ordersView);
@@ -181,7 +189,7 @@ public class AllSupplierFrame extends JFrame {
         addSupplier.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 dispose();
-                run(new AddSupplierProcess(sf,supplierManager));
+                run(new AddSupplierProcess(sf));
             }
         });
         addSupplier.setPreferredSize(new Dimension(100, 40)); // Adjust the dimensions as needed

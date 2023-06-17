@@ -53,7 +53,7 @@ public class SupplierGUI {
             run(new StockFrame(stockUI , supplierManager , sf));
         }
         else if(frameChoice == 2){
-            run(new AllSupplierFrame(supplierManager , sf));
+            run(new AllSupplierFrame( sf));
         }
 
     }

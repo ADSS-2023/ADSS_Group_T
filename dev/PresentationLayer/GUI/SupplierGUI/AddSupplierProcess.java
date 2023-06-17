@@ -27,13 +27,12 @@ public class AddSupplierProcess extends JFrame {
     private LinkedList<DayOfWeek> constDeliveryDays;
     private boolean selfDelivery;
     private PaymentTerms paymentTerm;
-    private SupplierManager sp;
 
-    public AddSupplierProcess(ServiceFactory sf, SupplierManager sp) {
+
+    public AddSupplierProcess(ServiceFactory sf) {
         daysToDeliver=-1;
         selfDelivery=false;
         constDeliveryDays=new LinkedList<>();
-        this.sp=sp;
         contacts=new HashMap<>();
         this.sf = sf;
         setTitle("Add New Supplier");
@@ -245,7 +244,7 @@ public class AddSupplierProcess extends JFrame {
                 sf.supplierService.addSupplier(name,address,supplierNum,bankAccount,daysToDeliver,
                         contacts,constDeliveryDays,selfDelivery,paymentTerm);
                 dispose();
-                run(new AllSupplierFrame(sp,sf));
+                run(new AllSupplierFrame(sf));
             }
         });
         panel.add(nextButton, BorderLayout.EAST);
