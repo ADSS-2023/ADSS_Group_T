@@ -14,7 +14,7 @@
 //    public MainFrame(ServiceFactory serviceFactory) {
 //        // Customize properties if needed
 //        super( serviceFactory);
-//        setTitle("Main");
+//        setTitle("MainGui");
 //        // Create the buttons
 //        startNewButton = new Button("Start New");
 //        loadOldDataButton = new Button("Load Old Data");

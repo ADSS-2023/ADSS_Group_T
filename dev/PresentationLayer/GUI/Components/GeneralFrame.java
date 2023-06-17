@@ -1,6 +1,6 @@
 package PresentationLayer.GUI.Components;
 
-import PresentationLayer.GUI.SupplierGUI.SupplierFrame;
+import PresentationLayer.GUI.SupplierGUI.AllSupplierFrame;
 import PresentationLayer.Stock.StockUI;
 import PresentationLayer.Supplier.SupplierManager;
 import ServiceLayer.Supplier_Stock.Response;
@@ -8,18 +8,11 @@ import ServiceLayer.Supplier_Stock.ServiceFactory;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.net.SocketTimeoutException;
 
-public class StockGUI extends JFrame {
-    private StockUI stockUI;
-    private SupplierManager supplierManager;
+public class GeneralFrame extends JFrame {
     private ServiceFactory sf;
 
-    public StockGUI(StockUI stockUI, SupplierManager supplierManager, ServiceFactory sf) {
-        this.stockUI = stockUI;
-        this.supplierManager = supplierManager;
+    public GeneralFrame(ServiceFactory sf) {
         this.sf = sf;
         setTitle("Stock Management");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -29,10 +22,7 @@ public class StockGUI extends JFrame {
         setVisible(true);
     }
 
-    public static void main(String[] args) {
-        ServiceFactory sf = new ServiceFactory();
-
-
+    public void run() {
         String[] options = {"Load data", "Empty system", "Set data to the system"};
         int action = JOptionPane.showOptionDialog(null, "Welcome to Superly inventory and supplier system", "Superly",
                 JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
@@ -78,37 +68,40 @@ public class StockGUI extends JFrame {
         } else {
             // Cancel button clicked or dialog closed
         }
-//        if (frameChoice == 0) {
-//            // Open ManagerFrame
-//            // Create an instance of ManagerFrame and activate it
-//            run(new ManagerFrame(sf));
-//        } else if (frameChoice == 1) {
-//            // Open StockFrame
-//            run(new StockFrame(stockUI , supplierManager , sf));
-//        }
 
     }
 
     private static void loadData(ServiceFactory sf) {
+        try {
+            sf.uss.loadDate();
+        }
+        catch (Exception e){
+            JOptionPane.showMessageDialog(null,"failed to load data");
+        }
+
         sf.userService.loadData();
         sf.inventoryService.loadData();
         ///TODO ask goz what need to be loaded
         sf.orderService.loadOrders();
+        sf.supplierService.loadSuppliers();
+        sf.manageOrderService.loadData();
+
     }
 
     private static void continueToFrame(Response res,ServiceFactory sf) {
         if (((String) res.getValue().toString()).equals("WareHouse"))
             run(new StockFrame(sf));
         else if(((String) res.getValue().toString()).equals("Suppliers"))
+            run(new AllSupplierFrame(sf));
+        else
             run(new ManagerFrame(sf));
-//        else
-//            run(new SupplierFrame(sf));
     }
 
 
 
     private static void run(JFrame curFrame) {
         curFrame.setVisible(true);
+
     }
 }
 

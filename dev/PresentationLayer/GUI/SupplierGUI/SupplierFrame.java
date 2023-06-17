@@ -16,7 +16,7 @@ import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.util.List;
 
-//import static PresentationLayer.GUI.Components.StockGUI.run;
+//import static PresentationLayer.GUI.Components.GeneralFrame.run;
 
 public class SupplierFrame extends JFrame {
     private ServiceFactory sf;

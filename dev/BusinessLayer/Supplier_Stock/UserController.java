@@ -45,5 +45,6 @@ public class UserController {
 
     public void  loadData(){
         users.add(new Employee("123", Employee.Occupation.WareHouse));
+        users.add(new Employee("2",Employee.Occupation.Suppliers));
     }
 }

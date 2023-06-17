@@ -8,7 +8,7 @@ import ServiceLayer.Supplier_Stock.ServiceFactory;
 
 import javax.swing.*;
 
-//import static PresentationLayer.GUI.Components.StockGUI.run;
+//import static PresentationLayer.GUI.Components.GeneralFrame.run;
 
 public class SupplierGUI {
     public static void main(String[] args) {
