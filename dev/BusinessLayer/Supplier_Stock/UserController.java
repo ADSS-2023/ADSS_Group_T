@@ -1,21 +1,23 @@
 package BusinessLayer.Supplier_Stock;
 
-import PresentationLayer.GUI.Components.ManagerFrame;
-
 import java.sql.Connection;
 import java.util.LinkedList;
+import java.util.List;
 
 public class UserController {
     private LinkedList<Employee> users;
     private Employee currentUser;
     private Connection connection;
+
+    private UserDalController userDalController;
     /**
      * Class that controls login and validation
      */
-    public UserController(Connection connection){
+    public UserController(Connection connection, UserDalController userDalController){
+        this.connection = connection;
+        this.userDalController = userDalController;
         users = new LinkedList<>();
         currentUser = null;
-        this.connection = connection;
     }
     /**
      * Login with unique id
@@ -36,18 +38,33 @@ public class UserController {
             throw new Exception("No such id in the system");
         return currentUser.occupation.toString();
     }
-    public boolean isWareHouseEmployee(){
 
+    public void register(String id, Employee.Occupation occupation) throws SQLException {
+            Employee employee = new Employee(id,occupation, userDalController);
+    }
+    public boolean isWareHouseEmployee(){
         return currentUser.isWareHouseEmployee();
     }
     public boolean isManager(){
         return currentUser.isManager();
     }
-    public boolean isSupplierEmployee(){ return currentUser.isSupplierEmployee(); }
+    public boolean isSupplierEmployee(){
+        return currentUser.isSupplierEmployee();
+    }
 
-    public void  loadData(){
-        users.add(new Employee("123", Employee.Occupation.WareHouse));
-        users.add(new Employee("2",Employee.Occupation.Suppliers));
-        users.add(new Employee("1", Employee.Occupation.Manager));
+    public void  loadData() throws SQLException{
+        List<UserDTO> userDTOS = loadUser();
+        for(UserDTO userDTO: userDTOS){
+            if(userDTO.getOccupation() == 1)
+                users.add(new Employee(userDTO.getId(), Employee.Occupation.Manager, userDalController));
+            else if(userDTO.getOccupation() == 2)
+                users.add(new Employee(userDTO.getId(), Employee.Occupation.WareHouse, userDalController));
+            else if(userDTO.getOccupation() == 3)
+                users.add(new Employee(userDTO.getId(), Employee.Occupation.Suppliers, userDalController));
+        }
+    }
+
+    public List<UserDTO> loadUser() throws SQLException {
+        return userDalController.findAll("users", UserDTO.class);
     }
 }

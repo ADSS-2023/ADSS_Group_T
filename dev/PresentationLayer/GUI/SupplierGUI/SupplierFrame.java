@@ -593,10 +593,6 @@ public class SupplierFrame extends JFrame {
     public static void run(JFrame curFrame) {
         curFrame.setVisible(true);
     }
-
-    public static void main(String[] args) {
-        run(new SupplierFrame(new ServiceFactory(), 2, "Sapak2"));
-    }
 }
 
 
