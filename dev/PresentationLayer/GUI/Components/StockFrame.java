@@ -1,11 +1,24 @@
 package PresentationLayer.GUI.Components;
 
+import BusinessLayer.HR.Constraint;
 import BusinessLayer.Stock.Util.Util;
 import PresentationLayer.Stock.StockUI;
 import PresentationLayer.Supplier.SupplierManager;
 import ServiceLayer.Supplier_Stock.Response;
 import ServiceLayer.Supplier_Stock.ServiceFactory;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
+import org.jdatepicker.JDatePanel;
+import org.jdatepicker.JDatePicker;
+import org.jdatepicker.impl.DateComponentFormatter;
+import org.jdatepicker.impl.JDatePanelImpl;
+import org.jdatepicker.impl.JDatePickerImpl;
+import org.jdatepicker.impl.UtilDateModel;
 
+
+import java.time.chrono.JapaneseDate;
+import java.util.Properties;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
@@ -27,7 +40,7 @@ public class StockFrame extends JFrame {
 
     public StockFrame(StockUI stockUI, SupplierManager supplierManager, ServiceFactory sf) {
         this.sf = sf;
-
+        cardLayout = new CardLayout();
         setTitle("Stock");
         setPreferredSize(new Dimension(800, 600));
         setLayout(new BorderLayout());
@@ -67,12 +80,24 @@ public class StockFrame extends JFrame {
         else
             updateOkMessage((String) res.getValue());
     }
-    private void createEmptyBoxPanel() {
-        cardLayout = new CardLayout();
-        emptyBoxPanel = new JPanel(cardLayout);
-        emptyBoxPanel.setBackground(Color.WHITE);
-        add(emptyBoxPanel, BorderLayout.CENTER);
-    }
+//    private void createEmptyBoxPanel() {
+//
+//        emptyBoxPanel = new JPanel(
+//            new GridLayout(6,2)
+//        );
+//        emptyBoxPanel.setBackground(Color.WHITE);
+//        add(emptyBoxPanel);
+//    }
+private void createEmptyBoxPanel() {
+    emptyBoxPanel = new JPanel(new GridLayout(10, 2));
+    emptyBoxPanel.setBackground(Color.WHITE);
+
+    // Add labels and text fields to the panel
+
+
+    add(emptyBoxPanel);
+}
+
 
     private void createToolbar() {
         JToolBar toolbar = new JToolBar(JToolBar.VERTICAL);
@@ -115,6 +140,7 @@ public class StockFrame extends JFrame {
 
     //TODO : make only one function here and in stock
     public String presentCategories() {
+        emptyBoxPanel.removeAll();
         try {
             Response dataResponse = sf.inventoryService.show_data();
             if (dataResponse.isError()) {
@@ -249,76 +275,128 @@ public class StockFrame extends JFrame {
     }
 
     private void setDiscount() {
+        emptyBoxPanel.removeAll();
         String product = presentCategories();
-        JTextField productField = new JTextField(10);
-        JTextField startDateField = new JTextField(10);
-        JTextField endDateField = new JTextField(10);
-        JTextField amountField = new JTextField(10);
+        if (!product.equals("exit")) {
+        try {
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(5, 2));
-        panel.add(new JLabel("Start Date:"));
-        panel.add(startDateField);
-        panel.add(new JLabel("End Date:"));
-        panel.add(endDateField);
-        panel.add(new JLabel("Percentage Amount:"));
-        panel.add(amountField);
 
-        int result = JOptionPane.showConfirmDialog(null, panel, "Set Discount", JOptionPane.OK_CANCEL_OPTION);
-        if (result == JOptionPane.OK_OPTION) {
-            try {
-                String startDate = startDateField.getText();
-                String endDate = endDateField.getText();
-                double amount = Double.parseDouble(amountField.getText());
-                // Send the data to set discount
-                // TODO: Implement and take the error message
-                handleErrorOrOk(sf.inventoryService.set_discount(product, amount, startDate, endDate));
-            } catch (NumberFormatException ex) {
+                JTextField amountField = new JTextField();
+                emptyBoxPanel.add(new JLabel("Start Date:"), 0);
+                JDatePicker startDate = addDate(emptyBoxPanel, 1);
+                emptyBoxPanel.add(new JLabel("End Date:"), 2);
+                JDatePicker endDate = addDate(emptyBoxPanel, 3);
+                emptyBoxPanel.add(new JLabel("Percentage Amount:"), 4);
+                emptyBoxPanel.add(amountField, 5);
+                UtilDateModel model = (UtilDateModel) startDate.getModel();
+
+                UtilDateModel model2 = (UtilDateModel) endDate.getModel();
+
+                addButton(emptyBoxPanel, "Ok", () -> handleErrorOrOk(
+                        sf.inventoryService.set_discount(
+                                product, Double.parseDouble(amountField.getText()),
+                                Util.DateToString(model.getValue().toInstant().atZone(ZoneId.systemDefault()).toLocalDate()),
+                                Util.DateToString(model2.getValue().toInstant().atZone(ZoneId.systemDefault()).toLocalDate()))));
+                addButton(emptyBoxPanel, "Cancel", () -> {
+                    emptyBoxPanel.removeAll(); // Remove all components from the panel
+                    emptyBoxPanel.revalidate(); // Revalidate the panel
+                    emptyBoxPanel.repaint(); // Repaint the panel
+                });
+                emptyBoxPanel.add(new JLabel());
+                emptyBoxPanel.add(new JLabel());
+                emptyBoxPanel.add(new JLabel());
+                emptyBoxPanel.add(new JLabel());
+
+                emptyBoxPanel.revalidate();
+                emptyBoxPanel.repaint();
+                emptyBoxPanel.setVisible(true);
+            }
+            catch(NumberFormatException ex){
                 updateError("Invalid input format");
-            } catch (Exception ex) {
-                updateError(ex.getMessage());
             }
         }
+    }
+
+    private JDatePicker addDate(JPanel emptyBoxPanel,int index) {
+        UtilDateModel model = new UtilDateModel();
+//model.setDate(20,04,2014);
+// Need this...
+        Properties p = new Properties();
+        p.put("text.today", "Today");
+        p.put("text.month", "Month");
+        p.put("text.year", "Year");
+        JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
+// Don't know about the formatter, but there it is...
+        JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateComponentFormatter());
+
+        datePicker.setPreferredSize(new Dimension(100, 30));
+        datePicker.setBackground(Color.white);
+        emptyBoxPanel.add(datePicker,index);
+        return datePicker;
+    }
+
+    private void addButton(JPanel panel,String name, Runnable runnable) {
+        JButton button = new JButton("<html><center>" + name + "</center></html>");
+
+        button.setSize(5,5);
+        button.addActionListener((e)->runnable.run());
+        // Apply custom styling
+        button.setFocusPainted(false);
+        button.setFont(button.getFont().deriveFont(Font.BOLD, 15));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = 5;
+        gbc.gridheight = 10;
+        panel.add(button,gbc);
     }
 
     private void damagedItem() {
-        JTextField itemIdField = new JTextField(10);
-        JTextField orderIdField = new JTextField(10);
-        JTextField amountField = new JTextField(10);
-        JTextField descriptionField = new JTextField(10);
+        emptyBoxPanel.removeAll();
+        try {
+            JTextField itemIdField = new JTextField();
+            JTextField orderIdField = new JTextField();
+            JTextField amountField = new JTextField();
+            JTextField descriptionField = new JTextField();
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(4, 2));
-        panel.add(new JLabel("Item ID:"));
-        panel.add(itemIdField);
-        panel.add(new JLabel("Order ID:"));
-        panel.add(orderIdField);
-        panel.add(new JLabel("Amount:"));
-        panel.add(amountField);
-        panel.add(new JLabel("Description:"));
-        panel.add(descriptionField);
 
-        int result = JOptionPane.showConfirmDialog(null, panel, "Report Damaged Item", JOptionPane.OK_CANCEL_OPTION);
-        if (result == JOptionPane.OK_OPTION) {
-            try {
-                int item_id = Integer.parseInt(itemIdField.getText());
-                int order_id = Integer.parseInt(orderIdField.getText());
-                int amount = Integer.parseInt(amountField.getText());
-                String description = descriptionField.getText();
-                Response res = sf.damagedService.report_damaged_item(item_id, order_id, amount, description);
-                handleErrorOrOk(res);
-            } catch (NumberFormatException ex) {
-                updateError("Invalid input format");
-            } catch (Exception ex) {
-                updateError(ex.getMessage());
-            }
+            emptyBoxPanel.add(new JLabel("Item ID:"), 0);
+            emptyBoxPanel.add(itemIdField, 1);
+            emptyBoxPanel.add(new JLabel("Order ID:"), 2);
+            emptyBoxPanel.add(orderIdField, 3);
+            emptyBoxPanel.add(new JLabel("Amount:"), 4);
+            emptyBoxPanel.add(amountField, 5);
+            emptyBoxPanel.add(new JLabel("Description:"), 6);
+            emptyBoxPanel.add(descriptionField, 7);
+
+            addButton(emptyBoxPanel, "Ok", () -> handleErrorOrOk(
+                    sf.damagedService.report_damaged_item(
+                            Integer.parseInt(itemIdField.getText()),
+                            Integer.parseInt(orderIdField.getText()),
+                            Integer.parseInt(amountField.getText()),
+                            descriptionField.getText())));
+            addButton(emptyBoxPanel, "Cancel", () -> {
+                emptyBoxPanel.removeAll(); // Remove all components from the panel
+                emptyBoxPanel.revalidate(); // Revalidate the panel
+                emptyBoxPanel.repaint(); // Repaint the panel
+            });
+            emptyBoxPanel.add(new JLabel());
+            emptyBoxPanel.add(new JLabel());
+            emptyBoxPanel.add(new JLabel());
+            emptyBoxPanel.add(new JLabel());
+
+            emptyBoxPanel.revalidate();
+            emptyBoxPanel.repaint();
+            emptyBoxPanel.setVisible(true);
         }
+       catch (Exception ex) {
+                updateError("invalid input");
+            }
     }
+
 
     //TODO : change from an alert to just a string of error
     private void setMinimalAmount() {
-        JTextField itemIdField = new JTextField(10);
-        JTextField amountField = new JTextField(10);
+        JTextField itemIdField = new JTextField(0);
+        JTextField amountField = new JTextField(0);
 
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(2, 2));
@@ -344,6 +422,7 @@ public class StockFrame extends JFrame {
     }
 
     private void addItem() {
+        emptyBoxPanel.removeAll();
         String categoryId = presentCategories();
         if (categoryId != "exit") {
             JTextField itemIdField = new JTextField(10);
@@ -356,106 +435,136 @@ public class StockFrame extends JFrame {
             addItemPanel.setLayout(new GridLayout(6, 2));
 
 
-            addItemPanel.add(new JLabel("Item ID:"));
-            addItemPanel.add(itemIdField);
-            addItemPanel.add(new JLabel("Name:"));
-            addItemPanel.add(nameField);
-            addItemPanel.add(new JLabel("Alert Amount:"));
-            addItemPanel.add(amountField);
-            addItemPanel.add(new JLabel("Manufacturer:"));
-            addItemPanel.add(manufacturerField);
-            addItemPanel.add(new JLabel("Price:"));
-            addItemPanel.add(priceField);
+            emptyBoxPanel.add(new JLabel("Item ID:"),0);
+            emptyBoxPanel.add(itemIdField,1);
+            emptyBoxPanel.add(new JLabel("Name:"),2);
+            emptyBoxPanel.add(nameField,3);
+            emptyBoxPanel.add(new JLabel("Alert Amount:"),4);
+            emptyBoxPanel.add(amountField,5);
+            emptyBoxPanel.add(new JLabel("Manufacturer:"),6);
+            emptyBoxPanel.add(manufacturerField,7);
+            emptyBoxPanel.add(new JLabel("Price:"),8);
+            emptyBoxPanel.add(priceField,9);
 
-            emptyBoxPanel.add(addItemPanel, "addItemPanel");
-            cardLayout.show(emptyBoxPanel, "addItemPanel");
 
-            int result = JOptionPane.showConfirmDialog(emptyBoxPanel, addItemPanel, "Add Item", JOptionPane.OK_CANCEL_OPTION);
-            if (result == JOptionPane.OK_OPTION) {
-                try {
-                    int itemId = Integer.parseInt(itemIdField.getText());
-                    String name = nameField.getText();
-                    int amount = Integer.parseInt(amountField.getText());
-                    String manufacturer = manufacturerField.getText();
-                    double price = Double.parseDouble(priceField.getText());
-                    handleErrorOrOk(sf.itemService.addItem(categoryId, itemId, name, amount, manufacturer, price));
+            addButton(emptyBoxPanel, "Ok", () -> handleErrorOrOk(
+                    sf.itemService.addItem(
+                            categoryId,Integer.parseInt(itemIdField.getText()),
+                            nameField.getText(),Integer.parseInt(amountField.getText()),
+                            manufacturerField.getText(),Double.parseDouble(priceField.getText())
+                    )));
 
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(null, "Invalid input format", "Error", JOptionPane.ERROR_MESSAGE);
-                } catch (Exception ex) {
-                    messageField.setText(ex.getMessage());
-                }
-            }
-            emptyBoxPanel.removeAll();
+            addButton(emptyBoxPanel, "Cancel", () -> {
+                emptyBoxPanel.removeAll(); // Remove all components from the panel
+                emptyBoxPanel.revalidate(); // Revalidate the panel
+                emptyBoxPanel.repaint(); // Repaint the panel
+            });
+            emptyBoxPanel.add(new JLabel());
+            emptyBoxPanel.add(new JLabel());
+            emptyBoxPanel.add(new JLabel());
+            emptyBoxPanel.add(new JLabel());
+
             emptyBoxPanel.revalidate();
             emptyBoxPanel.repaint();
+            emptyBoxPanel.setVisible(true);
+
+
         }
     }
 
+
     public void receiveOrder() {
-        JTextField orderIdField = new JTextField(10);
-        JTextField itemIdField = new JTextField(10);
-        JTextField amountField = new JTextField(10);
-        JTextField locationField = new JTextField(10);
-        JTextField validityField = new JTextField(10);
-        JTextField costPriceField = new JTextField(10);
+        emptyBoxPanel.removeAll();
+        try {
+            JTextField orderIdField = new JTextField();
+            JTextField itemIdField = new JTextField();
+            JTextField amountField = new JTextField();
+            JTextField locationField = new JTextField();
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(6, 2));
-        panel.add(new JLabel("Order ID:"));
-        panel.add(orderIdField);
-        panel.add(new JLabel("Item ID:"));
-        panel.add(itemIdField);
-        panel.add(new JLabel("Amount Received:"));
-        panel.add(amountField);
-        panel.add(new JLabel("Location in Store:"));
-        panel.add(locationField);
-        panel.add(new JLabel("Validity Date:"));
-        panel.add(validityField);
-        panel.add(new JLabel("Cost Price:"));
-        panel.add(costPriceField);
 
-        int result = JOptionPane.showConfirmDialog(null, panel, "Receive Order", JOptionPane.OK_CANCEL_OPTION);
-        if (result == JOptionPane.OK_OPTION) {
-            try {
-                int orderId = Integer.parseInt(orderIdField.getText());
-                int itemId = Integer.parseInt(itemIdField.getText());
-                int amount = Integer.parseInt(amountField.getText());
-                String location = locationField.getText();
-                String validity = validityField.getText();
-                double costPrice = Double.parseDouble(costPriceField.getText());
+            JTextField costPriceField = new JTextField();
 
-                handleErrorOrOk(sf.itemService.receive_order(orderId, itemId, amount, location, Util.stringToDate(validity), costPrice));
-                //JOptionPane.showMessageDialog(null, message, "Receive Order", JOptionPane.INFORMATION_MESSAGE);
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(null, "Invalid input format", "Error", JOptionPane.ERROR_MESSAGE);
-            } catch (Exception ex) {
-                messageField.setText(ex.getMessage());
-            }
+            emptyBoxPanel.add(new JLabel("Order ID:"),0);
+            emptyBoxPanel.add(orderIdField,1);
+            emptyBoxPanel.add(new JLabel("Item ID:"),2);
+            emptyBoxPanel.add(itemIdField,3);
+            emptyBoxPanel.add(new JLabel("Amount Received:"),4);
+            emptyBoxPanel.add(amountField,5);
+            emptyBoxPanel.add(new JLabel("Location in Store:"),6);
+            emptyBoxPanel.add(locationField,7);
+            emptyBoxPanel.add(new JLabel("Validity Date:"),8);
+            JDatePicker validityField = addDate(emptyBoxPanel, 9);
+            UtilDateModel model = (UtilDateModel) validityField.getModel();
+            emptyBoxPanel.add(new JLabel("Cost Price:"),10);
+            emptyBoxPanel.add(costPriceField,11);
+
+            addButton(emptyBoxPanel, "Ok", () -> handleErrorOrOk(
+                    sf.itemService.receive_order(
+                            Integer.parseInt(orderIdField.getText()),
+                            Integer.parseInt(itemIdField.getText()),
+                            Integer.parseInt(amountField.getText()),
+                            locationField.getText(),
+                            Util.stringToDate(Util.DateToString(model.getValue().toInstant().atZone(ZoneId.systemDefault()).toLocalDate())),
+                            Double.parseDouble(costPriceField.getText())
+                            )));
+            addButton(emptyBoxPanel, "Cancel", () -> {
+                emptyBoxPanel.removeAll(); // Remove all components from the panel
+                emptyBoxPanel.revalidate(); // Revalidate the panel
+                emptyBoxPanel.repaint(); // Repaint the panel
+            });
+            emptyBoxPanel.add(new JLabel());
+            emptyBoxPanel.add(new JLabel());
+            emptyBoxPanel.add(new JLabel());
+            emptyBoxPanel.add(new JLabel());
+
+            emptyBoxPanel.revalidate();
+            emptyBoxPanel.repaint();
+            emptyBoxPanel.setVisible(true);
         }
+            catch(NumberFormatException ex){
+        updateError("Invalid input format");
+        }
+
     }
 
     private void addCategory() {
+        emptyBoxPanel.removeAll();
         String index = presentCategories();
-        JTextField nameField = new JTextField(10);
+        try {
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(2, 2));
-        panel.add(new JLabel("Index ID:"));
-        panel.add(new JLabel(index));
-        panel.add(new JLabel("Category Name:"));
-        panel.add(nameField);
+            if (!index.equals("exit")) {
+                JTextField nameField = new JTextField();
 
-        int result = JOptionPane.showConfirmDialog(null, panel, "Add Category", JOptionPane.OK_CANCEL_OPTION);
-        if (result == JOptionPane.OK_OPTION) {
-            try {
-                String name = nameField.getText();
-                handleErrorOrOk(sf.categoryService.add_category(index, name));
-                //JOptionPane.showMessageDialog(null, message, "Add Category", JOptionPane.INFORMATION_MESSAGE);
-            } catch (Exception ex) {
-                messageField.setText(ex.getMessage());
+                emptyBoxPanel.add(new JLabel("Category Name:"), 0);
+                emptyBoxPanel.add(nameField, 1);
+                addButton(emptyBoxPanel,"OK",()->handleErrorOrOk(sf.categoryService.add_category(index,nameField.getText())));
+                addButton(emptyBoxPanel,"Cancel",()-> {
+                    emptyBoxPanel.removeAll(); // Remove all components from the panel
+                    emptyBoxPanel.revalidate(); // Revalidate the panel
+                    emptyBoxPanel.repaint();
+                });
+                emptyBoxPanel.add(new JLabel());
+                emptyBoxPanel.add(new JLabel());
+                emptyBoxPanel.add(new JLabel());
+                emptyBoxPanel.add(new JLabel());
+                emptyBoxPanel.add(new JLabel());
+                emptyBoxPanel.add(new JLabel());
+                emptyBoxPanel.add(new JLabel());
+                emptyBoxPanel.add(new JLabel());
+
+
+                emptyBoxPanel.revalidate();
+                emptyBoxPanel.repaint();
+                emptyBoxPanel.setVisible(true);
+
             }
         }
+
+        catch (Exception ex) {
+                    updateError("invalid input");
+                }
+
+
     }
 
     private void placeWaitingItems() {
