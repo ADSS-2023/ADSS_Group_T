@@ -1,17 +1,30 @@
 package PresentationLayer.GUI.Components;
+
+import BusinessLayer.Stock.Util.Util;
+import BusinessLayer.Supplier_Stock.Employee;
+import PresentationLayer.Stock.StockUI;
+import PresentationLayer.Supplier.SupplierManager;
 import ServiceLayer.Supplier_Stock.Response;
 import ServiceLayer.Supplier_Stock.ServiceFactory;
+
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.EtchedBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.time.DayOfWeek;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 
 public class ManagerFrame extends JFrame {
     private ServiceFactory sf;
+    private JPanel contentPanel;
     private JPanel emptyBoxPanel;
     private CardLayout cardLayout;
     private JLabel messageField;
+
 
     public ManagerFrame(ServiceFactory sf) {
         this.sf = sf;
@@ -21,6 +34,7 @@ public class ManagerFrame extends JFrame {
         setPreferredSize(new Dimension(800, 600));
         setLayout(new BorderLayout());
 
+        //TODO: split the error and the string value
         createToolbar();
         createEmptyBoxPanel();
         createErrorOkMessages();
@@ -49,7 +63,6 @@ public class ManagerFrame extends JFrame {
         messageField.setText(msg);
         messageField.setForeground(Color.RED);
     }
-
     public void updateOkMessage(String msg){
         messageField.setText(msg);
         messageField.setForeground(Color.GREEN);
@@ -75,11 +88,58 @@ public class ManagerFrame extends JFrame {
         addButtonToToolbar(toolbar, "Show All Orders", this::show_all_orders);
         addButtonToToolbar(toolbar, "Create Regular Order - TESTING ONLY", this::createRegularOrder);
         addButtonToToolbar(toolbar, "Show New Items", this::showNewItems);
+        addButtonToToolbar(toolbar,"add new employee",this::addNewEmployee);
 
         add(toolbar, BorderLayout.WEST);
     }
 
-    //TODO : change the colour that returns from the user in the service
+    private void addNewEmployee() {
+        Panel panel = new Panel();
+
+        panel.add(new JLabel("New employee id:"));
+        JTextField id = new JTextField(10);
+        panel.add(id);
+        String[] options = {"Manager", "Warehouse", "Suppliers"};
+
+        // Create the container to hold the options
+        JPanel optionsPanel = new JPanel();
+        ButtonGroup buttonGroup = new ButtonGroup();
+        for (String option : options) {
+            JRadioButton radioButton = new JRadioButton(option);
+            optionsPanel.add(radioButton);
+            buttonGroup.add(radioButton);
+        }
+        // Create the scroll pane and add the container
+        JScrollPane scrollPane = new JScrollPane(optionsPanel);
+        panel.add(scrollPane);
+        int result = JOptionPane.showOptionDialog(null, panel, "options", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
+        if (result == JOptionPane.OK_OPTION) {
+            ButtonModel selectedButtonModel = buttonGroup.getSelection();
+            if (selectedButtonModel != null) {
+                String selectedOption = selectedButtonModel.getActionCommand();
+                Employee.Occupation occupation;
+                switch (selectedOption) {
+                    case "Manager":
+                        occupation = Employee.Occupation.Manager;
+                        break;
+                    case "Warehouse":
+                        occupation = Employee.Occupation.WareHouse;
+                        break;
+                    case "Suppliers":
+                        occupation = Employee.Occupation.Suppliers;
+                        break;
+                }
+                Response res = sf.userService.register(id.getText(),occupation);
+                if(res.isError()) {
+                    ///TODO show error message
+                }
+            }
+            else {
+
+            }
+        }
+    }
+
     private void showNewItems(){
         try {
             Response newItemsData = sf.manageOrderService.show_new_items();
@@ -171,17 +231,11 @@ public class ManagerFrame extends JFrame {
         }
     }
 
+    //TODO : fix when click on final category
     public String presentCategories() {
         try {
             Response dataResponse = sf.inventoryService.show_data();
-            if (dataResponse.isError()) {
-                if(emptyCategory())
-                    //TODO : Check
-                    return "";
-                else{
-                    return "exit";
-                }
-            }
+            if (dataResponse.isError()) throw new Exception(dataResponse.getErrorMassage());
             String data = (String) dataResponse.getValue();
             String[] categories = data.split(", ");
             String[] options = new String[categories.length + 1];
@@ -222,49 +276,33 @@ public class ManagerFrame extends JFrame {
                     nextIndex += "." + (Integer.parseInt(options[choice].split(" : ")[0]) - 1);
                     try {
                         Response dataToShow = sf.categoryService.show_data(nextIndex);
-                        if (dataToShow.isError()) {
-                            if(emptyCategory())
-                                return nextIndex;
-                            else{
-                                return "exit";
-                            }
-                        }
-                        else {
-                            String toShow = (String) dataToShow.getValue();
-                            if (toShow.startsWith("--")) {
-                                isActive = false;
-                                if (!presentItem(toShow)) {
-                                    nextIndex = "exit";
-                                }
-                            }
-                            else {
-                                categories = toShow.split(", ");
-                                options = new String[categories.length + 1];
+                        if (dataResponse.isError()) throw new Exception(dataToShow.getErrorMassage());
+                        String toShow = (String) dataToShow.getValue();
+                        categories = toShow.split(", ");
+                        options = new String[categories.length + 1];
 
-                                for (int i = 0; i < categories.length; i++) {
-                                    String[] parts = categories[i].split(" : ");
-                                    String index = parts[0].trim();
-                                    String categoryName = parts[1].trim();
-                                    options[i] = index + " : " + categoryName;
-                                }
-                                options[categories.length] = "Choose Current Category";
-
-                                choice = JOptionPane.showOptionDialog(
-                                        null,
-                                        message,
-                                        "Choose Category",
-                                        JOptionPane.DEFAULT_OPTION,
-                                        JOptionPane.PLAIN_MESSAGE,
-                                        null,
-                                        options,
-                                        options[0]
-                                );
-                            }
+                        for (int i = 0; i < categories.length; i++) {
+                            String[] parts = categories[i].split(" : ");
+                            String index = parts[0].trim();
+                            String categoryName = parts[1].trim();
+                            options[i] = index + " : " + categoryName;
                         }
+
+                        options[categories.length] = "Choose Current Category";
+
+                        choice = JOptionPane.showOptionDialog(
+                                null,
+                                message,
+                                "Choose Category",
+                                JOptionPane.DEFAULT_OPTION,
+                                JOptionPane.PLAIN_MESSAGE,
+                                null,
+                                options,
+                                options[0]
+                        );
                     } catch (Exception e) {
-                        nextIndex = nextIndex + emptyCategory();
-                        return nextIndex;
-                        //updateError(e.getMessage()); // Update the messageField with the error message
+                        updateError(e.getMessage()); // Update the messageField with the error message
+                        return "exit";
                     }
                 }
             }
@@ -273,36 +311,6 @@ public class ManagerFrame extends JFrame {
             updateOkMessage(e.getMessage()); // Update the messageField with the error message
             return "exit";
         }
-    }
-
-    private boolean emptyCategory() {
-        String[] options = {"Choose this category","Cancel"};
-        int choice = JOptionPane.showOptionDialog(
-                null,
-                "This category is empty",
-                "Choose Category",
-                JOptionPane.DEFAULT_OPTION,
-                JOptionPane.PLAIN_MESSAGE,
-                null,
-                options,
-                options[0]
-        );
-        return choice == 0;
-    }
-
-    private boolean presentItem(String toShow) {
-        String[] options = {"Choose this category","Cancel"};
-        int choise =  JOptionPane.showOptionDialog(
-                null,
-                toShow,
-                "Choose Item",
-                JOptionPane.DEFAULT_OPTION,
-                JOptionPane.PLAIN_MESSAGE,
-                null,
-                options,
-                "cancel"
-        );
-        return choise == 0;
     }
 
     public void inventoryReport() {
@@ -423,55 +431,57 @@ public class ManagerFrame extends JFrame {
 
     private void show_all_orders() {
         try {
-            Response res = sf.manageOrderService.show_all_orders();
-            String allOrders = "";
-            if(res.isError())
-                throw new Exception(res.getErrorMassage());
-            else
-                allOrders = (String) res.getValue();
-//            if (allOrders.isEmpty()) {
-//                JOptionPane.showMessageDialog(null, "No orders available.", "All Orders", JOptionPane.INFORMATION_MESSAGE);
-//                return;
-//            }
-//
-//            String[] days = {"SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"};
-//            StringBuilder sb = new StringBuilder();
-//
-//            for (String day : days) {
-//                sb.append("---------").append(day).append("---------\n");
-//
-//                String regularOrders =(String) sf.manageOrderService.presentItemsById(DayOfWeek.valueOf(day)).getValue();
-//                if (regularOrders.isEmpty()) {
-//                    sb.append("Regular orders:\n");
-//                    sb.append("\tNo orders on this day\n");
-//                } else {
-//                    sb.append("Regular orders:\n");
-//                    sb.append(regularOrders);
-//                }
-//
-//                String specialOrders = ""; // Replace with the actual special orders implementation
-//                if (specialOrders.isEmpty()) {
-//                    sb.append("Special orders:\n");
-//                    sb.append("\tNo orders on this day\n");
-//                } else {
-//                    sb.append("Special orders:\n");
-//                    sb.append(specialOrders);
-//                }
-//
-//                sb.append("\n");
-//            }
+            Response allOrdersData = sf.manageOrderService.show_all_orders();
+            if (allOrdersData.isError()) throw new Exception(allOrdersData.getErrorMassage());
+            String allOrders = (String) allOrdersData.getValue();
 
-            JTextArea textArea = new JTextArea(allOrders);
+            if (allOrders.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "No orders available.", "All Orders", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+
+            String[] days = {"SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"};
+            StringBuilder sb = new StringBuilder();
+
+            for (String day : days) {
+                sb.append("---------").append(day).append("---------\n");
+
+                Response regularOrdersData = sf.manageOrderService.presentItemsById(DayOfWeek.valueOf(day));
+                if (regularOrdersData.isError()) throw new Exception(regularOrdersData.getErrorMassage());
+                String regularOrders = regularOrdersData.getErrorMassage();
+                if (regularOrders == null || regularOrders.isEmpty()) {
+                    sb.append("Regular orders:\n");
+                    sb.append("\tNo orders on this day\n");
+                } else {
+                    sb.append("Regular orders:\n");
+                    sb.append(regularOrders);
+                }
+
+                String specialOrders = ""; // Replace with the actual special orders implementation
+                if (specialOrders.isEmpty()) {
+                    sb.append("Special orders:\n");
+                    sb.append("\tNo orders on this day\n");
+                } else {
+                    sb.append("Special orders:\n");
+                    sb.append(specialOrders);
+                }
+
+                sb.append("\n");
+            }
+
+            JTextArea textArea = new JTextArea(sb.toString());
             JScrollPane scrollPane = new JScrollPane(textArea);
             scrollPane.setPreferredSize(new Dimension(400, 300));
             textArea.setEditable(false);
 
             JOptionPane.showMessageDialog(null, scrollPane, "All Orders", JOptionPane.PLAIN_MESSAGE);
+            updateOkMessage("Report exported");
         } catch (Exception e) {
-            messageField.setText(e.getMessage()); // Update the messageField with the error message
+            updateError(e.getMessage()); // Update the messageField with the error message
         }
     }
 
+    //just for testing
     private void createRegularOrder() {
         boolean isActive = true;
         HashMap<Integer, Integer> products = new HashMap<>();
@@ -498,7 +508,7 @@ public class ManagerFrame extends JFrame {
                     int choice = JOptionPane.showConfirmDialog(null, "Add more products?", "Create Regular Order", JOptionPane.YES_NO_OPTION);
                     isActive = choice == JOptionPane.YES_OPTION;
                 } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(null, "Invalid input format", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Invalid input format. Please enter numeric values for ID and amount.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             } else {
                 isActive = false;
@@ -506,10 +516,13 @@ public class ManagerFrame extends JFrame {
         }
 
         try {
-            handleErrorOrOk(sf.manageOrderService.createRegularOrder(products));
+            Response messageData = sf.manageOrderService.createRegularOrder(products);
+            if (messageData.isError()) throw new Exception(messageData.getErrorMassage());
+            String message = (String) messageData.getValue();
+            updateOkMessage(message);
             //JOptionPane.showMessageDialog(null, message, "Create Regular Order", JOptionPane.INFORMATION_MESSAGE);
-        } catch (Exception ex) {
-            messageField.setText(ex.getMessage());
+        } catch (Exception e) {
+            updateError(e.getMessage()); // Update the messageField with the error message
         }
     }
 }

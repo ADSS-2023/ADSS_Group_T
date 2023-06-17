@@ -15,7 +15,7 @@ public class Util_Supplier_Stock {
 
     public Util_Supplier_Stock(InventoryDalController inventoryDalController) throws SQLException {
         this.inventoryDalController = inventoryDalController;
-       // currDay = Util.stringToDate(inventoryDalController.find("currDate","name", "inventory_constants",CurrDateDTO.class).getDate());
+       //currDay = Util.stringToDate(inventoryDalController.find("currDate","name", "inventory_constants",CurrDateDTO.class).getDate());
     }
     public static LocalDate getCurrDay(){
         return currDay;

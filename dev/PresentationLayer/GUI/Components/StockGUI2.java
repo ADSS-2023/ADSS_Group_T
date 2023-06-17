@@ -72,7 +72,7 @@ public class StockGUI2 extends JFrame {
     }
 
     public static void main(String[] args) {
-        // Create an instance of the ServiceFactory and pass it to the StockGUI constructor
+        // Create an instance of the ServiceFactory and pass it to the GeneralFrame constructor
         ServiceFactory sf = new ServiceFactory();
         StockGUI2 stockGUI = new StockGUI2(sf);
     }

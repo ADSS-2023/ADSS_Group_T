@@ -31,10 +31,11 @@ public class OrderProductsFrame extends JFrame {
         buttonPanel.setLayout(new GridLayout(4, 1)); // Adjust the number of rows as needed
         add(buttonPanel,BorderLayout.SOUTH);
         // Create the buttons and add them to the button panel
-        createOrderButton(buttonPanel);
+        backButton(buttonPanel);
 
 
-        Response res= sf.orderService.getProductsByOrder(orderId);
+
+
         String[] columnNames = {"Product Name", "Product Number", "Quantity","Initial Price","Discount","Final Price"};
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
 
@@ -85,12 +86,12 @@ public class OrderProductsFrame extends JFrame {
         }
     }
 
-    private void createOrderButton(JPanel buttonPanel) {
+    private void backButton(JPanel buttonPanel) {
         JButton backButton = new JButton("Back");
         backButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 dispose();
-                run(new OrdersFrame(sf,supplierManager));
+                run(new OrdersFrame(sf));
             }
         });
         buttonPanel.add(backButton);
@@ -98,7 +99,10 @@ public class OrderProductsFrame extends JFrame {
     private List<String> getOrdersFromBusinessLayer(int orderId) {
         Response res=sf.orderService.getProductsByOrder(orderId);
         if(res.isError()){
-            return null;
+                JOptionPane.showMessageDialog(this, res.getErrorMassage(), "Error", JOptionPane.INFORMATION_MESSAGE);
+                dispose();
+                run(new OrdersFrame(sf));
+                return null;
         }
         else{
             return (List<String>)res.getValue();

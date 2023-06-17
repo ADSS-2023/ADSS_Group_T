@@ -1,0 +1,56 @@
+עידו נגלר-318266939 לירן עזרן-315018937 יגיל בריל-209382902 עומר גוז-209438718
+מצורף קובץ DB_state.pdf בתיקיית docs->הגשה15-5-2023->משותף->'DB_state.pdf'
+אשר מתאר כנדרש את מצב המערכת לאחר אתחול עם מידע קיים
+1 :
+1.Load data – טעינת המידע הנתון מהדאטהבייס , במידה ונרצה לטעון מידע , יש לבצע "3" , לאחר מכן יש לסגור את המערכת , וללחוץ מחדש על "1".
+2.Empty system – מחיקת המידע מהדאטהבייס
+3. SetUp data system – מזין מידע למערכת כולל לדאטהבייס
+
+2 :
+1.Enter suppliers system – כניסה למערכת הספקים
+2.Enter Inventory system – כניסה למערכת המלאי
+3.Skip day – עדכון המערכת כי נגמר היום.
+4.Exit – יציאה מהמערכת.
+
+2.1 :
+1.Add supplier. – הוספת ספק חדש
+2.Delete supplier. – מחיקת ספק
+3.Edit supplier details. – עריכת פרטי ספק
+4.Add product to supplier. – הוספת מוצר לספק
+5.Delete product of supplier. – מחיקת מוצר מספק
+6.Edit product of supplier. – עריכת מוצר של ספק
+7.Add discount to product. – הוספת הנחה למוצר
+8.Delete discount of product. – מחיקת הנחה ממוצר
+9.Edit discount of product. – עריכת הנחה של מוצר
+10.Add supplier's general discounts. – הוספת הנחות קבועות לספק
+11.Delete supplier's general discounts. – מחיקת הנחות קבועות לספק
+12.Edit supplier's general discounts. – עריכת הנחות קבועות לספק
+13.Show all orders. – צפייה בכל ההזמנות
+14.Show all suppliers. – צפייה בכל הספקים
+15.Show all products supplied by a certain Supplier. – צפייה בכל המוצרים של ספק מסוים
+16.Show all discounts of a certain product's supplier. – צפייה בכל ההנחות של מוצר של ספק מסוים
+17.Show all general discounts of a certain supplier. – צפייה בכל ההנחות הקבועות של ספק מסוים
+18.Go back to main menu. – חזרה לתפריט הראשי
+
+2.2 :
+1.See categories – צפייה בקטגוריות ובמוצרים
+2.Produce inventory report – הפקת דוח מלאי
+3.Set discount – קביעת הנחה
+4.Report damaged item – דיווח על מוצר פגום
+5.Set minimal amount for a specific item – קביעת כמות מינ' של מוצר מסוים
+6.Produce damaged items report – יצירת דוח מוצרים פגומים
+7.Add new item – הוספת מוצר חדש למערכת
+8.Receive a new order (receive new supply of exists item) – קבלת הזמנה שהגיעה
+9.Produce shortage report – הפקת דוח חוסרים
+10.Add new category – הוספת קטגוריה חדשה
+11.Move item to store – הכנסת מוצר לחנות ועדכון מיקום
+12.Orders menu – תפריט ההזמנות
+13.Back to start menu – חזרה לתפריט הראשי
+
+2.12 : תפריט ההזמנות
+1.Edit regular order – עריכת הזמנה קבועה
+2.Create regular order – יצירת הזמנה קבועה
+3.Create special order – יצירת הזמנה דחופה
+4.Place waiting items – מיקום מוצרים המחכים לאחר קבלת הזמנה
+5.Show all orders for the next week – צפייה בכל ההזמנות לשבוע הקרוב
+6.Go back to inventory menu – חזרה לתפריט המלאי

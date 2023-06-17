@@ -16,7 +16,7 @@ import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.util.List;
 
-//import static PresentationLayer.GUI.Components.StockGUI.run;
+//import static PresentationLayer.GUI.Components.GeneralFrame.run;
 
 public class SupplierFrame extends JFrame {
     private ServiceFactory sf;
@@ -64,29 +64,11 @@ public class SupplierFrame extends JFrame {
 
 
 
-        createHeader();
+
         createProductsTable();
         createDiscountsTable();
         createButtons();
         setVisible(true);
-    }
-
-    private void createHeader() {
-        JPanel headerPanel = new JPanel();
-        headerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        headerPanel.setLayout(new BorderLayout());
-
-        JLabel titleLabel = new JLabel("Supplier Details");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        headerPanel.add(titleLabel, BorderLayout.NORTH);
-
-        JLabel supplierLabel = new JLabel("Supplier Number: " + supplierNumber);
-        supplierLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        supplierLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        headerPanel.add(supplierLabel, BorderLayout.CENTER);
-
-        add(headerPanel, BorderLayout.NORTH);
     }
 
     private void showSupplierProducts() {
@@ -131,6 +113,15 @@ public class SupplierFrame extends JFrame {
         productsTableModel = new DefaultTableModel();
         productsTable = new JTable(productsTableModel);
 
+        Response response = sf.supplierService.getProducts(supplierNumber);
+        if (response.isError()) {
+            JOptionPane.showMessageDialog(this, response.getErrorMassage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } else {
+            List<String> products = (List<String>) response.getValue();
+            if(products.size()!=0)
+                displayProducts(products);
+        }
+
 
 
         productsTable.getSelectionModel().addListSelectionListener(e -> {
@@ -139,7 +130,12 @@ public class SupplierFrame extends JFrame {
                 if (selectedRow != -1) {
                     Object selectedSupplierNumber = productsTable.getValueAt(selectedRow, 1);
                     SupplierFrame.this.dispose();
-                    SupplierProductFrame supplierFrame = new SupplierProductFrame(sf, supplierNumber, (Integer.parseInt(selectedSupplierNumber.toString())), supplierName);
+                    SupplierProductFrame supplierFrame = new SupplierProductFrame(sf, supplierNumber, supplierName,
+                            (Integer.parseInt(selectedSupplierNumber.toString())),(String)productsTable.getValueAt(selectedRow,0),
+                            (String) productsTable.getValueAt(selectedRow,2),
+                              Float.parseFloat((String) productsTable.getValueAt(selectedRow,3)),
+                            Integer.parseInt((String) productsTable.getValueAt(selectedRow,4)),
+                            (String) productsTable.getValueAt(selectedRow,5));
                     supplierFrame.setVisible(true);
                 }
             }
@@ -164,6 +160,17 @@ public class SupplierFrame extends JFrame {
     private void createDiscountsTable() {
         discountsTableModel = new DefaultTableModel();
         discountsTable = new JTable(discountsTableModel);
+
+        Response response = sf.supplierService.getSupplierDiscounts(supplierNumber);
+        if (response.isError()) {
+            JOptionPane.showMessageDialog(this, response.getErrorMassage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } else {
+            List<String> discounts = (List<String>) response.getValue();
+            if(discounts.size()!=0)
+                displayDiscounts(discounts);
+        }
+
+
         JScrollPane discountsScrollPane = new JScrollPane(discountsTable);
         JPanel discountsPanel = new JPanel();
         discountsPanel.setLayout(new BorderLayout());
@@ -258,9 +265,8 @@ public class SupplierFrame extends JFrame {
     private void back(){
         SupplierFrame.this.dispose();
 
-//        AllSupplierFrame allSupplierFrame = new AllSupplierFrame(, sf);
-//        allSupplierFrame.setVisible(true);
-        //JOptionPane.showMessageDialog(this, response.getValue(), "Delete Supplier", JOptionPane.INFORMATION_MESSAGE);
+        AllSupplierFrame allSupplierFrame = new AllSupplierFrame( sf);
+        allSupplierFrame.setVisible(true);
     }
 
     private void displayProducts(List<String> products) {
@@ -269,7 +275,6 @@ public class SupplierFrame extends JFrame {
 
         if (products.isEmpty()) {
             JOptionPane.showMessageDialog(this, "No products found.", "Information", JOptionPane.INFORMATION_MESSAGE);
-            return;
         }
 
         // Add column headers
@@ -520,7 +525,6 @@ public class SupplierFrame extends JFrame {
 
         if (discounts.isEmpty()) {
             JOptionPane.showMessageDialog(this, "No discounts found.", "Information", JOptionPane.INFORMATION_MESSAGE);
-            return;
         }
 
         // Add column headers
@@ -576,7 +580,7 @@ public class SupplierFrame extends JFrame {
             if (response.isError()) {
                 JOptionPane.showMessageDialog(this, response.getErrorMassage(), "Error", JOptionPane.ERROR_MESSAGE);
             } else {
-                JOptionPane.showMessageDialog(this, response.getValue(), "Success", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Success", "Success", JOptionPane.INFORMATION_MESSAGE);
             }
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "Invalid price or max amount.", "Error", JOptionPane.ERROR_MESSAGE);
