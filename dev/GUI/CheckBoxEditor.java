@@ -9,11 +9,13 @@ class CheckBoxEditor extends DefaultCellEditor {
     public CheckBoxEditor(JCheckBox checkBox) {
         super(checkBox);
         this.checkBox = checkBox;
-        setClickCountToStart(1);
     }
 
-    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        checkBox.setSelected(value != null && (boolean) value);
+    public Component getTableCellEditorComponent(
+            JTable table, Object value, boolean isSelected, int row, int column) {
+        if (value instanceof Boolean) {
+            checkBox.setSelected((Boolean) value);
+        }
         return checkBox;
     }
 }

@@ -3,6 +3,8 @@ package GUI;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ButtonRenderer extends DefaultTableCellRenderer {
     private JButton button;
@@ -21,6 +23,15 @@ public class ButtonRenderer extends DefaultTableCellRenderer {
             button.setBackground(UIManager.getColor("Button.background"));
         }
 
+        if (value instanceof List) {
+            List<String> employeeIds = (List<String>) value;
+            button.setText(employeeIds.isEmpty() ? "Assign" : "Assigned");
+        } else if (value instanceof Boolean) {
+            boolean isAssigned = (Boolean) value;
+            button.setText(isAssigned ? "Assigned" : "Assign");
+        }
+
         return button;
     }
+
 }

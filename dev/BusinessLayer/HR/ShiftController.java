@@ -8,10 +8,7 @@ import ServiceLayer.Transport.BranchService;
 import UtilSuper.Time;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 public class ShiftController {
 
@@ -23,6 +20,7 @@ public class ShiftController {
     private DalShiftService dalShiftService;
     private DalEmployeeService dalEmployeeService;
     private HashMap<LocalDate, String> notifications;
+    private HashMap<LocalDate, Map<String, Object>> notificationsUI;
 
 
 
@@ -52,6 +50,7 @@ public class ShiftController {
 
         // Output the notification string
         notifications.put(date, notificationString);
+        notificationsUI.put(date, buildNotificationUI(date, shiftsByDateInAllBranch));
         dalShiftService.addNotification(date, notificationString);
     }
 
@@ -121,10 +120,81 @@ public class ShiftController {
     }
 
 
+    public Map<String, Object> buildNotificationUI(LocalDate date, LinkedHashMap<String, HashMap<LocalDate, ArrayList<Shift>>> shiftsByDateInAllBranch) throws SQLException {
+        Map<String, Object> notificationData = new LinkedHashMap<>();
+
+        try {
+            List<Map<String, Object>> branchesData = new ArrayList<>();
+
+            for (String branch : shiftsByDateInAllBranch.keySet()) {
+                Map<String, Object> branchData = new LinkedHashMap<>();
+                List<Map<String, Object>> shiftsData = new ArrayList<>();
+
+                try {
+                    branchData.put("branch", branch);
+
+                    ArrayList<Shift> shiftsForDateInBranch = shiftsByDateInAllBranch.get(branch).get(date);
+
+                    if (shiftsForDateInBranch != null) {
+                        for (Shift shift : shiftsForDateInBranch) {
+                            Map<String, Object> shiftData = new LinkedHashMap<>();
+
+                            if (shift.getShiftManagerId() == -1) {
+                                shiftData.put("managerId", "Not assigned");
+                            } else {
+                                shiftData.put("managerId", shift.getShiftManagerId());
+                            }
+
+                            int isLegal = shift.isLegalShift();
+                            shiftData.put("legalStatus", getLegalStatus(isLegal));
+
+                            shiftData.put("date", shift.getDate());
+                            shiftData.put("shiftType", shift.getShiftType());
+                            shiftData.put("employeeRequirements", shift.getEmployeeRequirements());
+
+                            shiftsData.add(shiftData);
+                        }
+                        //notification for driver requirements
+                        String driverRequirements = driverController.getRequirementsByDate(date);
+                        branchData.put("driverRequirements", driverRequirements);
+                    }
+                } catch (Exception ex) {
+                    continue;
+                }
+
+                branchData.put("shifts", shiftsData);
+                branchesData.add(branchData);
+            }
+
+            notificationData.put("branches", branchesData);
+        } catch (Exception exp) {
+            //exp.printStackTrace();
+        }
+
+        return notificationData;
+    }
+
+    private String getLegalStatus(int isLegal) {
+        if (isLegal == 1) {
+            return "Legal";
+        } else if (isLegal == 0) {
+            return "Illegal";
+        } else {
+            return "No specific requirements";
+        }
+    }
+
+
     public HashMap<LocalDate, String> getNotifications(LocalDate fromDate, LocalDate toDate) throws SQLException {
         this.notifications = dalShiftService.getNotifications(fromDate.toString(), toDate.toString());
         return notifications;
     }
+
+    public Map<String, Object> getNotificationsUI (LocalDate date) throws SQLException {
+        return this.notificationsUI.get(date);
+    }
+
+
 
     public LinkedHashMap<LocalDate, ArrayList<Shift>> lazyLoadFindShifsByBranch(String branch) throws SQLException {
         LinkedHashMap<LocalDate, ArrayList<Shift>> branchShifts = dalShiftService.findAllShiftsByBranch(branch);
