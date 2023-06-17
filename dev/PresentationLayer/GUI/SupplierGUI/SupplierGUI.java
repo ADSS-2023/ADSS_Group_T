@@ -15,8 +15,8 @@ public class SupplierGUI {
         ServiceFactory sf = new ServiceFactory();
         StockUI stockUI = new StockUI(sf);
         SupplierManager supplierManager = new SupplierManager(sf);
-        stockUI.setPreviousCallBack(() -> run(new StockFrame(stockUI , supplierManager , sf)));
-        supplierManager.setPreviousCallBack(() -> run(new StockFrame(stockUI , supplierManager , sf)));
+//        stockUI.setPreviousCallBack(() -> run(new StockFrame(stockUI , supplierManager , sf)));
+//        supplierManager.setPreviousCallBack(() -> run(new StockFrame(stockUI , supplierManager , sf)));
 
         String[] options = {"Load data", "Empty system", "Set data to the system"};
         int action = JOptionPane.showOptionDialog(null, "Welcome to Superly inventory and supplier system", "Superly",
@@ -50,7 +50,7 @@ public class SupplierGUI {
             run(new ManagerFrame(sf));
         } else if (frameChoice == 1) {
             // Open StockFrame
-            run(new StockFrame(stockUI , supplierManager , sf));
+            run(new StockFrame(sf));
         }
         else if(frameChoice == 2){
             run(new AllSupplierFrame(supplierManager , sf));
