@@ -40,6 +40,9 @@ public class HRManagerFrame  extends GenericFrameUser {
         GenericButton addnewEmployeeButton = new GenericButton("add new employee");
         leftPanel.add((addnewEmployeeButton));
 
+        GenericButton editEmployeeButton = new GenericButton("edit employee details");
+        leftPanel.add((editEmployeeButton));
+
         GenericButton notificationButton = new GenericButton("notification");
         leftPanel.add((notificationButton));
 
@@ -57,6 +60,70 @@ public class HRManagerFrame  extends GenericFrameUser {
 
         GenericButton assignDriverButton = new GenericButton("manage assign driver for shift ");
         leftPanel.add((assignDriverButton));
+
+        //         editEmployeeButton.addActionListener(e->{
+//
+//            System.out.println("Button add new employee clicked");
+//            rightPanel.removeAll();
+//            GenericTextField idField = new GenericTextField();
+//            GenericTextField nameField = new GenericTextField();
+//            GenericTextField bankField = new GenericTextField();
+//            GenericTextField descriptionField = new GenericTextField();
+//            GenericTextField joiningField = new GenericTextField();
+//            GenericTextField passwordField = new GenericTextField();
+//            GenericTextField salaryField = new GenericTextField();
+//
+//            GenericButton done1Button = new GenericButton("Done");
+//            GenericButton done2Button = new GenericButton("Done");
+//
+//            done2Button.addActionListener(e1 ->{
+//                setErrorText("");
+//                setFeedbackText("");
+//                int id = Integer.parseInt(idField.getText());
+//                String name = nameField.getText();
+//                String bank = bankField.getText();
+//                String description = descriptionField.getText();
+//                String joining = joiningField.getText();
+//                int salary = Integer.parseInt(salaryField.getText());
+//                String password = passwordField.getText();
+//
+//                if (bank == null || name == null || description == null || joining == null || password == null ) {
+//                    setErrorText("Please fill all fields");
+//                }
+//                else if ( id<0 || salary <0 ) {
+//                    setErrorText("id and salary must be a number over 0 !!! ");
+//                }
+//                else {
+//                    Response response1 = ResponseSerializer.deserializeFromJson(employeeService.addNewEmployee(id,name,bank,description,salary, joining ,password));
+//                    if (response1.isError()) {
+//                        setErrorText(response1.getErrorMessage());
+//                    } else {
+//                        setFeedbackText("Delivery ordered successfully");
+//                    }
+//                }
+//            });
+//            rightPanel.add(new GenericLabel(""));
+//            rightPanel.add(new GenericLabel(""));
+//            rightPanel.add(new GenericLabel("Please enter the employee ID:"));
+//            rightPanel.add(idField);
+//            rightPanel.add(new GenericLabel("Please enter the employee name:"));
+//            rightPanel.add(nameField);
+//            rightPanel.add(new GenericLabel("Please enter the employee bank account:"));
+//            rightPanel.add(bankField);
+//            rightPanel.add(new GenericLabel("Please enter the employee description:"));
+//            rightPanel.add(descriptionField);
+//            rightPanel.add(new GenericLabel("Please enter the employee joining day:"));
+//            rightPanel.add(joiningField);
+//            rightPanel.add(new GenericLabel("Please enter the employee password:"));
+//            rightPanel.add(passwordField);
+//            rightPanel.add(new GenericLabel("Please enter the employee salary:"));
+//            rightPanel.add(salaryField);
+//            rightPanel.add(new GenericLabel(""));
+//            rightPanel.add(new GenericLabel(""));
+//            rightPanel.add(done1Button);
+//            rightPanel.revalidate();
+//            rightPanel.repaint();
+//        });
 
 
 
@@ -246,8 +313,7 @@ public class HRManagerFrame  extends GenericFrameUser {
 
 
 
-
-        showShiftStatusButton.addActionListener(e -> {
+            showShiftStatusButton.addActionListener(e -> {
             List<String> selectedEmployeeIds = new ArrayList<>();
             System.out.println("Button show shift status clicked");
             final GenericDatePicker dateField = GenericDatePicker.getNewGenericDatePicker();
@@ -540,12 +606,7 @@ public class HRManagerFrame  extends GenericFrameUser {
             doneButton.addActionListener(e1 ->{
                 setErrorText("");
                 setFeedbackText("");
-
-
-
                 String datef = datePicker.getDate();
-
-
                 String shiftType = shiftTypesComboBox.getSelectedItem().toString();
                 String branch = branchComboBox.getSelectedItem().toString();
                 ArrayList<Integer> nums = new ArrayList<>();
