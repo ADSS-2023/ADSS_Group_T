@@ -1,5 +1,6 @@
 package PresentationLayer.Supplier;
 
+import BusinessLayer.Supplier_Stock.Employee;
 import BusinessLayer.Supplier_Stock.ItemToOrder;
 import BusinessLayer.Supplier_Stock.Util_Supplier_Stock;
 import PresentationLayer.Supplier_Stock.PreviousCallBack;
@@ -23,6 +24,9 @@ public class SupplierManager {
     }
 
     public void setUpData() {
+        serviceFactory.userService.register("1", Employee.Occupation.Manager);
+        serviceFactory.userService.register("2", Employee.Occupation.WareHouse);
+        serviceFactory.userService.register("3", Employee.Occupation.Suppliers);
         HashMap<String, String> contactsSupplier1 = new HashMap<>();
         contactsSupplier1.put("yossi", "052284621");
         serviceFactory.supplierService.addSupplier("Sapak1", "Shoham 43, Tel Aviv",

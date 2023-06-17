@@ -1,6 +1,10 @@
 package BusinessLayer.Supplier_Stock;
 
+import DataLayer.Inventory_Supplier_Dal.DTO.UserDTO;
+import DataLayer.Inventory_Supplier_Dal.DalController.UserDalController;
+
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -41,6 +45,7 @@ public class UserController {
 
     public void register(String id, Employee.Occupation occupation) throws SQLException {
             Employee employee = new Employee(id,occupation, userDalController);
+            users.add(employee);
     }
     public boolean isWareHouseEmployee(){
         return currentUser.isWareHouseEmployee();

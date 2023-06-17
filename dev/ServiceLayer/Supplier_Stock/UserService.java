@@ -31,7 +31,7 @@ public class UserService {
         }
     }
 
-    public Response register(String id, Employee.Occupation occupation) throws SQLException {
+    public Response register(String id, Employee.Occupation occupation) {
         try {
             uc.register(id, occupation);
             return Response.okResponse("user signed up successfully.");

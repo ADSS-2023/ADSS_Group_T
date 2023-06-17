@@ -13,8 +13,10 @@ import javax.swing.border.EtchedBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.time.DayOfWeek;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -94,52 +96,90 @@ public class ManagerFrame extends JFrame {
     }
 
     private void addNewEmployee() {
-        Panel panel = new Panel();
+        try {
+            Panel panel = new Panel();
 
-        panel.add(new JLabel("New employee id:"));
-        JTextField id = new JTextField(10);
-        panel.add(id);
-        String[] options = {"Manager", "Warehouse", "Suppliers"};
+            panel.add(new JLabel("New employee id:"));
+            JTextField id = new JTextField(10);
+            panel.add(id);
+            String[] options = {"Manager", "Warehouse", "Suppliers"};
 
-        // Create the container to hold the options
-        JPanel optionsPanel = new JPanel();
-        ButtonGroup buttonGroup = new ButtonGroup();
-        for (String option : options) {
-            JRadioButton radioButton = new JRadioButton(option);
-            optionsPanel.add(radioButton);
-            buttonGroup.add(radioButton);
+            // Create the container to hold the options
+            JPanel optionsPanel = new JPanel();
+            ButtonGroup buttonGroup = new ButtonGroup();
+            for (String option : options) {
+                JRadioButton radioButton = new JRadioButton(option);
+                optionsPanel.add(radioButton);
+                buttonGroup.add(radioButton);
+            }
+            // Create the scroll pane and add the container
+            JScrollPane scrollPane = new JScrollPane(optionsPanel);
+            panel.add(scrollPane);
+
+            int result = JOptionPane.showOptionDialog(null, panel, "options", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
+            if (result == JOptionPane.OK_OPTION) {
+                Enumeration<AbstractButton> buttons = buttonGroup.getElements();
+                String selectedOption = null;
+                while (buttons.hasMoreElements()) {
+                    AbstractButton button = buttons.nextElement();
+                    if (button.isSelected()) {
+                        selectedOption = button.getText();
+                        break;
+                    }
+                }
+                if (selectedOption != null) {
+                    Employee.Occupation occupation = null;
+                    switch (selectedOption) {
+                        case "Manager":
+                            occupation = Employee.Occupation.Manager;
+                            break;
+                        case "Warehouse":
+                            occupation = Employee.Occupation.WareHouse;
+                            break;
+                        case "Suppliers":
+                            occupation = Employee.Occupation.Suppliers;
+                            break;
+                    }
+                    handleErrorOrOk(sf.userService.register(id.getText(), occupation));
+
+                } else {
+                    // No option selected
+                }
+            }
+
+
+
+
+//            int result = JOptionPane.showOptionDialog(null, panel, "options", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
+//            if (result == JOptionPane.OK_OPTION) {
+//                ButtonModel selectedButtonModel = buttonGroup.getSelection();
+//                if (selectedButtonModel != null) {
+//                    String selectedOption = selectedButtonModel.getActionCommand();
+//                    Employee.Occupation occupation = null;
+//                    switch (selectedOption) {
+//                        case "Manager":
+//                            occupation = Employee.Occupation.Manager;
+//                            break;
+//                        case "Warehouse":
+//                            occupation = Employee.Occupation.WareHouse;
+//                            break;
+//                        case "Suppliers":
+//                            occupation = Employee.Occupation.Suppliers;
+//                            break;
+//                    }
+//                    Response res = sf.userService.register(id.getText(), occupation);
+//                    if (res.isError()) {
+//                        ///TODO show error message
+//                    }
+//                } else {
+//
+//                }
+//            }
         }
-        // Create the scroll pane and add the container
-        JScrollPane scrollPane = new JScrollPane(optionsPanel);
-        panel.add(scrollPane);
-        int result = JOptionPane.showOptionDialog(null, panel, "options", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
-        if (result == JOptionPane.OK_OPTION) {
-            ButtonModel selectedButtonModel = buttonGroup.getSelection();
-            if (selectedButtonModel != null) {
-                String selectedOption = selectedButtonModel.getActionCommand();
-                Employee.Occupation occupation;
-                switch (selectedOption) {
-                    case "Manager":
-                        occupation = Employee.Occupation.Manager;
-                        break;
-                    case "Warehouse":
-                        occupation = Employee.Occupation.WareHouse;
-                        break;
-                    case "Suppliers":
-                        occupation = Employee.Occupation.Suppliers;
-                        break;
-                }
-                Response res = sf.userService.register(id.getText(),occupation);
-                if(res.isError()) {
-                    ///TODO show error message
-                }
-            }
-            else {
-
-            }
+        catch (Exception e){
+            updateError(e.getMessage());
         }
     }
-
     private void showNewItems(){
         try {
             Response newItemsData = sf.manageOrderService.show_new_items();

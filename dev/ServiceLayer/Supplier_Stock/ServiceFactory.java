@@ -134,7 +134,7 @@ public class ServiceFactory {
                 , "inventory_item_per_order" , "inventory_damaged_items" , "inventory_discount",
                 "inventory_waiting_list" , "supplier_const_delivery_days" ,
                 "supplier_discount" , "supplier_order" , "supplier_order_product" , "supplier_supplier" ,
-                "supplier_supplier_contact" ,"supplier_supplier_product"};
+                "supplier_supplier_contact" ,"supplier_supplier_product", "users"};
         for(int i = 0 ; i < table_names.length ; i++) {
             try {
                 inventoryDalController.getDAO().deleteAll(connection, table_names[i]);

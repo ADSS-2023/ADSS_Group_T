@@ -11,10 +11,14 @@ import java.awt.*;
 
 public class GeneralFrame extends JFrame {
     private ServiceFactory sf;
+    private StockUI stockUI;
+    private  SupplierManager supplierManager;
 
-    public GeneralFrame(ServiceFactory sf) {
+    public GeneralFrame(ServiceFactory sf, StockUI stockUI, SupplierManager supplierManager) {
         this.sf = sf;
-        setTitle("Stock Management");
+        this.stockUI = stockUI;
+        this.supplierManager = supplierManager;
+        setTitle("GeneralFrame");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(400, 300);
         setLocationRelativeTo(null);
@@ -33,12 +37,16 @@ public class GeneralFrame extends JFrame {
 
 
             } else if (action == 1) {
-                // Delete all the DB
-
-            } else if (action == 2) {
-
+                sf.supplierService.deleteAll();
+                sf.orderService.deleteAllOrders();
+                sf.deleteAllData();
+            }
+            else if (action == 2) {
+                stockUI.deleteData();
+                supplierManager.deleteAll();
                 sf.uss.setUpDate();
-
+                stockUI.setUpData();
+                supplierManager.setUpData();
             }
         } catch (Exception c) {
 
