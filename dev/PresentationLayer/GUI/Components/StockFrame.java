@@ -1,32 +1,22 @@
 package PresentationLayer.GUI.Components;
 
-import BusinessLayer.HR.Constraint;
 import BusinessLayer.Stock.Util.Util;
 import PresentationLayer.Stock.StockUI;
 import PresentationLayer.Supplier.SupplierManager;
 import ServiceLayer.Supplier_Stock.Response;
 import ServiceLayer.Supplier_Stock.ServiceFactory;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
-import org.jdatepicker.JDatePanel;
 import org.jdatepicker.JDatePicker;
 import org.jdatepicker.impl.DateComponentFormatter;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
-
-import java.time.chrono.JapaneseDate;
-import java.util.Properties;
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.EtchedBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.time.DayOfWeek;
+import java.time.ZoneId;
 import java.util.HashMap;
+import java.util.Properties;
 
 public class StockFrame extends JFrame {
     private ServiceFactory sf;
@@ -317,7 +307,7 @@ private void createEmptyBoxPanel() {
         }
     }
 
-    private JDatePicker addDate(JPanel emptyBoxPanel,int index) {
+    private JDatePicker addDate(JPanel emptyBoxPanel, int index) {
         UtilDateModel model = new UtilDateModel();
 //model.setDate(20,04,2014);
 // Need this...
@@ -680,10 +670,8 @@ private void createEmptyBoxPanel() {
                 isActive = false;
             }
         }
-
         try {
             handleErrorOrOk(sf.manageOrderService.createRegularOrder(products));
-            //JOptionPane.showMessageDialog(null, message, "Create Regular Order", JOptionPane.INFORMATION_MESSAGE);
         } catch (Exception ex) {
             messageField.setText(ex.getMessage());
         }
