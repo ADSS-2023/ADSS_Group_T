@@ -28,6 +28,10 @@
 3. Skip day - Update the system to the next day.
 4. Exit - Exit the system.
 
+## Super Manager Menu at the GUI will let you choose which window you would like to go to
+1. Supplier manu.
+2. Stock manu.
+3. Manager reports manu.
 
 ### Supplier mananger manu 
 
@@ -68,10 +72,6 @@ How to use :
 12. Orders menu - Orders menu.
 13. Back to the start menu - Return to the main menu.
 
-## Super Manager Menu at the GUI will let you choose which window you would like to go to
-1. Supplier manu.
-2. Stock manu.
-3. Manager reports manu.
 
 ## Employee Menu
 
