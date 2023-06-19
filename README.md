@@ -33,8 +33,8 @@
 
 How to use :
 1. Add supplier - Add a new supplier.
-2.Delete supplier - Remove a supplier.
-3.Edit supplier details - Modify supplier information.
+2 .Delete supplier - Remove a supplier.
+3. Edit supplier details - Modify supplier information.
 4.Add product to supplier - Add a product to a supplier.
 5.Delete product of supplier - Remove a product from a supplier.
 6.Edit product of supplier - Modify a product of a supplier.
