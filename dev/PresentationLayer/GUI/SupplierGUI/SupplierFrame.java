@@ -195,7 +195,7 @@ public class SupplierFrame extends JFrame {
         });
         buttonPanel.add(btnBack);
 
-        btnViewProducts = new JButton("View Products");
+        btnViewProducts = new JButton("Hide Products");
         btnViewProducts.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 showSupplierProducts();
@@ -203,7 +203,7 @@ public class SupplierFrame extends JFrame {
         });
         buttonPanel.add(btnViewProducts);
 
-        btnViewDiscounts = new JButton("View Discounts");
+        btnViewDiscounts = new JButton("Hide Discounts");
         btnViewDiscounts.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 showSupplierDiscounts();
@@ -380,7 +380,7 @@ public class SupplierFrame extends JFrame {
         //JOptionPane.showMessageDialog(this, response.getValue(), "Delete Supplier", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    private void addDiscount(){
+    private void addDiscount() {
         String discountEnumNumStr = JOptionPane.showInputDialog("Enter the type of the discount: press 1 to Total products purchased, press 2 to Total Price discount:");
         int discountEnumNum;
         try {
@@ -388,7 +388,8 @@ public class SupplierFrame extends JFrame {
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Invalid choice for kind of the discount.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
-        }        Discounts discountEnum;
+        }
+        Discounts discountEnum;
         if (discountEnumNum == 1)
             discountEnum = Discounts.DISCOUNT_BY_TOTAL_QUANTITY;
         else
@@ -423,10 +424,20 @@ public class SupplierFrame extends JFrame {
 
         boolean isPercentageBool = isPercentage == 1;
         Response response = sf.supplierService.addSupplierDiscount(supplierNumber, discountEnum, productAmount, discount, isPercentageBool);
-        if(response.isError())
+        if (response.isError())
             JOptionPane.showMessageDialog(this, response.getErrorMassage(), "Error", JOptionPane.INFORMATION_MESSAGE);
-        else
+        else {
             JOptionPane.showMessageDialog(this, response.getValue(), "Success", JOptionPane.INFORMATION_MESSAGE);
+            if (btnViewDiscounts.getText().equals("Hide Discounts")) {
+                Response response1 = sf.supplierService.getSupplierDiscounts(supplierNumber);
+                if (response1.isError()) {
+                    JOptionPane.showMessageDialog(this, response1.getErrorMassage(), "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    List<String> discounts = (List<String>) response1.getValue();
+                    displayDiscounts(discounts);
+                }
+            }
+        }
     }
 
     private void deleteDiscount(){
@@ -465,8 +476,18 @@ public class SupplierFrame extends JFrame {
         Response response = sf.supplierService.deleteSupplierDiscount(supplierNumber, discountEnum, productAmount, isPercentageBool);
         if (response.isError())
             JOptionPane.showMessageDialog(this, response.getErrorMassage(), "Error", JOptionPane.ERROR_MESSAGE);
-        else
+        else {
             JOptionPane.showMessageDialog(this, response.getValue(), "Success", JOptionPane.INFORMATION_MESSAGE);
+            if (btnViewDiscounts.getText().equals("Hide Discounts")) {
+                Response response1 = sf.supplierService.getSupplierDiscounts(supplierNumber);
+                if (response1.isError()) {
+                    JOptionPane.showMessageDialog(this, response1.getErrorMassage(), "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    List<String> discounts = (List<String>) response1.getValue();
+                    displayDiscounts(discounts);
+                }
+            }
+            }
     }
 
     private void editDiscount(){
@@ -581,6 +602,15 @@ public class SupplierFrame extends JFrame {
                 JOptionPane.showMessageDialog(this, response.getErrorMassage(), "Error", JOptionPane.ERROR_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(this, "Success", "Success", JOptionPane.INFORMATION_MESSAGE);
+                if (btnViewProducts.getText().equals("Hide Products")) {
+                    Response response1 = sf.supplierService.getProducts(supplierNumber);
+                    if (response1.isError()) {
+                        JOptionPane.showMessageDialog(this, response1.getErrorMassage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        List<String> discounts = (List<String>) response1.getValue();
+                        displayProducts(discounts);
+                    }
+                }
             }
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "Invalid price or max amount.", "Error", JOptionPane.ERROR_MESSAGE);
