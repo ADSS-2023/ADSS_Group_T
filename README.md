@@ -78,9 +78,12 @@ How to use,
 - submit shift - Follow the prompts enter id and shift by the format mentioned above
 - logout
 
+## External packages and jars 
+- jdatepicker-1.3.4.jar: A Java library that provides a user-friendly date picker component for incorporating date selection functionality into Java applications.
 
+- google-maps-services-2.2.0.jar: A Java library that offers convenient methods for accessing various Google Maps services, such as geocoding and directions, within Java applications.
 
-## pre-load-data
+## Pre-load-data
 
 ### Employees
 
@@ -187,3 +190,5 @@ How to use,
 | 1007          | t7    | 160000 | 32000     | C1          | non          |
 | 1008          | t8    | 18000  | 36000     | C1          | fridge       |
 | 1009          | t9    | 20000  | 40000     | C           | freezer      |
+
+
