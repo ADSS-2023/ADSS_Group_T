@@ -32,16 +32,16 @@ public class MainPresentation {
     private TransportManagerPresentation transportManagerPresentation;
     private HRManagerPresentation hrManagerPresentation;
     private EmployeePresentation employeePresentation;
-
+    private SuperManagerPresentation superManagerPresentation;
     private DriverPresentation driverPresentation;
 
 
-    public MainPresentation(String param) {
+    public MainPresentation() {
         try {
             this.serviceFactory = new ServiceFactory();
         }
         catch (Exception exception){
-            System.out.println(exception.toString());
+            System.out.println(exception.getMessage());
         }
 
         this.shiftService = serviceFactory.getShiftService();
@@ -55,6 +55,7 @@ public class MainPresentation {
         hrManagerPresentation = new HRManagerPresentation(shiftService,employeeService,branchService);
         employeePresentation = new EmployeePresentation(employeeService,branchService);
         driverPresentation = new DriverPresentation(employeeService);
+        superManagerPresentation = new SuperManagerPresentation(employeePresentation,driverPresentation,transportManagerPresentation,hrManagerPresentation);
         serviceFactory.callbackEnterWeight(this.transportManagerPresentation::enterWeightFunction);
         serviceFactory.callbackEnterOverWeight(this.transportManagerPresentation::enterOverWeightAction);
 
@@ -123,6 +124,7 @@ public class MainPresentation {
                 case "TransportManager" -> transportManagerPresentation.start();
                 case "HRManager" -> hrManagerPresentation.start();
                 case "driver" -> driverPresentation.start();
+                case "SuperManager" -> superManagerPresentation.start(id);
             }
         }
     }

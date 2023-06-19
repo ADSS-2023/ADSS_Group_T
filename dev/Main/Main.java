@@ -3,8 +3,6 @@ package Main;
 import GUI.MainObject;
 import PresentationLayer.MainPresentation;
 
-import java.sql.SQLException;
-
 public class Main {
 
     public static void main(String[] args) throws Exception {
@@ -16,7 +14,7 @@ public class Main {
                 MainObject mainObject = new MainObject("");
             }
             if (args[0].equals("CLI")) {
-                MainPresentation mainPresentation = new MainPresentation((String)args[1]);
+                MainPresentation mainPresentation = new MainPresentation();
                 mainPresentation.start();
             }
         }
