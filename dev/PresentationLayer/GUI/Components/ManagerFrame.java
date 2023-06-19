@@ -4,6 +4,7 @@ import BusinessLayer.Stock.Util.Util;
 import BusinessLayer.Supplier_Stock.Employee;
 import PresentationLayer.Stock.StockUI;
 import PresentationLayer.Supplier.SupplierManager;
+import PresentationLayer.Supplier_Stock.PreviousCallBack;
 import ServiceLayer.Supplier_Stock.Response;
 import ServiceLayer.Supplier_Stock.ServiceFactory;
 
@@ -13,8 +14,10 @@ import javax.swing.border.EtchedBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.time.DayOfWeek;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -24,6 +27,10 @@ public class ManagerFrame extends JFrame {
     private JPanel emptyBoxPanel;
     private CardLayout cardLayout;
     private JLabel messageField;
+    private JPanel bottomPanel;
+    private PreviousCallBack previousCallBack;
+    private PreviousCallBack supllierCallBack;
+    private PreviousCallBack inventoryCallBack;
 
 
     public ManagerFrame(ServiceFactory sf) {
@@ -37,19 +44,38 @@ public class ManagerFrame extends JFrame {
         //TODO: split the error and the string value
         createToolbar();
         createEmptyBoxPanel();
-        createErrorOkMessages();
+        createBottomPannel();
 
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
     }
 
-    private void createErrorOkMessages() {
-        messageField = new JLabel("Welcome to inventory system");
+    private void createBottomPannel() {
+        bottomPanel = new JPanel(new BorderLayout());
+
+        // Create the message field label
+        messageField = new JLabel("");
         Font currentFont = messageField.getFont();
         Font newFont = currentFont.deriveFont(currentFont.getSize() + 2f);
         messageField.setFont(newFont);
-        add(messageField,BorderLayout.NORTH);
+
+        // Create the logout button
+        JButton logoutButton = new JButton("Logout");
+
+        // Add an ActionListener to the logout button
+        logoutButton.addActionListener(e -> logout());
+
+        // Create a panel to hold the label and button
+        JPanel messagePanel = new JPanel(new BorderLayout());
+        messagePanel.add(messageField, BorderLayout.WEST);
+        messagePanel.add(logoutButton, BorderLayout.EAST);
+
+        // Add the message panel to the bottom panel
+        bottomPanel.add(messagePanel, BorderLayout.SOUTH);
+
+        // Add the bottom panel to the frame
+        add(bottomPanel, BorderLayout.SOUTH);
     }
 
     private void handleErrorOrOk(Response res) {
@@ -78,7 +104,6 @@ public class ManagerFrame extends JFrame {
     private void createToolbar() {
         JToolBar toolbar = new JToolBar(JToolBar.VERTICAL);
         toolbar.setFloatable(false);
-
         addButtonToToolbar(toolbar, "Generate Inventory Report", this::inventoryReport);
         addButtonToToolbar(toolbar, "Generate Damage Item Report", () -> {showDamageReportDialog(sf.damagedService.produce_damaged_report());});
         addButtonToToolbar(toolbar, "Generate Shortage Report", () -> {
@@ -89,54 +114,94 @@ public class ManagerFrame extends JFrame {
         addButtonToToolbar(toolbar, "Create Regular Order - TESTING ONLY", this::createRegularOrder);
         addButtonToToolbar(toolbar, "Show New Items", this::showNewItems);
         addButtonToToolbar(toolbar,"add new employee",this::addNewEmployee);
-
+        addButtonToToolbar(toolbar,"suppliers screen",()->{dispose();supllierCallBack.goBack();});
+        addButtonToToolbar(toolbar,"inventory screen",()->{dispose();inventoryCallBack.goBack();});
         add(toolbar, BorderLayout.WEST);
     }
 
     private void addNewEmployee() {
-        Panel panel = new Panel();
+        try {
+            Panel panel = new Panel();
 
-        panel.add(new JLabel("New employee id:"));
-        JTextField id = new JTextField(10);
-        panel.add(id);
-        String[] options = {"Manager", "Warehouse", "Suppliers"};
+            panel.add(new JLabel("New employee id:"));
+            JTextField id = new JTextField(10);
+            panel.add(id);
+            String[] options = {"Manager", "Warehouse", "Suppliers"};
 
-        // Create the container to hold the options
-        JPanel optionsPanel = new JPanel();
-        ButtonGroup buttonGroup = new ButtonGroup();
-        for (String option : options) {
-            JRadioButton radioButton = new JRadioButton(option);
-            optionsPanel.add(radioButton);
-            buttonGroup.add(radioButton);
+            // Create the container to hold the options
+            JPanel optionsPanel = new JPanel();
+            ButtonGroup buttonGroup = new ButtonGroup();
+            for (String option : options) {
+                JRadioButton radioButton = new JRadioButton(option);
+                optionsPanel.add(radioButton);
+                buttonGroup.add(radioButton);
+            }
+            // Create the scroll pane and add the container
+            JScrollPane scrollPane = new JScrollPane(optionsPanel);
+            panel.add(scrollPane);
+
+            int result = JOptionPane.showOptionDialog(null, panel, "options", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
+            if (result == JOptionPane.OK_OPTION) {
+                Enumeration<AbstractButton> buttons = buttonGroup.getElements();
+                String selectedOption = null;
+                while (buttons.hasMoreElements()) {
+                    AbstractButton button = buttons.nextElement();
+                    if (button.isSelected()) {
+                        selectedOption = button.getText();
+                        break;
+                    }
+                }
+                if (selectedOption != null) {
+                    Employee.Occupation occupation = null;
+                    switch (selectedOption) {
+                        case "Manager":
+                            occupation = Employee.Occupation.Manager;
+                            break;
+                        case "Warehouse":
+                            occupation = Employee.Occupation.WareHouse;
+                            break;
+                        case "Suppliers":
+                            occupation = Employee.Occupation.Suppliers;
+                            break;
+                    }
+                    handleErrorOrOk(sf.userService.register(id.getText(), occupation));
+
+                } else {
+                    // No option selected
+                }
+            }
+
+
+
+
+//            int result = JOptionPane.showOptionDialog(null, panel, "options", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
+//            if (result == JOptionPane.OK_OPTION) {
+//                ButtonModel selectedButtonModel = buttonGroup.getSelection();
+//                if (selectedButtonModel != null) {
+//                    String selectedOption = selectedButtonModel.getActionCommand();
+//                    Employee.Occupation occupation = null;
+//                    switch (selectedOption) {
+//                        case "Manager":
+//                            occupation = Employee.Occupation.Manager;
+//                            break;
+//                        case "Warehouse":
+//                            occupation = Employee.Occupation.WareHouse;
+//                            break;
+//                        case "Suppliers":
+//                            occupation = Employee.Occupation.Suppliers;
+//                            break;
+//                    }
+//                    Response res = sf.userService.register(id.getText(), occupation);
+//                    if (res.isError()) {
+//                        ///TODO show error message
+//                    }
+//                } else {
+//
+//                }
+//            }
         }
-        // Create the scroll pane and add the container
-        JScrollPane scrollPane = new JScrollPane(optionsPanel);
-        panel.add(scrollPane);
-        int result = JOptionPane.showOptionDialog(null, panel, "options", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
-        if (result == JOptionPane.OK_OPTION) {
-            ButtonModel selectedButtonModel = buttonGroup.getSelection();
-            if (selectedButtonModel != null) {
-                String selectedOption = selectedButtonModel.getActionCommand();
-                Employee.Occupation occupation;
-                switch (selectedOption) {
-                    case "Manager":
-                        occupation = Employee.Occupation.Manager;
-                        break;
-                    case "Warehouse":
-                        occupation = Employee.Occupation.WareHouse;
-                        break;
-                    case "Suppliers":
-                        occupation = Employee.Occupation.Suppliers;
-                        break;
-                }
-                Response res = sf.userService.register(id.getText(),occupation);
-                if(res.isError()) {
-                    ///TODO show error message
-                }
-            }
-            else {
-
-            }
+        catch (Exception e){
+            updateError(e.getMessage());
         }
     }
 
@@ -525,7 +590,19 @@ public class ManagerFrame extends JFrame {
             updateError(e.getMessage()); // Update the messageField with the error message
         }
     }
+    private void logout() {
+        dispose();
+        previousCallBack.goBack();
+    }
+    public void setLogOutCallBack(PreviousCallBack previousCallBack) {
+        this.previousCallBack = previousCallBack;
+    }
+
+    public void setInventoryCallBack(PreviousCallBack inventoryCallBack) {
+        this.inventoryCallBack = inventoryCallBack;
+    }
+
+    public void setSupllierCallBack(PreviousCallBack supllierCallBack) {
+        this.supllierCallBack = supllierCallBack;
+    }
 }
-
-
-

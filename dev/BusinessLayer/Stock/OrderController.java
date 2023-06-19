@@ -159,6 +159,8 @@ public class OrderController {
     }
 
     public void editRegularOrder(int id, DayOfWeek day, int new_amount) throws Exception {
+        if (day == null)
+            throw new Exception("illegal day");
         Item cur_item = inventory.get_item_by_id(id);
         order_service.editRegularItem(new ItemToOrder(cur_item.get_name(), cur_item.manufacturer_name , new_amount , null, -1,-1), day);
     }

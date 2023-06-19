@@ -1,13 +1,44 @@
 package BusinessLayer.Supplier_Stock;
 
+import DataLayer.Inventory_Supplier_Dal.DTO.UserDTO;
+import DataLayer.Inventory_Supplier_Dal.DalController.UserDalController;
+
+import java.sql.SQLException;
+
 public class Employee {
     private String id;
 
+    private UserDTO userDTO;
     Occupation occupation;
+    private UserDalController userDalController;
 
-    public Employee(String id,Occupation occupation){
+
+    public Employee(String id,Occupation occupation, UserDalController userDalController) throws SQLException {
         this.id = id;
         this.occupation = occupation;
+        this.userDalController = userDalController;
+        if(occupation.equals(Occupation.Manager))
+            this.userDTO = new UserDTO(id, 1);
+        else if(occupation.equals(Occupation.WareHouse))
+            this.userDTO = new UserDTO(id, 2);
+        else if (occupation.equals(Occupation.Suppliers))
+            this.userDTO = new UserDTO(id,3);
+        userDalController.insert(userDTO);
+    }
+    public Employee(UserDTO userDTO){
+        id = userDTO.getId();
+        switch (userDTO.getOccupation()){
+            case 1:
+                occupation = Occupation.Manager;
+                break;
+            case 2:
+                occupation = Occupation.WareHouse;
+                break;
+            case 3:
+                occupation = Occupation.Suppliers;
+                break;
+
+        }
     }
 
     public enum Occupation {

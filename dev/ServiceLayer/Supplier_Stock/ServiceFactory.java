@@ -38,6 +38,7 @@ public class ServiceFactory {
     public InventoryDalController inventoryDalController;
     public SupplierDalController supplierDalController;
     public OrderDalController orderDalController;
+    public UserDalController userDalController;
 
     public Connection connection;
     public Util_Supplier_Stock uss;
@@ -54,6 +55,7 @@ public class ServiceFactory {
         this.manageOrderService = new ManageOrderService();
         this.supplierDalController = new SupplierDalController(connection);
         this.orderDalController = new OrderDalController(connection);
+        this.userDalController = new UserDalController(connection);
         this.sc = new SupplierController(connection, supplierDalController);
         this.oc = new OrderController(this.sc, this.manageOrderService, connection, orderDalController);
         this.supplierService = new SupplierService(this.sc, this.oc);
@@ -62,7 +64,7 @@ public class ServiceFactory {
         this.manageOrderService.setOrderController(this.inventoryService.get_inventory(), this.orderService,inventoryDalController);
         this.inventoryService.get_inventory().setInventoryDalController(inventoryDalController);
         inventoryService.get_inventory().setItemDalController(new ItemDalController(connection));
-        this.userService = new UserService(new UserController(connection));
+        this.userService = new UserService(new UserController(connection, userDalController));
         try {
             uss = new Util_Supplier_Stock(inventoryDalController);
         }
@@ -132,7 +134,7 @@ public class ServiceFactory {
                 , "inventory_item_per_order" , "inventory_damaged_items" , "inventory_discount",
                 "inventory_waiting_list" , "supplier_const_delivery_days" ,
                 "supplier_discount" , "supplier_order" , "supplier_order_product" , "supplier_supplier" ,
-                "supplier_supplier_contact" ,"supplier_supplier_product"};
+                "supplier_supplier_contact" ,"supplier_supplier_product", "users"};
         for(int i = 0 ; i < table_names.length ; i++) {
             try {
                 inventoryDalController.getDAO().deleteAll(connection, table_names[i]);

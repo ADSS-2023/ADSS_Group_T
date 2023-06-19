@@ -55,7 +55,6 @@ public class SupplierGUI {
         else if(frameChoice == 2){
             run(new AllSupplierFrame( sf));
         }
-
     }
     public static void run(JFrame curFrame) {
         curFrame.setVisible(true);

@@ -11,15 +11,13 @@ import java.awt.*;
 
 public class GeneralFrame extends JFrame {
     private ServiceFactory sf;
+    private StockUI stockUI;
+    private  SupplierManager supplierManager;
 
-    public GeneralFrame(ServiceFactory sf) {
+    public GeneralFrame(ServiceFactory sf, StockUI stockUI, SupplierManager supplierManager) {
         this.sf = sf;
-        setTitle("Stock Management");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(400, 300);
-        setLocationRelativeTo(null);
-        setLayout(new GridLayout(4, 3));
-        setVisible(true);
+        this.stockUI = stockUI;
+        this.supplierManager = supplierManager;
     }
 
     public void run() {
@@ -33,16 +31,25 @@ public class GeneralFrame extends JFrame {
 
 
             } else if (action == 1) {
-                // Delete all the DB
-
-            } else if (action == 2) {
-
+                sf.supplierService.deleteAll();
+                sf.orderService.deleteAllOrders();
+                sf.deleteAllData();
+            }
+            else if (action == 2) {
+                stockUI.deleteData();
+                supplierManager.deleteAll();
                 sf.uss.setUpDate();
-
+                stockUI.setUpData();
+                supplierManager.setUpData();
             }
         } catch (Exception c) {
 
         }
+        login(sf);
+
+
+    }
+    public void login(ServiceFactory sf){
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(2, 2));
         panel.add(new JLabel("ID:"));
@@ -68,8 +75,8 @@ public class GeneralFrame extends JFrame {
         } else {
             // Cancel button clicked or dialog closed
         }
-
     }
+
 
     private static void loadData(ServiceFactory sf) {
         try {
@@ -88,20 +95,41 @@ public class GeneralFrame extends JFrame {
 
     }
 
-    private static void continueToFrame(Response res,ServiceFactory sf) {
-        if (((String) res.getValue().toString()).equals("WareHouse"))
-            run(new StockFrame(sf));
-        else if(((String) res.getValue().toString()).equals("Suppliers"))
-            run(new AllSupplierFrame(sf));
-        else
-            run(new ManagerFrame(sf));
+    private  void continueToFrame(Response res,ServiceFactory sf) {
+        if (((String) res.getValue().toString()).equals("WareHouse")) {
+            continueToInventory(sf);
+        }
+        else if(((String) res.getValue().toString()).equals("Suppliers")) {
+            continueToSupplier(sf);
+        }
+        else {
+            continueToManager(sf);
+        }
+    }
+    public void continueToManager(ServiceFactory sf){
+        ManagerFrame managerFrame = new ManagerFrame(sf);
+        managerFrame.setLogOutCallBack(() -> login(sf));
+        managerFrame.setInventoryCallBack(()->continueToInventory(sf));
+        managerFrame.setSupllierCallBack(()->continueToSupplier(sf));
+        run(managerFrame);
+    }
+    public void continueToSupplier(ServiceFactory sf){
+        AllSupplierFrame allSupplierFrame = new AllSupplierFrame(sf);
+        allSupplierFrame.setLogOutCallBack(()->login(sf));
+        allSupplierFrame.setManagerFrameCallBack(()->continueToManager(sf));
+        run(allSupplierFrame);
+    }
+    public void continueToInventory(ServiceFactory sf){
+        StockFrame stockFrame = new StockFrame(sf);
+        stockFrame.setLogOutCallBack(()->login(sf));
+        stockFrame.setManagerCallBack(()->continueToManager(sf));
+        run(stockFrame);
     }
 
 
 
     private static void run(JFrame curFrame) {
         curFrame.setVisible(true);
-
     }
 }
 
