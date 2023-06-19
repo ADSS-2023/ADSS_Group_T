@@ -7,6 +7,7 @@ import ServiceLayer.Transport.BranchService;
 import UtilSuper.ResponseSerializer;
 import UtilSuper.Time;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Scanner;
@@ -168,7 +169,7 @@ public class HRManagerPresentation {
             int ans_quantity = scanner.nextInt();
             howMany.put(p.name(), ans_quantity);
         }
-        String response1 = shiftService.addShiftRequirements(branch, howMany, date, shiftType);
+        String response1 = shiftService.addShiftRequirements(branch, howMany,Time.stringToLocalDate(date), shiftType);
         Response response = ResponseSerializer.deserializeFromJson(response1);
         if (response.isError()) {
             System.out.println(response.getErrorMessage());

@@ -136,9 +136,7 @@ public class HRManagerFrame  extends GenericFrameUser {
 //            rightPanel.repaint();
 //        });
 
-        addnewEmployeeButton.addActionListener(e->{
-            anyButtonPressed(addnewEmployeeButton);
-
+        addnewEmployeeButton.addActionListener(e -> {
             System.out.println("Button add new employee clicked");
             rightPanel.removeAll();
             GenericTextField idField = new GenericTextField();
@@ -151,33 +149,44 @@ public class HRManagerFrame  extends GenericFrameUser {
 
             GenericButton doneButton = new GenericButton("Done");
 
-            doneButton.addActionListener(e1 ->{
+            doneButton.addActionListener(e1 -> {
                 setErrorText("");
                 setFeedbackText("");
-                int id = Integer.parseInt(idField.getText());
+
+                // Get user input values
+                String idText = idField.getText();
                 String name = nameField.getText();
                 String bank = bankField.getText();
                 String description = descriptionField.getText();
                 String joining = joiningField.getText();
-                int salary = Integer.parseInt(salaryField.getText());
+                String salaryText = salaryField.getText();
                 String password = passwordField.getText();
 
-                if (bank == null || name == null || description == null || joining == null || password == null ) {
+                // Validate input values
+                if (idText.isEmpty() || name.isEmpty() || bank.isEmpty() || description.isEmpty() || joining.isEmpty() || salaryText.isEmpty() || password.isEmpty()) {
                     setErrorText("Please fill all fields");
-                }
-                else if ( id<0 || salary <0 ) {
-                    setErrorText("id and salary must be a number over 0 !!! ");
-                }
-                else {
-                    Response response1 = ResponseSerializer.deserializeFromJson(employeeService.addNewEmployee(id,name,bank,description,salary, joining ,password));
-                    if (response1.isError()) {
-                        setErrorText(response1.getErrorMessage());
-                    } else {
-                        setFeedbackText("Delivery ordered successfully");
-                    }
+                } else {
+                    try {
+                        int id = Integer.parseInt(idText);
+                        int salary = Integer.parseInt(salaryText);
 
+                        if (id <= 0 || salary <= 0) {
+                            setErrorText("ID and salary must be positive numbers");
+                        } else {
+                            Response response1 = ResponseSerializer.deserializeFromJson(employeeService.addNewEmployee(id, name, bank, description, salary, joining, password));
+                            if (response1.isError()) {
+                                setErrorText(response1.getErrorMessage());
+                            } else {
+                                setFeedbackText("Employee added successfully");
+                            }
+                        }
+                    } catch (NumberFormatException ex) {
+                        setErrorText("ID and salary must be valid numbers");
+                    }
                 }
             });
+
+            // Add components to the panel
             rightPanel.add(new GenericLabel(""));
             rightPanel.add(new GenericLabel(""));
             rightPanel.add(new GenericLabel("Please enter the employee ID:"));
@@ -201,28 +210,43 @@ public class HRManagerFrame  extends GenericFrameUser {
             rightPanel.repaint();
         });
 
-        employeeQualificationButton.addActionListener(e->{
+
+        employeeQualificationButton.addActionListener(e -> {
             anyButtonPressed(employeeQualificationButton);
             System.out.println("Button add new qualification clicked");
             rightPanel.removeAll();
             GenericTextField idField = new GenericTextField();
-            String[] qualifications = {"cashier" , "storekeeper", "security", "cleaning", "orderly", "general_worker", "shiftManager"};
+            String[] qualifications = {"cashier", "storekeeper", "security", "cleaning", "orderly", "general_worker", "shiftManager"};
             JComboBox<String> qualificationsComboBox = new JComboBox<>(qualifications);
 
             GenericButton doneButton = new GenericButton("Done");
 
-            doneButton.addActionListener(e1 ->{
+            doneButton.addActionListener(e1 -> {
                 setErrorText("");
                 setFeedbackText("");
-                int id = Integer.parseInt(idField.getText());
+
+                // Get user input values
+                String idText = idField.getText();
                 String selectedQuali = qualificationsComboBox.getSelectedItem().toString();
-                if ( id<0 ) {
-                    setErrorText("id must be a number over 0 !!! ");
-                }
-                else {
-                    employeeService.addQualification(id,selectedQuali);
+
+                // Validate input values
+                if (idText.isEmpty()) {
+                    setErrorText("Please enter the employee ID");
+                } else {
+                    try {
+                        int id = Integer.parseInt(idText);
+                        if (id <= 0) {
+                            setErrorText("ID must be a number greater than 0");
+                        } else {
+                            employeeService.addQualification(id, selectedQuali);
+                        }
+                    } catch (NumberFormatException ex) {
+                        setErrorText("Invalid ID format. Please enter a valid number");
+                    }
                 }
             });
+
+            // Add components to the panel
             rightPanel.add(new GenericLabel(""));
             rightPanel.add(new GenericLabel(""));
             rightPanel.add(new GenericLabel(""));
@@ -231,7 +255,7 @@ public class HRManagerFrame  extends GenericFrameUser {
             rightPanel.add(new GenericLabel(""));
             rightPanel.add(new GenericLabel("Please enter the employee ID:"));
             rightPanel.add(idField);
-            rightPanel.add(new GenericLabel("Please choose new Qualification"));
+            rightPanel.add(new GenericLabel("Please choose a new Qualification:"));
             rightPanel.add(qualificationsComboBox);
             rightPanel.add(new GenericLabel(""));
             rightPanel.add(new GenericLabel(""));
@@ -244,7 +268,8 @@ public class HRManagerFrame  extends GenericFrameUser {
             rightPanel.repaint();
         });
 
-        addNewDriverButton.addActionListener(e->{
+
+        addNewDriverButton.addActionListener(e -> {
             anyButtonPressed(addNewDriverButton);
             System.out.println("Button add new employee clicked");
             rightPanel.removeAll();
@@ -255,41 +280,53 @@ public class HRManagerFrame  extends GenericFrameUser {
             GenericTextField joiningField = new GenericTextField();
             GenericTextField passwordField = new GenericTextField();
             GenericTextField salaryField = new GenericTextField();
-            String[] coolinglevels = {"non","fridge","freezer"};
-            JComboBox<String> coolingLevelComboBox = new JComboBox<>(coolinglevels);
-            String[] licenseTypes = {"C1","C","E"};
+            String[] coolingLevels = {"non", "fridge", "freezer"};
+            JComboBox<String> coolingLevelComboBox = new JComboBox<>(coolingLevels);
+            String[] licenseTypes = {"C1", "C", "E"};
             JComboBox<String> licenseTypeComboBox = new JComboBox<>(licenseTypes);
 
             GenericButton doneButton = new GenericButton("Done");
 
-            doneButton.addActionListener(e1 ->{
+            doneButton.addActionListener(e1 -> {
                 setErrorText("");
                 setFeedbackText("");
-                int id = Integer.parseInt(idField.getText());
+
+                // Get user input values
+                String idText = idField.getText();
                 String name = nameField.getText();
                 String bank = bankField.getText();
                 String description = descriptionField.getText();
                 String joining = joiningField.getText();
-                int salary = Integer.parseInt(salaryField.getText());
+                String salaryText = salaryField.getText();
                 String password = passwordField.getText();
                 int coolingLevel = coolingLevelComboBox.getSelectedIndex();
                 String licenseType = licenseTypeComboBox.getSelectedItem().toString();
 
-                if (bank == null || name == null || description == null || joining == null || password == null ) {
+                // Validate input values
+                if (idText.isEmpty() || name.isEmpty() || bank.isEmpty() || description.isEmpty() || joining.isEmpty() || salaryText.isEmpty() || password.isEmpty()) {
                     setErrorText("Please fill all fields");
-                }
-                else if ( id<0 || salary <0 ) {
-                    setErrorText("id and salary must be a number over 0 !!! ");
-                }
-                else {
-                    Response response1 = ResponseSerializer.deserializeFromJson( employeeService.addNewDriver(id,name,bank,description,salary,joining,password,licenseType,coolingLevel));
-                    if (response1.isError()) {
-                        setErrorText(response1.getErrorMessage());
-                    } else {
-                        setFeedbackText("Delivery ordered successfully");
+                } else {
+                    try {
+                        int id = Integer.parseInt(idText);
+                        int salary = Integer.parseInt(salaryText);
+
+                        if (id <= 0 || salary <= 0) {
+                            setErrorText("ID and salary must be positive numbers");
+                        } else {
+                            Response response1 = ResponseSerializer.deserializeFromJson(employeeService.addNewDriver(id, name, bank, description, salary, joining, password, licenseType, coolingLevel));
+                            if (response1.isError()) {
+                                setErrorText(response1.getErrorMessage());
+                            } else {
+                                setFeedbackText("Driver added successfully");
+                            }
+                        }
+                    } catch (NumberFormatException ex) {
+                        setErrorText("ID and salary must be valid numbers");
                     }
                 }
             });
+
+            // Add components to the panel
             rightPanel.add(new GenericLabel("Please enter the employee ID:"));
             rightPanel.add(idField);
             rightPanel.add(new GenericLabel("Please enter the employee name:"));
@@ -304,16 +341,17 @@ public class HRManagerFrame  extends GenericFrameUser {
             rightPanel.add(passwordField);
             rightPanel.add(new GenericLabel("Please enter the employee salary:"));
             rightPanel.add(salaryField);
-            rightPanel.add(new GenericLabel("Please enter the driver cooling level"));
+            rightPanel.add(new GenericLabel("Please enter the driver cooling level:"));
             rightPanel.add(coolingLevelComboBox);
-            rightPanel.add(new GenericLabel("Please enter the driver license type"));
+            rightPanel.add(new GenericLabel("Please enter the driver license type:"));
             rightPanel.add(licenseTypeComboBox);
             rightPanel.add(doneButton);
             rightPanel.revalidate();
             rightPanel.repaint();
         });
 
-            showShiftStatusButton.addActionListener(e -> {
+
+        showShiftStatusButton.addActionListener(e -> {
                 anyButtonPressed(showShiftStatusButton);
             List<String> selectedEmployeeIds = new ArrayList<>();
             System.out.println("Button show shift status clicked");
@@ -417,7 +455,7 @@ public class HRManagerFrame  extends GenericFrameUser {
                                     // Call the assignAll function and get the response
                                     String response1 = shiftService.assignAll(selectedBranch, selectedDate, selectedShiftType);
 
-                                    setFeedbackText(response1);  // Set the response message as feedback text
+                                    setFeedbackText("assign successful");  // Set the response message as feedback text
 
                                     // Update the table with the new shift status
                                     updateShiftStatusTable(shiftStatusTable, selectedBranch, selectedDate, selectedShiftType);
@@ -529,7 +567,7 @@ public class HRManagerFrame  extends GenericFrameUser {
                     if (response1.isError()) {
                         setErrorText(response1.getErrorMessage());
                     } else {
-                        setFeedbackText("assign employee successfully");
+                        setFeedbackText("assign driver successfully");
                     }
                 }
                 idField.add(new GenericLabel(""));
@@ -632,11 +670,11 @@ public class HRManagerFrame  extends GenericFrameUser {
                     for (int i = 0 ; i < qualifications.length-1 ; i++  ){
                         howMany.put(qualifications[i],nums.get(i));
                     }
-                    Response response1 = ResponseSerializer.deserializeFromJson( shiftService.addShiftRequirements(branch, howMany, datef, shiftType));
+                    Response response1 = ResponseSerializer.deserializeFromJson( shiftService.addShiftRequirements(branch, howMany,  Time.stringToLocalDate(datef), shiftType));
                     if (response1.isError()) {
                         setErrorText(response1.getErrorMessage());
                     } else {
-                        setFeedbackText("assign employee successfully");
+                        setFeedbackText("added requirements successfully");
                     }
                 }
             });
