@@ -26,6 +26,7 @@ public class ShiftDTO extends DTO {
     }
 
     public ShiftDTO() {
+        super("Shift");
     }
 
     public ShiftDTO(String tableName, String branch) {

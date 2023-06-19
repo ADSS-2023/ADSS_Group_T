@@ -14,6 +14,7 @@ public class QualifiedPositionDTO extends DTO {
     }
 
     public QualifiedPositionDTO() {
+        super("QualifiedPosition");
 
     }
 }

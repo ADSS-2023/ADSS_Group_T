@@ -22,6 +22,7 @@ public class ShiftRequirementsDTO extends DTO {
 
 
     public ShiftRequirementsDTO() {
+        super("ShiftRequirements");
     }
 
     public String getShiftDate() {

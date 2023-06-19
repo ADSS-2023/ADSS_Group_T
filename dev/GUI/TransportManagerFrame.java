@@ -405,7 +405,11 @@ public class TransportManagerFrame extends GenericFrameUser {
             rightPanel.removeAll();
                 Response response1 = ResponseSerializer.deserializeFromJson(logisticCenterService.getProductsInStock());
                 if (response1.isError()) {
-                    setErrorText(response1.getErrorMessage());
+                    if (response1.getErrorMessage().equals("no products in stock"))
+                        setFeedbackText("no products in stock");
+                    else
+                        setErrorText(response1.getErrorMessage());
+
                 } else {
                     String products = (String) response1.getReturnValue();
                     //the products string of products separated by \n
@@ -574,7 +578,7 @@ public class TransportManagerFrame extends GenericFrameUser {
         if (response.isError()) {
             setErrorText(response.getErrorMessage());
         } else {
-            JTextArea deliveryDetails = new JTextArea("The truck is in: " + address + ".\n" + "\nThe following products are loaded:\n" + response.getReturnValue());
+            JTextArea deliveryDetails = new JTextArea("Delivery ID: "+deliveryID+"\n" +"The truck is in: " + address + ".\n" + "\nThe following products are loaded:\n" + response.getReturnValue());
             deliveryDetails.setEditable(false);
             deliveryDetails.setLineWrap(true);
             deliveryDetails.setWrapStyleWord(true);

@@ -16,6 +16,7 @@ public class NotificationsDTO extends DTO {
     }
 
     public NotificationsDTO() {
+        super("Notifications");
     }
 
     public String getDate() {

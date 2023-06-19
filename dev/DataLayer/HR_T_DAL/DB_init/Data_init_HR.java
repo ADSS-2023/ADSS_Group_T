@@ -140,7 +140,6 @@ public class Data_init_HR {
             String employeePassword = Integer.toString(id);
             employeeService.addNewEmployee(id, employeeName, employeePhoneNumber, employeePosition, employeeSalary, employeeStartDate, employeePassword);
             employeeService.addQualification(id , "storekeeper");
-            System.out.println("addEmployee" + id);
         }
 
 
@@ -220,13 +219,13 @@ public class Data_init_HR {
                     String morningShiftType = "m";
                     employeeService.submitShiftForEmployee(branchName, 80+(branch*2) , shiftDate, morningShiftType);
                     shiftService.assignEmployeeForShift(branchName, 80 + (branch*2), shiftDate.toString(), morningShiftType, PositionType.storekeeper.name());
-                    System.out.println("submitEmployee" + (80 + branch));
+                    //System.out.println("submitEmployee" + (80 + branch));
 
                     // Submit evening shift for store keeper
                     String eveningShiftType = "e";
                     employeeService.submitShiftForEmployee(branchName, 80+ branch+1, shiftDate, eveningShiftType);
                     shiftService.assignEmployeeForShift(branchName, 80 + branch +1, shiftDate.toString(), eveningShiftType, PositionType.storekeeper.name());
-                    System.out.println("assignEmployee" + (80 + branch +1));
+                    //System.out.println("assignEmployee" + (80 + branch +1));
                 }
         }
 
@@ -265,9 +264,9 @@ public class Data_init_HR {
         //store keepers
         for (int id = 1; id <= 6; id++) {
             employeeService.submitShiftForDriver(LocalDate.now().plusDays(id), 40);
-            System.out.println("submitDriver" + id);
+           // System.out.println("submitDriver" + id);
             employeeService.assignDriverForShift(LocalDate.now().plusDays(id), 40);
-            System.out.println("assignDriver" + id);
+           // System.out.println("assignDriver" + id);
         }
 
 

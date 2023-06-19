@@ -25,6 +25,7 @@ public class ConstraintByEmployeeDTO extends DTO {
 
 
     public ConstraintByEmployeeDTO() {
+        super("ConstraintByEmployee");
 
     }
 

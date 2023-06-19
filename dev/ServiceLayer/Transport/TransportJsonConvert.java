@@ -4,10 +4,7 @@ package ServiceLayer.Transport;
 import BusinessLayer.Transport.*;
 
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class TransportJsonConvert {
     public TransportJsonConvert() {
@@ -24,7 +21,13 @@ public class TransportJsonConvert {
         sb.append(suppliersAndProductsToString(delivery.getUnHandledSuppliers()));
         sb.append("\nHandledSuppliers\n");
         sb.append(suppliersAndProductsToString(delivery.getHandledSuppliers()));
-
+        sb.append("\nDest: \n");
+        HashMap<Branch,File> dests = delivery.getUnHandledBranches();
+        for (Map.Entry<Branch,File> entry : dests.entrySet()) {
+            sb.append("Branch: ").append(entry.getKey().getAddress()).append("\n");
+            sb.append(fileToString(entry.getValue()));
+            sb.append("\n");
+        }
 
         //sb.append("Source: ").append(delivery.getSource().getAddress()).append("\n");
         sb.append("Driver Name: ").append(delivery.getDriverID()).append("\n");
@@ -36,7 +39,7 @@ public class TransportJsonConvert {
 
     public String fileToString(File file) {
         StringBuilder sb = new StringBuilder();
-        sb.append("ID: " + file.getId() + "\n");
+        sb.append("File ID: " + file.getId() + "\n");
         // Append file details to the string builder
         LinkedHashMap<Product, Integer> products = file.getProducts();
         sb.append(productAndAmountToString(products));

@@ -10,7 +10,9 @@ public class DriverRequirementDTO extends DTO {
     private String coolingLevel;
     private int amount;
 
-    public DriverRequirementDTO() {}
+    public DriverRequirementDTO() {
+        super("DriverRequirements");
+    }
 
     public DriverRequirementDTO( String date, String licenseType, String coolingLevel, int amount) {
         super("DriverRequirements");

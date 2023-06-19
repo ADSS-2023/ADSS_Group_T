@@ -18,6 +18,9 @@ public class DeliveryHandledSitesDTO extends DTO {
         this.fileId = fileId;
         this.amount = amount;
     }
+    public DeliveryHandledSitesDTO() {
+        super("DeliveryHandledSites");
+    }
 
     public int getFileId() {
         return fileId;
