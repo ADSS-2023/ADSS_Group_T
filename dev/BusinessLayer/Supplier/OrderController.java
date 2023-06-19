@@ -452,9 +452,10 @@ public class OrderController {
                         }
                     }
                 }
-                if (quantityToChange != 0)
-                    throw new Exception("no such item has been found");
+
             }
+            if (quantityToChange != 0)
+                throw new Exception("no such item has been found");
         }
     }
     /*public void editRegularItem(ItemToOrder item, DayOfWeek day) throws Exception{

@@ -109,9 +109,9 @@ public class ManagerFrame extends JFrame {
         addButtonToToolbar(toolbar, "Generate Shortage Report", () -> {
             showShortageReportDialog(sf.inventoryService.produce_shortage_report());
         });
-        addButtonToToolbar(toolbar, "Edit Regular Order", this::editRegularItemOrder);
-        addButtonToToolbar(toolbar, "Show All Orders", this::show_all_orders);
-        addButtonToToolbar(toolbar, "Create Regular Order - TESTING ONLY", this::createRegularOrder);
+//        addButtonToToolbar(toolbar, "Edit Regular Order", this::editRegularItemOrder);
+//        addButtonToToolbar(toolbar, "Show All Orders", this::show_all_orders);
+//        addButtonToToolbar(toolbar, "Create Regular Order - TESTING ONLY", this::createRegularOrder);
         addButtonToToolbar(toolbar, "Show New Items", this::showNewItems);
         addButtonToToolbar(toolbar,"add new employee",this::addNewEmployee);
         addButtonToToolbar(toolbar,"suppliers screen",()->{dispose();supllierCallBack.goBack();});
@@ -205,20 +205,26 @@ public class ManagerFrame extends JFrame {
         }
     }
 
-    private void showNewItems(){
+    private void showNewItems() {
+        emptyBoxPanel.removeAll(); // Clear the empty box panel
+
         try {
             Response newItemsData = sf.manageOrderService.show_new_items();
-            if(newItemsData.isError()) throw new Exception(newItemsData.getErrorMassage());
+            if (newItemsData.isError()) throw new Exception(newItemsData.getErrorMassage());
             String newItems = (String) newItemsData.getValue();
+            newItems = newItems.replace( "\u001B[31m", "ATTENTION : ");
+            newItems = newItems.replace( "\u001B[0m", "");
             JTextArea textArea = new JTextArea(newItems);
             JScrollPane scrollPane = new JScrollPane(textArea);
             textArea.setEditable(false);
             scrollPane.setPreferredSize(new Dimension(400, 300));
-            JOptionPane.showMessageDialog(null, scrollPane, "New Items", JOptionPane.PLAIN_MESSAGE);
-            updateOkMessage("Items viewed");
 
-        }
-        catch (Exception exp) {
+            emptyBoxPanel.add(scrollPane); // Add the scroll pane to the empty box panel
+            emptyBoxPanel.revalidate();
+            emptyBoxPanel.repaint();
+
+            updateOkMessage("Items viewed");
+        } catch (Exception exp) {
             updateError(exp.getMessage());
         }
     }
@@ -236,6 +242,7 @@ public class ManagerFrame extends JFrame {
     }
 
     private void showDamageReportDialog(Response damagedReportData) {
+        emptyBoxPanel.removeAll(); // Clear the empty box panel
         try {
             if (damagedReportData.isError())
                 throw new Exception(damagedReportData.getErrorMassage());
@@ -257,19 +264,26 @@ public class ManagerFrame extends JFrame {
             textArea.setEditable(false);
             scrollPane.setPreferredSize(new Dimension(400, 300));
 
-            JOptionPane.showMessageDialog(null, scrollPane, "Damage Item Report", JOptionPane.PLAIN_MESSAGE);
-            updateOkMessage("Report exported");
+            // Clear the empty box and add the report
+            emptyBoxPanel.setLayout(new BorderLayout());
+            emptyBoxPanel.add(scrollPane, BorderLayout.CENTER);
 
+            emptyBoxPanel.revalidate();
+            emptyBoxPanel.repaint();
+
+            updateOkMessage("Report exported");
         } catch (Exception e) {
             updateError(e.getMessage()); // Update the messageField with the error message
         }
     }
+
 
     private void showShortageReportDialog(Response shortageReportData) {
         try {
             if (shortageReportData.isError())
                 throw new Exception(shortageReportData.getErrorMassage());
             String shortageReport = (String) shortageReportData.getValue();
+            if(shortageReport == "no shortage") throw new Exception("No shortage items");
             String[] items = shortageReport.split("-------------------------------------------");
 
             StringBuilder formattedReport = new StringBuilder();
@@ -288,9 +302,15 @@ public class ManagerFrame extends JFrame {
             textArea.setEditable(false);
             scrollPane.setPreferredSize(new Dimension(400, 300));
 
-            JOptionPane.showMessageDialog(null, scrollPane, "Shortage Report", JOptionPane.PLAIN_MESSAGE);
-            updateOkMessage("Report exported");
+            // Clear the empty box and add the report
+            emptyBoxPanel.removeAll();
+            emptyBoxPanel.setLayout(new BorderLayout());
+            emptyBoxPanel.add(scrollPane, BorderLayout.CENTER);
 
+            emptyBoxPanel.revalidate();
+            emptyBoxPanel.repaint();
+
+            updateOkMessage("Report exported");
         } catch (Exception e) {
             updateError(e.getMessage()); // Update the messageField with the error message
         }
@@ -413,11 +433,19 @@ public class ManagerFrame extends JFrame {
 
     private void showInventoryReportDialog(String inventoryReport) {
         try {
+            emptyBoxPanel.removeAll(); // Clear the empty box panel
             JTextArea textArea = new JTextArea(formatInventoryReport(inventoryReport));
             JScrollPane scrollPane = new JScrollPane(textArea);
             textArea.setEditable(false);
             scrollPane.setPreferredSize(new Dimension(400, 300));
-            JOptionPane.showMessageDialog(null, scrollPane, "Inventory Report", JOptionPane.PLAIN_MESSAGE);
+
+            // Clear the empty box and add the report
+            emptyBoxPanel.setLayout(new BorderLayout());
+            emptyBoxPanel.add(scrollPane, BorderLayout.CENTER);
+
+            emptyBoxPanel.revalidate();
+            emptyBoxPanel.repaint();
+
             updateOkMessage("Report exported");
         } catch (Exception e) {
             updateError(e.getMessage()); // Update the messageField with the error message
