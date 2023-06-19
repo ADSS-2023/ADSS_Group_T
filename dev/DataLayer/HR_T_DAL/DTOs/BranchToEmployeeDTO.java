@@ -13,6 +13,7 @@ public class BranchToEmployeeDTO extends DTO {
     }
 
     public BranchToEmployeeDTO(){
+        super("BranchToEmployee");
 
     }
 

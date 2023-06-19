@@ -50,7 +50,7 @@ public class ShiftController {
 
         // Output the notification string
         notifications.put(date, notificationString);
-        notificationsUI.put(date, buildNotificationUI(date, shiftsByDateInAllBranch));
+        //notificationsUI.put(date, buildNotificationUI(date, shiftsByDateInAllBranch));
         dalShiftService.addNotification(date, notificationString);
     }
 

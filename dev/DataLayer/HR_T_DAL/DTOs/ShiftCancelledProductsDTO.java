@@ -16,4 +16,7 @@ public class ShiftCancelledProductsDTO extends DTO {
         this.productName = productName;
         this.amount = amount;
     }
+    public ShiftCancelledProductsDTO() {
+        super("ShiftCancelledProducts");
+    }
 }

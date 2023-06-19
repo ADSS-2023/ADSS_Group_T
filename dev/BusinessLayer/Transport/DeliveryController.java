@@ -718,7 +718,7 @@ public class DeliveryController {
             this.shiftController.skipDay(getCurrDate().plusDays(1));
         }
         catch (Exception exception){
-            throw new Exception("Error while skipping in Shift day");
+            throw new Exception("Error while skipping in Shift day "+ exception.toString());
         }
         Set<Delivery> deliveriesThatReScheduleDelivery = new HashSet<>();
         if(!getDeliveriesByDate(getCurrDate().plusDays(1)).isEmpty()) {

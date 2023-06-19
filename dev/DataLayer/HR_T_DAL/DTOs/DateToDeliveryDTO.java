@@ -23,6 +23,8 @@ public class DateToDeliveryDTO extends DTO {
     }
 
     public DateToDeliveryDTO() {
+        super("DateToDelivery");
+
     }
 
     public static String getTableNameStatic(){

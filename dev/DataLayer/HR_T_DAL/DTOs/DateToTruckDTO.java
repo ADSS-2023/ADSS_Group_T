@@ -13,6 +13,7 @@ public class DateToTruckDTO extends DTO {
     }
 
     public DateToTruckDTO() {
+        super("DateToTruck");
     }
 
     public static String getTableNameStatic() {

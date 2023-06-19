@@ -59,16 +59,5 @@ public class GenericFrameUser extends GenericFrame {
         //the first word of the error message is always "Error: " in white color
         //the rest of the error message is in red color
         feedbackLabel.setText("<html><font color='white'>feedback: </font><font color='green'>" + feedbackText + "</font></html>");
-        new Thread(() -> {
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            feedbackLabel.setText("<html><font color='white'>feedback: </font><font color='green'>" + "</font></html>");
-        }).start();
     }
-
-
 }
