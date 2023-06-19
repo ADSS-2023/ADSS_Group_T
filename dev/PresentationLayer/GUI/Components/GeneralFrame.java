@@ -120,7 +120,6 @@ public class GeneralFrame extends JFrame {
 
     private static void run(JFrame curFrame) {
         curFrame.setVisible(true);
-
     }
 }
 

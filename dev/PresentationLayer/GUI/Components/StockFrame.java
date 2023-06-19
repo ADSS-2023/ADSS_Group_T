@@ -181,7 +181,14 @@ public class StockFrame extends JFrame {
     private void nextDay() {
         refreshEmptyBox("");
         Response res = sf.manageOrderService.nextDay();
-        handleErrorOrOk(res);
+        Response res2 = sf.orderService.nextDay();
+        sf.nextDay();
+        if(res.isError()){
+            handleErrorOrOk(res);
+        }
+        else {
+            handleErrorOrOk(res);
+        }
 //        JOptionPane.showMessageDialog(null, "Moved to the next day successfully.", "Move to Next Day", JOptionPane.INFORMATION_MESSAGE);
     }
 

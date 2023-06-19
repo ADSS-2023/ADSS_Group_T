@@ -102,12 +102,7 @@ public class SupplierManager {
         //System.out.println(serviceFactory.orderService.createSpecialOrder(itemsList,false));
         ItemToOrder item4  = new ItemToOrder("Click","Elite",2,Util_Supplier_Stock.getCurrDay().plusMonths(1),-1,-1);
         itemsList.add((item4));
-        serviceFactory.orderService.createSpecialOrder(itemsList,true);
-        nextDay();
-        nextDay();
-        nextDay();
-        nextDay();
-        nextDay();
+
     }
 
     public void start(){
