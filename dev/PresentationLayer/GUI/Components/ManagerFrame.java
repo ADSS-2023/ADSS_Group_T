@@ -205,20 +205,26 @@ public class ManagerFrame extends JFrame {
         }
     }
 
-    private void showNewItems(){
+    private void showNewItems() {
+        emptyBoxPanel.removeAll(); // Clear the empty box panel
+
         try {
             Response newItemsData = sf.manageOrderService.show_new_items();
-            if(newItemsData.isError()) throw new Exception(newItemsData.getErrorMassage());
+            if (newItemsData.isError()) throw new Exception(newItemsData.getErrorMassage());
             String newItems = (String) newItemsData.getValue();
+            newItems = newItems.replace( "\u001B[31m", "ATTENTION : ");
+            newItems = newItems.replace( "\u001B[0m", "");
             JTextArea textArea = new JTextArea(newItems);
             JScrollPane scrollPane = new JScrollPane(textArea);
             textArea.setEditable(false);
             scrollPane.setPreferredSize(new Dimension(400, 300));
-            JOptionPane.showMessageDialog(null, scrollPane, "New Items", JOptionPane.PLAIN_MESSAGE);
-            updateOkMessage("Items viewed");
 
-        }
-        catch (Exception exp) {
+            emptyBoxPanel.add(scrollPane); // Add the scroll pane to the empty box panel
+            emptyBoxPanel.revalidate();
+            emptyBoxPanel.repaint();
+
+            updateOkMessage("Items viewed");
+        } catch (Exception exp) {
             updateError(exp.getMessage());
         }
     }
