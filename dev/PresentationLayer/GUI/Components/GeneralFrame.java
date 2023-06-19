@@ -51,6 +51,11 @@ public class GeneralFrame extends JFrame {
         } catch (Exception c) {
 
         }
+        login(sf);
+
+
+    }
+    public void login(ServiceFactory sf){
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(2, 2));
         panel.add(new JLabel("ID:"));
@@ -76,8 +81,8 @@ public class GeneralFrame extends JFrame {
         } else {
             // Cancel button clicked or dialog closed
         }
-
     }
+
 
     private static void loadData(ServiceFactory sf) {
         try {
@@ -96,13 +101,19 @@ public class GeneralFrame extends JFrame {
 
     }
 
-    private static void continueToFrame(Response res,ServiceFactory sf) {
-        if (((String) res.getValue().toString()).equals("WareHouse"))
-            run(new StockFrame(sf));
+    private  void continueToFrame(Response res,ServiceFactory sf) {
+        if (((String) res.getValue().toString()).equals("WareHouse")) {
+            StockFrame stockFrame = new StockFrame(sf);
+            stockFrame.setLogOutCallBack(()->login(sf));
+            run(stockFrame);
+        }
         else if(((String) res.getValue().toString()).equals("Suppliers"))
             run(new AllSupplierFrame(sf));
-        else
-            run(new ManagerFrame(sf));
+        else {
+            ManagerFrame managerFrame = new ManagerFrame(sf);
+            managerFrame.setLogOutCallBack(() -> login(sf));
+            run(managerFrame);
+        }
     }
 
 

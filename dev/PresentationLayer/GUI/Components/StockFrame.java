@@ -5,6 +5,7 @@ import BusinessLayer.Stock.Util.Util;
 import BusinessLayer.Supplier_Stock.ItemToOrder;
 import PresentationLayer.Stock.StockUI;
 import PresentationLayer.Supplier.SupplierManager;
+import PresentationLayer.Supplier_Stock.PreviousCallBack;
 import ServiceLayer.Supplier_Stock.Response;
 import ServiceLayer.Supplier_Stock.ServiceFactory;
 import java.awt.List;
@@ -40,9 +41,10 @@ public class StockFrame extends JFrame {
     private JPanel emptyBoxPanel;
     private CardLayout cardLayout;
 
-    private JPanel mainPanel;
+    private JPanel bottomPanel;
     private JLabel messageField;
     private JLabel title;
+    private PreviousCallBack previousCallBack;
 
     public StockFrame(ServiceFactory sf) {
         this.sf = sf;
@@ -50,19 +52,22 @@ public class StockFrame extends JFrame {
         setTitle("Stock");
         setPreferredSize(new Dimension(800, 600));
         setLayout(new BorderLayout());
-
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         createToolbar();
         createEmptyBoxPanel();
-        createErrorOkMessages();
+        createBottomPannel();
         createTitleMessage();
+
+//        createLogoutButton(); // Add the logout button
 
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
-
     }
+
+
+
 
     private void createTitleMessage() {
         title = new JLabel("");
@@ -73,12 +78,36 @@ public class StockFrame extends JFrame {
         add(title, BorderLayout.NORTH);
     }
 
-    private void createErrorOkMessages() {
-        messageField = new JLabel("Welcome to inventory system");
+    private void createBottomPannel() {
+        bottomPanel = new JPanel(new BorderLayout());
+
+        // Create the message field label
+        messageField = new JLabel("");
         Font currentFont = messageField.getFont();
         Font newFont = currentFont.deriveFont(currentFont.getSize() + 2f);
         messageField.setFont(newFont);
-        add(messageField,BorderLayout.SOUTH);
+
+        // Create the logout button
+        JButton logoutButton = new JButton("Logout");
+
+        // Add an ActionListener to the logout button
+        logoutButton.addActionListener(e -> logout());
+
+        // Create a panel to hold the label and button
+        JPanel messagePanel = new JPanel(new BorderLayout());
+        messagePanel.add(messageField, BorderLayout.WEST);
+        messagePanel.add(logoutButton, BorderLayout.EAST);
+
+        // Add the message panel to the bottom panel
+        bottomPanel.add(messagePanel, BorderLayout.SOUTH);
+
+        // Add the bottom panel to the frame
+        add(bottomPanel, BorderLayout.SOUTH);
+    }
+
+    private void logout() {
+        dispose();
+        previousCallBack.goBack();
     }
 
     public void updateError(String msg){
@@ -851,7 +880,7 @@ public class StockFrame extends JFrame {
 
     //TODO : make only one function
     private void show_all_orders() {
-        emptyBoxPanel.removeAll(); // Clear the empty box panel
+        refreshEmptyBox("Next week orders");
 
         try {
             Response allOrdersData = sf.manageOrderService.show_all_orders();
@@ -879,7 +908,9 @@ public class StockFrame extends JFrame {
 
     }
 
-
+    public void setLogOutCallBack(PreviousCallBack previousCallBack) {
+        this.previousCallBack = previousCallBack;
+    }
 
 
     // Create methods to handle other actions here

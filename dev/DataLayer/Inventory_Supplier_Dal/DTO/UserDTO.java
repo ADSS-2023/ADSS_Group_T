@@ -22,6 +22,9 @@ public class UserDTO extends DTO {
         this.id = id;
         this.occupation = occupation;
     }
+    public UserDTO(){
+        super("users");
+    }
 
     public void setId(String id) {
         this.id = id;

@@ -61,11 +61,11 @@ public class UserController {
         List<UserDTO> userDTOS = loadUser();
         for(UserDTO userDTO: userDTOS){
             if(userDTO.getOccupation() == 1)
-                users.add(new Employee(userDTO.getId(), Employee.Occupation.Manager, userDalController));
+                users.add(new Employee(userDTO));
             else if(userDTO.getOccupation() == 2)
-                users.add(new Employee(userDTO.getId(), Employee.Occupation.WareHouse, userDalController));
+                users.add(new Employee(userDTO));
             else if(userDTO.getOccupation() == 3)
-                users.add(new Employee(userDTO.getId(), Employee.Occupation.Suppliers, userDalController));
+                users.add(new Employee(userDTO));
         }
     }
 

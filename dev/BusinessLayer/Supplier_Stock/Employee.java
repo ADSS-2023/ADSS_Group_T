@@ -25,6 +25,21 @@ public class Employee {
             this.userDTO = new UserDTO(id,3);
         userDalController.insert(userDTO);
     }
+    public Employee(UserDTO userDTO){
+        id = userDTO.getId();
+        switch (userDTO.getOccupation()){
+            case 1:
+                occupation = Occupation.Manager;
+                break;
+            case 2:
+                occupation = Occupation.WareHouse;
+                break;
+            case 3:
+                occupation = Occupation.Suppliers;
+                break;
+
+        }
+    }
 
     public enum Occupation {
         WareHouse,Suppliers,Manager
