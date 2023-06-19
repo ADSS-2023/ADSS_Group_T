@@ -11,40 +11,78 @@ import java.util.Date;
 import java.util.Scanner;
 
 public class UI_General {
-    public static void run(StockUI stockUI,SupplierManager supplierManager,ServiceFactory sf){
+    public void run2(StockUI stockUI,SupplierManager supplierManager,ServiceFactory sf,String user){
         Scanner scanner = new Scanner(System.in);
         boolean isActive = true;
         while (isActive) {
-            System.out.println("What would like to do?\n" +
-                    "1.Enter suppliers system\n2.Enter Inventory system\n3.Skip day\n4.Exit");
-            int action = scanner.nextInt();
-            scanner.nextLine();
-            switch (action) {
-                case 1:
-                    supplierManager.start();
-                    break;
-                case 2:
-                    stockUI.run();
-                    break;
-                case 3:
-                    stockUI.moveToNextDay();
-                    sf.nextDay();
-                    supplierManager.nextDay();
-                    break;
-                case 4:
-                    isActive = false;
-                    break;
+            if (user.equals("Supplier")) {
+                System.out.println("What would like to do?\n" +
+                        "1.Enter suppliers system\n2.Skip day\n3.exit");
+                int action = scanner.nextInt();
+                switch (action) {
+                    case 1:
+                        supplierManager.start();
+                        break;
+                    case 2:
+                        stockUI.moveToNextDay();
+                        sf.nextDay();
+                        supplierManager.nextDay();
+                        break;
+                    case 3:
+                        isActive = false;
+                        break;
+                }
+            }
+            else if (user.equals("Stock")){
+                System.out.println("What would like to do?\n" +
+                        "1.Enter inventory system\n2.Skip day\n3.exit");
+                int action = scanner.nextInt();
+                switch (action) {
+                    case 1:
+                        stockUI.run();
+                        break;
+                    case 2:
+                        stockUI.moveToNextDay();
+                        sf.nextDay();
+                        supplierManager.nextDay();
+                        break;
+                    case 3:
+                        isActive = false;
+                        break;
+                }
+            }
+            else {
+                System.out.println("What would like to do?\n" +
+                        "1.Enter suppliers system\n2.Enter Inventory system\n3.Skip day\n4.Exit");
+                int action = scanner.nextInt();
+                scanner.nextLine();
+                switch (action) {
+                    case 1:
+                        supplierManager.start();
+                        break;
+                    case 2:
+                        stockUI.run();
+                        break;
+                    case 3:
+                        stockUI.moveToNextDay();
+                        sf.nextDay();
+                        supplierManager.nextDay();
+                        break;
+                    case 4:
+                        isActive = false;
+                        break;
+                }
             }
         }
     }
 
-    public static void main(String[] args) throws Exception {
+    public  void run(String user) throws Exception {
         ServiceFactory sf = new ServiceFactory();
         //sf.sc.loadSuppliers();
         StockUI stockUI = new StockUI(sf);
         SupplierManager supplierManager = new SupplierManager(sf);
-        stockUI.setPreviousCallBack(()->run(stockUI,supplierManager,sf));
-        supplierManager.setPreviousCallBack(()->run(stockUI,supplierManager,sf));
+        stockUI.setPreviousCallBack(()->run2(stockUI,supplierManager,sf,user));
+        supplierManager.setPreviousCallBack(()->run2(stockUI,supplierManager,sf,user));
         Scanner scanner = new Scanner(System.in);
         System.out.println("\033[1mWelcome to Superly inventory and supplier system\033[0m\n\u001B[32m" +
                 "Would you like to load data or continue on an empty system?\n" +
@@ -68,6 +106,6 @@ public class UI_General {
             stockUI.setUpData();
             supplierManager.setUpData();
         }
-        run(stockUI,supplierManager,sf);
+        run2(stockUI,supplierManager,sf,user);
     }
 }
