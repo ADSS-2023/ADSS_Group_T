@@ -236,6 +236,9 @@ public class ShiftController {
     public String assignEmployeeForShift(String branch, int id, LocalDate date, boolean shiftType, String positionType) throws Exception {
         if (branchController.getBranch(branch) == null)
             throw new Exception(String.format("Branch %s does not exist", branch));
+
+        if (lazyLoadFindEmployeeByid(id) == null)
+            throw new Exception(String.format("wrong id", id));
         HashMap<LocalDate, ArrayList<Shift>> branchShifts = lazyLoadFindShifsByBranch(branch);
         Employee employee = lazyLoadFindEmployeeByid(id);
         if (branchShifts != null && employee != null) {
@@ -246,14 +249,15 @@ public class ShiftController {
     }
 
     public String assignAll(String branch, LocalDate date, boolean shiftType) throws Exception {
-        if (branchController.getBranch(branch) == null)
-            throw new Exception(String.format("Branch %s does not exist", branch));
-        HashMap<LocalDate, ArrayList<Shift>> branchShifts = lazyLoadFindShifsByBranch(branch);
-        if (branchShifts != null) {
-            Shift shift = shiftType ? branchShifts.get(date).get(0) : branchShifts.get(date).get(1);
-            return shift.assignAll();
-        }
-        return "assign failed";
+            if (branchController.getBranch(branch) == null)
+                throw new Exception(String.format("Branch %s does not exist", branch));
+            HashMap<LocalDate, ArrayList<Shift>> branchShifts = lazyLoadFindShifsByBranch(branch);
+            if (branchShifts != null) {
+                Shift shift = shiftType ? branchShifts.get(date).get(0) : branchShifts.get(date).get(1);
+                return shift.assignAll();
+            }
+
+        throw new NoSuchElementException("assign failed");
     }
 
     public void addRequirements(String branch, LocalDate shiftDate, boolean shiftType, LinkedHashMap<String, Integer> requirements) throws Exception {
@@ -265,10 +269,7 @@ public class ShiftController {
             if (branchShifts.containsKey(shiftDate)) {
                 ArrayList<Shift> shiftList = branchShifts.get(shiftDate);
                 Shift shift = shiftList.get(shiftType ? 0 : 1);
-                if (shiftType) shiftT = "m";
-                for (String position : requirements.keySet()) {
-                    dalShiftService.addRequierement(branch, Time.localDateToString(shiftDate), shiftT, position, requirements.get(position));
-                }
+
                 shift.addEmployeeRequirements(requirements);
             } else {
                 throw new IllegalArgumentException("No shifts available for the given date");

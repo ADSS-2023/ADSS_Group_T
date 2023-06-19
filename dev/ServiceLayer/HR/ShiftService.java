@@ -20,11 +20,11 @@ public class ShiftService {
         this.shiftController = shiftController;
     }
 
-    public String addShiftRequirements(String branch, LinkedHashMap<String, Integer> howMany, String date, String shiftType) {
+    public String addShiftRequirements(String branch, LinkedHashMap<String, Integer> howMany, LocalDate date, String shiftType) {
         Response response = new Response();
         try {
             boolean bool = !shiftType.equals("e");
-            shiftController.addRequirements(branch, Time.stringToLocalDate(date), bool, howMany);
+            shiftController.addRequirements(branch, date, bool, howMany);
             response.setReturnValue("succeed");
         } catch (Exception ex) {
             response.setErrorMessage(ex.getMessage());

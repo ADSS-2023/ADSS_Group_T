@@ -50,26 +50,35 @@ public class Shift {
     }
 
 
-
+//dalShiftService.updateRequierement(branch, date.toString(), s, positionType, amount, amount - 1);
 
     public void addEmployeeRequirements(LinkedHashMap<String, Integer> requirements) throws SQLException {
-        String s;
+        if (requirements == null || requirements.isEmpty()) {
+            throw new IllegalArgumentException("Requirements cannot be null or empty");
+        }
+
         for (Map.Entry<String, Integer> entry : requirements.entrySet()) {
-            int amount = entry.getValue();
-            String pos = entry.getKey();
-            if (employeeRequirements.containsKey(pos)){
-                if(shiftType){s = "morning";}
-                else s = "evening";
-                amount = amount + employeeRequirements.get(pos);
-                dalShiftService.updateRequierement(branch, date.toString(),s, pos, amount, amount-1);
+            String position = entry.getKey();
+            Integer toAddAmount = entry.getValue();
+            String shiftTypeStr = shiftType ? "m" : "e";
+            lazyLoadFindRequiermentsBtDateAndShiftType();
+
+            if (employeeRequirements == null){
+                employeeRequirements = new LinkedHashMap <String, Integer>();
             }
-            else{
-                employeeRequirements.put(pos, amount);
-                String sht = shiftType? "m" : "e";
-                dalShiftService.addRequierement(branch, date.toString(), sht, pos, amount);
+            if (employeeRequirements.containsKey(position)) {
+                int oldAmount = employeeRequirements.get(position);
+                dalShiftService.updateRequierement(branch, date.toString(), shiftTypeStr, position, oldAmount, oldAmount + toAddAmount);
+            } else {
+                employeeRequirements.put(position, toAddAmount);
+                dalShiftService.addRequierement(branch, date.toString(), shiftTypeStr, position, toAddAmount);
             }
         }
     }
+
+
+
+
 
     public void  lazyLoadFindRequiermentsBtDateAndShiftType() throws SQLException {
         String s ;

@@ -167,7 +167,7 @@ public class HRManagerFrame  extends GenericFrameUser {
                     if (response1.isError()) {
                         setErrorText(response1.getErrorMessage());
                     } else {
-                        setFeedbackText("Delivery ordered successfully");
+                        setFeedbackText("Employee added successfully");
                     }
 
                 }
@@ -280,7 +280,7 @@ public class HRManagerFrame  extends GenericFrameUser {
                     if (response1.isError()) {
                         setErrorText(response1.getErrorMessage());
                     } else {
-                        setFeedbackText("Delivery ordered successfully");
+                        setFeedbackText("Driver addesd successfully");
                     }
                 }
             });
@@ -416,7 +416,7 @@ public class HRManagerFrame  extends GenericFrameUser {
                                     // Call the assignAll function and get the response
                                     String response1 = shiftService.assignAll(selectedBranch, selectedDate, selectedShiftType);
 
-                                    setFeedbackText(response1);  // Set the response message as feedback text
+                                    setFeedbackText("assign successful");  // Set the response message as feedback text
 
                                     // Update the table with the new shift status
                                     updateShiftStatusTable(shiftStatusTable, selectedBranch, selectedDate, selectedShiftType);
@@ -531,7 +531,7 @@ public class HRManagerFrame  extends GenericFrameUser {
                     if (response1.isError()) {
                         setErrorText(response1.getErrorMessage());
                     } else {
-                        setFeedbackText("assign employee successfully");
+                        setFeedbackText("assign driver successfully");
                     }
                 }
                 idField.add(new GenericLabel(""));
@@ -633,11 +633,11 @@ public class HRManagerFrame  extends GenericFrameUser {
                     for (int i = 0 ; i < qualifications.length-1 ; i++  ){
                         howMany.put(qualifications[i],nums.get(i));
                     }
-                    Response response1 = ResponseSerializer.deserializeFromJson( shiftService.addShiftRequirements(branch, howMany, datef, shiftType));
+                    Response response1 = ResponseSerializer.deserializeFromJson( shiftService.addShiftRequirements(branch, howMany,  Time.stringToLocalDate(datef), shiftType));
                     if (response1.isError()) {
                         setErrorText(response1.getErrorMessage());
                     } else {
-                        setFeedbackText("assign employee successfully");
+                        setFeedbackText("added requirements successfully");
                     }
                 }
             });

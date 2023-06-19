@@ -79,8 +79,8 @@ public class Data_init_HR {
 // Loop through each date and insert shifts for the morning and evening
         while (startDate.isBefore(endDate)) {
             for (String branch : branches) {
-                shiftService.addShiftRequirements(branch, positions, startDate.toString(), "m" );
-                shiftService.addShiftRequirements(branch, positions, startDate.toString(), "e" );
+                shiftService.addShiftRequirements(branch, positions, startDate, "m" );
+                shiftService.addShiftRequirements(branch, positions, startDate, "e" );
             }
 
             // Increment the date by 1 day
