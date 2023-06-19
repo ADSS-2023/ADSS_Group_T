@@ -9,11 +9,12 @@ public class GUI_CLI_main {
             switch (args[0]) {
                 case "GUI":
                     MainGui mainGui = new MainGui();
-                    //mainGui.run(args[1]);
+                    mainGui.run(args[1]);
+                    break;
                 case "CLI":
                     UI_General uiGeneral = new UI_General();
                     uiGeneral.run(args[1]);
-
+                    break;
             }
         }
         catch (Exception e){
