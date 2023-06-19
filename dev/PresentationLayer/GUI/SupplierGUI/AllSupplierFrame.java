@@ -231,4 +231,7 @@ public class AllSupplierFrame extends JFrame {
         }
     }
 
+    public void setManagerFrameCallBack(PreviousCallBack managerFrameCallBack) {
+        this.managerFrameCallBack = managerFrameCallBack;
+    }
 }

@@ -116,6 +116,7 @@ public class GeneralFrame extends JFrame {
     public void continueToSupplier(ServiceFactory sf){
         AllSupplierFrame allSupplierFrame = new AllSupplierFrame(sf);
         allSupplierFrame.setLogOutCallBack(()->login(sf));
+        allSupplierFrame.setManagerFrameCallBack(()->continueToManager(sf));
         run(allSupplierFrame);
     }
     public void continueToInventory(ServiceFactory sf){
