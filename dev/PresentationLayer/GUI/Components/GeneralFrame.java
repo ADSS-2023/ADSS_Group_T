@@ -97,20 +97,32 @@ public class GeneralFrame extends JFrame {
 
     private  void continueToFrame(Response res,ServiceFactory sf) {
         if (((String) res.getValue().toString()).equals("WareHouse")) {
-            StockFrame stockFrame = new StockFrame(sf);
-            stockFrame.setLogOutCallBack(()->login(sf));
-            run(stockFrame);
+            continueToInventory(sf);
         }
         else if(((String) res.getValue().toString()).equals("Suppliers")) {
-            AllSupplierFrame allSupplierFrame = new AllSupplierFrame(sf);
-            allSupplierFrame.setLogOutCallBack(()->login(sf));
-            run(allSupplierFrame);
+            continueToSupplier(sf);
         }
         else {
-            ManagerFrame managerFrame = new ManagerFrame(sf);
-            managerFrame.setLogOutCallBack(() -> login(sf));
-            run(managerFrame);
+            continueToManager(sf);
         }
+    }
+    public void continueToManager(ServiceFactory sf){
+        ManagerFrame managerFrame = new ManagerFrame(sf);
+        managerFrame.setLogOutCallBack(() -> login(sf));
+        managerFrame.setInventoryCallBack(()->continueToInventory(sf));
+        managerFrame.setSupllierCallBack(()->continueToSupplier(sf));
+        run(managerFrame);
+    }
+    public void continueToSupplier(ServiceFactory sf){
+        AllSupplierFrame allSupplierFrame = new AllSupplierFrame(sf);
+        allSupplierFrame.setLogOutCallBack(()->login(sf));
+        run(allSupplierFrame);
+    }
+    public void continueToInventory(ServiceFactory sf){
+        StockFrame stockFrame = new StockFrame(sf);
+        stockFrame.setLogOutCallBack(()->login(sf));
+        stockFrame.setManagerCallBack(()->continueToManager(sf));
+        run(stockFrame);
     }
 
 

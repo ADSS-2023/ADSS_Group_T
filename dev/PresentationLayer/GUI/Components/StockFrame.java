@@ -1,21 +1,15 @@
 package PresentationLayer.GUI.Components;
 
-import BusinessLayer.HR.Constraint;
 import BusinessLayer.Stock.Util.Util;
-import BusinessLayer.Supplier_Stock.ItemToOrder;
-import PresentationLayer.Stock.StockUI;
-import PresentationLayer.Supplier.SupplierManager;
 import PresentationLayer.Supplier_Stock.PreviousCallBack;
 import ServiceLayer.Supplier_Stock.Response;
 import ServiceLayer.Supplier_Stock.ServiceFactory;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
 
-import org.jdatepicker.JDatePanel;
 import org.jdatepicker.JDatePicker;
 import org.jdatepicker.impl.DateComponentFormatter;
 import org.jdatepicker.impl.JDatePanelImpl;
@@ -23,15 +17,10 @@ import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
 
-import java.time.chrono.JapaneseDate;
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.EtchedBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.time.DayOfWeek;
-import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,6 +34,7 @@ public class StockFrame extends JFrame {
     private JLabel messageField;
     private JLabel title;
     private PreviousCallBack previousCallBack;
+    private PreviousCallBack managerCallBack;
 
     public StockFrame(ServiceFactory sf) {
         this.sf = sf;
@@ -162,6 +152,9 @@ public class StockFrame extends JFrame {
         addButtonToToolbar(toolbar, "Create Regular Order", this::createRegularOrder);
         addButtonToToolbar(toolbar, "Edit Regular Item Order", this::editRegularItemOrder);
         addButtonToToolbar(toolbar, "Move to Next Day", this::nextDay);
+        if(sf.userService.isManager()){
+            addButtonToToolbar(toolbar,"Back to manager screen" ,()->{dispose();managerCallBack.goBack();});
+        }
 
         add(toolbar, BorderLayout.WEST);
     }
@@ -910,6 +903,8 @@ public class StockFrame extends JFrame {
         this.previousCallBack = previousCallBack;
     }
 
-
+    public void setManagerCallBack(PreviousCallBack managerCallBack) {
+        this.managerCallBack = managerCallBack;
+    }
     // Create methods to handle other actions here
 }
