@@ -8,12 +8,16 @@
 ##
 * Start the program with a parameter "CLI"/"GUI" and one of the users : 
 
-java -jar adss2023_v03.jar GUI StoreManager     
+java -jar adss2023_v03.jar GUI StoreManager
+
 java -jar adss2023_v03.jar GUI Stock
+
 java -jar adss2023_v03.jar GUI Supplier
 
-java -jar adss2023_v03.jar CLI StoreManager     
+java -jar adss2023_v03.jar CLI StoreManager
+
 java -jar adss2023_v03.jar CLI Stock
+
 java -jar adss2023_v03.jar CLI Supplier
 
 
