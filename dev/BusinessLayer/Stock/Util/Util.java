@@ -61,4 +61,29 @@ public class Util {
             day_string ="0"+day_string;
         return year+"-"+month_string+"-"+day_string;
     }
+
+    public static DayOfWeek stringToDayOfWeek(String day) {
+        switch (day) {
+            case "SUNDAY":
+                return DayOfWeek.SUNDAY;
+            case "MONDAY":
+                return DayOfWeek.MONDAY;
+            case "TUESDAY":
+                return DayOfWeek.TUESDAY;
+            case "WEDNESDAY":
+                return DayOfWeek.WEDNESDAY;
+            case "THURSDAY":
+                return DayOfWeek.THURSDAY;
+            case "FRIDAY":
+                return DayOfWeek.FRIDAY;
+            case "SATURDAY":
+                return DayOfWeek.SATURDAY;
+            default:
+                return null; // or handle invalid day input
+        }
+    }
+
+
+
+
 }

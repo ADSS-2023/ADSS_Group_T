@@ -8,12 +8,13 @@ import PresentationLayer.Supplier.SupplierManager;
 import PresentationLayer.Supplier_Stock.PreviousCallBack;
 import ServiceLayer.Supplier_Stock.Response;
 import ServiceLayer.Supplier_Stock.ServiceFactory;
-import java.awt.List;
+
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.Date;
+import java.util.*;
+
 import org.jdatepicker.JDatePanel;
 import org.jdatepicker.JDatePicker;
 import org.jdatepicker.impl.DateComponentFormatter;
@@ -23,7 +24,6 @@ import org.jdatepicker.impl.UtilDateModel;
 
 
 import java.time.chrono.JapaneseDate;
-import java.util.Properties;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
@@ -32,7 +32,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.DayOfWeek;
 import java.time.ZoneId;
-import java.util.HashMap;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class StockFrame extends JFrame {
@@ -65,8 +65,6 @@ public class StockFrame extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
     }
-
-
 
 
     private void createTitleMessage() {
@@ -110,16 +108,17 @@ public class StockFrame extends JFrame {
         previousCallBack.goBack();
     }
 
-    public void updateError(String msg){
+    public void updateError(String msg) {
         messageField.setText(msg);
         messageField.setForeground(Color.RED);
     }
-    public void updateOkMessage(String msg){
+
+    public void updateOkMessage(String msg) {
         messageField.setText(msg);
         messageField.setForeground(Color.GREEN);
     }
 
-    private void handleErrorOrOk(Response res){
+    private void handleErrorOrOk(Response res) {
         if (res.isError())
             updateError(res.getErrorMassage());
         else
@@ -139,7 +138,7 @@ public class StockFrame extends JFrame {
     private void refreshEmptyBox(String title) {
         this.title.setText(title);
         emptyBoxPanel.removeAll();
-        emptyBoxPanel.setLayout(new GridLayout(10,2));
+        emptyBoxPanel.setLayout(new GridLayout(10, 2));
 
         emptyBoxPanel.revalidate();
         emptyBoxPanel.repaint();
@@ -179,7 +178,7 @@ public class StockFrame extends JFrame {
         toolbar.add(button);
     }
 
-    private void nextDay(){
+    private void nextDay() {
         refreshEmptyBox("");
         Response res = sf.manageOrderService.nextDay();
         handleErrorOrOk(res);
@@ -192,10 +191,10 @@ public class StockFrame extends JFrame {
         try {
             Response dataResponse = sf.inventoryService.show_data();
             if (dataResponse.isError()) {
-                if(emptyCategory())
+                if (emptyCategory())
                     //TODO : Check
                     return "";
-                else{
+                else {
                     return "exit";
                 }
             }
@@ -240,21 +239,19 @@ public class StockFrame extends JFrame {
                     try {
                         Response dataToShow = sf.categoryService.show_data(nextIndex);
                         if (dataToShow.isError()) {
-                            if(emptyCategory())
+                            if (emptyCategory())
                                 return nextIndex;
-                            else{
+                            else {
                                 return "exit";
                             }
-                        }
-                        else {
+                        } else {
                             String toShow = (String) dataToShow.getValue();
                             if (toShow.startsWith("--")) {
                                 isActive = false;
                                 if (!presentItem(toShow)) {
                                     nextIndex = "exit";
                                 }
-                            }
-                            else {
+                            } else {
                                 categories = toShow.split(", ");
                                 options = new String[categories.length + 1];
 
@@ -293,7 +290,7 @@ public class StockFrame extends JFrame {
     }
 
     private boolean emptyCategory() {
-        String[] options = {"Choose this category","Cancel"};
+        String[] options = {"Choose this category", "Cancel"};
         int choice = JOptionPane.showOptionDialog(
                 null,
                 "This category is empty",
@@ -308,8 +305,8 @@ public class StockFrame extends JFrame {
     }
 
     private boolean presentItem(String toShow) {
-        String[] options = {"Choose this category","Cancel"};
-        int choise =  JOptionPane.showOptionDialog(
+        String[] options = {"Choose this category", "Cancel"};
+        int choise = JOptionPane.showOptionDialog(
                 null,
                 toShow,
                 "Choose Item",
@@ -326,7 +323,7 @@ public class StockFrame extends JFrame {
         refreshEmptyBox("set discount");
         String product = presentCategories();
         if (!product.equals("exit")) {
-        try {
+            try {
 
 
                 JTextField amountField = new JTextField();
@@ -358,14 +355,13 @@ public class StockFrame extends JFrame {
                 emptyBoxPanel.revalidate();
                 emptyBoxPanel.repaint();
                 emptyBoxPanel.setVisible(true);
-            }
-            catch(NumberFormatException ex){
+            } catch (NumberFormatException ex) {
                 updateError("Invalid input format");
             }
         }
     }
 
-    private JDatePicker addDate(JPanel emptyBoxPanel,int index) {
+    private JDatePicker addDate(JPanel emptyBoxPanel, int index) {
         UtilDateModel model = new UtilDateModel();
 //model.setDate(20,04,2014);
 // Need this...
@@ -379,22 +375,22 @@ public class StockFrame extends JFrame {
 
         datePicker.setPreferredSize(new Dimension(100, 30));
         datePicker.setBackground(Color.white);
-        emptyBoxPanel.add(datePicker,index);
+        emptyBoxPanel.add(datePicker, index);
         return datePicker;
     }
 
-    private void addButton(JPanel panel,String name, Runnable runnable) {
+    private void addButton(JPanel panel, String name, Runnable runnable) {
         JButton button = new JButton("<html><center>" + name + "</center></html>");
 
-        button.setSize(5,5);
-        button.addActionListener((e)->runnable.run());
+        button.setSize(5, 5);
+        button.addActionListener((e) -> runnable.run());
         // Apply custom styling
         button.setFocusPainted(false);
         button.setFont(button.getFont().deriveFont(Font.BOLD, 15));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = 5;
         gbc.gridheight = 10;
-        panel.add(button,gbc);
+        panel.add(button, gbc);
     }
 
     private void damagedItem() {
@@ -434,26 +430,25 @@ public class StockFrame extends JFrame {
             emptyBoxPanel.revalidate();
             emptyBoxPanel.repaint();
             emptyBoxPanel.setVisible(true);
+        } catch (Exception ex) {
+            updateError("invalid input");
         }
-       catch (Exception ex) {
-                updateError("invalid input");
-            }
     }
 
 
     //TODO : change from an alert to just a string of error
     private void setMinimalAmount() {
         refreshEmptyBox("set minimal amount");
-        try{
-        JTextField itemIdField = new JTextField(0);
-        JTextField amountField = new JTextField(0);
+        try {
+            JTextField itemIdField = new JTextField(0);
+            JTextField amountField = new JTextField(0);
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(2, 2));
-        emptyBoxPanel.add(new JLabel("Item ID:"));
-        emptyBoxPanel.add(itemIdField);
-        emptyBoxPanel.add(new JLabel("Minimal Amount:"));
-        emptyBoxPanel.add(amountField);
+            JPanel panel = new JPanel();
+            panel.setLayout(new GridLayout(2, 2));
+            emptyBoxPanel.add(new JLabel("Item ID:"));
+            emptyBoxPanel.add(itemIdField);
+            emptyBoxPanel.add(new JLabel("Minimal Amount:"));
+            emptyBoxPanel.add(amountField);
             addButton(emptyBoxPanel, "Ok", () -> handleErrorOrOk(
                     sf.itemService.setMinimalAmount(Integer.parseInt(itemIdField.getText()),
                             Integer.parseInt(amountField.getText()))));
@@ -474,8 +469,8 @@ public class StockFrame extends JFrame {
             emptyBoxPanel.revalidate();
             emptyBoxPanel.repaint();
             emptyBoxPanel.setVisible(true);
-            } catch (NumberFormatException ex) {
-                messageField.setText("Invalid input format");
+        } catch (NumberFormatException ex) {
+            messageField.setText("Invalid input format");
 
         }
     }
@@ -494,23 +489,23 @@ public class StockFrame extends JFrame {
             addItemPanel.setLayout(new GridLayout(6, 2));
 
 
-            emptyBoxPanel.add(new JLabel("Item ID:"),0);
-            emptyBoxPanel.add(itemIdField,1);
-            emptyBoxPanel.add(new JLabel("Name:"),2);
-            emptyBoxPanel.add(nameField,3);
-            emptyBoxPanel.add(new JLabel("Alert Amount:"),4);
-            emptyBoxPanel.add(amountField,5);
-            emptyBoxPanel.add(new JLabel("Manufacturer:"),6);
-            emptyBoxPanel.add(manufacturerField,7);
-            emptyBoxPanel.add(new JLabel("Price:"),8);
-            emptyBoxPanel.add(priceField,9);
+            emptyBoxPanel.add(new JLabel("Item ID:"), 0);
+            emptyBoxPanel.add(itemIdField, 1);
+            emptyBoxPanel.add(new JLabel("Name:"), 2);
+            emptyBoxPanel.add(nameField, 3);
+            emptyBoxPanel.add(new JLabel("Alert Amount:"), 4);
+            emptyBoxPanel.add(amountField, 5);
+            emptyBoxPanel.add(new JLabel("Manufacturer:"), 6);
+            emptyBoxPanel.add(manufacturerField, 7);
+            emptyBoxPanel.add(new JLabel("Price:"), 8);
+            emptyBoxPanel.add(priceField, 9);
 
 
             addButton(emptyBoxPanel, "Ok", () -> handleErrorOrOk(
                     sf.itemService.addItem(
-                            categoryId,Integer.parseInt(itemIdField.getText()),
-                            nameField.getText(),Integer.parseInt(amountField.getText()),
-                            manufacturerField.getText(),Double.parseDouble(priceField.getText())
+                            categoryId, Integer.parseInt(itemIdField.getText()),
+                            nameField.getText(), Integer.parseInt(amountField.getText()),
+                            manufacturerField.getText(), Double.parseDouble(priceField.getText())
                     )));
 
             addButton(emptyBoxPanel, "Cancel", () -> {
@@ -543,19 +538,19 @@ public class StockFrame extends JFrame {
 
             JTextField costPriceField = new JTextField();
 
-            emptyBoxPanel.add(new JLabel("Order ID:"),0);
-            emptyBoxPanel.add(orderIdField,1);
-            emptyBoxPanel.add(new JLabel("Item ID:"),2);
-            emptyBoxPanel.add(itemIdField,3);
-            emptyBoxPanel.add(new JLabel("Amount Received:"),4);
-            emptyBoxPanel.add(amountField,5);
-            emptyBoxPanel.add(new JLabel("Location in Store:"),6);
-            emptyBoxPanel.add(locationField,7);
-            emptyBoxPanel.add(new JLabel("Validity Date:"),8);
+            emptyBoxPanel.add(new JLabel("Order ID:"), 0);
+            emptyBoxPanel.add(orderIdField, 1);
+            emptyBoxPanel.add(new JLabel("Item ID:"), 2);
+            emptyBoxPanel.add(itemIdField, 3);
+            emptyBoxPanel.add(new JLabel("Amount Received:"), 4);
+            emptyBoxPanel.add(amountField, 5);
+            emptyBoxPanel.add(new JLabel("Location in Store:"), 6);
+            emptyBoxPanel.add(locationField, 7);
+            emptyBoxPanel.add(new JLabel("Validity Date:"), 8);
             JDatePicker validityField = addDate(emptyBoxPanel, 9);
             UtilDateModel model = (UtilDateModel) validityField.getModel();
-            emptyBoxPanel.add(new JLabel("Cost Price:"),10);
-            emptyBoxPanel.add(costPriceField,11);
+            emptyBoxPanel.add(new JLabel("Cost Price:"), 10);
+            emptyBoxPanel.add(costPriceField, 11);
 
             addButton(emptyBoxPanel, "Ok", () -> handleErrorOrOk(
                     sf.itemService.receive_order(
@@ -565,7 +560,7 @@ public class StockFrame extends JFrame {
                             locationField.getText(),
                             Util.stringToDate(Util.DateToString(model.getValue().toInstant().atZone(ZoneId.systemDefault()).toLocalDate())),
                             Double.parseDouble(costPriceField.getText())
-                            )));
+                    )));
             addButton(emptyBoxPanel, "Cancel", () -> {
                 emptyBoxPanel.removeAll(); // Remove all components from the panel
                 emptyBoxPanel.revalidate(); // Revalidate the panel
@@ -579,9 +574,8 @@ public class StockFrame extends JFrame {
             emptyBoxPanel.revalidate();
             emptyBoxPanel.repaint();
             emptyBoxPanel.setVisible(true);
-        }
-            catch(NumberFormatException ex){
-        updateError("Invalid input format");
+        } catch (NumberFormatException ex) {
+            updateError("Invalid input format");
         }
 
     }
@@ -596,8 +590,8 @@ public class StockFrame extends JFrame {
 
                 emptyBoxPanel.add(new JLabel("Category Name:"), 0);
                 emptyBoxPanel.add(nameField, 1);
-                addButton(emptyBoxPanel,"OK",()->handleErrorOrOk(sf.categoryService.add_category(index,nameField.getText())));
-                addButton(emptyBoxPanel,"Cancel",()-> {
+                addButton(emptyBoxPanel, "OK", () -> handleErrorOrOk(sf.categoryService.add_category(index, nameField.getText())));
+                addButton(emptyBoxPanel, "Cancel", () -> {
                     emptyBoxPanel.removeAll(); // Remove all components from the panel
                     emptyBoxPanel.revalidate(); // Revalidate the panel
                     emptyBoxPanel.repaint();
@@ -617,11 +611,9 @@ public class StockFrame extends JFrame {
                 emptyBoxPanel.setVisible(true);
 
             }
+        } catch (Exception ex) {
+            updateError("invalid input");
         }
-
-        catch (Exception ex) {
-                    updateError("invalid input");
-                }
 
 
     }
@@ -652,7 +644,7 @@ public class StockFrame extends JFrame {
                     }
                 });
             }
-            addButton(emptyBoxPanel,"Cancel",()-> {
+            addButton(emptyBoxPanel, "Cancel", () -> {
                 emptyBoxPanel.removeAll(); // Remove all components from the panel
                 emptyBoxPanel.revalidate(); // Revalidate the panel
                 emptyBoxPanel.repaint();
@@ -667,22 +659,21 @@ public class StockFrame extends JFrame {
 
 
     private void openLocationInputDialog(int itemId) {
-            JTextField locationField = new JTextField(10);
+        JTextField locationField = new JTextField(10);
 
-            JPanel panel = new JPanel();
-            panel.add(new JLabel("Where to place item with ID: " + itemId + "? (e.g., ile:'ile number' shelf:'shelf number')"));
-            panel.add(locationField);
+        JPanel panel = new JPanel();
+        panel.add(new JLabel("Where to place item with ID: " + itemId + "? (e.g., ile:'ile number' shelf:'shelf number')"));
+        panel.add(locationField);
 
-            int result = JOptionPane.showConfirmDialog(null, panel, "Item Location", JOptionPane.OK_CANCEL_OPTION);
-            if (result == JOptionPane.OK_OPTION) {
-                String location = locationField.getText();
-                handleErrorOrOk(sf.manageOrderService.placeNewArrival(itemId, location));
-            }
+        int result = JOptionPane.showConfirmDialog(null, panel, "Item Location", JOptionPane.OK_CANCEL_OPTION);
+        if (result == JOptionPane.OK_OPTION) {
+            String location = locationField.getText();
+            handleErrorOrOk(sf.manageOrderService.placeNewArrival(itemId, location));
         }
+    }
 
 
-
-    private void createSpecialOrder2(){
+    private void createSpecialOrder2() {
         try {
             refreshEmptyBox("create special order");
             HashMap<Integer, Integer> items = new HashMap<>();
@@ -714,24 +705,21 @@ public class StockFrame extends JFrame {
             pack();
             emptyBoxPanel.revalidate();
             setVisible(true);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             updateError(e.getMessage());
         }
 
     }
 
 
-
-
-    private void addItemToEmptyBoxPanel(String itemId, String amount,HashMap<Integer,Integer> items) {
+    private void addItemToEmptyBoxPanel(String itemId, String amount, HashMap<Integer, Integer> items) {
         // Create a panel to display the added item
         JPanel itemPanel = new JPanel();
         itemPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         itemPanel.add(new JLabel("Item ID: " + itemId));
         itemPanel.add(new JLabel("Amount: " + amount));
 
-        items.put(Integer.parseInt(itemId),Integer.parseInt(amount));
+        items.put(Integer.parseInt(itemId), Integer.parseInt(amount));
         // Add the item panel to the emptyBoxPanel
         emptyBoxPanel.add(itemPanel);
 
@@ -740,52 +728,6 @@ public class StockFrame extends JFrame {
         emptyBoxPanel.repaint();
     }
 
-
-    //orders
-//    private void createSpecialOrder() {
-//        refreshEmptyBox();
-//        boolean isActive = true;
-//        HashMap<Integer, Integer> products = new HashMap<>();
-//
-//        while (isActive) {
-//            JTextField idField = new JTextField(10);
-//            JTextField amountField = new JTextField(10);
-//
-//            JPanel panel = new JPanel();
-//            panel.setLayout(new GridLayout(3, 2));
-//            panel.add(new JLabel("Insert item ID:"));
-//            panel.add(idField);
-//            panel.add(new JLabel("Insert amount desired:"));
-//            panel.add(amountField);
-//
-//            int result = JOptionPane.showConfirmDialog(null, panel, "Create Special Order", JOptionPane.OK_CANCEL_OPTION);
-//            if (result == JOptionPane.OK_OPTION) {
-//                try {
-//                    int id = Integer.parseInt(idField.getText());
-//                    int amount = Integer.parseInt(amountField.getText());
-//
-//                    products.put(id, amount);
-//
-//                    int choice = JOptionPane.showConfirmDialog(null, "Add more products?", "Create Special Order", JOptionPane.YES_NO_OPTION);
-//                    isActive = choice == JOptionPane.YES_OPTION;
-//                } catch (NumberFormatException ex) {
-//                    JOptionPane.showMessageDialog(null, "Invalid input format", "Error", JOptionPane.ERROR_MESSAGE);
-//                }
-//            } else {
-//                isActive = false;
-//            }
-//        }
-//
-//        int urgentChoice = JOptionPane.showConfirmDialog(null, "Mark this order as urgent?", "Create Special Order", JOptionPane.YES_NO_OPTION);
-//        boolean isUrgent = urgentChoice == JOptionPane.YES_OPTION;
-//
-//        try {
-//            handleErrorOrOk(sf.manageOrderService.createSpecialOrder(products, isUrgent));
-//
-//        } catch (Exception ex) {
-//            messageField.setText(ex.getMessage());
-//        }
-//    }
 
     private void createRegularOrder() {
         try {
@@ -820,8 +762,7 @@ public class StockFrame extends JFrame {
             pack();
             emptyBoxPanel.revalidate();
             setVisible(true);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             updateError(e.getMessage());
         }
 
@@ -830,53 +771,103 @@ public class StockFrame extends JFrame {
 
     private void editRegularItemOrder() {
         try {
-           refreshEmptyBox("edit regular order");
-            JTextField dayField = new JTextField(10);
-            JTextField idField = new JTextField(10);
-            JTextField amountField = new JTextField(10);
+            Response res = sf.manageOrderService.show_all_orders();
+            if (res.isError()) throw new Exception(res.getErrorMassage());
+            String orders = (String) res.getValue();
+            // Split the text by "---------" to get each day and its content
+            List<String> ordersList = removeSpecialOrders(orders);
+            refreshEmptyBox("edit order");
+            emptyBoxPanel.setLayout(new GridLayout(7, 2));
+            for (String cell : ordersList) {
+                cell = "<html>" + cell.replace("\n", "<br>") + "</html>";
+                JLabel label = new JLabel(cell);
+                label.setHorizontalAlignment(SwingConstants.LEFT);
+                label.setVerticalAlignment(SwingConstants.TOP);
+                label.setFont(label.getFont().deriveFont(Font.BOLD));
+                JPanel cellPanel = new JPanel(new BorderLayout());
+                cellPanel.add(label, BorderLayout.CENTER);
+                if (!cell.contains("No items to present")) {
+                    JButton editButton = new JButton("Edit");
+                    editButton.setActionCommand(cell.substring(cell.indexOf("-") + 9, cell.indexOf("Y") + 1)); // Extract the day from the cell text
+                    editButton.addActionListener(editButtonListener);
+                    cellPanel.add(editButton, BorderLayout.EAST);
+                }
+                JScrollPane scrollPane = new JScrollPane(cellPanel);
 
-            JPanel panel = new JPanel();
-            panel.setLayout(new GridLayout(3, 2));
-            panel.add(new JLabel("Day of the week:"));
-            panel.add(dayField);
-            panel.add(new JLabel("Product ID:"));
-            panel.add(idField);
-            panel.add(new JLabel("New amount:"));
-            panel.add(amountField);
-
-            JComboBox<String> dayComboBox;
-            String[] daysOfWeek = {"Sunday","Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
-            dayComboBox = new JComboBox<>(daysOfWeek);
-            emptyBoxPanel.add(new JLabel("Day"),0);
-            emptyBoxPanel.add(dayComboBox,1);
-            emptyBoxPanel.add(new JLabel("Product ID:"),2);
-            emptyBoxPanel.add(idField,3);
-            emptyBoxPanel.add(new JLabel("New amount:"),4);
-            emptyBoxPanel.add(amountField,5);
-
-            addButton(emptyBoxPanel,"edit",()->handleErrorOrOk(
-                    sf.manageOrderService.editRegularOrder(Integer.parseInt(idField.getText()),
-                            DayOfWeek.of(dayComboBox.getSelectedIndex())
-                            ,Integer.parseInt(amountField.getText()))));
-            addButton(emptyBoxPanel,"Cancel",()-> {
-                emptyBoxPanel.removeAll(); // Remove all components from the panel
-                emptyBoxPanel.revalidate(); // Revalidate the panel
-                emptyBoxPanel.repaint();
-            });
-            emptyBoxPanel.add(new JLabel());
-            emptyBoxPanel.add(new JLabel());
-            emptyBoxPanel.add(new JLabel());
-            emptyBoxPanel.add(new JLabel());
-            emptyBoxPanel.add(new JLabel());
-            emptyBoxPanel.add(new JLabel());
+                emptyBoxPanel.add(scrollPane);
+            }
 
             emptyBoxPanel.revalidate();
             emptyBoxPanel.repaint();
-            emptyBoxPanel.setVisible(true);
-        } catch (NumberFormatException e) {
+
+        } catch (Exception e) {
             messageField.setText("Invalid input. Please enter numeric values for ID and amount."); // Update the messageField
         }
     }
+
+    private List<String> removeSpecialOrders(String orders) {
+        String[] cells = orders.split("\n");
+        List<String> ordersList = new LinkedList<>();
+// Iterate over the cells skipping the first empty cell
+
+        for (int i = 0; i < cells.length; i++) {
+            String box = cells[i];
+            i++;
+            while (i < cells.length && !cells[i].equals("Special orders:")) {
+                box += "\n" + cells[i];
+                i++;
+            }
+            if (cells[i].equals("Special orders:")) {
+                while (i < cells.length && !cells[i].startsWith("-"))
+                    i++;
+                i--;
+            }
+
+            ordersList.add(box);
+
+        }
+        return ordersList;
+    }
+
+
+
+    ActionListener editButtonListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JButton editButton = (JButton) e.getSource();
+            String day = editButton.getActionCommand();
+
+            JPanel panel = new JPanel(new GridLayout(2, 2));
+            JLabel itemLabel = new JLabel("Item ID:");
+            JTextField itemField = new JTextField();
+            JLabel amountLabel = new JLabel("Amount:");
+            JTextField amountField = new JTextField();
+            panel.add(itemLabel);
+            panel.add(itemField);
+            panel.add(amountLabel);
+            panel.add(amountField);
+
+            int option = JOptionPane.showOptionDialog(
+                    null,
+                    panel,
+                    "Edit Order",
+                    JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.PLAIN_MESSAGE,
+                    null,
+                    null,
+                    null
+            );
+
+            if (option == JOptionPane.OK_OPTION) {
+                String itemId = itemField.getText();
+                String newAmount = amountField.getText();
+
+                handleErrorOrOk(sf.manageOrderService.editRegularOrder(Integer.parseInt(itemId), Util.stringToDayOfWeek(day), Integer.parseInt(newAmount)));
+                editRegularItemOrder();
+            }
+        }
+
+    };
 
     //TODO : make only one function
     private void show_all_orders() {
