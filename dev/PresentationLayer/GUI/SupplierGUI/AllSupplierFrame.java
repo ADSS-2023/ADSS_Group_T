@@ -3,6 +3,7 @@ package PresentationLayer.GUI.SupplierGUI;
 import BusinessLayer.Supplier.Supplier_Util.PaymentTerms;
 import PresentationLayer.Stock.StockUI;
 import PresentationLayer.Supplier.SupplierManager;
+import PresentationLayer.Supplier_Stock.PreviousCallBack;
 import ServiceLayer.Supplier_Stock.Response;
 import ServiceLayer.Supplier_Stock.ServiceFactory;
 
@@ -27,10 +28,7 @@ public class AllSupplierFrame extends JFrame {
     private CardLayout cardLayout;
     private JTable supplierTable;
     private DefaultTableModel tableModel;
-
-
-
-
+    private PreviousCallBack previousCallBack;
 
     public AllSupplierFrame(ServiceFactory sf) {
         this.sf=sf;
@@ -66,6 +64,10 @@ public class AllSupplierFrame extends JFrame {
         // Create the additional button
         createAddSupplierButton(tablePanel);
 
+        createLogoutButton(buttonPanel);
+
+        createManagerScreenButton(buttonPanel);
+
         // Add the button panel to the left side (WEST) of the frame
         add(buttonPanel, BorderLayout.WEST);
 
@@ -74,6 +76,10 @@ public class AllSupplierFrame extends JFrame {
 
         pack();
 
+    }
+
+    public void setLogOutCallBack(PreviousCallBack previousCallBack) {
+        this.previousCallBack = previousCallBack;
     }
 
     private void initializeTable() {
@@ -195,4 +201,29 @@ public class AllSupplierFrame extends JFrame {
         addSupplier.setPreferredSize(new Dimension(100, 40)); // Adjust the dimensions as needed
         buttonPanel.add(addSupplier, BorderLayout.SOUTH);
     }
+
+    private void createLogoutButton(JPanel buttonPanel) {
+
+        JButton logoutButton = new JButton("Logout");
+        logoutButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+                previousCallBack.goBack();
+            }
+        });
+        buttonPanel.add(logoutButton);
+    }
+
+    private void createManagerScreenButton(JPanel buttonPanel) {
+
+        JButton ManagerScreenButton = new JButton("Manager Screen");
+        ManagerScreenButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+                previousCallBack.goBack();
+            }
+        });
+        buttonPanel.add(ManagerScreenButton);
+    }
+
 }

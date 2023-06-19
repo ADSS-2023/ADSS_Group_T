@@ -18,12 +18,6 @@ public class GeneralFrame extends JFrame {
         this.sf = sf;
         this.stockUI = stockUI;
         this.supplierManager = supplierManager;
-        setTitle("GeneralFrame");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(400, 300);
-        setLocationRelativeTo(null);
-        setLayout(new GridLayout(4, 3));
-        setVisible(true);
     }
 
     public void run() {
@@ -107,8 +101,11 @@ public class GeneralFrame extends JFrame {
             stockFrame.setLogOutCallBack(()->login(sf));
             run(stockFrame);
         }
-        else if(((String) res.getValue().toString()).equals("Suppliers"))
-            run(new AllSupplierFrame(sf));
+        else if(((String) res.getValue().toString()).equals("Suppliers")) {
+            AllSupplierFrame allSupplierFrame = new AllSupplierFrame(sf);
+            allSupplierFrame.setLogOutCallBack(()->login(sf));
+            run(allSupplierFrame);
+        }
         else {
             ManagerFrame managerFrame = new ManagerFrame(sf);
             managerFrame.setLogOutCallBack(() -> login(sf));
