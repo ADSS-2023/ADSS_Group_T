@@ -15,6 +15,7 @@ public class BranchToShiftDTO extends DTO {
     }
 
     public BranchToShiftDTO(){
+        super("BranchToShift");
 
     }
 

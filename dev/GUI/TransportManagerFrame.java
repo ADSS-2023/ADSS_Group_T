@@ -34,6 +34,8 @@ public class TransportManagerFrame extends GenericFrameUser {
     private final SupplierService supplierService;
     private final BranchService branchService;
 
+    private ArrayList<GenericButton> buttonList;
+
     public TransportManagerFrame(ServiceFactory serviceFactory) {
         super(serviceFactory);
         setTitle("Transport Manager");
@@ -42,6 +44,7 @@ public class TransportManagerFrame extends GenericFrameUser {
         this.supplierService = serviceFactory.getSupplierService();
         this.branchService = serviceFactory.getBranchService();
         this.serviceFactory.setTransportManagerFrame(this);
+        this.buttonList = new ArrayList<>();
         serviceFactory.callbackEnterWeight(this::enterWeightFunction);
         serviceFactory.callbackEnterOverWeight(this::enterOverWeightAction);
 
@@ -54,31 +57,40 @@ public class TransportManagerFrame extends GenericFrameUser {
 
         GenericButton skipDayButton = new GenericButton("Skip day");
         leftPanel.add((skipDayButton));
+        buttonList.add(skipDayButton);
 
         GenericButton enterNewDeliveryButton = new GenericButton("Enter new delivery");
         leftPanel.add((enterNewDeliveryButton));
+        buttonList.add(enterNewDeliveryButton);
 
         GenericButton enterNewTruckButton = new GenericButton("Enter new truck");
         leftPanel.add((enterNewTruckButton));
+        buttonList.add(enterNewTruckButton);
 
         GenericButton enterNewSupplierButton = new GenericButton("Enter new supplier");
         leftPanel.add((enterNewSupplierButton));
+        buttonList.add(enterNewSupplierButton);
 
         GenericButton enterNewBranchButton = new GenericButton("Enter new branch");
         leftPanel.add((enterNewBranchButton));
+        buttonList.add(enterNewBranchButton);
 
         GenericButton showLogicCenterProductsButton = new GenericButton("Show logic center products");
         leftPanel.add((showLogicCenterProductsButton));
+        buttonList.add(showLogicCenterProductsButton);
 
         GenericButton showAllDeliveriesButton = new GenericButton("Show all deliveries");
         leftPanel.add((showAllDeliveriesButton));
+        buttonList.add(showAllDeliveriesButton);
 
         GenericButton addNewProductsButton = new GenericButton("Add new products");
         leftPanel.add((addNewProductsButton));
+        buttonList.add(addNewProductsButton);
 
 
 
         skipDayButton.addActionListener(e -> {
+            anyButtonPressed(skipDayButton);
             System.out.println("Button skip day clicked");
             rightPanel.removeAll();
             Response nextDayDetailsResponse = ResponseSerializer.deserializeFromJson(deliveryService.getNextDayDetails());
@@ -106,6 +118,7 @@ public class TransportManagerFrame extends GenericFrameUser {
 
 
         enterNewDeliveryButton.addActionListener(e -> {
+            anyButtonPressed(enterNewDeliveryButton);
             System.out.println("Button enter new delivery clicked");
             rightPanel.removeAll();
             //----------Destination combobox----------------
@@ -237,6 +250,7 @@ public class TransportManagerFrame extends GenericFrameUser {
 
 
         enterNewTruckButton.addActionListener(e -> {
+            anyButtonPressed(enterNewTruckButton);
             rightPanel.removeAll();
             GenericTextField licensePlateTextField = new GenericTextField();
             GenericTextField modelTextField = new GenericTextField();
@@ -290,6 +304,7 @@ public class TransportManagerFrame extends GenericFrameUser {
 
 
         enterNewSupplierButton.addActionListener(e -> {
+            anyButtonPressed(enterNewSupplierButton);
             rightPanel.removeAll();
             GenericTextField addressTextField = new GenericTextField();
             GenericTextField telephone = new GenericTextField();
@@ -337,6 +352,7 @@ public class TransportManagerFrame extends GenericFrameUser {
 
 
         enterNewBranchButton.addActionListener(e -> {
+            anyButtonPressed(enterNewBranchButton);
             rightPanel.removeAll();
             GenericTextField addressTextField = new GenericTextField();
             GenericTextField telephone = new GenericTextField();
@@ -385,10 +401,15 @@ public class TransportManagerFrame extends GenericFrameUser {
 
 
         showLogicCenterProductsButton.addActionListener(e -> {
+            anyButtonPressed(showLogicCenterProductsButton);
             rightPanel.removeAll();
                 Response response1 = ResponseSerializer.deserializeFromJson(logisticCenterService.getProductsInStock());
                 if (response1.isError()) {
-                    setErrorText(response1.getErrorMessage());
+                    if (response1.getErrorMessage().equals("no products in stock"))
+                        setFeedbackText("no products in stock");
+                    else
+                        setErrorText(response1.getErrorMessage());
+
                 } else {
                     String products = (String) response1.getReturnValue();
                     //the products string of products separated by \n
@@ -407,6 +428,7 @@ public class TransportManagerFrame extends GenericFrameUser {
 
 
         showAllDeliveriesButton.addActionListener(e -> {
+            anyButtonPressed(showAllDeliveriesButton);
             rightPanel.removeAll();
             Response response1 = ResponseSerializer.deserializeFromJson(deliveryService.showAllDeliveries());
             if (response1.isError()) {
@@ -460,11 +482,11 @@ public class TransportManagerFrame extends GenericFrameUser {
 
 
                         String track = (String) response2.getReturnValue();
-                     //  String[] trackArray = track.split("\n");
-                        List<String> trackArray = new java.util.ArrayList<>();
-                        for (int i = 0; i < 9; i++) {
-                            trackArray.add(SiteAddresses.getBranchAddress(i));
-                        }
+                        String[] trackArray = track.split("\n");
+//                        List<String> trackArray = new java.util.ArrayList<>();
+//                        for (int i = 0; i < 9; i++) {
+//                            trackArray.add(SiteAddresses.getBranchAddress(i));
+//                        }
 
 // Show track on Google Maps
                         StringBuilder urlBuilder = new StringBuilder("https://www.google.com/maps/dir/");
@@ -498,6 +520,7 @@ public class TransportManagerFrame extends GenericFrameUser {
 
 
         addNewProductsButton.addActionListener(e -> {
+            anyButtonPressed(addNewProductsButton);
                     rightPanel.removeAll();
                     JComboBox<String> supplierComboBox = new JComboBox<>();
                     Response response1 = ResponseSerializer.deserializeFromJson(supplierService.getAllSuppliers());
@@ -555,7 +578,7 @@ public class TransportManagerFrame extends GenericFrameUser {
         if (response.isError()) {
             setErrorText(response.getErrorMessage());
         } else {
-            JTextArea deliveryDetails = new JTextArea("The truck is in: " + address + ".\n" + "\nThe following products are loaded:\n" + response.getReturnValue());
+            JTextArea deliveryDetails = new JTextArea("Delivery ID: "+deliveryID+"\n" +"The truck is in: " + address + ".\n" + "\nThe following products are loaded:\n" + response.getReturnValue());
             deliveryDetails.setEditable(false);
             deliveryDetails.setLineWrap(true);
             deliveryDetails.setWrapStyleWord(true);
@@ -609,4 +632,10 @@ public class TransportManagerFrame extends GenericFrameUser {
             }
             return "";
         }
+    private void anyButtonPressed (GenericButton g){
+        for (GenericButton x : buttonList) {
+            if (!x.equals(g))
+                x.setBackground(new Color(255, 255, 255));
+        }
+    }
 }

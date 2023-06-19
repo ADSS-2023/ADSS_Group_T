@@ -21,6 +21,7 @@ public class DeliveryUnHandledSitesDTO extends DTO {
     }
 
     public DeliveryUnHandledSitesDTO() {
+        super("DeliveryUnHandledSites");
     }
 
     public static String getTableNameStatic() {

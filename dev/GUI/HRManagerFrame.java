@@ -28,6 +28,7 @@ public class HRManagerFrame  extends GenericFrameUser {
     private final EmployeeService employeeService;
     private  final LogisticCenterService logisticCenterService;
     private final BranchService branchService;
+    private ArrayList<GenericButton> buttonList;
 
     public HRManagerFrame(ServiceFactory serviceFactory) {
         super(serviceFactory);
@@ -36,30 +37,40 @@ public class HRManagerFrame  extends GenericFrameUser {
         this.shiftService = serviceFactory.getShiftService();
         this.logisticCenterService = serviceFactory.getLogisticCenterService();
         this.branchService = serviceFactory.getBranchService();
+        this.buttonList = new ArrayList<>();
 
         GenericButton addnewEmployeeButton = new GenericButton("add new employee");
         leftPanel.add((addnewEmployeeButton));
+        buttonList.add(addnewEmployeeButton);
 
-        GenericButton editEmployeeButton = new GenericButton("edit employee details");
-        leftPanel.add((editEmployeeButton));
+//        GenericButton editEmployeeButton = new GenericButton("edit employee details");
+//        leftPanel.add((editEmployeeButton));
+//        buttonList.add(editEmployeeButton);
 
         GenericButton notificationButton = new GenericButton("notification");
         leftPanel.add((notificationButton));
+        buttonList.add(notificationButton);
 
         GenericButton employeeQualificationButton = new GenericButton("add employee qualification");
         leftPanel.add((employeeQualificationButton));
+        buttonList.add(employeeQualificationButton);
 
         GenericButton showShiftStatusButton = new GenericButton("manage assign employee for shift");
         leftPanel.add((showShiftStatusButton));
+        buttonList.add(showShiftStatusButton);
 
         GenericButton addNewDriverButton = new GenericButton("add new driver");
         leftPanel.add((addNewDriverButton));
+        buttonList.add(addNewDriverButton);
 
         GenericButton ShiftRequirementsButton = new GenericButton("add shift requirements");
         leftPanel.add((ShiftRequirementsButton));
+        buttonList.add(ShiftRequirementsButton);
 
         GenericButton assignDriverButton = new GenericButton("manage assign driver for shift ");
         leftPanel.add((assignDriverButton));
+        buttonList.add(assignDriverButton);
+
 
 //         editEmployeeButton.addActionListener(e->{
 //
@@ -125,13 +136,8 @@ public class HRManagerFrame  extends GenericFrameUser {
 //            rightPanel.repaint();
 //        });
 
-
-
-
-
-
-
         addnewEmployeeButton.addActionListener(e->{
+            anyButtonPressed(addnewEmployeeButton);
 
             System.out.println("Button add new employee clicked");
             rightPanel.removeAll();
@@ -196,7 +202,7 @@ public class HRManagerFrame  extends GenericFrameUser {
         });
 
         employeeQualificationButton.addActionListener(e->{
-
+            anyButtonPressed(employeeQualificationButton);
             System.out.println("Button add new qualification clicked");
             rightPanel.removeAll();
             GenericTextField idField = new GenericTextField();
@@ -239,7 +245,7 @@ public class HRManagerFrame  extends GenericFrameUser {
         });
 
         addNewDriverButton.addActionListener(e->{
-
+            anyButtonPressed(addNewDriverButton);
             System.out.println("Button add new employee clicked");
             rightPanel.removeAll();
             GenericTextField idField = new GenericTextField();
@@ -306,14 +312,9 @@ public class HRManagerFrame  extends GenericFrameUser {
             rightPanel.revalidate();
             rightPanel.repaint();
         });
-      
-      
-      
-      
-      
-      
-            
+
             showShiftStatusButton.addActionListener(e -> {
+                anyButtonPressed(showShiftStatusButton);
             List<String> selectedEmployeeIds = new ArrayList<>();
             System.out.println("Button show shift status clicked");
             final GenericDatePicker dateField = GenericDatePicker.getNewGenericDatePicker();
@@ -497,11 +498,8 @@ public class HRManagerFrame  extends GenericFrameUser {
             JOptionPane.showMessageDialog(null, panel, "Shift Status", JOptionPane.PLAIN_MESSAGE);
         });
 
-
-
-
-
             assignDriverButton.addActionListener(e-> {
+                anyButtonPressed(assignDriverButton);
             System.out.println("Button assign driver clicked");
             rightPanel.removeAll();
             GenericTextField idField = new GenericTextField();
@@ -566,6 +564,7 @@ public class HRManagerFrame  extends GenericFrameUser {
         });
 
         ShiftRequirementsButton.addActionListener(e-> {
+            anyButtonPressed(ShiftRequirementsButton);
             System.out.println("Button add new employee clicked");
             rightPanel.removeAll();
 
@@ -669,9 +668,8 @@ public class HRManagerFrame  extends GenericFrameUser {
             rightPanel.repaint();
         });
 
-
-
         notificationButton.addActionListener(e -> {
+            anyButtonPressed(notificationButton);
                     System.out.println("Button add new employee clicked");
                     rightPanel.removeAll();
 
@@ -797,7 +795,6 @@ public class HRManagerFrame  extends GenericFrameUser {
             rightPanel.repaint();
         });
 
-
     }
     // Method to update the shift status table
     private void updateShiftStatusTable(JTable table, Object[][] data, Object[] columnNames) {
@@ -848,6 +845,10 @@ public class HRManagerFrame  extends GenericFrameUser {
         }
     }
 
-
-
+    private void anyButtonPressed (GenericButton g){
+        for (GenericButton x : buttonList) {
+            if (!x.equals(g))
+            x.setBackground(new Color(255, 255, 255));
+        }
+    }
 }

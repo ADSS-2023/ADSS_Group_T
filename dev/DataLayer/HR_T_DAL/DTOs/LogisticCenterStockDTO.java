@@ -14,6 +14,7 @@ public class LogisticCenterStockDTO extends DTO {
     }
 
     public LogisticCenterStockDTO() {
+        super("LogisticCenterStock");
     }
 
     public String getProductName() {

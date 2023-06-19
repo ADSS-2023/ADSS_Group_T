@@ -15,6 +15,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Map;
 
 public class EmployeeMenueFrame extends GenericFrameUser {
@@ -24,6 +25,8 @@ public class EmployeeMenueFrame extends GenericFrameUser {
     private final BranchService branchService;
     private int id ;
 
+    private ArrayList<GenericButton> buttonList;
+
     public EmployeeMenueFrame(ServiceFactory serviceFactory,int id ) {
         super(serviceFactory);
         setTitle("employee : " + id);
@@ -32,12 +35,15 @@ public class EmployeeMenueFrame extends GenericFrameUser {
         this.logisticCenterService = serviceFactory.getLogisticCenterService();
         this.branchService = serviceFactory.getBranchService();
         this.id = id;
+        this.buttonList = new ArrayList<>();
 
         GenericButton assignShiftButton = new GenericButton("submit shift ");
         leftPanel.add((assignShiftButton));
+        buttonList.add(assignShiftButton);
 
         GenericButton showSubmissionsButton = new GenericButton("show submissions");
         leftPanel.add((showSubmissionsButton));
+        buttonList.add(showSubmissionsButton);
         leftPanel.add(new GenericLabel(""));
         leftPanel.add(new GenericLabel(""));
         leftPanel.add(new GenericLabel(""));
@@ -45,6 +51,7 @@ public class EmployeeMenueFrame extends GenericFrameUser {
         leftPanel.add(new GenericLabel(""));
 
         assignShiftButton.addActionListener(e->{
+            anyButtonPressed(assignShiftButton);
             System.out.println("Button assign shift clicked");
             rightPanel.removeAll();
             GenericDatePicker dateField = GenericDatePicker.getNewGenericDatePicker();
@@ -98,9 +105,13 @@ public class EmployeeMenueFrame extends GenericFrameUser {
 
 
 
-        showSubmissionsButton.addActionListener(e -> {
-            String json = employeeService.getListOfSubmittion(id, "GUI");
 
+
+
+
+        showSubmissionsButton.addActionListener(e->{
+            anyButtonPressed(showSubmissionsButton);
+            String json = employeeService.getListOfSubmittion(id,"GUI");
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             JsonElement element = gson.fromJson(json, JsonElement.class);
             JsonArray submissionsArray = element.getAsJsonObject().getAsJsonArray("returnValue");
@@ -144,10 +155,8 @@ public class EmployeeMenueFrame extends GenericFrameUser {
 
 
 
-
-
-
     }
+
 
     public static String formatJsonString(String json) {
         StringBuilder formattedJson = new StringBuilder();
@@ -185,6 +194,14 @@ public class EmployeeMenueFrame extends GenericFrameUser {
             indent.append("  "); // Two spaces for each level of indentation
         }
         return indent.toString();
+    }
+
+
+    private void anyButtonPressed (GenericButton g){
+        for (GenericButton x : buttonList) {
+            if (!x.equals(g))
+                x.setBackground(new Color(255, 255, 255));
+        }
     }
 
 }

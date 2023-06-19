@@ -23,6 +23,8 @@ public class DateToDriverDTO extends DTO {
     }
 
     public DateToDriverDTO() {
+        super("DateToDriver");
+
 
     }
 

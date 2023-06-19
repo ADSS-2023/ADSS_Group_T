@@ -15,6 +15,7 @@ public class DriverDTO extends DTO {
     }
 
     public DriverDTO() {
+        super("Driver");
     }
 
     public int getDriverId() {
