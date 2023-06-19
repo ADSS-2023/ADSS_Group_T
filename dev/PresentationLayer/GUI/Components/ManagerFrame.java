@@ -29,6 +29,8 @@ public class ManagerFrame extends JFrame {
     private JLabel messageField;
     private JPanel bottomPanel;
     private PreviousCallBack previousCallBack;
+    private PreviousCallBack supllierCallBack;
+    private PreviousCallBack inventoryCallBack;
 
 
     public ManagerFrame(ServiceFactory sf) {
@@ -102,7 +104,6 @@ public class ManagerFrame extends JFrame {
     private void createToolbar() {
         JToolBar toolbar = new JToolBar(JToolBar.VERTICAL);
         toolbar.setFloatable(false);
-
         addButtonToToolbar(toolbar, "Generate Inventory Report", this::inventoryReport);
         addButtonToToolbar(toolbar, "Generate Damage Item Report", () -> {showDamageReportDialog(sf.damagedService.produce_damaged_report());});
         addButtonToToolbar(toolbar, "Generate Shortage Report", () -> {
@@ -113,7 +114,8 @@ public class ManagerFrame extends JFrame {
         addButtonToToolbar(toolbar, "Create Regular Order - TESTING ONLY", this::createRegularOrder);
         addButtonToToolbar(toolbar, "Show New Items", this::showNewItems);
         addButtonToToolbar(toolbar,"add new employee",this::addNewEmployee);
-
+        addButtonToToolbar(toolbar,"suppliers screen",()->{dispose();supllierCallBack.goBack();});
+        addButtonToToolbar(toolbar,"inventory screen",()->{dispose();inventoryCallBack.goBack();});
         add(toolbar, BorderLayout.WEST);
     }
 
@@ -596,4 +598,11 @@ public class ManagerFrame extends JFrame {
         this.previousCallBack = previousCallBack;
     }
 
+    public void setInventoryCallBack(PreviousCallBack inventoryCallBack) {
+        this.inventoryCallBack = inventoryCallBack;
+    }
+
+    public void setSupllierCallBack(PreviousCallBack supllierCallBack) {
+        this.supllierCallBack = supllierCallBack;
+    }
 }
