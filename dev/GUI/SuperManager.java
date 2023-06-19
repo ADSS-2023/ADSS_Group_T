@@ -1,8 +1,5 @@
 package GUI;
 
-import BusinessLayer.HR.Employee;
-import DataLayer.HR_T_DAL.DB_init.Data_init;
-import DataLayer.HR_T_DAL.DB_init.Data_init_HR;
 import GUI.Generic.GenericButton;
 import GUI.Generic.GenericFrame;
 import UtilSuper.ServiceFactory;
@@ -20,8 +17,8 @@ public class SuperManager extends GenericFrame {
         // Create the buttons
         registerAsHRM = new GenericButton("register As HR Manager");
         registerAsTransportM = new GenericButton("register As Transport Manager");
-        registerAsEmployee = new GenericButton("register As Employee ");
-        registerAsDriver = new GenericButton("register As Driver ");
+        registerAsEmployee = new GenericButton("register As Employee");
+        registerAsDriver = new GenericButton("register As Driver");
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
