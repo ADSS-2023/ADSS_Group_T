@@ -102,6 +102,7 @@ public class TransportManagerFrame extends GenericFrameUser {
                 nextDayDetailsTextArea.setText((String) nextDayDetailsResponse.getReturnValue());
                 rightPanel.add(nextDayDetailsTextArea);
                 updateDateTime();
+
             }
             Response skipDayResponse = ResponseSerializer.deserializeFromJson(deliveryService.skipDay());
             if (skipDayResponse.isError()) {
@@ -111,6 +112,7 @@ public class TransportManagerFrame extends GenericFrameUser {
                 JTextArea skipDayTextArea = new JTextArea();
                 skipDayTextArea.setText((String) skipDayResponse.getReturnValue());
                 rightPanel.add(skipDayTextArea);
+                updateDateTime();
             }
             rightPanel.revalidate();
             rightPanel.repaint();
