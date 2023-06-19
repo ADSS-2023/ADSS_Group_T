@@ -105,10 +105,6 @@ public class EmployeeMenueFrame extends GenericFrameUser {
 
 
 
-
-
-
-
         showSubmissionsButton.addActionListener(e->{
             anyButtonPressed(showSubmissionsButton);
             String json = employeeService.getListOfSubmittion(id,"GUI");

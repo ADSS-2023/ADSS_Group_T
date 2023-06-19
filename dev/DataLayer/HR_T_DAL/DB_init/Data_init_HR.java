@@ -31,7 +31,7 @@ public class Data_init_HR {
 
         //init shifts for ayear in all branches
         LocalDate startDate = LocalDate.now(); // Start date is one year from now
-        LocalDate endDate = startDate.plusWeeks(2); // End date is one month from the start date
+        LocalDate endDate = startDate.plusWeeks(1); // End date is one month from the start date
 
         //this was the old before map:
        // List<String> branches = Arrays.asList("b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9");

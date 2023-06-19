@@ -34,6 +34,9 @@ public class DalShiftService {
         this.dalEmployeeService = dalEmployeeService;
     }
 
+    public ShiftDAO getshifsDAO() throws SQLException {
+        return this.shiftDAO;
+    }
     public List<ShiftDTO> getshifsByDate(LocalDate localDate) throws SQLException {
         return shiftDAO.getShiftsByDate(localDate);
     }
