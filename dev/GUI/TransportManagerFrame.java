@@ -482,11 +482,11 @@ public class TransportManagerFrame extends GenericFrameUser {
 
 
                         String track = (String) response2.getReturnValue();
-                     //  String[] trackArray = track.split("\n");
-                        List<String> trackArray = new java.util.ArrayList<>();
-                        for (int i = 0; i < 9; i++) {
-                            trackArray.add(SiteAddresses.getBranchAddress(i));
-                        }
+                        String[] trackArray = track.split("\n");
+//                        List<String> trackArray = new java.util.ArrayList<>();
+//                        for (int i = 0; i < 9; i++) {
+//                            trackArray.add(SiteAddresses.getBranchAddress(i));
+//                        }
 
 // Show track on Google Maps
                         StringBuilder urlBuilder = new StringBuilder("https://www.google.com/maps/dir/");

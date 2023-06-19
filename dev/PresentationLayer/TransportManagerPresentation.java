@@ -7,6 +7,13 @@ import ServiceLayer.Transport.SupplierService;
 import UtilSuper.Response;
 import UtilSuper.ResponseSerializer;
 
+import java.awt.*;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.LinkedHashMap;
 import java.util.Scanner;
@@ -53,6 +60,7 @@ public class TransportManagerPresentation {
             System.out.println("7. show all Deliveries");
             System.out.println("8. add new products to supplier");
             System.out.println("9. Logout");
+            System.out.println("10. show map");
 
             int choice = scanner.nextInt();
             scanner.nextLine(); // Consume the newline character
@@ -66,6 +74,7 @@ public class TransportManagerPresentation {
                 case 7 -> showAllDeliveries();
                 case 8 -> addNewSupplierProducts();
                 case 9 -> {return;}
+                case 10 -> showMap();
                 default -> System.out.println("Invalid choice. Please try again.");
             }
         }
@@ -411,5 +420,46 @@ public class TransportManagerPresentation {
         System.out.println("2.replace truck");
         System.out.println("3.unload products");
         return scanner.nextInt();//overweight action
+    }
+    private void showMap(){
+        //enter delivery id
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Please enter delivery id:");
+        int deliveryID = scanner.nextInt();
+        //get delivery path
+        Response response2 = ResponseSerializer.deserializeFromJson(deliveryService.getDeliveryTrack(deliveryID));
+        if (response2.isError()) {
+            System.out.println(response2.getErrorMessage());
+        } else {
+
+
+            String track = (String) response2.getReturnValue();
+            String[] trackArray = track.split("\n");
+//                        List<String> trackArray = new java.util.ArrayList<>();
+//                        for (int i = 0; i < 9; i++) {
+//                            trackArray.add(SiteAddresses.getBranchAddress(i));
+//                        }
+
+// Show track on Google Maps
+            StringBuilder urlBuilder = new StringBuilder("https://www.google.com/maps/dir/");
+            for (String trackPoint : trackArray) {
+                String encodedTrackPoint = null;
+                try {
+                    encodedTrackPoint = URLEncoder.encode(trackPoint, StandardCharsets.UTF_8.toString());
+                } catch (UnsupportedEncodingException ee) {
+                    ee.printStackTrace();
+                }
+                urlBuilder.append(encodedTrackPoint).append("/");
+            }
+            String url = urlBuilder.toString();
+
+            try {
+                // Open URL in default web browser
+                Desktop.getDesktop().browse(new URI(url));
+            } catch (IOException | URISyntaxException ee) {
+                ee.printStackTrace();
+            }
+
+        }
     }
 }
