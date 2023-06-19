@@ -30,6 +30,9 @@ public class AllSupplierFrame extends JFrame {
     private DefaultTableModel tableModel;
     private PreviousCallBack previousCallBack;
 
+    private PreviousCallBack managerFrameCallBack;
+
+
     public AllSupplierFrame(ServiceFactory sf) {
         this.sf=sf;
         // Set up the frame properties
@@ -216,14 +219,16 @@ public class AllSupplierFrame extends JFrame {
 
     private void createManagerScreenButton(JPanel buttonPanel) {
 
-        JButton ManagerScreenButton = new JButton("Manager Screen");
-        ManagerScreenButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-                previousCallBack.goBack();
-            }
-        });
-        buttonPanel.add(ManagerScreenButton);
+        JButton ManagerScreenButton = new JButton("Back to manager screen");
+        if(sf.userService.isManager()){
+            ManagerScreenButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    dispose();
+                    managerFrameCallBack.goBack();
+                }
+            });
+            buttonPanel.add(ManagerScreenButton);
+        }
     }
 
 }
