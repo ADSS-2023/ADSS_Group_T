@@ -19,6 +19,7 @@
 
 * HR manager id = 1 password = 1 - lead to ***HR Manager-Menu*** (below)
 * Transporter manager id = 2 password = 2 - lead to ***Transporter Manager-Menu*** (below)
+* Super manager id = 1111 password = 1111 - lead to ***Super Manager-Menu***
 
 - if you choose 2 in the start menu you'll have access to Employees and driver in system :
 - employees id = 11-20 passwords = 11-20 accordingly - lead to ***Employee-Menu*** (below)
@@ -52,6 +53,16 @@ Follow the prompts to enter any required information.
 - show logistic center products - show the list of products in the logistic center
 - show all deliveries 
 - add new product to supplier - follow the prompts
+- logout 
+
+## Super Manager Menu 
+
+How to use,
+Follow the prompts to select the required menu.
+- register As HR Manager - opens the menu of the HR manager actions
+- register As Transport Manager - opens the menu of the Transport manager actions
+- register As Employee - opens the menu of the Employee actions
+- register As Driver - opens the menu of the Driver actions
 - logout 
 
 ## Employee Menu
