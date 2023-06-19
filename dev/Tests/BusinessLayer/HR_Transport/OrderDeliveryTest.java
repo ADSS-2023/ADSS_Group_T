@@ -3,6 +3,7 @@ import BusinessLayer.HR.*;
 import BusinessLayer.Transport.Delivery;
 import DataLayer.HR_T_DAL.DB_init.Data_init;
 import DataLayer.HR_T_DAL.DB_init.Data_init_HR;
+import DataLayer.HR_T_DAL.DB_init.SiteAddresses;
 import PresentationLayer.TransportManagerPresentation;
 import UtilSuper.Pair;
 import UtilSuper.ServiceFactory;
@@ -23,18 +24,24 @@ private ServiceFactory serviceFactory;
         Data_init.initOldData(serviceFactory.getDAO(),serviceFactory.getSupplierService(),serviceFactory.getDeliveryService());
         Data_init_HR.initOldData(serviceFactory.getDAO(), serviceFactory.getEmployeeService(), serviceFactory.getShiftService(),
                 serviceFactory.getEmployeeController(), serviceFactory.getShiftController(),serviceFactory.getDalShiftService());
-        String branch1 = "b1";
+        String branch1 = SiteAddresses.getBranchAddress(0);
         LinkedHashMap<String, LinkedHashMap<String, Integer>> products1 = new LinkedHashMap<>();
         LinkedHashMap<String, Integer> supplierProducts1 = new LinkedHashMap<>();
-        supplierProducts1.put("Beef", 5);
-        supplierProducts1.put("Pork", 10);
-        supplierProducts1.put("Chicken", 20);
-        products1.put("s1", supplierProducts1);
+        supplierProducts1.put("Milk", 500);
+        supplierProducts1.put("Cheese", 1000);
+        supplierProducts1.put("Eggs", 200);
+        products1.put(SiteAddresses.getSupplierAddress(0), supplierProducts1);
         LinkedHashMap<String, Integer> supplierProducts2 = new LinkedHashMap<>();
-        supplierProducts2.put("Bread", 8);
-        supplierProducts2.put("Cupcake", 5);
-        products1.put("s2", supplierProducts2);
+        supplierProducts2.put("Coke", 1000);
+        supplierProducts2.put("Diet Coke", 250);
+        supplierProducts2.put("Coke Zero", 1000);
+        supplierProducts2.put("Sprite", 300);
+        supplierProducts2.put("Diet Sprite", 200);
+        supplierProducts2.put("Fanta", 200);
+        supplierProducts2.put("Diet Fanta", 150);
+        products1.put(SiteAddresses.getSupplierAddress(1), supplierProducts2);
         String date1 = Time.localDateToString(LocalDate.now().plusDays(2));
+
         try {
             serviceFactory.getDeliveryController().orderDelivery(branch1, products1, date1);
         } catch (Exception e) {
@@ -50,7 +57,7 @@ private ServiceFactory serviceFactory;
     @Test
     public void  checkIfRequierementsDrverswith() throws SQLException {
         LinkedHashMap<Pair<Driver.LicenseType, Driver.CoolingLevel>, Integer> requierementsForDate  = serviceFactory.getDriverController().lazyLoadAllRequierementsForDate(LocalDate.now().plusDays(3));
-        assertEquals(3,requierementsForDate.size());
+        assertEquals(2,requierementsForDate.size());
     }
 
     @Test
