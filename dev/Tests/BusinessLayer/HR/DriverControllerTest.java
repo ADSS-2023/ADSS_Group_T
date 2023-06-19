@@ -30,8 +30,8 @@ public class DriverControllerTest extends TestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        String testDBUrl = "jdbc:sqlite:dev/DataLayer/HR_Transport_DB.db";
-        Connection connection = ServiceFactory.makeCon();
+        ServiceFactory serviceFactory = new ServiceFactory();
+        Connection connection = serviceFactory.makeCon();
         this.dalUserService = new DalUserService(connection);
         this.dalEmployeeService = new DalEmployeeService(connection,dalUserService);
         this.dalDriverService = new DalDriverService(connection,dalUserService);
