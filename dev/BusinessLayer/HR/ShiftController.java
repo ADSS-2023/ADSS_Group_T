@@ -2,6 +2,8 @@ package BusinessLayer.HR;
 
 import BusinessLayer.HR.User.PositionType;
 import BusinessLayer.Transport.BranchController;
+import DataLayer.HR_T_DAL.DB_init.SiteAddresses;
+import DataLayer.HR_T_DAL.DTOs.ShiftDTO;
 import DataLayer.HR_T_DAL.DalService.DalEmployeeService;
 import DataLayer.HR_T_DAL.DalService.DalShiftService;
 import ServiceLayer.Transport.BranchService;
@@ -40,7 +42,61 @@ public class ShiftController {
 
 
 
-    public void skipDay(LocalDate date) throws SQLException {
+
+
+
+
+
+
+
+
+
+
+
+    public void addShiftToNextWeek(LocalDate date) throws Exception {
+
+
+        //init shifts for ayear in all branches
+        LocalDate dateToadd = date.plusDays(6); // Start date is one year from now
+
+        List<String> branches = new java.util.ArrayList<>();
+        for (int i = 0; i < 9; i++) {
+            branches.add(SiteAddresses.getBranchAddress(i));
+        }
+
+        // Loop through each date and insert shifts for the morning and evening
+            for (String branch : branches) {
+                try{
+                    ShiftDTO shift1 = new ShiftDTO(dateToadd.toString(), "m", -1, branch);
+                    ShiftDTO shift2 = new ShiftDTO(dateToadd.toString(), "e", -1, branch);
+                    dalShiftService.getshifsDAO().insert(shift1);
+                    dalShiftService.getshifsDAO().insert(shift2);
+                }
+                catch (Exception exp){
+                    throw new Exception("failed to insert shifts to DB");
+                }
+
+        }
+        //init requirements for month
+        LinkedHashMap<String, Integer> positions = new LinkedHashMap<>();
+        positions.put(PositionType.orderly.name(), 1);
+        positions.put(PositionType.security.name(), 1);
+        positions.put(PositionType.general_worker.name(), 2);
+        positions.put(PositionType.cleaning.name(), 1);
+        positions.put(PositionType.cashier.name(), 3);
+        positions.put(PositionType.storekeeper.name(), 2);
+        // positions.put(PositionType.shiftManager.name(), 1);
+
+
+            for (String branch : branches) {
+                this.addRequirements(branch,  dateToadd, true, positions );
+                this.addRequirements(branch,  dateToadd, false, positions );
+            }
+    }
+
+
+
+    public void skipDay(LocalDate date) throws Exception {
         // Retrieve all shifts for the given date and group them by branch
         LinkedHashMap<String, HashMap<LocalDate, ArrayList<Shift>>> shiftsByDateInAllBranch = dalShiftService.findAllShiftsByDateInAllBranches(date);
 
@@ -52,6 +108,7 @@ public class ShiftController {
         notifications.put(date, notificationString);
         //notificationsUI.put(date, buildNotificationUI(date, shiftsByDateInAllBranch));
         dalShiftService.addNotification(date, notificationString);
+        addShiftToNextWeek(date);
     }
 
     public String notificationBuilder(LocalDate date, LinkedHashMap<String, HashMap<LocalDate, ArrayList<Shift>>> shiftsByDateInAllBranch) throws SQLException {
