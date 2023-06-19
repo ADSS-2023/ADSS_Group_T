@@ -29,63 +29,60 @@
 4. Exit - Exit the system.
 
 
-## Supplier mananger manu : 
+### Supplier mananger manu 
 
 How to use :
 1. Add supplier - Add a new supplier.
 2 .Delete supplier - Remove a supplier.
 3. Edit supplier details - Modify supplier information.
-4.Add product to supplier - Add a product to a supplier.
-5.Delete product of supplier - Remove a product from a supplier.
-6.Edit product of supplier - Modify a product of a supplier.
-7.Add discount to product - Apply a discount to a product.
-8.Delete discount of product - Remove a discount from a product.
-9.Edit discount of product - Modify a discount for a product.
-10.Add supplier's general discounts - Add general discounts for a supplier.
-11.Delete supplier's general discounts - Remove general discounts of a supplier.
-12.Edit supplier's general discounts - Modify general discounts of a supplier.
-13.Show all orders - View all orders.
-14.Show all suppliers - Display all suppliers.
-15.Show all products supplied by a certain supplier - View all products supplied by a specific supplier.
-16.Show all discounts of a certain product's supplier - Display all discounts for a product from a specific supplier.
-17.Show all general discounts of a certain supplier - View all general discounts of a specific supplier.
-18.Go back to the main menu - Return to the main menu.
+4. Add product to supplier - Add a product to a supplier.
+5. Delete product of supplier - Remove a product from a supplier.
+6. Edit product of supplier - Modify a product of a supplier.
+7. Add discount to product - Apply a discount to a product.
+8. Delete discount of product - Remove a discount from a product.
+9. Edit discount of product - Modify a discount for a product.
+10. Add supplier's general discounts - Add general discounts for a supplier.
+11. Delete supplier's general discounts - Remove general discounts of a supplier.
+12. Edit supplier's general discounts - Modify general discounts of a supplier.
+13. Show all orders - View all orders.
+14. Show all suppliers - Display all suppliers.
+15. Show all products supplied by a certain supplier - View all products supplied by a specific supplier.
+16. Show all discounts of a certain product's supplier - Display all discounts for a product from a specific supplier.
+17. Show all general discounts of a certain supplier - View all general discounts of a specific supplier.
+18. Go back to the main menu - Return to the main menu.
 
 ## Stock Manager Menu 
 
 How to use :
-1.See categories - View categories and products.
-2.Produce inventory report - Generate an inventory report.
-3.Set discount - Set a discount.
-4.Report damaged item - Report a damaged product.
-5.Set minimal amount for a specific item - Set a minimum quantity for a specific product.
-6.Produce damaged items report - Generate a report of damaged items.
-7.Add new item - Add a new product to the system.
-8.Receive a new order (receive a new supply of an existing item) - Receive an order that has arrived.
-9.Produce shortage report - Generate a report of shortages.
-10.Add new category - Add a new category.
-11.Move item to store - Move a product to the store and update its location.
-12.Orders menu - Orders menu.
-13.Back to the start menu - Return to the main menu.
+1. See categories - View categories and products.
+2. Produce inventory report - Generate an inventory report.
+3. Set discount - Set a discount.
+4. Report damaged item - Report a damaged product.
+5. Set minimal amount for a specific item - Set a minimum quantity for a specific product.
+6. Produce damaged items report - Generate a report of damaged items.
+7. Add new item - Add a new product to the system.
+8. Receive a new order (receive a new supply of an existing item) - Receive an order that has arrived.
+9. Produce shortage report - Generate a report of shortages.
+10. Add new category - Add a new category.
+11. Move item to store - Move a product to the store and update its location.
+12. Orders menu - Orders menu.
+13. Back to the start menu - Return to the main menu.
 
 ## Super Manager Menu at the GUI will let you choose which window you would like to go to
 1. Supplier manu.
 2. Stock manu.
 3. Manager reports manu.
 
-How to use,
-
-
 ## Employee Menu
 
 Orders menu :
 
-1.Edit regular order - Edit a regular order.
-2.Create regular order - Create a regular order.
-3.Create special order - Create an urgent order.
-4.Place waiting items - Assign products that are waiting after receiving an order.
-5.Show all orders for the next week - View all orders for the upcoming week.
-6.Go back to the inventory menu - Return to the inventory menu.
+1. Edit regular order - Edit a regular order.
+2. Create regular order - Create a regular order.
+3. Create special order - Create an urgent order.
+4. Place waiting items - Assign products that are waiting after receiving an order.
+5. Show all orders for the next week - View all orders for the upcoming week.
+6. Go back to the inventory menu - Return to the inventory menu.
 
 
 
