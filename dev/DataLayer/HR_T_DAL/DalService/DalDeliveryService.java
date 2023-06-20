@@ -8,7 +8,6 @@ import DataLayer.Util.DAO;
 import UtilSuper.Time;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -435,6 +434,7 @@ public class DalDeliveryService {
 
     public void deleteDelivery(Delivery delivery) throws SQLException {
         dao.delete(delivery.createDeliveryDTO());
+        deliveries.remove(delivery.getId());
     }
 
     public void updateDateCounter(LocalDate oldDate, LocalDate newDate) throws SQLException {

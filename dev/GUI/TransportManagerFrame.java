@@ -18,15 +18,6 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.List;
-import com.google.maps.DirectionsApi;
-import com.google.maps.DirectionsApiRequest;
-import com.google.maps.GeoApiContext;
-import com.google.maps.GeocodingApi;
-import com.google.maps.model.DirectionsLeg;
-import com.google.maps.model.DirectionsResult;
-import com.google.maps.model.DirectionsRoute;
-import com.google.maps.model.LatLng;
-import com.google.maps.model.TravelMode;
 
 public class TransportManagerFrame extends GenericFrameUser {
     private final LogisticCenterService logisticCenterService;
@@ -430,7 +421,7 @@ public class TransportManagerFrame extends GenericFrameUser {
 
 
         showAllDeliveriesButton.addActionListener(e -> {
-            //anyButtonPressed(showAllDeliveriesButton);
+            anyButtonPressed(showAllDeliveriesButton);
             rightPanel.removeAll();
             Response response1 = ResponseSerializer.deserializeFromJson(deliveryService.showAllDeliveries());
             if (response1.isError()) {
