@@ -65,16 +65,17 @@ public class ShiftController {
         }
 
         // Loop through each date and insert shifts for the morning and evening
-            for (String branch : branches) {
-                try{
-                    ShiftDTO shift1 = new ShiftDTO(dateToadd.toString(), "m", -1, branch);
-                    ShiftDTO shift2 = new ShiftDTO(dateToadd.toString(), "e", -1, branch);
-                    dalShiftService.getshifsDAO().insert(shift1);
-                    dalShiftService.getshifsDAO().insert(shift2);
-                }
-                catch (Exception exp){
-                    throw new Exception("failed to insert shifts to DB");
-                }
+
+        for (String branch : branches) {
+            try{
+                ShiftDTO shift1 = new ShiftDTO(dateToadd.toString(), "m", -1, branch);
+                ShiftDTO shift2 = new ShiftDTO(dateToadd.toString(), "e", -1, branch);
+                dalShiftService.getshifsDAO().insert(shift1);
+                dalShiftService.getshifsDAO().insert(shift2);
+            }
+            catch (Exception exp){
+                throw new Exception("failed to insert shifts to DB");
+            }
 
         }
         //init requirements for month
@@ -88,10 +89,10 @@ public class ShiftController {
         // positions.put(PositionType.shiftManager.name(), 1);
 
 
-            for (String branch : branches) {
-                this.addRequirements(branch,  dateToadd, true, positions );
-                this.addRequirements(branch,  dateToadd, false, positions );
-            }
+        for (String branch : branches) {
+            this.addRequirements(branch,  dateToadd, true, positions );
+            this.addRequirements(branch,  dateToadd, false, positions );
+        }
     }
 
 
@@ -129,12 +130,15 @@ public class ShiftController {
                         // Iterate over all shifts for the current branch and date
                         for (Shift shift : shiftsForDateInBranch) {
                             // Check if the current shift has a manager
-                            if (shift.getShiftManagerId() == -1) {
-                                notificationBuilder.append("Noticed no such manager shift has been assign yet - the shift must have a manager!!!\n");
-                            } else {
-                                notificationBuilder.append(String.format("Manager ID: %s\n", shift.getShiftManagerId()));
-                            }
-                            // Check if the current shift is legal
+                            String hasManager = "";
+
+                                // Check if the current shift has a manager
+                                if (shift.getShiftManagerId() == -1) {
+                                    hasManager ="Noticed no such manager shift has been assign yet - the shift must have a manager!!!";
+                                } else {
+                                    hasManager =  String.valueOf(shift.getShiftManagerId());
+                                }
+                                // Check if the current shift is legal
                             String legalStatus = "";
                             int isLlegal = shift.isLegalShift();
                             if (isLlegal == 1)
@@ -144,10 +148,11 @@ public class ShiftController {
                             else if (isLlegal == -1)
                                 legalStatus = "There is no such requirements to this shift";
 
-                            notificationBuilder.append("Noticed - the shift is illegal!!!\n");
+
 
                             notificationBuilder.append("\n------------------------------\n");
-                            notificationBuilder.append(String.format("Shift Date: %s\nShift Type: %s\nLegal Status: %s\n", shift.getDate(), shift.getShiftType(), legalStatus));
+                            String sht = shift.getShiftType()? "morning" : "evening" ;
+                            notificationBuilder.append(String.format("Shift Date: %s\nShift Type: %s\nLegal Status: %s\nManagerId: %s\n", shift.getDate(), sht, legalStatus, hasManager));
                             notificationBuilder.append("\nEmployee Requirements:\n");
 
                             if (shift.getEmployeeRequirements() != null) {
@@ -306,13 +311,13 @@ public class ShiftController {
     }
 
     public String assignAll(String branch, LocalDate date, boolean shiftType) throws Exception {
-            if (branchController.getBranch(branch) == null)
-                throw new Exception(String.format("Branch %s does not exist", branch));
-            HashMap<LocalDate, ArrayList<Shift>> branchShifts = lazyLoadFindShifsByBranch(branch);
-            if (branchShifts != null) {
-                Shift shift = shiftType ? branchShifts.get(date).get(0) : branchShifts.get(date).get(1);
-                return shift.assignAll();
-            }
+        if (branchController.getBranch(branch) == null)
+            throw new Exception(String.format("Branch %s does not exist", branch));
+        HashMap<LocalDate, ArrayList<Shift>> branchShifts = lazyLoadFindShifsByBranch(branch);
+        if (branchShifts != null) {
+            Shift shift = shiftType ? branchShifts.get(date).get(0) : branchShifts.get(date).get(1);
+            return shift.assignAll();
+        }
 
         throw new NoSuchElementException("assign failed");
     }
@@ -349,7 +354,7 @@ public class ShiftController {
         ArrayList<Shift> branchShiftsByDate = branchShifts.get(requiredDate);
         if(branchShiftsByDate == null || branchShiftsByDate.size() < 2)
             throw new Exception("there is no 2 shifts in this date");
-            //TODO: if there is no shifts in this date, create 2 new shifts
+        //TODO: if there is no shifts in this date, create 2 new shifts
         String s;
         if(!(branchShiftsByDate.get(0).isThereAnyStoreKeeperReuirement() && branchShiftsByDate.get(1).isThereAnyStoreKeeperReuirement())) {
             for (Shift shift : branchShiftsByDate) {

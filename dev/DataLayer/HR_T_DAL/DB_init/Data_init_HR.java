@@ -194,6 +194,7 @@ public class Data_init_HR {
         employeeService.submitShiftForEmployee(branches.get(0), 17, LocalDate.now().plusDays(1), "m");
         employeeService.submitShiftForEmployee(branches.get(0), 18, LocalDate.now().plusDays(1), "m");
         employeeService.submitShiftForEmployee(branches.get(0), 19, LocalDate.now().plusDays(1), "e");
+        employeeService.submitShiftForEmployee(branches.get(0), 11, LocalDate.now().plusDays(2), "m");
         employeeService.submitShiftForEmployee(branches.get(0), 20, LocalDate.now().plusDays(2), "m");
         employeeService.submitShiftForEmployee(branches.get(0), 20, LocalDate.now().plusDays(3), "m");
         employeeService.submitShiftForEmployee(branches.get(0), 20, LocalDate.now().plusDays(4), "e");

@@ -47,7 +47,7 @@ public class EmployeeService {
     public String submitShiftForEmployee(String branch, int id, LocalDate date, String shiftType) {
         Response response = new Response();
         try {
-            boolean sht = shiftType.equals("m");
+            boolean sht = shiftType.equals("m") ;
             response.setReturnValue(shiftController.submitShiftForEmployee(branch, id, date, sht));
         } catch (Exception ex) {
             response.setErrorMessage(ex.getMessage());

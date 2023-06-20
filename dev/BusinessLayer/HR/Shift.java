@@ -291,7 +291,6 @@ public class Shift {
         return "Shift submitted successfully";
     }
 
-
     public void makeSureThereIsStorekeeperRequirement() throws Exception {
         String s;
         lazyLoadFindRequiermentsBtDateAndShiftType();

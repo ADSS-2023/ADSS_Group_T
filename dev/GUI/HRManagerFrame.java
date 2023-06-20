@@ -10,6 +10,7 @@ import UtilSuper.Response;
 import UtilSuper.ResponseSerializer;
 import UtilSuper.ServiceFactory;
 import UtilSuper.Time;
+import com.google.gson.*;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -407,6 +408,7 @@ public class HRManagerFrame  extends GenericFrameUser {
                                 employeeSetList.add(employeeData.get("employeeId").toString());
                             }
 
+
                             if (employeeIds.length() > 0) {
                                 employeeIds.setLength(employeeIds.length() - 2); // Remove the trailing comma and space
                             }
@@ -708,132 +710,184 @@ public class HRManagerFrame  extends GenericFrameUser {
 
         notificationButton.addActionListener(e -> {
             anyButtonPressed(notificationButton);
-                    System.out.println("Button add new employee clicked");
-                    rightPanel.removeAll();
+            System.out.println("Button add new employee clicked");
+            rightPanel.removeAll();
 
-                    JTextArea notificationArea = new JTextArea();
-                    notificationArea.setEditable(false);
-                    notificationArea.setFont(new Font("Arial", Font.PLAIN, 12));
+            JTextArea notificationArea = new JTextArea();
+            notificationArea.setEditable(false);
+            notificationArea.setFont(new Font("Arial", Font.PLAIN, 12));
 
-                    JScrollPane scrollPane = new JScrollPane(notificationArea);
-                    scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+            JScrollPane scrollPane = new JScrollPane(notificationArea);
+            scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
-                    LocalDate currentDate = LocalDate.now();
-                    String notificationText = "===============================\n" +
-                            "Branch: רמי לוי - סניף עטרות\n" +
-                            "Noticed no such manager shift has been assigned yet - the shift must have a manager!!!\n" +
-                            "Noticed - the shift is illegal!!!\n" +
-                            "\n" +
-                            "------------------------------\n" +
-                            "Shift Date: " + currentDate + "\n" +
-                            "Shift Type: false\n" +
-                            "Legal Status: illegal\n" +
-                            "\n" +
-                            "Employee Requirements:\n" +
-                            "cashier: 3\n" +
-                            "cleaning: 1\n" +
-                            "general_worker: 2\n" +
-                            "orderly: 1\n" +
-                            "security: 1\n" +
-                            "storekeeper: 1\n" +
-                            "Noticed no such manager shift has been assigned yet - the shift must have a manager!!!\n" +
-                            "Noticed - the shift is illegal!!!\n" +
-                            "\n" +
-                            "------------------------------\n" +
-                            "Shift Date: " + currentDate + "\n" +
-                            "Shift Type: true\n" +
-                            "Legal Status: illegal\n" +
-                            "\n" +
-                            "Employee Requirements:\n" +
-                            "cashier: 3\n" +
-                            "cleaning: 1\n" +
-                            "general_worker: 2\n" +
-                            "orderly: 1\n" +
-                            "security: 1\n" +
-                            "storekeeper: 1\n" +
-                            "Requirements for " + currentDate + ":\n" +
-                            "----------------------------------\n" +
-                            "\n" +
-                            "===============================\n" +
-                            "Branch: רמי לוי אילת\n" +
-                            "Noticed no such manager shift has been assigned yet - the shift must have a manager!!!\n" +
-                            "Noticed - the shift is illegal!!!\n" +
-                            "\n" +
-                            "------------------------------\n" +
-                            "Shift Date: " + currentDate + "\n" +
-                            "Shift Type: false\n" +
-                            "Legal Status: illegal\n" +
-                            "\n" +
-                            "Employee Requirements:\n" +
-                            "cashier: 3\n" +
-                            "cleaning: 1\n" +
-                            "general_worker: 2\n" +
-                            "orderly: 1\n" +
-                            "security: 1\n" +
-                            "storekeeper: 1\n" +
-                            "Noticed no such manager shift has been assigned yet - the shift must have a manager!!!\n" +
-                            "Noticed - the shift is illegal!!!\n" +
-                            "\n" +
-                            "------------------------------\n" +
-                            "Shift Date: " + currentDate + "\n" +
-                            "Shift Type: true\n" +
-                            "Legal Status: illegal\n" +
-                            "\n" +
-                            "Employee Requirements:\n" +
-                            "cashier: 3\n" +
-                            "cleaning: 1\n" +
-                            "general_worker: 2\n" +
-                            "orderly: 1\n" +
-                            "security: 1\n" +
-                            "storekeeper: 1\n" +
-                            "Requirements for " + currentDate + ":\n" +
-                            "----------------------------------\n" +
-                            "\n" +
-                            "===============================\n" +
-                            "Branch: רמי לוי בית שמש\n" +
-                            "Noticed no such manager shift has been assigned yet - the shift must have a manager!!!\n" +
-                            "Noticed - the shift is illegal!!!\n" +
-                            "\n" +
-                            "------------------------------\n" +
-                            "Shift Date: " + currentDate + "\n" +
-                            "Shift Type: false\n" +
-                            "Legal Status: illegal\n" +
-                            "\n" +
-                            "Employee Requirements:\n" +
-                            "cashier: 3\n" +
-                            "cleaning: 1\n" +
-                            "general_worker: 2\n" +
-                            "orderly: 1\n" +
-                            "security: 1\n" +
-                            "storekeeper: 1\n" +
-                            "Noticed no such manager shift has been assigned yet - the shift must have a manager!!!\n" +
-                            "Noticed - the shift is illegal!!!\n" +
-                            "\n" +
-                            "------------------------------\n" +
-                            "Shift Date: " + currentDate + "\n" +
-                            "Shift Type: true\n" +
-                            "Legal Status: illegal\n" +
-                            "\n" +
-                            "Employee Requirements:\n" +
-                            "cashier: 3\n" +
-                            "cleaning: 1\n" +
-                            "general_worker: 2\n" +
-                            "orderly: 1\n" +
-                            "security: 1\n" +
-                            "storekeeper: 1\n" +
-                            "Requirements for " + currentDate + ":\n" +
-                            "----------------------------------\n" +
-                            "\n";
+            String responeNotification = shiftService.getNotification();
+            Response response = ResponseSerializer.deserializeFromJson(responeNotification);
+            if (response.isError()) {
+                setErrorText("no notification");
+            } else {
+                String[] notifications = response.getReturnValue().toString().split("==============================");
+                for (String notification : notifications) {
+                    String[] lines = notification.split("\n");
 
-            notificationArea.setText(notificationText);
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("==============================\n");
+                    for (String line : lines) {
+                        if (!line.trim().isEmpty()) {
+                            if (line.startsWith("Branch:") || line.startsWith("Shift Date:") || line.startsWith("Shift Type:") || line.startsWith("Legal Status:")) {
+                                stringBuilder.append(line).append("\n");
+                            } else if (line.equals("Employee Requirements:")) {
+                                stringBuilder.append("\n").append(line).append("\n");
+                            } else {
+                                stringBuilder.append(line).append("\n");
+                            }
+                        }
+                    }
+                    stringBuilder.append("----------------------------------\n");
+                    notificationArea.append(stringBuilder.toString());
+                }
+            }
 
-            JOptionPane.showMessageDialog(null, scrollPane, "Notifications", JOptionPane.INFORMATION_MESSAGE);
+            rightPanel.setLayout(new BorderLayout());
+            rightPanel.add(scrollPane, BorderLayout.CENTER); // Add the scroll pane to the center of the right panel
 
             rightPanel.revalidate();
             rightPanel.repaint();
         });
 
-    }
+
+
+
+
+
+
+
+//        notificationButton.addActionListener(e -> {
+//            anyButtonPressed(notificationButton);
+//                    System.out.println("Button add new employee clicked");
+//                    rightPanel.removeAll();
+//
+//                    JTextArea notificationArea = new JTextArea();
+//                    notificationArea.setEditable(false);
+//                    notificationArea.setFont(new Font("Arial", Font.PLAIN, 12));
+//
+//                    JScrollPane scrollPane = new JScrollPane(notificationArea);
+//                    scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+//
+//                    LocalDate currentDate = LocalDate.now();
+//                    String notificationText = "===============================\n" +
+//                            "Branch: רמי לוי - סניף עטרות\n" +
+//                            "Noticed no such manager shift has been assigned yet - the shift must have a manager!!!\n" +
+//                            "Noticed - the shift is illegal!!!\n" +
+//                            "\n" +
+//                            "------------------------------\n" +
+//                            "Shift Date: " + currentDate + "\n" +
+//                            "Shift Type: false\n" +
+//                            "Legal Status: illegal\n" +
+//                            "\n" +
+//                            "Employee Requirements:\n" +
+//                            "cashier: 3\n" +
+//                            "cleaning: 1\n" +
+//                            "general_worker: 2\n" +
+//                            "orderly: 1\n" +
+//                            "security: 1\n" +
+//                            "storekeeper: 1\n" +
+//                            "Noticed no such manager shift has been assigned yet - the shift must have a manager!!!\n" +
+//                            "Noticed - the shift is illegal!!!\n" +
+//                            "\n" +
+//                            "------------------------------\n" +
+//                            "Shift Date: " + currentDate + "\n" +
+//                            "Shift Type: true\n" +
+//                            "Legal Status: illegal\n" +
+//                            "\n" +
+//                            "Employee Requirements:\n" +
+//                            "cashier: 3\n" +
+//                            "cleaning: 1\n" +
+//                            "general_worker: 2\n" +
+//                            "orderly: 1\n" +
+//                            "security: 1\n" +
+//                            "storekeeper: 1\n" +
+//                            "Requirements for " + currentDate + ":\n" +
+//                            "----------------------------------\n" +
+//                            "\n" +
+//                            "===============================\n" +
+//                            "Branch: רמי לוי אילת\n" +
+//                            "Noticed no such manager shift has been assigned yet - the shift must have a manager!!!\n" +
+//                            "Noticed - the shift is illegal!!!\n" +
+//                            "\n" +
+//                            "------------------------------\n" +
+//                            "Shift Date: " + currentDate + "\n" +
+//                            "Shift Type: false\n" +
+//                            "Legal Status: illegal\n" +
+//                            "\n" +
+//                            "Employee Requirements:\n" +
+//                            "cashier: 3\n" +
+//                            "cleaning: 1\n" +
+//                            "general_worker: 2\n" +
+//                            "orderly: 1\n" +
+//                            "security: 1\n" +
+//                            "storekeeper: 1\n" +
+//                            "Noticed no such manager shift has been assigned yet - the shift must have a manager!!!\n" +
+//                            "Noticed - the shift is illegal!!!\n" +
+//                            "\n" +
+//                            "------------------------------\n" +
+//                            "Shift Date: " + currentDate + "\n" +
+//                            "Shift Type: true\n" +
+//                            "Legal Status: illegal\n" +
+//                            "\n" +
+//                            "Employee Requirements:\n" +
+//                            "cashier: 3\n" +
+//                            "cleaning: 1\n" +
+//                            "general_worker: 2\n" +
+//                            "orderly: 1\n" +
+//                            "security: 1\n" +
+//                            "storekeeper: 1\n" +
+//                            "Requirements for " + currentDate + ":\n" +
+//                            "----------------------------------\n" +
+//                            "\n" +
+//                            "===============================\n" +
+//                            "Branch: רמי לוי בית שמש\n" +
+//                            "Noticed no such manager shift has been assigned yet - the shift must have a manager!!!\n" +
+//                            "Noticed - the shift is illegal!!!\n" +
+//                            "\n" +
+//                            "------------------------------\n" +
+//                            "Shift Date: " + currentDate + "\n" +
+//                            "Shift Type: false\n" +
+//                            "Legal Status: illegal\n" +
+//                            "\n" +
+//                            "Employee Requirements:\n" +
+//                            "cashier: 3\n" +
+//                            "cleaning: 1\n" +
+//                            "general_worker: 2\n" +
+//                            "orderly: 1\n" +
+//                            "security: 1\n" +
+//                            "storekeeper: 1\n" +
+//                            "Noticed no such manager shift has been assigned yet - the shift must have a manager!!!\n" +
+//                            "Noticed - the shift is illegal!!!\n" +
+//                            "\n" +
+//                            "------------------------------\n" +
+//                            "Shift Date: " + currentDate + "\n" +
+//                            "Shift Type: true\n" +
+//                            "Legal Status: illegal\n" +
+//                            "\n" +
+//                            "Employee Requirements:\n" +
+//                            "cashier: 3\n" +
+//                            "cleaning: 1\n" +
+//                            "general_worker: 2\n" +
+//                            "orderly: 1\n" +
+//                            "security: 1\n" +
+//                            "storekeeper: 1\n" +
+//                            "Requirements for " + currentDate + ":\n" +
+//                            "----------------------------------\n" +
+//                            "\n";
+//
+//            notificationArea.setText(notificationText);
+//
+//            JOptionPane.showMessageDialog(null, scrollPane, "Notifications", JOptionPane.INFORMATION_MESSAGE);
+//
+//            rightPanel.revalidate();
+//            rightPanel.repaint();
+//        });
+        }
     // Method to update the shift status table
     private void updateShiftStatusTable(JTable table, Object[][] data, Object[] columnNames) {
         DefaultTableModel model = new DefaultTableModel(data, columnNames);
