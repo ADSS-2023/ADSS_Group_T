@@ -91,7 +91,8 @@ public class TransportManagerFrame extends GenericFrameUser {
                 //show next day details in the right panel in big textBox
                 JTextArea nextDayDetailsTextArea = new JTextArea();
                 nextDayDetailsTextArea.setText((String) nextDayDetailsResponse.getReturnValue());
-                rightPanel.add(nextDayDetailsTextArea);
+                JScrollPane scrollPane = new JScrollPane(nextDayDetailsTextArea);
+                rightPanel.add(scrollPane);
                 updateDateTime();
 
             }
