@@ -368,6 +368,12 @@ public class Delivery {
         unHandledSuppliers = dalDeliveryService.findAllUnHandledSuppliersForDelivery(id);
         return unHandledSuppliers;
     }
+    public LinkedHashMap<Supplier, File> getUnHandledSuppliersNextDay() throws SQLException {
+        return unHandledSuppliers;
+    }
+    public LinkedHashMap<Branch, File> getUnHandledBranchesNextDay() throws SQLException {
+        return unHandledBranches;
+    }
 
     /**
      * get all the branches with their files that their orders does not collected yet from the suppliers

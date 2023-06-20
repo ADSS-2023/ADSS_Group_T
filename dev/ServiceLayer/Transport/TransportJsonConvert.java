@@ -142,4 +142,42 @@ public class TransportJsonConvert {
         }
         return sb.toString();
     }
-}
+
+    public String deliveryListToStringNextDay(ArrayList<Delivery> deliveryList) throws SQLException {
+        if (deliveryList == null || deliveryList.isEmpty())
+            return  null;
+        StringBuilder sb = new StringBuilder();
+        for (Delivery delivery : deliveryList) {
+            sb.append("\n---------------------------------------\n");
+            sb.append(deliveryToStringNextDay(delivery)).append("\n\n");
+        }
+        return sb.toString();
+    }
+
+
+    private String deliveryToStringNextDay(Delivery delivery) throws SQLException {
+        StringBuilder sb = new StringBuilder();
+        // Append delivery details to the string builder
+        sb.append("\nDelivery ID: ").append(delivery.getId()).append("\n");
+        sb.append("Date: ").append(delivery.getDate()).append("\n");
+        sb.append("Truck Weight: ").append(delivery.getTruckWeight()).append("\n");
+        sb.append("\nUnHandledSuppliers:\n");
+        sb.append(suppliersAndProductsToString(delivery.getUnHandledSuppliersNextDay()));
+        sb.append("\nHandledSuppliers\n");
+        sb.append(suppliersAndProductsToString(delivery.getUnHandledBranchesNextDay()));
+        sb.append("\nDest: \n");
+        HashMap<Branch,File> dests = delivery.getUnHandledBranches();
+        for (Map.Entry<Branch,File> entry : dests.entrySet()) {
+            sb.append("Branch: ").append(entry.getKey().getAddress()).append("\n");
+            sb.append(fileToString(entry.getValue()));
+            sb.append("\n");
+        }
+
+        //sb.append("Source: ").append(delivery.getSource().getAddress()).append("\n");
+        sb.append("Driver Name: ").append(delivery.getDriverID()).append("\n");
+        sb.append("Truck Number: ").append(delivery.getTruckNumber()).append("\n");
+        sb.append("Shipping Area: ").append(delivery.getShippingArea()).append("\n");
+        // Return the generated string
+        return sb.toString();
+    }
+    }

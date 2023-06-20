@@ -76,7 +76,7 @@ public class DeliveryService {
     public String getNextDayDetails() {
         try {
             Response response = new Response();
-            String s = transportJsonConvert.deliveryListToString(deliveryController.getNextDayDeatails());
+            String s = transportJsonConvert.deliveryListToStringNextDay(deliveryController.getNextDayDeatails());
             if(s == null)
                 response.setReturnValue("\nno deliveries today! :)\n");
             else

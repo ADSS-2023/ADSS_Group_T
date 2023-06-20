@@ -138,6 +138,7 @@ public class HRManagerFrame  extends GenericFrameUser {
 //        });
 
         addnewEmployeeButton.addActionListener(e -> {
+            anyButtonPressed(addnewEmployeeButton);
             System.out.println("Button add new employee clicked");
             rightPanel.removeAll();
             GenericTextField idField = new GenericTextField();
