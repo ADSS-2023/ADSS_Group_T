@@ -173,16 +173,24 @@ public class Data_init {
 // Delivery 2
         String branch2 = SiteAddresses.getBranchAddress(1);
         LinkedHashMap<String, LinkedHashMap<String, Integer>> products2 = new LinkedHashMap<>();
+
         LinkedHashMap<String, Integer> supplierProducts3 = new LinkedHashMap<>();
         supplierProducts3.put("Salmon", 10);
         supplierProducts3.put("Shrimp", 5);
         supplierProducts3.put("Tuna", 3);
         products2.put(SiteAddresses.getSupplierAddress(2), supplierProducts3);
+
         LinkedHashMap<String, Integer> supplierProducts4 = new LinkedHashMap<>();
         supplierProducts4.put("Apple", 20);
         supplierProducts4.put("Orange", 15);
         supplierProducts4.put("Mango", 10);
         products2.put(SiteAddresses.getSupplierAddress(3), supplierProducts4);
+
+        LinkedHashMap<String, Integer> supplierProducts5 = new LinkedHashMap<>();
+        supplierProducts5.put("Coke", 1000);
+        supplierProducts5.put("Diet Coke", 250);
+        products2.put(SiteAddresses.getSupplierAddress(1), supplierProducts5);
+
         String date2 = Time.localDateToString(LocalDate.now().plusDays(3));
         deliveryService.orderDelivery(branch2, products2, date2);
     }

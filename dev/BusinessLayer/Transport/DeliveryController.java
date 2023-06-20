@@ -593,7 +593,7 @@ public class DeliveryController {
                     delivery.removeUnHandledSupplier(supplier,f);
                 }
             }
-            reScheduleDelivery(delivery.getUnHandledSuppliers(), delivery.getUnHandledBranches());
+            reScheduleDelivery(delivery.getUnHandledSuppliers(), delivery.getUnHandledBranches(),delivery.getId());
         }
         else {//delivery from supplier to branch
             ArrayList<Supplier> suppliersTmp = new ArrayList<>(delivery.getUnHandledSuppliers().keySet());
@@ -615,7 +615,7 @@ public class DeliveryController {
                     filesCounter = delivery.supplierHandled(filesCounter, copyOfSupplierFileProducts);
                 }
             }
-            reScheduleDelivery(delivery.getUnHandledSuppliers(), delivery.getUnHandledBranches());
+            reScheduleDelivery(delivery.getUnHandledSuppliers(), delivery.getUnHandledBranches(),delivery.getId());
         }
     }
 
@@ -656,7 +656,7 @@ public class DeliveryController {
      * @param branches the branches to deliver to
      * @throws Exception error while reschedule delivery
      */
-    private void reScheduleDelivery(LinkedHashMap<Supplier, File> suppliers, LinkedHashMap<Branch, File> branches) throws Exception {
+    private void reScheduleDelivery(LinkedHashMap<Supplier, File> suppliers, LinkedHashMap<Branch, File> branches,int oldID) throws Exception {
         boolean found = suppliers.isEmpty() && branches.isEmpty();
         if(!found) {
             LocalDate newDeliveredDate = getCurrDate().plusDays(2);
@@ -678,6 +678,32 @@ public class DeliveryController {
                 dalDeliveryService.updateCounter("delivery counter", deliveryCounter);
                 addDelivery(newDelivery);
                 addDeliveryToDate(newDeliveredDate, newDelivery);
+                for (Supplier supplier : suppliers.keySet()) {
+                    File f = suppliers.get(supplier);
+                    HashMap<Product, Integer> supplierFileProducts =f.getProducts();
+                    for (Product product : supplierFileProducts.keySet()) {
+                        int amount = supplierFileProducts.get(product);
+                        dalDeliveryService.insertUnHandledSite(newDelivery.getId(), supplier.getAddress(), product.getName(), f.getId(), amount);
+                        dalDeliveryService.deleteUnHandledSite(oldID, supplier.getAddress(), product.getName(), f.getId(), amount);
+
+                    }
+                }
+                for (Branch branch : branches.keySet()) {
+                    File f = branches.get(branch);
+                    HashMap<Product, Integer> branchFileProducts = f.getProducts();
+                    for (Product product : branchFileProducts.keySet()) {
+                        int amount = branchFileProducts.get(product);
+                        dalDeliveryService.insertUnHandledSite(newDelivery.getId(), branch.getAddress(), product.getName(), f.getId(), amount);
+                        dalDeliveryService.deleteUnHandledSite(oldID, branch.getAddress(), product.getName(), f.getId(), amount);
+                    }
+                }
+
+                //delivery.addProductToUnHandledBranch(branch, product, products.get(product));
+                //for on suppliers map and call addProductToUnHandledSupplier
+
+
+
+
                 found = true;
             }
         }
@@ -726,7 +752,7 @@ public class DeliveryController {
             deliveriesThatReScheduleDelivery.addAll(scheduleDriversForTomorrow());
         }
         for(Delivery delivery: deliveriesThatReScheduleDelivery){
-            reScheduleDelivery(delivery.getUnHandledSuppliers(),delivery.getUnHandledBranches());
+            reScheduleDelivery(delivery.getUnHandledSuppliers(),delivery.getUnHandledBranches(),delivery.getId());
             removeDeliveryFromDate(delivery.getDate(),delivery);
             removeTruckFromDate(delivery.getDate(),logisticCenterController.getTruck(delivery.getTruckNumber()));
             removeDelivery(delivery);

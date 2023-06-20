@@ -131,7 +131,7 @@ public class Data_init_HR {
 
 
         // Store keepers
-        for (int id = 80; id <= 98; id++) {
+        for (int id = 80; id <= 110; id++) {
             String employeeName = "Store Keeper " + id ; // Generate a unique name for each store keeper
             String employeePhoneNumber = "123789456" + id ; // Generate a unique phone number for each store keeper
             String employeePosition = "storekeeper" + id;
@@ -210,23 +210,25 @@ public class Data_init_HR {
         employeeService.submitShiftForEmployee(branches.get(2), 18, LocalDate.now().plusDays(4), "e");
         employeeService.submitShiftForEmployee(branches.get(3), 19, LocalDate.now().plusDays(5), "m");
         employeeService.submitShiftForEmployee(branches.get(3), 20, LocalDate.now().plusDays(5), "e");
-
+        int id = 80;
         for (int days = 1; days <= 6; days++) {
+            id = 80;
                 for (int branch = 0; branch < 9; branch++) {
                     String branchName = branches.get(branch);
                     LocalDate shiftDate = LocalDate.now().plusDays(days);
 
                     // Submit morning shift for store keeper
                     String morningShiftType = "m";
-                    employeeService.submitShiftForEmployee(branchName, 80+(branch*2) , shiftDate, morningShiftType);
-                    shiftService.assignEmployeeForShift(branchName, 80 + (branch*2), shiftDate.toString(), morningShiftType, PositionType.storekeeper.name());
+                    employeeService.submitShiftForEmployee(branchName, id , shiftDate, morningShiftType);
+                    shiftService.assignEmployeeForShift(branchName, id, shiftDate.toString(), morningShiftType, PositionType.storekeeper.name());
                     //System.out.println("submitEmployee" + (80 + branch));
 
                     // Submit evening shift for store keeper
                     String eveningShiftType = "e";
-                    employeeService.submitShiftForEmployee(branchName, 80+ branch+1, shiftDate, eveningShiftType);
-                    shiftService.assignEmployeeForShift(branchName, 80 + branch +1, shiftDate.toString(), eveningShiftType, PositionType.storekeeper.name());
+                    employeeService.submitShiftForEmployee(branchName, id+1, shiftDate, eveningShiftType);
+                    shiftService.assignEmployeeForShift(branchName, id +1, shiftDate.toString(), eveningShiftType, PositionType.storekeeper.name());
                     //System.out.println("assignEmployee" + (80 + branch +1));
+                    id+= 2;
                 }
         }
 
@@ -263,10 +265,10 @@ public class Data_init_HR {
         employeeService.submitShiftForDriver(LocalDate.now().plusDays(3), 31);
 
         //store keepers
-        for (int id = 1; id <= 6; id++) {
-            employeeService.submitShiftForDriver(LocalDate.now().plusDays(id), 40);
+        for (int id1 = 1; id1 <= 6; id1++) {
+            employeeService.submitShiftForDriver(LocalDate.now().plusDays(id1), 40);
            // System.out.println("submitDriver" + id);
-            employeeService.assignDriverForShift(LocalDate.now().plusDays(id), 40);
+            employeeService.assignDriverForShift(LocalDate.now().plusDays(id1), 40);
            // System.out.println("assignDriver" + id);
         }
 

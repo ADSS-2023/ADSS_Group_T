@@ -57,7 +57,15 @@ public class EmployeeMenueFrame extends GenericFrameUser {
             GenericDatePicker dateField = GenericDatePicker.getNewGenericDatePicker();
             String[] shiftTypes = {"morning","evening"};
             JComboBox<String> shiftTypesComboBox = new JComboBox<>(shiftTypes);
-            String[] branches = {"b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9"};
+//            String[] branches = {"b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9"};
+            Response response = ResponseSerializer.deserializeFromJson(branchService.getAllBranches());
+            String[] branches;
+            if (response.isError()) {
+                setErrorText(response.getErrorMessage());
+                branches = new String[0];
+            } else {
+                branches = ((String) response.getReturnValue()).split("\n");
+            }
             JComboBox<String> branchComboBox = new JComboBox<>(branches);
 
             GenericButton submitButton = new GenericButton("submit");

@@ -102,6 +102,7 @@ public class TransportManagerFrame extends GenericFrameUser {
                 nextDayDetailsTextArea.setText((String) nextDayDetailsResponse.getReturnValue());
                 rightPanel.add(nextDayDetailsTextArea);
                 updateDateTime();
+
             }
             Response skipDayResponse = ResponseSerializer.deserializeFromJson(deliveryService.skipDay());
             if (skipDayResponse.isError()) {
@@ -111,6 +112,7 @@ public class TransportManagerFrame extends GenericFrameUser {
                 JTextArea skipDayTextArea = new JTextArea();
                 skipDayTextArea.setText((String) skipDayResponse.getReturnValue());
                 rightPanel.add(skipDayTextArea);
+                updateDateTime();
             }
             rightPanel.revalidate();
             rightPanel.repaint();
@@ -241,9 +243,9 @@ public class TransportManagerFrame extends GenericFrameUser {
             rightPanel.add(amountTextField);
             rightPanel.add(addProductButton);
             rightPanel.add(new GenericLabel(""));
-            rightPanel.add(new GenericLabel("Choose date:"), "cell 0 6");
-            rightPanel.add(datePicker, "cell 0 6");
-            rightPanel.add(sendButton, "cell 0 7");
+            rightPanel.add(new GenericLabel("Choose date:"));
+            rightPanel.add(datePicker);
+            rightPanel.add(sendButton);
             rightPanel.revalidate();
             rightPanel.repaint();
         });
@@ -428,7 +430,7 @@ public class TransportManagerFrame extends GenericFrameUser {
 
 
         showAllDeliveriesButton.addActionListener(e -> {
-            anyButtonPressed(showAllDeliveriesButton);
+            //anyButtonPressed(showAllDeliveriesButton);
             rightPanel.removeAll();
             Response response1 = ResponseSerializer.deserializeFromJson(deliveryService.showAllDeliveries());
             if (response1.isError()) {
@@ -451,20 +453,15 @@ public class TransportManagerFrame extends GenericFrameUser {
                 JScrollPane scrollPane = new JScrollPane(deliveryDetailsTextArea);
                 GenericButton showDeliveryOnMapButton = new GenericButton("Show delivery on map");
                 // Remove all components from the right panel
-                rightPanel.removeAll();
-                rightPanel.setLayout(new BorderLayout());
+               // rightPanel.removeAll();
+
 
                 rightPanel.add(scrollPane, BorderLayout.CENTER);
                 rightPanel.add(deliveryComboBox, BorderLayout.NORTH);
                 rightPanel.add(showDeliveryDetailsButton, BorderLayout.WEST);
                 rightPanel.add(showDeliveryOnMapButton, BorderLayout.EAST);
-
                 rightPanel.revalidate();
                 rightPanel.repaint();
-
-
-
-
                 showDeliveryDetailsButton.addActionListener(e1 -> {
                     deliveryDetailsTextArea.setText("");
                     String selectedDelivery = deliveriesArray[deliveryComboBox.getSelectedIndex()];
@@ -473,22 +470,13 @@ public class TransportManagerFrame extends GenericFrameUser {
                         deliveryDetailsTextArea.append(deliveryDetail + "\n");
                     }
                 });
-
                 showDeliveryOnMapButton.addActionListener(e1 -> {
                     Response response2 = ResponseSerializer.deserializeFromJson(deliveryService.getDeliveryTrack(Integer.parseInt(deliveryComboBox.getSelectedItem().toString())));
                     if (response2.isError()) {
                         setErrorText(response2.getErrorMessage());
                     } else {
-
-
                         String track = (String) response2.getReturnValue();
                         String[] trackArray = track.split("\n");
-//                        List<String> trackArray = new java.util.ArrayList<>();
-//                        for (int i = 0; i < 9; i++) {
-//                            trackArray.add(SiteAddresses.getBranchAddress(i));
-//                        }
-
-// Show track on Google Maps
                         StringBuilder urlBuilder = new StringBuilder("https://www.google.com/maps/dir/");
                         for (String trackPoint : trackArray) {
                             String encodedTrackPoint = null;
@@ -500,7 +488,6 @@ public class TransportManagerFrame extends GenericFrameUser {
                             urlBuilder.append(encodedTrackPoint).append("/");
                         }
                         String url = urlBuilder.toString();
-
                         try {
                             // Open URL in default web browser
                             Desktop.getDesktop().browse(new URI(url));
@@ -508,13 +495,8 @@ public class TransportManagerFrame extends GenericFrameUser {
                             ee.printStackTrace();
                         }
 
-
-
-//קניון מול 7, HaAyin Lamed St, Be'er Sheva, 8485536
-
                     }
                 });
-
             }
         });
 
