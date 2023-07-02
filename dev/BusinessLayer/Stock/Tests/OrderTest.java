@@ -122,8 +122,10 @@ class   OrderTest {
     @Test
     void presentItemsToBePlaced(){
         try {
-            assertEquals("1. Order id:12, item:3% milk, manufacturer:IDO LTD, amount:40\n" +
-                    "2. Order id:1005, item:Beef Sausage, manufacturer:Zogloveck, amount:16\n", orderController.presentItemsToBePlaced());
+            String result = orderController.presentItemsToBePlaced().toString();
+            assertEquals("[1. Order id:12, item:3% milk, manufacturer:IDO LTD, amount:40\n" +
+                    ", 2. Order id:1005, item:Beef Sausage, manufacturer:Zogloveck, amount:16\n" +
+                    "]", result);
         }
         catch (Exception e){
             assertEquals("" , "FALSE");
@@ -133,8 +135,10 @@ class   OrderTest {
     @Test
     void placeNewArrival_removed() throws Exception {
         orderController.placeNewArrival(2 , "ile:2 , shelf:9");
+        String result = orderController.presentItemsToBePlaced().toString();
         //check if the item removed from the "need to remove" list
-        assertEquals("1. Order id:12, item:3% milk, manufacturer:IDO LTD, amount:40\n" , orderController.presentItemsToBePlaced());
+        assertEquals("[1. Order id:12, item:3% milk, manufacturer:IDO LTD, amount:40\n" +
+                "]" ,result );
     }
 
     @Test

@@ -67,7 +67,7 @@ public class DamagedTest {
             // Check if the returned report is not empty and contains the correct item details
             assertNotNull(result);
             assertEquals("Item name : 1.5% milk , Item ID : 1 , Amount : 3 , Description : Damaged during transit\n" +
-                    "arrived in: 2023-09-17", result);
+                    "arrived in: 2023-09-17,,\n", result);
         } catch (Exception e) {
             fail("produce_damaged_report() threw an exception: " + e.getMessage());
         }
