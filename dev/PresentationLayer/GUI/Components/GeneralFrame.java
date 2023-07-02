@@ -20,7 +20,7 @@ public class GeneralFrame extends JFrame {
         this.supplierManager = supplierManager;
     }
 
-    public void run() {
+    public void run(String userChoise) {
         String[] options = {"Load data", "Empty system", "Set data to the system"};
         int action = JOptionPane.showOptionDialog(null, "Welcome to Superly inventory and supplier system", "Superly",
                 JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
@@ -45,37 +45,27 @@ public class GeneralFrame extends JFrame {
         } catch (Exception c) {
 
         }
-        login(sf);
+        login(sf,userChoise);
 
 
     }
-    public void login(ServiceFactory sf){
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(2, 2));
-        panel.add(new JLabel("ID:"));
-        JTextField idField = new JTextField();
-        panel.add(idField);
-
-        String[] options2 = {"Login", "Cancel"};
-        int choice = JOptionPane.showOptionDialog(null, panel, "Login",
-                JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
-
-        if (choice == 0) {
-            // Login button clicked
-            String id = idField.getText();
-            // Perform login logic
-            Response res = sf.userService.login(id);
-            if (res.isError()){
-                JOptionPane.showMessageDialog(null, "Login Failed: " + res.getErrorMassage(), "Error", JOptionPane.ERROR_MESSAGE);
-            }
-            else {
-                continueToFrame(res,sf);
-            }
-
+    public void login(ServiceFactory sf, String userChoise) {
+        String id = "";
+        if (userChoise.equals("StoreManager"))
+            id = "1";
+        else if (userChoise.equals("Stock"))
+            id = "2";
+        else if (userChoise.equals("Supplier")) {
+            id = "3";
+        }
+        Response res = sf.userService.login(id);
+        if (res.isError()) {
+            JOptionPane.showMessageDialog(null, "Login Failed: " + res.getErrorMassage(), "Error", JOptionPane.ERROR_MESSAGE);
         } else {
-            // Cancel button clicked or dialog closed
+            continueToFrame(res, sf);
         }
     }
+
 
 
     private static void loadData(ServiceFactory sf) {
@@ -108,20 +98,20 @@ public class GeneralFrame extends JFrame {
     }
     public void continueToManager(ServiceFactory sf){
         ManagerFrame managerFrame = new ManagerFrame(sf);
-        managerFrame.setLogOutCallBack(() -> login(sf));
+        managerFrame.setLogOutCallBack(() -> dispose());
         managerFrame.setInventoryCallBack(()->continueToInventory(sf));
         managerFrame.setSupllierCallBack(()->continueToSupplier(sf));
         run(managerFrame);
     }
     public void continueToSupplier(ServiceFactory sf){
         AllSupplierFrame allSupplierFrame = new AllSupplierFrame(sf);
-        allSupplierFrame.setLogOutCallBack(()->login(sf));
+        allSupplierFrame.setLogOutCallBack(()->dispose());
         allSupplierFrame.setManagerFrameCallBack(()->continueToManager(sf));
         run(allSupplierFrame);
     }
     public void continueToInventory(ServiceFactory sf){
         StockFrame stockFrame = new StockFrame(sf);
-        stockFrame.setLogOutCallBack(()->login(sf));
+        stockFrame.setLogOutCallBack(()-> dispose());
         stockFrame.setManagerCallBack(()->continueToManager(sf));
         run(stockFrame);
     }

@@ -6,22 +6,27 @@
 * Ido Nagler 318266939 
 * Yagil Brill 209382902 
 ##
-* Start the program with a parameter "CLI"/"GUI"
+* Start the program with a parameter "CLI"/"GUI" and one of the users : 
+
+java -jar adss2023_v03.jar GUI StoreManager
+
+java -jar adss2023_v03.jar GUI Stock
+
+java -jar adss2023_v03.jar GUI Supplier
+
+java -jar adss2023_v03.jar CLI StoreManager
+
+java -jar adss2023_v03.jar CLI Stock
+
+java -jar adss2023_v03.jar CLI Supplier
+
 
 ## START - MENU 
 1. Load data - Load the given data from the database. If you want to load data, perform "3". Afterward, close the system and press "1" again.
 2. Empty system - Delete the data from the database.
 3. Set up data system - Enter data into the system, including the database.
 
-## LOGIN - WINDOW at the GUI
-### enter your id
-
-//TODO : implement the id's
-
-* Stock manager id = 1 password = 1 - lead to ***HR Manager-Menu*** (below)
-* Supplier manager id = 2 password = 2 - lead to ***Transporter Manager-Menu*** (below)
-* Manager id = 1111 password = 1111 - lead to ***Super Manager-Menu***
-
+In case of enter to a Manager Window : 
 
 1. Enter suppliers system - Access the suppliers system.
 2. Enter inventory system - Access the inventory system.
@@ -86,7 +91,7 @@ Orders menu :
 
 
 
-## pre-load-data
+## pre-load-data 
 
 ### Inventory categories
 
