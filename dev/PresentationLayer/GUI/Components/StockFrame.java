@@ -324,8 +324,6 @@ public class StockFrame extends JFrame {
         String product = presentCategories();
         if (!product.equals("exit")) {
             try {
-
-
                 JTextField amountField = new JTextField();
                 emptyBoxPanel.add(new JLabel("Start Date:"), 0);
                 JDatePicker startDate = addDate(emptyBoxPanel, 1);
@@ -337,11 +335,13 @@ public class StockFrame extends JFrame {
 
                 UtilDateModel model2 = (UtilDateModel) endDate.getModel();
 
-                addButton(emptyBoxPanel, "Ok", () -> handleErrorOrOk(
-                        sf.inventoryService.set_discount(
-                                product, Double.parseDouble(amountField.getText()),
-                                Util.DateToString(model.getValue().toInstant().atZone(ZoneId.systemDefault()).toLocalDate()),
-                                Util.DateToString(model2.getValue().toInstant().atZone(ZoneId.systemDefault()).toLocalDate()))));
+                addButton(emptyBoxPanel, "Ok", () ->
+                    handleErrorOrOk(
+                            sf.inventoryService.set_discount(
+                                    product, Double.parseDouble(amountField.getText()),
+                                    Util.DateToString(model.getValue().toInstant().atZone(ZoneId.systemDefault()).toLocalDate()),
+                                    Util.DateToString(model2.getValue().toInstant().atZone(ZoneId.systemDefault()).toLocalDate())))
+                );
                 addButton(emptyBoxPanel, "Cancel", () -> {
                     emptyBoxPanel.removeAll(); // Remove all components from the panel
                     emptyBoxPanel.revalidate(); // Revalidate the panel
@@ -355,7 +355,7 @@ public class StockFrame extends JFrame {
                 emptyBoxPanel.revalidate();
                 emptyBoxPanel.repaint();
                 emptyBoxPanel.setVisible(true);
-            } catch (NumberFormatException ex) {
+            } catch (Exception ex) {
                 updateError("Invalid input format");
             }
         }
@@ -383,7 +383,7 @@ public class StockFrame extends JFrame {
         JButton button = new JButton("<html><center>" + name + "</center></html>");
 
         button.setSize(5, 5);
-        button.addActionListener((e) -> runnable.run());
+        button.addActionListener((e) -> {try{runnable.run();}catch (Exception exp){updateError("invalid Input");}});
         // Apply custom styling
         button.setFocusPainted(false);
         button.setFont(button.getFont().deriveFont(Font.BOLD, 15));
